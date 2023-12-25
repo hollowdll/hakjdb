@@ -1,12 +1,32 @@
 package kvdb
 
-import "sync"
+import (
+	"sync"
+)
 
 // Database containing key-value pairs of data.
 type Database struct {
 	Name  string
 	data  map[DatabaseKey]DatabaseValue
 	mutex sync.RWMutex
+}
+
+// Creates a new instance of Database.
+func newDatabase(name string) *Database {
+	return &Database{
+		Name: name,
+		data: make(map[DatabaseKey]DatabaseValue),
+	}
+}
+
+// Creates a new database with a name. Validates input.
+func CreateDatabase(name string) (*Database, error) {
+	err := validateDatabaseName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return newDatabase(name), nil
 }
 
 // Retrieves a value using a key.
