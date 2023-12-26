@@ -10,32 +10,75 @@ const dataDirName string = "data"
 
 // Gets path to the data directory.
 // Data directory is a subdir in the executable's parent dir.
-func getDataDirectoryPath() (string, error) {
+func getDataDirPath() (string, error) {
 	execPath, err := os.Executable()
 	if err != nil {
 		return "", err
 	}
 
 	parentDirPath := filepath.Dir(execPath)
-	dataDirPath := filepath.Join(parentDirPath, dataDirName)
+	path := filepath.Join(parentDirPath, dataDirName)
 
-	return dataDirPath, nil
+	return path, nil
 }
 
-// Creates data directory if it doesn't exist.
-func createDataDirectoryIfNotExist() error {
-	dataDirPath, err := getDataDirectoryPath()
+// Gets path to a sub directory in the data directory.
+func getDataDirSubDirPath(dirName string) (string, error) {
+	dataDirPath, err := getDataDirPath()
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	if _, err := os.Stat(dataDirPath); os.IsNotExist(err) {
-		// create directory
-		err := os.Mkdir(dataDirPath, os.ModePerm)
+	path := filepath.Join(dataDirPath, dirName)
+
+	return path, nil
+}
+
+// Gets path to a file in a data directory sub directory.
+func getDataDirSubDirFilePath(dirName string, fileName string) (string, error) {
+	dirPath, err := getDataDirSubDirPath(dirName)
+	if err != nil {
+		return "", nil
+	}
+
+	filePath := filepath.Join(dirPath, fileName)
+
+	return filePath, nil
+}
+
+// Creates a directory if it doesn't exist.
+// Does nothing if the directory exists.
+func createDirIfNotExist(dirPath string) error {
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		err := os.Mkdir(dirPath, os.ModePerm)
 		if err != nil {
 			return err
 		}
 	} else if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Creates a sub directory to the data directory if it doesn't exist.
+// Creates the data directory if it doesn't exist.
+// Does nothing if the directory exists.
+func createDataDirSubDirIfNotExist(dirName string) error {
+	dataDirPath, err := getDataDirPath()
+	if err != nil {
+		return err
+	}
+	dirPath, err := getDataDirSubDirPath(dirName)
+	if err != nil {
+		return err
+	}
+	err = createDirIfNotExist(dataDirPath)
+	if err != nil {
+		return err
+	}
+	err = createDirIfNotExist(dirPath)
+	if err != nil {
 		return err
 	}
 
