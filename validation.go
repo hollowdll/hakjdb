@@ -10,7 +10,7 @@ func isEmpty(input string) bool {
 }
 
 func containsWhitespace(input string) bool {
-	return strings.ContainsAny(input, " .\t\n\r\v\f")
+	return strings.ContainsAny(input, " \t\n\r\v\f")
 }
 
 func containsInvalidSymbol(input string) bool {
