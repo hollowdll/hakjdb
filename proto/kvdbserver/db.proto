@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package kvdbserver.api
+
+message CreateDatabaseRequest {
+    string name = 1;
+}
+
+message CreateDatabaseResponse {
+    string name = 1;
+}
+
+service Database {
+    rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
+}
