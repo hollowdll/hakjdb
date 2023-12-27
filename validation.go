@@ -16,10 +16,10 @@ func containsValidCharacters(input string) bool {
 
 func validateDatabaseName(name string) error {
 	if isEmpty(name) {
-		return errors.New("Database name is empty")
+		return errors.New("database name is empty")
 	}
 	if !containsValidCharacters(name) {
-		return errors.New("Database name contains invalid characters")
+		return errors.New("database name contains invalid characters")
 	}
 
 	return nil
