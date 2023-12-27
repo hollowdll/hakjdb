@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -15,39 +16,50 @@ type Logger struct{}
 
 type logEntry struct {
 	createdAt time.Time
-	logType   logType
+	logType   LogType
 	content   string
 }
 
-func (l *logEntry) String() string {
-	return fmt.Sprintf("[%s] [%s] %s", l.createdAt.UTC(), l.logType, l.content)
+func NewLogger() *Logger {
+	return &Logger{}
 }
 
-type logType int
+func newLogEntry(logType LogType, content string) *logEntry {
+	return &logEntry{
+		createdAt: time.Now(),
+		logType:   logType,
+		content:   content,
+	}
+}
+
+func (l *logEntry) String() string {
+	return fmt.Sprintf("[%s] [%s] %s\n", l.createdAt.Format(time.RFC3339), l.logType, l.content)
+}
+
+type LogType int
 
 const (
-	logTypeInfo logType = iota
+	LogTypeInfo LogType = iota
 )
 
-func (l logType) String() string {
+func (l LogType) String() string {
 	switch l {
-	case logTypeInfo:
+	case LogTypeInfo:
 		return "Info"
 	default:
 		return "Invalid LogType"
 	}
 }
 
-// Logs info to log file.
-func (l Logger) LogInfo(info string) error {
-	err := createDataDirSubDirIfNotExist(logsDirName)
+// Logs message to log file.
+func (l Logger) LogMessage(logType LogType, message string) error {
+	dirPath, err := createDataDirSubDirIfNotExist(logsDirName)
 	if err != nil {
-		return nil
+		return err
 	}
-	filePath, err := getDataDirSubDirFilePath(logsDirName, allLogsFile)
-	if err != nil {
-		return nil
-	}
+	filePath := filepath.Join(dirPath, allLogsFile)
+	logEntry := newLogEntry(logType, message)
+
 	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
@@ -56,7 +68,7 @@ func (l Logger) LogInfo(info string) error {
 
 	writer := bufio.NewWriter(file)
 
-	_, err = writer.WriteString(info)
+	_, err = writer.WriteString(logEntry.String())
 	if err != nil {
 		return err
 	}

@@ -38,7 +38,7 @@ func getDataDirSubDirPath(dirName string) (string, error) {
 func getDataDirSubDirFilePath(dirName string, fileName string) (string, error) {
 	dirPath, err := getDataDirSubDirPath(dirName)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	filePath := filepath.Join(dirPath, fileName)
@@ -64,23 +64,22 @@ func createDirIfNotExist(dirPath string) error {
 // Creates a sub directory to the data directory if it doesn't exist.
 // Creates the data directory if it doesn't exist.
 // Does nothing if the directory exists.
-func createDataDirSubDirIfNotExist(dirName string) error {
+//
+// Returns the path to the sub directory.
+func createDataDirSubDirIfNotExist(dirName string) (string, error) {
 	dataDirPath, err := getDataDirPath()
 	if err != nil {
-		return err
+		return "", err
 	}
-	dirPath, err := getDataDirSubDirPath(dirName)
-	if err != nil {
-		return err
-	}
+	dirPath := filepath.Join(dataDirPath, dirName)
 	err = createDirIfNotExist(dataDirPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 	err = createDirIfNotExist(dirPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return dirPath, nil
 }
