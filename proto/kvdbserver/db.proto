@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package kvdbserver.api
+option go_package = "proto/kvdbserver";
+
+package kvdbserverapi;
 
 message CreateDatabaseRequest {
     string name = 1;
