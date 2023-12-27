@@ -2,30 +2,24 @@ package kvdb
 
 import (
 	"errors"
-	"strings"
+	"regexp"
 )
 
 func isEmpty(input string) bool {
 	return len(input) == 0
 }
 
-func containsWhitespace(input string) bool {
-	return strings.ContainsAny(input, " \t\n\r\v\f")
-}
-
-func containsInvalidSymbol(input string) bool {
-	return strings.ContainsAny(input, ".")
+func containsValidCharacters(input string) bool {
+	pattern := regexp.MustCompile("^[A-Za-z0-9-_]+$")
+	return pattern.MatchString(input)
 }
 
 func validateDatabaseName(name string) error {
 	if isEmpty(name) {
 		return errors.New("Database name is empty")
 	}
-	if containsWhitespace(name) {
-		return errors.New("Database name contains whitespace")
-	}
-	if containsInvalidSymbol(name) {
-		return errors.New("Database name contains invalid symbol")
+	if !containsValidCharacters(name) {
+		return errors.New("Database name contains invalid characters")
 	}
 
 	return nil
