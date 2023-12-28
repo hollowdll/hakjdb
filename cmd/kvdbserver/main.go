@@ -10,7 +10,7 @@ import (
 
 func main() {
 	server := newDatabaseServer()
-	listener, err := net.Listen("tcp", ":12345")
+	listener, err := net.Listen("tcp", ":12345") // env var later
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
