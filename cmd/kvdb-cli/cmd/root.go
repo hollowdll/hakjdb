@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/db"
+	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/cobra"
 )
 
@@ -9,7 +10,7 @@ var rootCmd = &cobra.Command{
 	Use:     "kvdb-cli",
 	Short:   "CLI tool for kvdb key-value database",
 	Long:    "CLI tool for kvdb key-value database",
-	Version: "0.0.0",
+	Version: version.Version,
 }
 
 func Execute() error {
