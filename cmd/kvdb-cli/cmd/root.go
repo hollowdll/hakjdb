@@ -19,6 +19,7 @@ func Execute() error {
 
 func init() {
 	rootCmd.AddCommand(db.CmdDb)
+	rootCmd.AddCommand(cmdConnect)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }

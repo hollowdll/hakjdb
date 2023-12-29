@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var address = "localhost:12345"
+var address = fmt.Sprintf("%s:%d", cmd.Hostname, cmd.Port)
 
 func main() {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -21,5 +21,7 @@ func main() {
 	defer conn.Close()
 	client.InitClient(conn)
 
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
