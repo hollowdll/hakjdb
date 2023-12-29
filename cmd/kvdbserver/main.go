@@ -22,11 +22,4 @@ func main() {
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to server gRPC: %v", err)
 	}
-
-	/* test stuff
-	logger := kvdb.NewLogger()
-	if err := logger.LogMessage(kvdb.LogTypeInfo, "Test log"); err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
-	}
-	*/
 }

@@ -2,13 +2,17 @@ package db
 
 import (
 	"context"
-	"log"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/spf13/cobra"
 )
+
+// CommandTimeout specifies how long to wait until a command terminates.
+var CommandTimeout = time.Second * 10
 
 var dbName string
 var cmdCreateDb = &cobra.Command{
@@ -19,7 +23,6 @@ var cmdCreateDb = &cobra.Command{
 		createDatabase()
 	},
 }
-var cmdTimeout = time.Second
 
 func init() {
 	cmdCreateDb.Flags().StringVarP(&dbName, "name", "n", "", "name of the database (required)")
@@ -27,10 +30,12 @@ func init() {
 }
 
 func createDatabase() {
-	response, err := client.GrpcClient.CreateDatabase(context.Background(), &kvdbserver.CreateDatabaseRequest{Name: dbName})
+	ctx, cancel := context.WithTimeout(context.Background(), CommandTimeout)
+	defer cancel()
+	response, err := client.GrpcClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{Name: dbName})
 	if err != nil {
-		log.Fatalf("cannot create database: %v", err)
+		fmt.Fprintln(os.Stderr, "Error: cannot create database:", err)
 	}
 
-	log.Printf("Created database: %s", response.GetName())
+	fmt.Println("Created database:", response.GetName())
 }
