@@ -1,11 +1,11 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -15,10 +15,11 @@ var address = "localhost:12345"
 func main() {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("failed to connect: %v", err)
+		fmt.Fprintln(os.Stderr, "Error: failed to connect to the server:", err)
+		os.Exit(1)
 	}
 	defer conn.Close()
-	client.GrpcClient = kvdbserver.NewDatabaseClient(conn)
+	client.InitClient(conn)
 
 	cmd.Execute()
 }

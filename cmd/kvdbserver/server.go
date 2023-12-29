@@ -37,7 +37,7 @@ func (s *databaseServer) databaseExists(name string) bool {
 // Creates a new database to the database server.
 // Fails if it already exists or the name is invalid.
 func (s *databaseServer) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (*kvdbserver.CreateDatabaseResponse, error) {
-	log.Printf("Creating new database: %s", req.GetName())
+	log.Printf("attempt to create database: %s", req.GetName())
 
 	db, err := kvdb.CreateDatabase(req.GetName())
 	if err != nil {
@@ -52,13 +52,14 @@ func (s *databaseServer) CreateDatabase(ctx context.Context, req *kvdbserver.Cre
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+
 	s.databases[db.Name] = db
+	log.Printf("created database: %s", db.Name)
 
 	err = s.logger.LogMessage(kvdb.LogTypeInfo, fmt.Sprintf("Created database: %s", db.Name))
 	if err != nil {
 		log.Printf("error: failed to write to log file: %s", err)
 	}
-	log.Printf("Created new database: %s", db.Name)
 
 	return &kvdbserver.CreateDatabaseResponse{Name: db.Name}, nil
 }
