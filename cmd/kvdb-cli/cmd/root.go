@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/db"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -25,7 +26,7 @@ func Execute() error {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initConfig, client.InitClient)
 
 	viper.SetDefault("host", common.ServerDefaultHost)
 	viper.SetDefault("port", common.ServerDefaultPort)
