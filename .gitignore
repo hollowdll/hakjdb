@@ -24,3 +24,6 @@ go.work
 data
 logs
 *.log
+
+# Config
+.kvdb-cli.json

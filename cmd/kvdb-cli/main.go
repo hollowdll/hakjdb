@@ -6,11 +6,12 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var address = fmt.Sprintf("%s:%d", cmd.Hostname, cmd.Port)
+var address = fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
 
 func main() {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
