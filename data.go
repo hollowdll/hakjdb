@@ -8,17 +8,6 @@ import (
 // Data directory name
 const dataDirName string = "data"
 
-// GetExecParentDirPath gets path to the executable's parent directory.
-func GetExecParentDirPath() (string, error) {
-	execPath, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-	path := filepath.Dir(execPath)
-
-	return path, nil
-}
-
 // Gets path to the data directory.
 // Data directory is a subdir in the executable's parent dir.
 func getDataDirPath() (string, error) {

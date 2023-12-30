@@ -1,14 +1,17 @@
 package cmd
 
 import (
-	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/db"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-const configFileName string = ".kvdb-cli"
+const (
+	configFileName string = ".kvdb-cli"
+	configFileType string = "json"
+)
 
 var rootCmd = &cobra.Command{
 	Use:     "kvdb-cli",
@@ -24,8 +27,8 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	viper.SetDefault("host", "localhost")
-	viper.SetDefault("port", 12345)
+	viper.SetDefault("host", common.ServerDefaultHost)
+	viper.SetDefault("port", common.ServerDefaultPort)
 
 	rootCmd.AddCommand(db.CmdDb)
 	rootCmd.AddCommand(cmdConnect)
@@ -34,13 +37,15 @@ func init() {
 }
 
 func initConfig() {
-	configDirPath, err := kvdb.GetExecParentDirPath()
+	configDirPath, err := common.GetExecParentDirPath()
 	cobra.CheckErr(err)
+	// configFilePath := filepath.Join(configDirPath, fmt.Sprintf("%s.%s", configFileName, configFileType))
 
 	viper.AddConfigPath(configDirPath)
-	viper.SetConfigType("json")
+	viper.SetConfigType(configFileType)
 	viper.SetConfigName(configFileName)
 
+	viper.SafeWriteConfig()
 	err = viper.ReadInConfig()
 	cobra.CheckErr(err)
 }
