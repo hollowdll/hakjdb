@@ -1,4 +1,4 @@
-package cmd
+package connect
 
 import (
 	"github.com/spf13/cobra"
@@ -13,7 +13,7 @@ const (
 var (
 	host       string
 	port       uint16
-	cmdConnect = &cobra.Command{
+	CmdConnect = &cobra.Command{
 		Use:   "connect [flags]",
 		Short: "Change connection settings to a server",
 		Long:  "Change connection settings to a server",
@@ -31,6 +31,7 @@ var (
 )
 
 func init() {
-	cmdConnect.Flags().StringVarP(&host, "host", "a", defaultHost, "server address")
-	cmdConnect.Flags().Uint16VarP(&port, "port", "p", defaultPort, "port number")
+	CmdConnect.AddCommand(CmdConnectLs)
+	CmdConnect.Flags().StringVarP(&host, "host", "a", defaultHost, "server address")
+	CmdConnect.Flags().Uint16VarP(&port, "port", "p", defaultPort, "port number")
 }

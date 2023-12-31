@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/connect"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/db"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -32,7 +33,7 @@ func init() {
 	viper.SetDefault("port", common.ServerDefaultPort)
 
 	rootCmd.AddCommand(db.CmdDb)
-	rootCmd.AddCommand(cmdConnect)
+	rootCmd.AddCommand(connect.CmdConnect)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }

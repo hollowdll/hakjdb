@@ -22,13 +22,12 @@ var (
 // InitClient initializes the client and connections.
 func InitClient() {
 	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
-	fmt.Println(address)
-
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error: failed to connect to the server:", err)
 		os.Exit(1)
 	}
+
 	GrpcDatabaseClient = kvdbserver.NewDatabaseClient(conn)
 	grpcClientConnection = conn
 }
