@@ -4,6 +4,10 @@ option go_package = "proto/kvdbserver";
 
 package kvdbserverapi;
 
+import "google/protobuf/timestamp.proto";
+
+message Empty {}
+
 message CreateDatabaseRequest {
     string name = 1;
 }
@@ -12,6 +16,19 @@ message CreateDatabaseResponse {
     string name = 1;
 }
 
+message GetAllDatabasesResponse {
+    repeated string names = 1;
+}
+
+message DatabaseDetails {
+    string name = 1;
+    google.protobuf.Timestamp created_at = 2;
+    google.protobuf.Timestamp updated_at = 3;
+    uint64 size = 4;
+    uint32 key_count = 5;
+}
+
 service Database {
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
+    rpc GetAllDatabases (Empty) returns (GetAllDatabasesResponse) {}
 }
