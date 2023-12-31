@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	server := newDatabaseServer()
+	server := newServer()
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", common.ServerDefaultPort)) // env var later
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
