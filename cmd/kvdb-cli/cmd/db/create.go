@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
@@ -31,10 +30,7 @@ func createDatabase() {
 	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
 	defer cancel()
 	response, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{Name: dbName})
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
-		os.Exit(1)
-	}
+	cobra.CheckErr(err)
 
 	fmt.Println("Created database:", response.GetName())
 }

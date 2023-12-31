@@ -14,14 +14,14 @@ func main() {
 	server := newServer()
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", common.ServerDefaultPort)) // env var later
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Fatalf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
 	kvdbserver.RegisterDatabaseServer(grpcServer, server)
-	log.Printf("Server listening at %v", listener.Addr())
+	log.Printf("server listening at %v", listener.Addr())
 
 	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve gRPC: %v", err)
+		log.Fatalf("failed to serve gRPC: %v", err)
 	}
 }

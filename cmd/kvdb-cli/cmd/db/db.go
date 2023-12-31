@@ -12,4 +12,5 @@ var CmdDb = &cobra.Command{
 
 func init() {
 	CmdDb.AddCommand(cmdCreateDb)
+	CmdDb.AddCommand(cmdDbLs)
 }
