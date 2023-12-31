@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CmdConnectLs = &cobra.Command{
+var cmdConnectLs = &cobra.Command{
 	Use:   "ls",
 	Short: "Show connection settings to a server",
 	Long:  "Show connection settings to a server",

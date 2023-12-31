@@ -5,7 +5,7 @@ import (
 )
 
 var CmdDb = &cobra.Command{
-	Use:   "db [subcommand]",
+	Use:   "db [command]",
 	Short: "Manage databases",
 	Long:  "Manage databases",
 }
