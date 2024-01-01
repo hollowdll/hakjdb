@@ -18,122 +18,126 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// StorageClient is the client API for Storage service.
+// StorageServiceClient is the client API for StorageService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type StorageClient interface {
+type StorageServiceClient interface {
+	// Sets a string value using a key
 	SetValue(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*SetValueResponse, error)
+	// Gets a string value using a key
 	GetValue(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*GetValueResponse, error)
 }
 
-type storageClient struct {
+type storageServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStorageClient(cc grpc.ClientConnInterface) StorageClient {
-	return &storageClient{cc}
+func NewStorageServiceClient(cc grpc.ClientConnInterface) StorageServiceClient {
+	return &storageServiceClient{cc}
 }
 
-func (c *storageClient) SetValue(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*SetValueResponse, error) {
+func (c *storageServiceClient) SetValue(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*SetValueResponse, error) {
 	out := new(SetValueResponse)
-	err := c.cc.Invoke(ctx, "/kvdbserverapi.Storage/SetValue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/SetValue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storageClient) GetValue(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*GetValueResponse, error) {
+func (c *storageServiceClient) GetValue(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*GetValueResponse, error) {
 	out := new(GetValueResponse)
-	err := c.cc.Invoke(ctx, "/kvdbserverapi.Storage/GetValue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetValue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// StorageServer is the server API for Storage service.
-// All implementations must embed UnimplementedStorageServer
+// StorageServiceServer is the server API for StorageService service.
+// All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
-type StorageServer interface {
+type StorageServiceServer interface {
+	// Sets a string value using a key
 	SetValue(context.Context, *SetValueRequest) (*SetValueResponse, error)
+	// Gets a string value using a key
 	GetValue(context.Context, *GetValueRequest) (*GetValueResponse, error)
-	mustEmbedUnimplementedStorageServer()
+	mustEmbedUnimplementedStorageServiceServer()
 }
 
-// UnimplementedStorageServer must be embedded to have forward compatible implementations.
-type UnimplementedStorageServer struct {
+// UnimplementedStorageServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedStorageServiceServer struct {
 }
 
-func (UnimplementedStorageServer) SetValue(context.Context, *SetValueRequest) (*SetValueResponse, error) {
+func (UnimplementedStorageServiceServer) SetValue(context.Context, *SetValueRequest) (*SetValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetValue not implemented")
 }
-func (UnimplementedStorageServer) GetValue(context.Context, *GetValueRequest) (*GetValueResponse, error) {
+func (UnimplementedStorageServiceServer) GetValue(context.Context, *GetValueRequest) (*GetValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValue not implemented")
 }
-func (UnimplementedStorageServer) mustEmbedUnimplementedStorageServer() {}
+func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 
-// UnsafeStorageServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StorageServer will
+// UnsafeStorageServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StorageServiceServer will
 // result in compilation errors.
-type UnsafeStorageServer interface {
-	mustEmbedUnimplementedStorageServer()
+type UnsafeStorageServiceServer interface {
+	mustEmbedUnimplementedStorageServiceServer()
 }
 
-func RegisterStorageServer(s grpc.ServiceRegistrar, srv StorageServer) {
-	s.RegisterService(&Storage_ServiceDesc, srv)
+func RegisterStorageServiceServer(s grpc.ServiceRegistrar, srv StorageServiceServer) {
+	s.RegisterService(&StorageService_ServiceDesc, srv)
 }
 
-func _Storage_SetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StorageService_SetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetValueRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StorageServer).SetValue(ctx, in)
+		return srv.(StorageServiceServer).SetValue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kvdbserverapi.Storage/SetValue",
+		FullMethod: "/kvdbserverapi.StorageService/SetValue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServer).SetValue(ctx, req.(*SetValueRequest))
+		return srv.(StorageServiceServer).SetValue(ctx, req.(*SetValueRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Storage_GetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StorageService_GetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetValueRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StorageServer).GetValue(ctx, in)
+		return srv.(StorageServiceServer).GetValue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kvdbserverapi.Storage/GetValue",
+		FullMethod: "/kvdbserverapi.StorageService/GetValue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServer).GetValue(ctx, req.(*GetValueRequest))
+		return srv.(StorageServiceServer).GetValue(ctx, req.(*GetValueRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Storage_ServiceDesc is the grpc.ServiceDesc for Storage service.
+// StorageService_ServiceDesc is the grpc.ServiceDesc for StorageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Storage_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "kvdbserverapi.Storage",
-	HandlerType: (*StorageServer)(nil),
+var StorageService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kvdbserverapi.StorageService",
+	HandlerType: (*StorageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SetValue",
-			Handler:    _Storage_SetValue_Handler,
+			Handler:    _StorageService_SetValue_Handler,
 		},
 		{
 			MethodName: "GetValue",
-			Handler:    _Storage_GetValue_Handler,
+			Handler:    _StorageService_GetValue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

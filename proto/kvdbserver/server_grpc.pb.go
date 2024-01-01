@@ -18,88 +18,88 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ServerClient is the client API for Server service.
+// ServerServiceClient is the client API for ServerService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ServerClient interface {
+type ServerServiceClient interface {
 	// Gets and returns information about the server.
 	GetServerInfo(ctx context.Context, in *GetServerInfoRequest, opts ...grpc.CallOption) (*GetServerInfoResponse, error)
 }
 
-type serverClient struct {
+type serverServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewServerClient(cc grpc.ClientConnInterface) ServerClient {
-	return &serverClient{cc}
+func NewServerServiceClient(cc grpc.ClientConnInterface) ServerServiceClient {
+	return &serverServiceClient{cc}
 }
 
-func (c *serverClient) GetServerInfo(ctx context.Context, in *GetServerInfoRequest, opts ...grpc.CallOption) (*GetServerInfoResponse, error) {
+func (c *serverServiceClient) GetServerInfo(ctx context.Context, in *GetServerInfoRequest, opts ...grpc.CallOption) (*GetServerInfoResponse, error) {
 	out := new(GetServerInfoResponse)
-	err := c.cc.Invoke(ctx, "/kvdbserverapi.Server/GetServerInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.ServerService/GetServerInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ServerServer is the server API for Server service.
-// All implementations must embed UnimplementedServerServer
+// ServerServiceServer is the server API for ServerService service.
+// All implementations must embed UnimplementedServerServiceServer
 // for forward compatibility
-type ServerServer interface {
+type ServerServiceServer interface {
 	// Gets and returns information about the server.
 	GetServerInfo(context.Context, *GetServerInfoRequest) (*GetServerInfoResponse, error)
-	mustEmbedUnimplementedServerServer()
+	mustEmbedUnimplementedServerServiceServer()
 }
 
-// UnimplementedServerServer must be embedded to have forward compatible implementations.
-type UnimplementedServerServer struct {
+// UnimplementedServerServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServerServiceServer struct {
 }
 
-func (UnimplementedServerServer) GetServerInfo(context.Context, *GetServerInfoRequest) (*GetServerInfoResponse, error) {
+func (UnimplementedServerServiceServer) GetServerInfo(context.Context, *GetServerInfoRequest) (*GetServerInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerInfo not implemented")
 }
-func (UnimplementedServerServer) mustEmbedUnimplementedServerServer() {}
+func (UnimplementedServerServiceServer) mustEmbedUnimplementedServerServiceServer() {}
 
-// UnsafeServerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ServerServer will
+// UnsafeServerServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServerServiceServer will
 // result in compilation errors.
-type UnsafeServerServer interface {
-	mustEmbedUnimplementedServerServer()
+type UnsafeServerServiceServer interface {
+	mustEmbedUnimplementedServerServiceServer()
 }
 
-func RegisterServerServer(s grpc.ServiceRegistrar, srv ServerServer) {
-	s.RegisterService(&Server_ServiceDesc, srv)
+func RegisterServerServiceServer(s grpc.ServiceRegistrar, srv ServerServiceServer) {
+	s.RegisterService(&ServerService_ServiceDesc, srv)
 }
 
-func _Server_GetServerInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ServerService_GetServerInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetServerInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServerServer).GetServerInfo(ctx, in)
+		return srv.(ServerServiceServer).GetServerInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kvdbserverapi.Server/GetServerInfo",
+		FullMethod: "/kvdbserverapi.ServerService/GetServerInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServerServer).GetServerInfo(ctx, req.(*GetServerInfoRequest))
+		return srv.(ServerServiceServer).GetServerInfo(ctx, req.(*GetServerInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Server_ServiceDesc is the grpc.ServiceDesc for Server service.
+// ServerService_ServiceDesc is the grpc.ServiceDesc for ServerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Server_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "kvdbserverapi.Server",
-	HandlerType: (*ServerServer)(nil),
+var ServerService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kvdbserverapi.ServerService",
+	HandlerType: (*ServerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetServerInfo",
-			Handler:    _Server_GetServerInfo_Handler,
+			Handler:    _ServerService_GetServerInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

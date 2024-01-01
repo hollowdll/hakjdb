@@ -15,7 +15,7 @@ import (
 const ClientCtxTimeout = time.Second * 10
 
 var (
-	GrpcDatabaseClient   kvdbserver.DatabaseClient
+	GrpcDatabaseClient   kvdbserver.DatabaseServiceClient
 	grpcClientConnection *grpc.ClientConn
 )
 
@@ -28,7 +28,7 @@ func InitClient() {
 		os.Exit(1)
 	}
 
-	GrpcDatabaseClient = kvdbserver.NewDatabaseClient(conn)
+	GrpcDatabaseClient = kvdbserver.NewDatabaseServiceClient(conn)
 	grpcClientConnection = conn
 }
 

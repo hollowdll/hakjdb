@@ -22,7 +22,7 @@ message ServerInfo {
     string os = 4;
 }
 
-service Server {
+service ServerService {
     // Gets and returns information about the server.
     rpc GetServerInfo (GetServerInfoRequest) returns (GetServerInfoResponse) {}
 }

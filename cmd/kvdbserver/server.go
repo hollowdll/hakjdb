@@ -8,9 +8,9 @@ import (
 )
 
 type server struct {
-	kvdbserver.UnimplementedDatabaseServer
-	kvdbserver.UnimplementedServerServer
-	kvdbserver.UnimplementedStorageServer
+	kvdbserver.UnimplementedDatabaseServiceServer
+	kvdbserver.UnimplementedServerServiceServer
+	kvdbserver.UnimplementedStorageServiceServer
 	databases map[string]*kvdb.Database
 	logger    kvdb.Logger
 	mutex     sync.RWMutex

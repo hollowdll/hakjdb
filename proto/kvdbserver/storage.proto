@@ -19,7 +19,7 @@ message GetValueResponse {
     string value = 1;
 }
 
-service Storage {
+service StorageService {
     // Sets a string value using a key
     rpc SetValue(SetValueRequest) returns (SetValueResponse) {}
     // Gets a string value using a key

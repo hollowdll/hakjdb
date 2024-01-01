@@ -41,7 +41,7 @@ message DatabaseMetadata {
     uint32 key_count = 5;
 }
 
-service Database {
+service DatabaseService {
     // Creates a new database
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
     // Gets and returns the names of all databases
