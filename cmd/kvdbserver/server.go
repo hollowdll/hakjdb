@@ -20,11 +20,3 @@ func newServer() *server {
 		logger:    *kvdb.NewLogger(),
 	}
 }
-
-func (s *server) databaseExists(name string) bool {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	_, exists := s.databases[name]
-	return exists
-}

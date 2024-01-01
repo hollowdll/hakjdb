@@ -11,6 +11,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func (s *server) databaseExists(name string) bool {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	_, exists := s.databases[name]
+	return exists
+}
+
 // CreateDatabase creates a new database to the server.
 // Fails if it already exists or the name is invalid.
 func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (*kvdbserver.CreateDatabaseResponse, error) {
