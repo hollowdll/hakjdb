@@ -6,8 +6,6 @@ package kvdbserverapi;
 
 import "google/protobuf/timestamp.proto";
 
-message Empty {}
-
 message CreateDatabaseRequest {
     string name = 1;
 }
@@ -16,19 +14,38 @@ message CreateDatabaseResponse {
     string name = 1;
 }
 
+message GetAllDatabasesRequest {}
+
 message GetAllDatabasesResponse {
     repeated string names = 1;
 }
 
-message DatabaseDetails {
+message GetDatabaseMetadataRequest {
+    string db_name = 1;
+}
+
+message GetDatabaseMetadataResponse {
+    DatabaseMetadata data = 1;
+}
+
+message DatabaseMetadata {
+    // Name of the database
     string name = 1;
+    // Timestamp when created
     google.protobuf.Timestamp created_at = 2;
+    // Timestamp when updated
     google.protobuf.Timestamp updated_at = 3;
+    // Size of the database in bytes
     uint64 size = 4;
+    // Number of keys in the database
     uint32 key_count = 5;
 }
 
 service Database {
+    // Creates a new database
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
-    rpc GetAllDatabases (Empty) returns (GetAllDatabasesResponse) {}
+    // Gets and returns the names of all databases
+    rpc GetAllDatabases (GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
+    // Gets and returns info about a database
+    rpc GetDatabaseMetadata (GetDatabaseMetadataRequest) returns (GetDatabaseMetadataResponse) {}
 }

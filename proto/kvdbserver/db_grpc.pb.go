@@ -22,8 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DatabaseClient interface {
+	// Creates a new database
 	CreateDatabase(ctx context.Context, in *CreateDatabaseRequest, opts ...grpc.CallOption) (*CreateDatabaseResponse, error)
-	GetAllDatabases(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
+	// Gets and returns the names of all databases
+	GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
+	// Gets and returns info about a database
+	GetDatabaseMetadata(ctx context.Context, in *GetDatabaseMetadataRequest, opts ...grpc.CallOption) (*GetDatabaseMetadataResponse, error)
 }
 
 type databaseClient struct {
@@ -43,9 +47,18 @@ func (c *databaseClient) CreateDatabase(ctx context.Context, in *CreateDatabaseR
 	return out, nil
 }
 
-func (c *databaseClient) GetAllDatabases(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error) {
+func (c *databaseClient) GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error) {
 	out := new(GetAllDatabasesResponse)
 	err := c.cc.Invoke(ctx, "/kvdbserverapi.Database/GetAllDatabases", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *databaseClient) GetDatabaseMetadata(ctx context.Context, in *GetDatabaseMetadataRequest, opts ...grpc.CallOption) (*GetDatabaseMetadataResponse, error) {
+	out := new(GetDatabaseMetadataResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.Database/GetDatabaseMetadata", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +69,12 @@ func (c *databaseClient) GetAllDatabases(ctx context.Context, in *Empty, opts ..
 // All implementations must embed UnimplementedDatabaseServer
 // for forward compatibility
 type DatabaseServer interface {
+	// Creates a new database
 	CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error)
-	GetAllDatabases(context.Context, *Empty) (*GetAllDatabasesResponse, error)
+	// Gets and returns the names of all databases
+	GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error)
+	// Gets and returns info about a database
+	GetDatabaseMetadata(context.Context, *GetDatabaseMetadataRequest) (*GetDatabaseMetadataResponse, error)
 	mustEmbedUnimplementedDatabaseServer()
 }
 
@@ -68,8 +85,11 @@ type UnimplementedDatabaseServer struct {
 func (UnimplementedDatabaseServer) CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDatabase not implemented")
 }
-func (UnimplementedDatabaseServer) GetAllDatabases(context.Context, *Empty) (*GetAllDatabasesResponse, error) {
+func (UnimplementedDatabaseServer) GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllDatabases not implemented")
+}
+func (UnimplementedDatabaseServer) GetDatabaseMetadata(context.Context, *GetDatabaseMetadataRequest) (*GetDatabaseMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDatabaseMetadata not implemented")
 }
 func (UnimplementedDatabaseServer) mustEmbedUnimplementedDatabaseServer() {}
 
@@ -103,7 +123,7 @@ func _Database_CreateDatabase_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _Database_GetAllDatabases_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(GetAllDatabasesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +135,25 @@ func _Database_GetAllDatabases_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/kvdbserverapi.Database/GetAllDatabases",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServer).GetAllDatabases(ctx, req.(*Empty))
+		return srv.(DatabaseServer).GetAllDatabases(ctx, req.(*GetAllDatabasesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Database_GetDatabaseMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDatabaseMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServer).GetDatabaseMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.Database/GetDatabaseMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServer).GetDatabaseMetadata(ctx, req.(*GetDatabaseMetadataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -134,6 +172,10 @@ var Database_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllDatabases",
 			Handler:    _Database_GetAllDatabases_Handler,
+		},
+		{
+			MethodName: "GetDatabaseMetadata",
+			Handler:    _Database_GetDatabaseMetadata_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package = "proto/kvdbserver";
+
+package kvdbserverapi;
+
+message GetServerInfoRequest {}
+
+message GetServerInfoResponse {
+    ServerInfo info = 1;
+}
+
+// Information about the server. Will have more fields in future versions.
+message ServerInfo {
+    // Version of the server
+    string version = 1;
+    // Number of databases
+    uint32 db_count = 2;
+    // Total amount of used memory in bytes.
+    uint64 total_used_memory = 3;
+    // Server operating system.
+    string os = 4;
+}
+
+service Server {
+    // Gets and returns information about the server.
+    rpc GetServerInfo (GetServerInfoRequest) returns (GetServerInfoResponse) {}
+}

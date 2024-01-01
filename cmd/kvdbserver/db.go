@@ -50,7 +50,7 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 }
 
 // GetAllDatabases returns the names of all databases on the server.
-func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.Empty) (*kvdbserver.GetAllDatabasesResponse, error) {
+func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (*kvdbserver.GetAllDatabasesResponse, error) {
 	log.Printf("attempt to get all databases")
 
 	s.mutex.RLock()
