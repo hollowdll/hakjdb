@@ -39,9 +39,11 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	defer s.mutex.Unlock()
 
 	s.databases[db.Name] = db
-	log.Printf("created database: %s", db.Name)
 
-	err = s.logger.LogMessage(kvdb.LogTypeInfo, fmt.Sprintf("Created database: %s", db.Name))
+	logMsg := fmt.Sprintf("created database: %s", db.Name)
+	log.Print(logMsg)
+
+	err = s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
 	if err != nil {
 		log.Printf("error: failed to write to log file: %s", err)
 	}
@@ -60,9 +62,11 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	for key := range s.databases {
 		names = append(names, key)
 	}
-	log.Printf("get all databases")
 
-	err := s.logger.LogMessage(kvdb.LogTypeInfo, "Get all databases")
+	logMsg := "get all databases"
+	log.Printf(logMsg)
+
+	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
 	if err != nil {
 		log.Printf("error: failed to write to log file: %s", err)
 	}

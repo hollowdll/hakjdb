@@ -19,6 +19,9 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	kvdbserver.RegisterDatabaseServer(grpcServer, server)
+	kvdbserver.RegisterServerServer(grpcServer, server)
+	kvdbserver.RegisterStorageServer(grpcServer, server)
+
 	log.Printf("server listening at %v", listener.Addr())
 
 	if err := grpcServer.Serve(listener); err != nil {
