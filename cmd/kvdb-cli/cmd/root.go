@@ -15,12 +15,15 @@ const (
 	configFileType string = "json"
 )
 
-var rootCmd = &cobra.Command{
-	Use:     "kvdb-cli",
-	Short:   "CLI tool for kvdb key-value database",
-	Long:    "CLI tool for kvdb key-value database",
-	Version: version.Version,
-}
+var (
+	dbName  string
+	rootCmd = &cobra.Command{
+		Use:     "kvdb-cli",
+		Short:   "CLI tool for kvdb key-value database",
+		Long:    "CLI tool for kvdb key-value database",
+		Version: version.Version,
+	}
+)
 
 func Execute() error {
 	return rootCmd.Execute()
@@ -34,6 +37,8 @@ func init() {
 
 	rootCmd.AddCommand(db.CmdDb)
 	rootCmd.AddCommand(connect.CmdConnect)
+	rootCmd.AddCommand(cmdGetString)
+	rootCmd.AddCommand(cmdSetString)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
