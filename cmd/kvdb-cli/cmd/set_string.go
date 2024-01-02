@@ -26,7 +26,7 @@ func init() {
 }
 
 func setString(key string, value string) {
-	// send database name in metadata
+	// Send database name in metadata
 	md := metadata.Pairs(common.GrpcMetadataKeyDbName, dbName)
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	ctx, cancel := context.WithTimeout(ctx, client.ClientCtxTimeout)
