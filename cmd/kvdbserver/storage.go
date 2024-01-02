@@ -29,6 +29,11 @@ func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, status.Error(codes.InvalidArgument, errMsg)
 	}
 
+	if !s.databaseExists(dbName[0]) {
+		errMsg := "database doesn't exist"
+		return nil, status.Error(codes.NotFound, errMsg)
+	}
+
 	s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 
 	logMsg := fmt.Sprintf("set value with key '%s' in database: %s", req.GetKey(), dbName[0])
