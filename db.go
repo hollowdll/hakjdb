@@ -4,10 +4,16 @@ import (
 	"sync"
 )
 
+// DatabaseKey represents key-value pair key. Key is stored as string.
+type DatabaseKey string
+
+// DatabaseStringValue represents key-value pair string value. Value is stored as string.
+type DatabaseStringValue string
+
 // Database containing key-value pairs of data.
 type Database struct {
 	Name  string
-	data  map[DatabaseKey]DatabaseValue
+	data  map[DatabaseKey]DatabaseStringValue
 	mutex sync.RWMutex
 }
 
@@ -15,7 +21,7 @@ type Database struct {
 func newDatabase(name string) *Database {
 	return &Database{
 		Name: name,
-		data: make(map[DatabaseKey]DatabaseValue),
+		data: make(map[DatabaseKey]DatabaseStringValue),
 	}
 }
 
@@ -29,16 +35,16 @@ func CreateDatabase(name string) (*Database, error) {
 	return newDatabase(name), nil
 }
 
-// Retrieves a value using a key.
-func (db *Database) Get(key DatabaseKey) DatabaseValue {
+// Retrieves a string value using a key.
+func (db *Database) GetString(key DatabaseKey) DatabaseStringValue {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
 	return db.data[key]
 }
 
-// Sets a value using a key.
-func (db *Database) Set(key DatabaseKey, value DatabaseValue) {
+// Sets a string value using a key.
+func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 

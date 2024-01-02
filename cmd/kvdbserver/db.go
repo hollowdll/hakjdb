@@ -64,7 +64,7 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	}
 
 	logMsg := "get all databases"
-	log.Printf(logMsg)
+	log.Print(logMsg)
 
 	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
 	if err != nil {

@@ -28,7 +28,7 @@ func (s *server) SetValue(ctx context.Context, req *kvdbserver.SetValueRequest) 
 		return nil, status.Error(codes.InvalidArgument, errMsg)
 	}
 
-	s.databases[dbName[0]].Set(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseValue(req.GetValue()))
+	s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 
 	logMsg := fmt.Sprintf("set value with key '%s' in database: %s", req.GetKey(), dbName[0])
 	log.Print(logMsg)
