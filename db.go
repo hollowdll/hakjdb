@@ -43,10 +43,16 @@ func (db *Database) GetString(key DatabaseKey) DatabaseStringValue {
 	return db.data[key]
 }
 
-// SetString sets a string value using a key.
-func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
+// SetString sets a string value using a key. Validates key before storing.
+func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
+	err := validateDatabaseKey(key)
+	if err != nil {
+		return err
+	}
+
 	db.data[key] = value
+	return nil
 }

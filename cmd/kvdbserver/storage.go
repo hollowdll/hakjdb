@@ -34,12 +34,16 @@ func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, status.Error(codes.NotFound, errMsg)
 	}
 
-	s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
+	err := s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
+	if err != nil {
+		errMsg := fmt.Sprintf("%s", err)
+		return nil, status.Error(codes.InvalidArgument, errMsg)
+	}
 
 	logMsg := fmt.Sprintf("set value with key '%s' in database '%s'", req.GetKey(), dbName[0])
 	log.Print(logMsg)
 
-	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
+	err = s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
 	if err != nil {
 		log.Printf("error: failed to write to log file: %s", err)
 	}
