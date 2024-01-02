@@ -4,24 +4,24 @@ option go_package = "proto/kvdbserver";
 
 package kvdbserverapi;
 
-message SetValueRequest {
+message SetStringRequest {
     string key = 1;
     string value = 2;
 }
 
-message SetValueResponse {}
+message SetStringResponse {}
 
-message GetValueRequest {
+message GetStringRequest {
     string key = 1;
 }
 
-message GetValueResponse {
+message GetStringResponse {
     string value = 1;
 }
 
 service StorageService {
     // Sets a string value using a key
-    rpc SetValue(SetValueRequest) returns (SetValueResponse) {}
+    rpc SetString(SetStringRequest) returns (SetStringResponse) {}
     // Gets a string value using a key
-    rpc GetValue(GetValueRequest) returns (GetValueResponse) {}
+    rpc GetString(GetStringRequest) returns (GetStringResponse) {}
 }

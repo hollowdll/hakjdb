@@ -20,6 +20,7 @@ type logEntry struct {
 	content   string
 }
 
+// NewLogger returns a new logger.
 func NewLogger() *Logger {
 	return &Logger{}
 }
@@ -36,9 +37,11 @@ func (l *logEntry) String() string {
 	return fmt.Sprintf("[%s] [%s] %s\n", l.createdAt.Format(time.RFC3339), l.logType, l.content)
 }
 
+// LogType represents the type of log.
 type LogType int
 
 const (
+	// LogTypeInfo is log type for informative log messages.
 	LogTypeInfo LogType = iota
 )
 
@@ -51,7 +54,7 @@ func (l LogType) String() string {
 	}
 }
 
-// Logs message to log file.
+// LogMessage writes message to log file.
 func (l Logger) LogMessage(logType LogType, message string) error {
 	dirPath, err := createDataDirSubDirIfNotExist(logsDirName)
 	if err != nil {

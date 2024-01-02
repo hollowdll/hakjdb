@@ -13,8 +13,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// SetValue sets a string value using a key.
-func (s *server) SetValue(ctx context.Context, req *kvdbserver.SetValueRequest) (*kvdbserver.SetValueResponse, error) {
+// SetString sets a string value using a key.
+// Accepts database name in gRPC metadata.
+func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (*kvdbserver.SetStringResponse, error) {
 	log.Printf("attempt to set value")
 
 	md, ok := metadata.FromIncomingContext(ctx)
@@ -38,5 +39,5 @@ func (s *server) SetValue(ctx context.Context, req *kvdbserver.SetValueRequest) 
 		log.Printf("error: failed to write to log file: %s", err)
 	}
 
-	return &kvdbserver.SetValueResponse{}, nil
+	return &kvdbserver.SetStringResponse{}, nil
 }

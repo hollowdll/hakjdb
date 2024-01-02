@@ -25,7 +25,7 @@ func newDatabase(name string) *Database {
 	}
 }
 
-// Creates a new database with a name. Validates input.
+// CreateDatabase creates a new database with a name. Validates input.
 func CreateDatabase(name string) (*Database, error) {
 	err := validateDatabaseName(name)
 	if err != nil {
@@ -35,7 +35,7 @@ func CreateDatabase(name string) (*Database, error) {
 	return newDatabase(name), nil
 }
 
-// Retrieves a string value using a key.
+// GetString retrieves a string value using a key.
 func (db *Database) GetString(key DatabaseKey) DatabaseStringValue {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
@@ -43,7 +43,7 @@ func (db *Database) GetString(key DatabaseKey) DatabaseStringValue {
 	return db.data[key]
 }
 
-// Sets a string value using a key.
+// SetString sets a string value using a key.
 func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()

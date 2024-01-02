@@ -23,9 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageServiceClient interface {
 	// Sets a string value using a key
-	SetValue(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*SetValueResponse, error)
+	SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error)
 	// Gets a string value using a key
-	GetValue(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*GetValueResponse, error)
+	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
 }
 
 type storageServiceClient struct {
@@ -36,18 +36,18 @@ func NewStorageServiceClient(cc grpc.ClientConnInterface) StorageServiceClient {
 	return &storageServiceClient{cc}
 }
 
-func (c *storageServiceClient) SetValue(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*SetValueResponse, error) {
-	out := new(SetValueResponse)
-	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/SetValue", in, out, opts...)
+func (c *storageServiceClient) SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error) {
+	out := new(SetStringResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/SetString", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storageServiceClient) GetValue(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*GetValueResponse, error) {
-	out := new(GetValueResponse)
-	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetValue", in, out, opts...)
+func (c *storageServiceClient) GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error) {
+	out := new(GetStringResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetString", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,9 +59,9 @@ func (c *storageServiceClient) GetValue(ctx context.Context, in *GetValueRequest
 // for forward compatibility
 type StorageServiceServer interface {
 	// Sets a string value using a key
-	SetValue(context.Context, *SetValueRequest) (*SetValueResponse, error)
+	SetString(context.Context, *SetStringRequest) (*SetStringResponse, error)
 	// Gets a string value using a key
-	GetValue(context.Context, *GetValueRequest) (*GetValueResponse, error)
+	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
 
@@ -69,11 +69,11 @@ type StorageServiceServer interface {
 type UnimplementedStorageServiceServer struct {
 }
 
-func (UnimplementedStorageServiceServer) SetValue(context.Context, *SetValueRequest) (*SetValueResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetValue not implemented")
+func (UnimplementedStorageServiceServer) SetString(context.Context, *SetStringRequest) (*SetStringResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetString not implemented")
 }
-func (UnimplementedStorageServiceServer) GetValue(context.Context, *GetValueRequest) (*GetValueResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetValue not implemented")
+func (UnimplementedStorageServiceServer) GetString(context.Context, *GetStringRequest) (*GetStringResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetString not implemented")
 }
 func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 
@@ -88,38 +88,38 @@ func RegisterStorageServiceServer(s grpc.ServiceRegistrar, srv StorageServiceSer
 	s.RegisterService(&StorageService_ServiceDesc, srv)
 }
 
-func _StorageService_SetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetValueRequest)
+func _StorageService_SetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetStringRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StorageServiceServer).SetValue(ctx, in)
+		return srv.(StorageServiceServer).SetString(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kvdbserverapi.StorageService/SetValue",
+		FullMethod: "/kvdbserverapi.StorageService/SetString",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServiceServer).SetValue(ctx, req.(*SetValueRequest))
+		return srv.(StorageServiceServer).SetString(ctx, req.(*SetStringRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StorageService_GetValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetValueRequest)
+func _StorageService_GetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStringRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StorageServiceServer).GetValue(ctx, in)
+		return srv.(StorageServiceServer).GetString(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kvdbserverapi.StorageService/GetValue",
+		FullMethod: "/kvdbserverapi.StorageService/GetString",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServiceServer).GetValue(ctx, req.(*GetValueRequest))
+		return srv.(StorageServiceServer).GetString(ctx, req.(*GetStringRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -132,12 +132,12 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*StorageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SetValue",
-			Handler:    _StorageService_SetValue_Handler,
+			MethodName: "SetString",
+			Handler:    _StorageService_SetString_Handler,
 		},
 		{
-			MethodName: "GetValue",
-			Handler:    _StorageService_GetValue_Handler,
+			MethodName: "GetString",
+			Handler:    _StorageService_GetString_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

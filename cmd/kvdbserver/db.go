@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// databaseExists returns true if a database exists on the server
 func (s *server) databaseExists(name string) bool {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
