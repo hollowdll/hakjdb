@@ -9,6 +9,7 @@ import (
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // databaseExists returns true if a database exists on the server
@@ -32,7 +33,7 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	}
 
 	if s.databaseExists(db.Name) {
-		errMsg := fmt.Sprintf("database already exists: %s", db.Name)
+		errMsg := "database already exists"
 		return nil, status.Error(codes.AlreadyExists, errMsg)
 	}
 
@@ -73,4 +74,27 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	}
 
 	return &kvdbserver.GetAllDatabasesResponse{Names: names}, nil
+}
+
+func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDatabaseMetadataRequest) (*kvdbserver.GetDatabaseMetadataResponse, error) {
+	if !s.databaseExists(req.GetDbName()) {
+		errMsg := "database doesn't exist"
+		return nil, status.Error(codes.NotFound, errMsg)
+	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	db := s.databases[req.GetDbName()]
+	keyCount := db.GetKeyCount()
+
+	data := &kvdbserver.DatabaseMetadata{
+		Name:      db.Name,
+		CreatedAt: timestamppb.New(db.CreatedAt),
+		UpdatedAt: timestamppb.New(db.UpdatedAt),
+		KeyCount:  keyCount,
+		Size:      0,
+	}
+
+	return &kvdbserver.GetDatabaseMetadataResponse{Data: data}, nil
 }

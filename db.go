@@ -1,9 +1,13 @@
 package kvdb
 
 import (
+	"fmt"
+	"math"
 	"sync"
 	"time"
 )
+
+const dbMaxKeyCount uint32 = math.MaxUint32 / 2
 
 // DatabaseKey represents key-value pair key. Key is stored as string.
 type DatabaseKey string
@@ -35,6 +39,11 @@ func (db *Database) update() {
 	db.UpdatedAt = time.Now()
 }
 
+// GetKeyCount returns the number of keys in the database.
+func (db *Database) GetKeyCount() uint32 {
+	return uint32(len(db.data))
+}
+
 // CreateDatabase creates a new database with a name. Validates input.
 func CreateDatabase(name string) (*Database, error) {
 	err := validateDatabaseName(name)
@@ -61,6 +70,11 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	err := validateDatabaseKey(key)
 	if err != nil {
 		return err
+	}
+
+	// Max key count exceeded
+	if db.GetKeyCount() >= dbMaxKeyCount {
+		return fmt.Errorf("max key count exceeded (%d keys)", dbMaxKeyCount)
 	}
 
 	db.data[key] = value
