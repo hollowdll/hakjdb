@@ -2,6 +2,7 @@ package kvdb
 
 import (
 	"sync"
+	"time"
 )
 
 // DatabaseKey represents key-value pair key. Key is stored as string.
@@ -12,17 +13,26 @@ type DatabaseStringValue string
 
 // Database containing key-value pairs of data.
 type Database struct {
-	Name  string
-	data  map[DatabaseKey]DatabaseStringValue
-	mutex sync.RWMutex
+	Name      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	data      map[DatabaseKey]DatabaseStringValue
+	mutex     sync.RWMutex
 }
 
 // Creates a new instance of Database.
 func newDatabase(name string) *Database {
 	return &Database{
-		Name: name,
-		data: make(map[DatabaseKey]DatabaseStringValue),
+		Name:      name,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		data:      make(map[DatabaseKey]DatabaseStringValue),
 	}
+}
+
+// update updates the database changing some of its fields.
+func (db *Database) update() {
+	db.UpdatedAt = time.Now()
 }
 
 // CreateDatabase creates a new database with a name. Validates input.
@@ -54,5 +64,7 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	}
 
 	db.data[key] = value
+	db.update()
+
 	return nil
 }
