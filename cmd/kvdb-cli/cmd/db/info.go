@@ -35,7 +35,7 @@ func showDbInfo() {
 	info += fmt.Sprintf("created_at: %s00:00\n", response.Data.GetCreatedAt().AsTime().Format(time.RFC3339))
 	info += fmt.Sprintf("updated_at: %s00:00\n", response.Data.GetUpdatedAt().AsTime().Format(time.RFC3339))
 	info += fmt.Sprintf("key_count: %d\n", response.Data.GetKeyCount())
-	info += fmt.Sprintf("size: %dB", response.Data.GetSize())
+	info += fmt.Sprintf("data_size: %dB", response.Data.GetDataSize())
 
 	fmt.Println(info)
 }

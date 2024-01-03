@@ -3,6 +3,7 @@ package kvdb
 import (
 	"fmt"
 	"math"
+	"reflect"
 	"sync"
 	"time"
 )
@@ -46,6 +47,19 @@ func (db *Database) update() {
 // GetKeyCount returns the number of keys in the database.
 func (db *Database) GetKeyCount() uint32 {
 	return uint32(len(db.data))
+}
+
+// GetStoredSizeBytes returns the size of stored data in the database in bytes.
+func (db *Database) GetStoredSizeBytes() uint64 {
+	var size uint64
+	for key, value := range db.data {
+		size += uint64(reflect.TypeOf(key).Size())
+		size += uint64(len(key))
+		size += uint64(reflect.TypeOf(value).Size())
+		size += uint64(len(value))
+	}
+
+	return size
 }
 
 // CreateDatabase creates a new database with a name. Validates input.

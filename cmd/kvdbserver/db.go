@@ -86,14 +86,12 @@ func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDat
 	defer s.mutex.RUnlock()
 
 	db := s.databases[req.GetDbName()]
-	keyCount := db.GetKeyCount()
-
 	data := &kvdbserver.DatabaseMetadata{
 		Name:      db.Name,
 		CreatedAt: timestamppb.New(db.CreatedAt),
 		UpdatedAt: timestamppb.New(db.UpdatedAt),
-		KeyCount:  keyCount,
-		Size:      0,
+		KeyCount:  db.GetKeyCount(),
+		DataSize:  db.GetStoredSizeBytes(),
 	}
 
 	return &kvdbserver.GetDatabaseMetadataResponse{Data: data}, nil

@@ -35,8 +35,8 @@ message DatabaseMetadata {
     google.protobuf.Timestamp created_at = 2;
     // Timestamp when updated
     google.protobuf.Timestamp updated_at = 3;
-    // Size of the database in bytes
-    uint64 size = 4;
+    // Size of the data in bytes
+    uint64 data_size = 4;
     // Number of keys in the database
     uint32 key_count = 5;
 }
