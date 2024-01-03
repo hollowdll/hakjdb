@@ -7,7 +7,8 @@ import (
 	"time"
 )
 
-const dbMaxKeyCount uint32 = math.MaxUint32 / 2
+// DbMaxKeyCount is the maximum number of keys a database can hold.
+const DbMaxKeyCount uint32 = math.MaxUint32 / 2
 
 // DatabaseKey represents key-value pair key. Key is stored as string.
 type DatabaseKey string
@@ -17,8 +18,11 @@ type DatabaseStringValue string
 
 // Database containing key-value pairs of data.
 type Database struct {
-	Name      string
+	// Name of the database.
+	Name string
+	// UTC timestamp describing when the database was created.
 	CreatedAt time.Time
+	// UTC timestamp describing when the database was updated.
 	UpdatedAt time.Time
 	data      map[DatabaseKey]DatabaseStringValue
 	mutex     sync.RWMutex
@@ -28,8 +32,8 @@ type Database struct {
 func newDatabase(name string) *Database {
 	return &Database{
 		Name:      name,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 		data:      make(map[DatabaseKey]DatabaseStringValue),
 	}
 }
@@ -73,8 +77,8 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	}
 
 	// Max key count exceeded
-	if db.GetKeyCount() >= dbMaxKeyCount {
-		return fmt.Errorf("max key count exceeded (%d keys)", dbMaxKeyCount)
+	if db.GetKeyCount() >= DbMaxKeyCount {
+		return fmt.Errorf("max key count exceeded (%d keys)", DbMaxKeyCount)
 	}
 
 	db.data[key] = value

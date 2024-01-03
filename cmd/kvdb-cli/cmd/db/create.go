@@ -9,21 +9,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	dbName      string
-	cmdCreateDb = &cobra.Command{
-		Use:   "create [flags]",
-		Short: "Create a new database",
-		Long:  "Create a new database",
-		Run: func(cmd *cobra.Command, args []string) {
-			createDatabase()
-		},
-	}
-)
+var cmdDbCreate = &cobra.Command{
+	Use:   "create [flags]",
+	Short: "Create a new database",
+	Long:  "Create a new database",
+	Run: func(cmd *cobra.Command, args []string) {
+		createDatabase()
+	},
+}
 
 func init() {
-	cmdCreateDb.Flags().StringVarP(&dbName, "name", "n", "", "name of the database (required)")
-	cmdCreateDb.MarkFlagRequired("name")
+	cmdDbCreate.Flags().StringVarP(&dbName, "name", "n", "", "name of the database (required)")
+	cmdDbCreate.MarkFlagRequired("name")
 }
 
 func createDatabase() {
