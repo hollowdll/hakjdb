@@ -6,8 +6,8 @@ import (
 
 var CmdConnect = &cobra.Command{
 	Use:   "connect [command]",
-	Short: "Manage connection settings to a server",
-	Long:  "Manage connection settings to a server",
+	Short: "Manage connection settings",
+	Long:  "Manage connection settings to the server",
 }
 
 func init() {

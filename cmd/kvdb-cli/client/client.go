@@ -17,6 +17,7 @@ const ClientCtxTimeout = time.Second * 10
 var (
 	GrpcDatabaseClient   kvdbserver.DatabaseServiceClient
 	GrpcStorageClient    kvdbserver.StorageServiceClient
+	GrpcServerClient     kvdbserver.ServerServiceClient
 	grpcClientConnection *grpc.ClientConn
 )
 
@@ -31,6 +32,7 @@ func InitClient() {
 
 	GrpcDatabaseClient = kvdbserver.NewDatabaseServiceClient(conn)
 	GrpcStorageClient = kvdbserver.NewStorageServiceClient(conn)
+	GrpcServerClient = kvdbserver.NewServerServiceClient(conn)
 	grpcClientConnection = conn
 }
 
