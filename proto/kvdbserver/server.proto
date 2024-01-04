@@ -12,14 +12,16 @@ message GetServerInfoResponse {
 
 // Information about the server. Will have more fields in future versions.
 message ServerInfo {
-    // Version of the server
+    // Version of the server.
     string version = 1;
-    // Number of databases
-    uint32 db_count = 2;
-    // Total amount of used memory in bytes.
-    uint64 total_used_memory = 3;
+    // Version of go used to compile the server.
+    string go_version = 2;
+    // Number of databases.
+    uint32 db_count = 3;
+    // Total amount of stored data in bytes.
+    uint64 total_data_size = 4;
     // Server operating system.
-    string os = 4;
+    string os = 5;
 }
 
 service ServerService {
