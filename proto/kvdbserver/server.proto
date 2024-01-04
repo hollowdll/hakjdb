@@ -22,6 +22,8 @@ message ServerInfo {
     uint64 total_data_size = 4;
     // Server operating system.
     string os = 5;
+    // Architecture which can be 32 or 64 bits.
+    string arch = 6;
 }
 
 service ServerService {

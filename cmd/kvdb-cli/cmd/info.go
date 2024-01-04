@@ -29,7 +29,8 @@ func showServerInfo() {
 	info += fmt.Sprintf("go_version: %s\n", response.Info.GetGoVersion())
 	info += fmt.Sprintf("db_count: %d\n", response.Info.GetDbCount())
 	info += fmt.Sprintf("total_data_size: %dB\n", response.Info.GetTotalDataSize())
-	info += fmt.Sprintf("os: %s", response.Info.GetOs())
+	info += fmt.Sprintf("os: %s\n", response.Info.GetOs())
+	info += fmt.Sprintf("arch: %s", response.Info.GetArch())
 
 	fmt.Println(info)
 }

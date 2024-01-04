@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
+	"os/exec"
 	"runtime"
+	"strings"
 	"sync"
 
 	kvdb "github.com/hollowdll/kvdb"
@@ -40,19 +41,44 @@ func (s *server) getTotalDataSize() uint64 {
 	return sum
 }
 
+// getOsInfo returns information about the server's operating system.
+func getOsInfo() (string, error) {
+	osInfo := runtime.GOOS
+
+	switch osInfo {
+	case "linux":
+		cmd := exec.Command("uname", "-o", "-s", "-r")
+		output, err := cmd.Output()
+
+		if err != nil {
+			return "", err
+		}
+
+		return "Linux " + strings.TrimSpace(string(output)), nil
+	case "windows":
+		cmd := exec.Command("cmd", "/c", "ver")
+		output, err := cmd.Output()
+
+		if err != nil {
+			return "", err
+		}
+
+		return strings.TrimSpace(string(output)), nil
+	default:
+		return osInfo, nil
+	}
+}
+
+// GetServerInfo returns information about the server.
 func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (*kvdbserver.GetServerInfoResponse, error) {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	var osInfo string
-	osInfo += runtime.GOOS + " " + runtime.GOARCH
-
-	hostname, err := os.Hostname()
+	osInfo, err := getOsInfo()
 	if err != nil {
 		errMsg := fmt.Sprintf("%s", err)
 		return nil, status.Error(codes.Internal, errMsg)
 	}
-	osInfo += " " + hostname
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 
 	info := &kvdbserver.ServerInfo{
 		Version:       version.Version,
@@ -60,6 +86,7 @@ func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		DbCount:       uint32(len(s.databases)),
 		TotalDataSize: s.getTotalDataSize(),
 		Os:            osInfo,
+		Arch:          runtime.GOARCH,
 	}
 
 	return &kvdbserver.GetServerInfoResponse{Info: info}, nil
