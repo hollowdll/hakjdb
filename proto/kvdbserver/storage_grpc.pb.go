@@ -22,10 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageServiceClient interface {
-	// Sets a string value using a key
+	// Sets a string value using a key.
 	SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error)
-	// Gets a string value using a key
+	// Gets a string value using a key.
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
+	// Deletes a key and its value.
+	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
 }
 
 type storageServiceClient struct {
@@ -54,14 +56,25 @@ func (c *storageServiceClient) GetString(ctx context.Context, in *GetStringReque
 	return out, nil
 }
 
+func (c *storageServiceClient) DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error) {
+	out := new(DeleteKeyResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/DeleteKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageServiceServer is the server API for StorageService service.
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
 type StorageServiceServer interface {
-	// Sets a string value using a key
+	// Sets a string value using a key.
 	SetString(context.Context, *SetStringRequest) (*SetStringResponse, error)
-	// Gets a string value using a key
+	// Gets a string value using a key.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
+	// Deletes a key and its value.
+	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
 
@@ -74,6 +87,9 @@ func (UnimplementedStorageServiceServer) SetString(context.Context, *SetStringRe
 }
 func (UnimplementedStorageServiceServer) GetString(context.Context, *GetStringRequest) (*GetStringResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetString not implemented")
+}
+func (UnimplementedStorageServiceServer) DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteKey not implemented")
 }
 func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 
@@ -124,6 +140,24 @@ func _StorageService_GetString_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StorageService_DeleteKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).DeleteKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.StorageService/DeleteKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).DeleteKey(ctx, req.(*DeleteKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StorageService_ServiceDesc is the grpc.ServiceDesc for StorageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -138,6 +172,10 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetString",
 			Handler:    _StorageService_GetString_Handler,
+		},
+		{
+			MethodName: "DeleteKey",
+			Handler:    _StorageService_DeleteKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

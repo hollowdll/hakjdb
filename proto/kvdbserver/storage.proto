@@ -5,23 +5,39 @@ option go_package = "proto/kvdbserver";
 package kvdbserverapi;
 
 message SetStringRequest {
+    // Key used to store the value.
     string key = 1;
+    // Value to store.
     string value = 2;
 }
 
 message SetStringResponse {}
 
 message GetStringRequest {
+    // Key used to get the value.
     string key = 1;
 }
 
 message GetStringResponse {
+    // Returned value.
     string value = 1;
 }
 
+message DeleteKeyRequest {
+    // Key to delete.
+    string key = 1;
+}
+
+message DeleteKeyResponse {
+    // True if key was deleted. False if it doesn't exist.
+    bool success = 1;
+}
+
 service StorageService {
-    // Sets a string value using a key
+    // Sets a string value using a key.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
-    // Gets a string value using a key
+    // Gets a string value using a key.
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
+    // Deletes a key and its value.
+    rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
 }
