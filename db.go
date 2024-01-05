@@ -44,6 +44,15 @@ func (db *Database) update() {
 	db.UpdatedAt = time.Now()
 }
 
+// keyExists returns true if key exists in the database.
+func (db *Database) keyExists(key DatabaseKey) bool {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
+	_, exists := db.data[key]
+	return exists
+}
+
 // GetKeyCount returns the number of keys in the database.
 func (db *Database) GetKeyCount() uint32 {
 	return uint32(len(db.data))
@@ -99,4 +108,18 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	db.update()
 
 	return nil
+}
+
+// DeleteKey deletes a key and its value. Returns true if key exists and it was deleted.
+// Returns false if key doesn't exist.
+func (db *Database) DeleteKey(key DatabaseKey) bool {
+	if !db.keyExists(key) {
+		return false
+	}
+
+	db.mutex.Lock()
+	defer db.mutex.Unlock()
+	delete(db.data, key)
+
+	return true
 }
