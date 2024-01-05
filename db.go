@@ -55,11 +55,17 @@ func (db *Database) keyExists(key DatabaseKey) bool {
 
 // GetKeyCount returns the number of keys in the database.
 func (db *Database) GetKeyCount() uint32 {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
 	return uint32(len(db.data))
 }
 
 // GetStoredSizeBytes returns the size of stored data in the database in bytes.
 func (db *Database) GetStoredSizeBytes() uint64 {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
 	var size uint64
 	for key, value := range db.data {
 		size += uint64(reflect.TypeOf(key).Size())
@@ -91,9 +97,6 @@ func (db *Database) GetString(key DatabaseKey) DatabaseStringValue {
 
 // SetString sets a string value using a key. Validates key before storing.
 func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
-
 	err := validateDatabaseKey(key)
 	if err != nil {
 		return err
@@ -103,6 +106,9 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	if db.GetKeyCount() >= DbMaxKeyCount {
 		return fmt.Errorf("max key count exceeded (%d keys)", DbMaxKeyCount)
 	}
+
+	db.mutex.Lock()
+	defer db.mutex.Unlock()
 
 	db.data[key] = value
 	db.update()
