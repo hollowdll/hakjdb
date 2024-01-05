@@ -24,6 +24,12 @@ message ServerInfo {
     string os = 5;
     // Architecture which can be 32 or 64 bits.
     string arch = 6;
+    // PID of the server process.
+    uint32 process_id = 7;
+    // Server process uptime in seconds.
+    uint64 uptime_seconds = 8;
+    // Server TCP/IP port.
+    uint32 tcp_port = 9;
 }
 
 service ServerService {

@@ -3,12 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
 	"sync"
+	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
 	"google.golang.org/grpc/codes"
@@ -19,6 +22,7 @@ type server struct {
 	kvdbserver.UnimplementedDatabaseServiceServer
 	kvdbserver.UnimplementedServerServiceServer
 	kvdbserver.UnimplementedStorageServiceServer
+	startTime time.Time
 	databases map[string]*kvdb.Database
 	logger    kvdb.Logger
 	mutex     sync.RWMutex
@@ -26,6 +30,7 @@ type server struct {
 
 func newServer() *server {
 	return &server{
+		startTime: time.Now(),
 		databases: make(map[string]*kvdb.Database),
 		logger:    *kvdb.NewLogger(),
 	}
@@ -87,6 +92,9 @@ func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		TotalDataSize: s.getTotalDataSize(),
 		Os:            osInfo,
 		Arch:          runtime.GOARCH,
+		ProcessId:     uint32(os.Getpid()),
+		UptimeSeconds: uint64(time.Since(s.startTime).Seconds()),
+		TcpPort:       uint32(common.ServerDefaultPort),
 	}
 
 	return &kvdbserver.GetServerInfoResponse{Info: info}, nil
