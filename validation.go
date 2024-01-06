@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	// dbNameMaxSize is the maximum length of database name in bytes.
-	dbNameMaxSize int = 32
-	// dbKeyMaxSize is the maximum length of database key in bytes.
-	dbKeyMaxSize int = 32
+	// DbNameMaxSize is the maximum length of database name in bytes.
+	DbNameMaxSize int = 32
+	// DbKeyMaxSize is the maximum length of database key in bytes.
+	DbKeyMaxSize int = 32
 )
 
 // isEmpty returns true if input is too long.
@@ -44,8 +44,8 @@ func validateDatabaseName(name string) error {
 	if isEmpty(name) {
 		return errors.New("database name is empty")
 	}
-	if isTooLong(name, dbNameMaxSize) {
-		return fmt.Errorf("database name is too long (max %d bytes)", dbNameMaxSize)
+	if isTooLong(name, DbNameMaxSize) {
+		return fmt.Errorf("database name is too long (max %d bytes)", DbNameMaxSize)
 	}
 	if !dbNamecontainsValidCharacters(name) {
 		return errors.New("database name contains invalid characters")
@@ -60,8 +60,8 @@ func validateDatabaseKey(key DatabaseKey) error {
 	if isEmpty(string(key)) {
 		return errors.New("key is empty")
 	}
-	if isTooLong(string(key), dbKeyMaxSize) {
-		return fmt.Errorf("key is too long (max %d bytes)", dbKeyMaxSize)
+	if isTooLong(string(key), DbKeyMaxSize) {
+		return fmt.Errorf("key is too long (max %d bytes)", DbKeyMaxSize)
 	}
 	if !dbKeycontainsValidCharacters(key) {
 		return errors.New("key contains invalid characters")
