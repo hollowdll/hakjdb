@@ -109,7 +109,6 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
-
 	db.data[key] = value
 	db.update()
 
@@ -126,6 +125,7 @@ func (db *Database) DeleteKey(key DatabaseKey) bool {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 	delete(db.data, key)
+	db.update()
 
 	return true
 }
