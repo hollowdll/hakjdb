@@ -6,6 +6,7 @@ import (
 	"log"
 
 	kvdb "github.com/hollowdll/kvdb"
+	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,18 +29,15 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 
 	db, err := kvdb.CreateDatabase(req.GetName())
 	if err != nil {
-		errMsg := fmt.Sprintf("%s", err)
-		return nil, status.Error(codes.InvalidArgument, errMsg)
+		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
 	}
 
 	if s.databaseExists(db.Name) {
-		errMsg := "database already exists"
-		return nil, status.Error(codes.AlreadyExists, errMsg)
+		return nil, status.Errorf(codes.AlreadyExists, "%s", kvdberrors.ErrDatabaseExists)
 	}
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-
 	s.databases[db.Name] = db
 
 	logMsg := fmt.Sprintf("created database: %s", db.Name)
@@ -47,7 +45,7 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 
 	err = s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
 	if err != nil {
-		log.Printf("error: failed to write to log file: %s", err)
+		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
 	}
 
 	return &kvdbserver.CreateDatabaseResponse{Name: db.Name}, nil
@@ -70,7 +68,7 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 
 	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
 	if err != nil {
-		log.Printf("error: failed to write to log file: %s", err)
+		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
 	}
 
 	return &kvdbserver.GetAllDatabasesResponse{Names: names}, nil
@@ -78,8 +76,7 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 
 func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDatabaseMetadataRequest) (*kvdbserver.GetDatabaseMetadataResponse, error) {
 	if !s.databaseExists(req.GetDbName()) {
-		errMsg := "database doesn't exist"
-		return nil, status.Error(codes.NotFound, errMsg)
+		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
 
 	s.mutex.RLock()
