@@ -3,6 +3,7 @@ package kvdb
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -13,6 +14,22 @@ const allLogsFile string = "all_logs.log"
 
 // Logger manages read and write operations to log files.
 type Logger struct{}
+
+type DefaultLogger struct {
+	Logger *log.Logger
+	debug  bool
+}
+
+func NewDefaultLogger() *DefaultLogger {
+	return &DefaultLogger{
+		Logger: log.Default(),
+		debug:  false,
+	}
+}
+
+func (l *DefaultLogger) EnableDebug() {
+	l.debug = true
+}
 
 type logEntry struct {
 	createdAt time.Time
@@ -82,4 +99,26 @@ func (l Logger) LogMessage(logType LogType, message string) error {
 	}
 
 	return nil
+}
+
+func (l *DefaultLogger) Debug(message string) {
+	if l.debug {
+		l.Logger.Printf("[Debug] %s", message)
+	}
+}
+
+func (l *DefaultLogger) Info(message string) {
+	l.Logger.Printf("[Info] %s", message)
+}
+
+func (l *DefaultLogger) Error(message string) {
+	l.Logger.Printf("[Error] %s", message)
+}
+
+func (l *DefaultLogger) Warning(message string) {
+	l.Logger.Printf("[Warning] %s", message)
+}
+
+func (l *DefaultLogger) Fatal(message string) {
+	l.Logger.Fatalf("[Fatal] %s", message)
 }
