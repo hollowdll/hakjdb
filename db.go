@@ -1,11 +1,12 @@
 package kvdb
 
 import (
-	"fmt"
 	"math"
 	"reflect"
 	"sync"
 	"time"
+
+	kvdberrors "github.com/hollowdll/kvdb/errors"
 )
 
 // DbMaxKeyCount is the maximum number of keys a database can hold.
@@ -104,7 +105,7 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 
 	// Max key count exceeded
 	if db.GetKeyCount() >= DbMaxKeyCount {
-		return fmt.Errorf("max key count exceeded (%d keys)", DbMaxKeyCount)
+		return kvdberrors.ErrMaxKeysExceeded
 	}
 
 	db.mutex.Lock()
