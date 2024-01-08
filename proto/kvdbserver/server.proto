@@ -7,7 +7,8 @@ package kvdbserverapi;
 message GetServerInfoRequest {}
 
 message GetServerInfoResponse {
-    ServerInfo info = 1;
+    // Information about the server.
+    ServerInfo data = 1;
 }
 
 // Information about the server. Will have more fields in future versions.

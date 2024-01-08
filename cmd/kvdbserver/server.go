@@ -97,5 +97,5 @@ func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		TcpPort:       uint32(common.ServerDefaultPort),
 	}
 
-	return &kvdbserver.GetServerInfoResponse{Info: info}, nil
+	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
 }

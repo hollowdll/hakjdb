@@ -27,7 +27,7 @@ func init() {
 func showDbInfo() {
 	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
 	defer cancel()
-	response, err := client.GrpcDatabaseClient.GetDatabaseMetadata(ctx, &kvdbserver.GetDatabaseMetadataRequest{DbName: dbName})
+	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &kvdbserver.GetDatabaseInfoRequest{DbName: dbName})
 	cobra.CheckErr(err)
 
 	var info string

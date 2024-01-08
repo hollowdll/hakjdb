@@ -7,45 +7,50 @@ package kvdbserverapi;
 import "google/protobuf/timestamp.proto";
 
 message CreateDatabaseRequest {
-    string name = 1;
+    // Name of the database.
+    string db_name = 1;
 }
 
 message CreateDatabaseResponse {
-    string name = 1;
+    // Name of the created database.
+    string db_name = 1;
 }
 
 message GetAllDatabasesRequest {}
 
 message GetAllDatabasesResponse {
-    repeated string names = 1;
+    // List of returned database names.
+    repeated string db_names = 1;
 }
 
-message GetDatabaseMetadataRequest {
+message GetDatabaseInfoRequest {
+    // Name of the database.
     string db_name = 1;
 }
 
-message GetDatabaseMetadataResponse {
-    DatabaseMetadata data = 1;
+message GetDatabaseInfoResponse {
+    // Information about the database.
+    DatabaseInfo data = 1;
 }
 
-message DatabaseMetadata {
-    // Name of the database
+message DatabaseInfo {
+    // Name of the database.
     string name = 1;
-    // Timestamp when created
+    // Timestamp when created.
     google.protobuf.Timestamp created_at = 2;
-    // Timestamp when updated
+    // Timestamp when updated.
     google.protobuf.Timestamp updated_at = 3;
-    // Size of the data in bytes
+    // Size of the data in bytes.
     uint64 data_size = 4;
-    // Number of keys in the database
+    // Number of keys in the database.
     uint32 key_count = 5;
 }
 
 service DatabaseService {
-    // Creates a new database
+    // Creates a new database.
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
-    // Gets and returns the names of all databases
+    // Gets and returns the names of all databases.
     rpc GetAllDatabases (GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
-    // Gets and returns info about a database
-    rpc GetDatabaseMetadata (GetDatabaseMetadataRequest) returns (GetDatabaseMetadataResponse) {}
+    // Gets and returns info about a database.
+    rpc GetDatabaseInfo (GetDatabaseInfoRequest) returns (GetDatabaseInfoResponse) {}
 }

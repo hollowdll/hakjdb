@@ -25,7 +25,7 @@ func showDatabaseNames() {
 	response, err := client.GrpcDatabaseClient.GetAllDatabases(ctx, &kvdbserver.GetAllDatabasesRequest{})
 	cobra.CheckErr(err)
 
-	if len(response.Names) > 0 {
-		fmt.Println(strings.Join(response.Names, "\n"))
+	if len(response.DbNames) > 0 {
+		fmt.Println(strings.Join(response.DbNames, "\n"))
 	}
 }

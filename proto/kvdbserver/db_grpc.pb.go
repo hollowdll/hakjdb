@@ -22,12 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DatabaseServiceClient interface {
-	// Creates a new database
+	// Creates a new database.
 	CreateDatabase(ctx context.Context, in *CreateDatabaseRequest, opts ...grpc.CallOption) (*CreateDatabaseResponse, error)
-	// Gets and returns the names of all databases
+	// Gets and returns the names of all databases.
 	GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
-	// Gets and returns info about a database
-	GetDatabaseMetadata(ctx context.Context, in *GetDatabaseMetadataRequest, opts ...grpc.CallOption) (*GetDatabaseMetadataResponse, error)
+	// Gets and returns info about a database.
+	GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -56,9 +56,9 @@ func (c *databaseServiceClient) GetAllDatabases(ctx context.Context, in *GetAllD
 	return out, nil
 }
 
-func (c *databaseServiceClient) GetDatabaseMetadata(ctx context.Context, in *GetDatabaseMetadataRequest, opts ...grpc.CallOption) (*GetDatabaseMetadataResponse, error) {
-	out := new(GetDatabaseMetadataResponse)
-	err := c.cc.Invoke(ctx, "/kvdbserverapi.DatabaseService/GetDatabaseMetadata", in, out, opts...)
+func (c *databaseServiceClient) GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error) {
+	out := new(GetDatabaseInfoResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.DatabaseService/GetDatabaseInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -69,12 +69,12 @@ func (c *databaseServiceClient) GetDatabaseMetadata(ctx context.Context, in *Get
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility
 type DatabaseServiceServer interface {
-	// Creates a new database
+	// Creates a new database.
 	CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error)
-	// Gets and returns the names of all databases
+	// Gets and returns the names of all databases.
 	GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error)
-	// Gets and returns info about a database
-	GetDatabaseMetadata(context.Context, *GetDatabaseMetadataRequest) (*GetDatabaseMetadataResponse, error)
+	// Gets and returns info about a database.
+	GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -88,8 +88,8 @@ func (UnimplementedDatabaseServiceServer) CreateDatabase(context.Context, *Creat
 func (UnimplementedDatabaseServiceServer) GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllDatabases not implemented")
 }
-func (UnimplementedDatabaseServiceServer) GetDatabaseMetadata(context.Context, *GetDatabaseMetadataRequest) (*GetDatabaseMetadataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDatabaseMetadata not implemented")
+func (UnimplementedDatabaseServiceServer) GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDatabaseInfo not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 
@@ -140,20 +140,20 @@ func _DatabaseService_GetAllDatabases_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_GetDatabaseMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDatabaseMetadataRequest)
+func _DatabaseService_GetDatabaseInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDatabaseInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetDatabaseMetadata(ctx, in)
+		return srv.(DatabaseServiceServer).GetDatabaseInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kvdbserverapi.DatabaseService/GetDatabaseMetadata",
+		FullMethod: "/kvdbserverapi.DatabaseService/GetDatabaseInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetDatabaseMetadata(ctx, req.(*GetDatabaseMetadataRequest))
+		return srv.(DatabaseServiceServer).GetDatabaseInfo(ctx, req.(*GetDatabaseInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -174,8 +174,8 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DatabaseService_GetAllDatabases_Handler,
 		},
 		{
-			MethodName: "GetDatabaseMetadata",
-			Handler:    _DatabaseService_GetDatabaseMetadata_Handler,
+			MethodName: "GetDatabaseInfo",
+			Handler:    _DatabaseService_GetDatabaseInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

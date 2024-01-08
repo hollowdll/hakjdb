@@ -23,16 +23,16 @@ func (s *server) databaseExists(name string) bool {
 // CreateDatabase creates a new database to the server.
 // Fails if it already exists or the name is invalid.
 func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
-	s.logger.Debugf("Attempt to create database '%s'", req.GetName())
+	s.logger.Debugf("Attempt to create database '%s'", req.GetDbName())
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to create database '%s': %s", req.GetName(), err)
+			s.logger.Errorf("Failed to create database '%s': %s", req.GetDbName(), err)
 		} else {
-			s.logger.Infof("Created database '%s'", req.GetName())
+			s.logger.Infof("Created database '%s'", req.GetDbName())
 		}
 	}()
 
-	db, err := kvdb.CreateDatabase(req.GetName())
+	db, err := kvdb.CreateDatabase(req.GetDbName())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
 	}
@@ -45,7 +45,7 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	defer s.mutex.Unlock()
 	s.databases[db.Name] = db
 
-	return &kvdbserver.CreateDatabaseResponse{Name: db.Name}, nil
+	return &kvdbserver.CreateDatabaseResponse{DbName: db.Name}, nil
 }
 
 // GetAllDatabases returns the names of all databases on the server.
@@ -67,10 +67,10 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 		names = append(names, key)
 	}
 
-	return &kvdbserver.GetAllDatabasesResponse{Names: names}, nil
+	return &kvdbserver.GetAllDatabasesResponse{DbNames: names}, nil
 }
 
-func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDatabaseMetadataRequest) (res *kvdbserver.GetDatabaseMetadataResponse, err error) {
+func (s *server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
 	s.logger.Debugf("Attempt to get info for database '%s'", req.GetDbName())
 	defer func() {
 		if err != nil {
@@ -88,7 +88,7 @@ func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDat
 	defer s.mutex.RUnlock()
 
 	db := s.databases[req.GetDbName()]
-	data := &kvdbserver.DatabaseMetadata{
+	data := &kvdbserver.DatabaseInfo{
 		Name:      db.Name,
 		CreatedAt: timestamppb.New(db.CreatedAt),
 		UpdatedAt: timestamppb.New(db.UpdatedAt),
@@ -96,5 +96,5 @@ func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDat
 		DataSize:  db.GetStoredSizeBytes(),
 	}
 
-	return &kvdbserver.GetDatabaseMetadataResponse{Data: data}, nil
+	return &kvdbserver.GetDatabaseInfoResponse{Data: data}, nil
 }
