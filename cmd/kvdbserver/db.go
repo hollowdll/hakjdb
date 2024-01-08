@@ -43,11 +43,6 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	logMsg := fmt.Sprintf("created database: %s", db.Name)
 	log.Print(logMsg)
 
-	err = s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
-	if err != nil {
-		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
-	}
-
 	return &kvdbserver.CreateDatabaseResponse{Name: db.Name}, nil
 }
 
@@ -65,11 +60,6 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 
 	logMsg := "get all databases"
 	log.Print(logMsg)
-
-	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
-	if err != nil {
-		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
-	}
 
 	return &kvdbserver.GetAllDatabasesResponse{Names: names}, nil
 }

@@ -41,11 +41,6 @@ func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 	logMsg := fmt.Sprintf("set value with key '%s' in database '%s'", req.GetKey(), dbName[0])
 	log.Print(logMsg)
 
-	err = s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
-	if err != nil {
-		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
-	}
-
 	return &kvdbserver.SetStringResponse{}, nil
 }
 
@@ -72,11 +67,6 @@ func (s *server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 
 	logMsg := fmt.Sprintf("get value with key '%s' in database '%s'", req.GetKey(), dbName[0])
 	log.Print(logMsg)
-
-	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
-	if err != nil {
-		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
-	}
 
 	return &kvdbserver.GetStringResponse{Value: string(value)}, nil
 }
@@ -107,11 +97,6 @@ func (s *server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 
 	logMsg := fmt.Sprintf("deleted key '%s' in database '%s'", req.GetKey(), dbName[0])
 	log.Print(logMsg)
-
-	err := s.logger.LogMessage(kvdb.LogTypeInfo, logMsg)
-	if err != nil {
-		log.Printf("%s: %s", kvdberrors.ErrWriteLogFile, err)
-	}
 
 	return &kvdbserver.DeleteKeyResponse{Success: true}, nil
 }
