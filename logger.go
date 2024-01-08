@@ -1,19 +1,30 @@
 package kvdb
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 	"time"
 )
 
 const logsDirName string = "logs"
 const allLogsFile string = "all_logs.log"
 
-// Logger manages read and write operations to log files.
-type Logger struct{}
+type Logger interface {
+	Debug(v ...any)
+	Debugf(format string, v ...any)
+
+	Info(v ...any)
+	Infof(format string, v ...any)
+
+	Error(v ...any)
+	Errof(format string, v ...any)
+
+	Warning(v ...any)
+	Warningf(format string, v ...any)
+
+	Fatal(v ...any)
+	Fatalf(format string, v ...any)
+}
 
 type DefaultLogger struct {
 	Logger *log.Logger
@@ -35,11 +46,6 @@ type logEntry struct {
 	createdAt time.Time
 	logType   LogType
 	content   string
-}
-
-// NewLogger returns a new logger.
-func NewLogger() *Logger {
-	return &Logger{}
 }
 
 func newLogEntry(logType LogType, content string) *logEntry {
@@ -71,8 +77,9 @@ func (l LogType) String() string {
 	}
 }
 
-// LogMessage writes message to log file.
-func (l Logger) LogMessage(logType LogType, message string) error {
+// Disabled
+/*
+func AppendLogFile(logType LogType, message string) error {
 	dirPath, err := createDataDirSubDirIfNotExist(logsDirName)
 	if err != nil {
 		return err
@@ -100,25 +107,48 @@ func (l Logger) LogMessage(logType LogType, message string) error {
 
 	return nil
 }
+*/
 
-func (l *DefaultLogger) Debug(message string) {
+func (l *DefaultLogger) Debug(v ...any) {
 	if l.debug {
-		l.Logger.Printf("[Debug] %s", message)
+		l.Logger.Printf("[Debug] %s", fmt.Sprint(v...))
 	}
 }
 
-func (l *DefaultLogger) Info(message string) {
-	l.Logger.Printf("[Info] %s", message)
+func (l *DefaultLogger) Debugf(format string, v ...any) {
+	if l.debug {
+		l.Logger.Printf("[Debug] %s", fmt.Sprintf(format, v...))
+	}
 }
 
-func (l *DefaultLogger) Error(message string) {
-	l.Logger.Printf("[Error] %s", message)
+func (l *DefaultLogger) Info(v ...any) {
+	l.Logger.Printf("[Info] %s", fmt.Sprint(v...))
 }
 
-func (l *DefaultLogger) Warning(message string) {
-	l.Logger.Printf("[Warning] %s", message)
+func (l *DefaultLogger) Infof(format string, v ...any) {
+	l.Logger.Printf("[Info] %s", fmt.Sprintf(format, v...))
 }
 
-func (l *DefaultLogger) Fatal(message string) {
-	l.Logger.Fatalf("[Fatal] %s", message)
+func (l *DefaultLogger) Error(v ...any) {
+	l.Logger.Printf("[Error] %s", fmt.Sprint(v...))
+}
+
+func (l *DefaultLogger) Errorf(format string, v ...any) {
+	l.Logger.Printf("[Error] %s", fmt.Sprintf(format, v...))
+}
+
+func (l *DefaultLogger) Warning(v ...any) {
+	l.Logger.Printf("[Warning] %s", fmt.Sprint(v...))
+}
+
+func (l *DefaultLogger) Warningf(format string, v ...any) {
+	l.Logger.Printf("[Warning] %s", fmt.Sprintf(format, v...))
+}
+
+func (l *DefaultLogger) Fatal(v ...any) {
+	l.Logger.Fatalf("[Fatal] %s", fmt.Sprint(v...))
+}
+
+func (l *DefaultLogger) Fatalf(format string, v ...any) {
+	l.Logger.Fatalf("[Fatal] %s", fmt.Sprintf(format, v...))
 }

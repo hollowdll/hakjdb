@@ -32,7 +32,7 @@ func newServer() *server {
 	return &server{
 		startTime: time.Now(),
 		databases: make(map[string]*kvdb.Database),
-		logger:    *kvdb.NewLogger(),
+		logger:    kvdb.NewDefaultLogger(),
 	}
 }
 
