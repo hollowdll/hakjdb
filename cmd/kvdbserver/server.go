@@ -75,7 +75,16 @@ func getOsInfo() (string, error) {
 }
 
 // GetServerInfo returns information about the server.
-func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (*kvdbserver.GetServerInfoResponse, error) {
+func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
+	s.logger.Debug("Attempt to get server info")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get server info: %s", err)
+		} else {
+			s.logger.Debug("Get server info success")
+		}
+	}()
+
 	osInfo, err := getOsInfo()
 	if err != nil {
 		errMsg := fmt.Sprintf("%s", err)

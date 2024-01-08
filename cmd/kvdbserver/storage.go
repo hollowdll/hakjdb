@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"log"
 
 	kvdb "github.com/hollowdll/kvdb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
@@ -16,8 +14,15 @@ import (
 
 // SetString sets a string value using a key.
 // Accepts database name in gRPC metadata.
-func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (*kvdbserver.SetStringResponse, error) {
-	log.Print("attempt to set value")
+func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
+	s.logger.Debug("Attempt to set string value")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to set string value: %s", err)
+		} else {
+			s.logger.Debug("Set string value success")
+		}
+	}()
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -33,21 +38,25 @@ func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
 
-	err := s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
+	err = s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
 	}
-
-	logMsg := fmt.Sprintf("set value with key '%s' in database '%s'", req.GetKey(), dbName[0])
-	log.Print(logMsg)
 
 	return &kvdbserver.SetStringResponse{}, nil
 }
 
 // GetString gets a string value using a key.
 // Accepts database name in gRPC metadata.
-func (s *server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (*kvdbserver.GetStringResponse, error) {
-	log.Print("attempt to get value")
+func (s *server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
+	s.logger.Debug("Attempt to get string value")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get string value: %s", err)
+		} else {
+			s.logger.Debug("Get string value success")
+		}
+	}()
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -62,19 +71,22 @@ func (s *server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 	if !s.databaseExists(dbName[0]) {
 		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
-
 	value := s.databases[dbName[0]].GetString(kvdb.DatabaseKey(req.GetKey()))
-
-	logMsg := fmt.Sprintf("get value with key '%s' in database '%s'", req.GetKey(), dbName[0])
-	log.Print(logMsg)
 
 	return &kvdbserver.GetStringResponse{Value: string(value)}, nil
 }
 
 // DeleteKey deletes a key and its value.
 // Accepts database name in gRPC metadata.
-func (s *server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (*kvdbserver.DeleteKeyResponse, error) {
-	log.Print("attempt to delete key")
+func (s *server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
+	s.logger.Debug("Attempt to delete key")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to delete key: %s", err)
+		} else {
+			s.logger.Debug("Delete key success")
+		}
+	}()
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -94,9 +106,6 @@ func (s *server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 	if !success {
 		return &kvdbserver.DeleteKeyResponse{Success: false}, nil
 	}
-
-	logMsg := fmt.Sprintf("deleted key '%s' in database '%s'", req.GetKey(), dbName[0])
-	log.Print(logMsg)
 
 	return &kvdbserver.DeleteKeyResponse{Success: true}, nil
 }
