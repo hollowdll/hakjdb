@@ -17,7 +17,7 @@ type Logger interface {
 	Infof(format string, v ...any)
 
 	Error(v ...any)
-	Errof(format string, v ...any)
+	Errorf(format string, v ...any)
 
 	Warning(v ...any)
 	Warningf(format string, v ...any)

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	kvdb "github.com/hollowdll/kvdb"
@@ -24,8 +23,15 @@ func (s *server) databaseExists(name string) bool {
 
 // CreateDatabase creates a new database to the server.
 // Fails if it already exists or the name is invalid.
-func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (*kvdbserver.CreateDatabaseResponse, error) {
-	log.Printf("attempt to create database: %s", req.GetName())
+func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
+	s.logger.Debugf("attempt to create database '%s'", req.GetName())
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to create database: %s", err)
+		} else {
+			s.logger.Infof("Created database '%s'", req.GetName())
+		}
+	}()
 
 	db, err := kvdb.CreateDatabase(req.GetName())
 	if err != nil {
@@ -39,9 +45,6 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	s.databases[db.Name] = db
-
-	logMsg := fmt.Sprintf("created database: %s", db.Name)
-	log.Print(logMsg)
 
 	return &kvdbserver.CreateDatabaseResponse{Name: db.Name}, nil
 }
