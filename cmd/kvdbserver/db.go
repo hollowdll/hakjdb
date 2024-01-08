@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 
 	kvdb "github.com/hollowdll/kvdb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
@@ -24,10 +23,10 @@ func (s *server) databaseExists(name string) bool {
 // CreateDatabase creates a new database to the server.
 // Fails if it already exists or the name is invalid.
 func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
-	s.logger.Debugf("attempt to create database '%s'", req.GetName())
+	s.logger.Debugf("Attempt to create database '%s'", req.GetName())
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to create database: %s", err)
+			s.logger.Errorf("Failed to create database '%s': %s", req.GetName(), err)
 		} else {
 			s.logger.Infof("Created database '%s'", req.GetName())
 		}
@@ -50,8 +49,15 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 }
 
 // GetAllDatabases returns the names of all databases on the server.
-func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (*kvdbserver.GetAllDatabasesResponse, error) {
-	log.Printf("attempt to get all databases")
+func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
+	s.logger.Debug("Attempt to get all databases")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get all databases: %s", err)
+		} else {
+			s.logger.Debug("Get all databases success")
+		}
+	}()
 
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
@@ -61,13 +67,19 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 		names = append(names, key)
 	}
 
-	logMsg := "get all databases"
-	log.Print(logMsg)
-
 	return &kvdbserver.GetAllDatabasesResponse{Names: names}, nil
 }
 
-func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDatabaseMetadataRequest) (*kvdbserver.GetDatabaseMetadataResponse, error) {
+func (s *server) GetDatabaseMetadata(ctx context.Context, req *kvdbserver.GetDatabaseMetadataRequest) (res *kvdbserver.GetDatabaseMetadataResponse, err error) {
+	s.logger.Debugf("Attempt to get info for database '%s'", req.GetDbName())
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get info for database '%s': %s", req.GetDbName(), err)
+		} else {
+			s.logger.Debugf("Get info for database '%s' success", req.GetDbName())
+		}
+	}()
+
 	if !s.databaseExists(req.GetDbName()) {
 		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
