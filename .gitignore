@@ -25,5 +25,6 @@ data
 logs
 *.log
 
-# Config
+# Config files
 .kvdb-cli.json
+.kvdbserver.json

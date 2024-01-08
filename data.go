@@ -3,28 +3,32 @@ package kvdb
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/hollowdll/kvdb/internal/common"
 )
 
 // Data directory name
 const dataDirName string = "data"
 
-// Gets path to the data directory.
+// GetDataDirPath gets path to the data directory.
 // Data directory is a subdir in the executable's parent dir.
-func getDataDirPath() (string, error) {
-	execPath, err := os.Executable()
+// Creates the directory if it does not exist.
+func GetDataDirPath() (string, error) {
+	parentDirPath, err := common.GetExecParentDirPath()
 	if err != nil {
 		return "", err
 	}
-
-	parentDirPath := filepath.Dir(execPath)
 	path := filepath.Join(parentDirPath, dataDirName)
+	if err = createDirIfNotExist(path); err != nil {
+		return "", err
+	}
 
 	return path, nil
 }
 
 // Gets path to a sub directory in the data directory.
 func getDataDirSubDirPath(dirName string) (string, error) {
-	dataDirPath, err := getDataDirPath()
+	dataDirPath, err := GetDataDirPath()
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +71,7 @@ func createDirIfNotExist(dirPath string) error {
 //
 // Returns the path to the sub directory.
 func createDataDirSubDirIfNotExist(dirName string) (string, error) {
-	dataDirPath, err := getDataDirPath()
+	dataDirPath, err := GetDataDirPath()
 	if err != nil {
 		return "", err
 	}
