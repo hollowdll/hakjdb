@@ -26,8 +26,8 @@ func init() {
 func createDatabase() {
 	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
 	defer cancel()
-	response, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{DbName: dbName})
-	cobra.CheckErr(err)
+	_, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{DbName: dbName})
+	client.CheckGrpcError(err)
 
-	fmt.Println("Created database:", response.GetDbName())
+	fmt.Println("OK")
 }
