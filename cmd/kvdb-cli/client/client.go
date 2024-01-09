@@ -15,7 +15,7 @@ const (
 	// ClientCtxTimeout specifies how long to wait until operation terminates.
 	ClientCtxTimeout = time.Second * 10
 	// ValueNone is a special value for values that do not exist.
-	ValueNone = "(None)"
+	ValueNone string = "(None)"
 )
 
 var (

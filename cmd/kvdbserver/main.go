@@ -17,6 +17,7 @@ func main() {
 func initServer() {
 	server := newServer()
 	initConfig(server)
+	server.logger.ClearFlags()
 
 	// Enable debug logs.
 	if viper.GetBool(configKeyDebugMode) {
