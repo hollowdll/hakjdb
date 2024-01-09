@@ -33,7 +33,7 @@ func deleteKey(key string) {
 	defer cancel()
 
 	response, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserver.DeleteKeyRequest{Key: key})
-	cobra.CheckErr(err)
+	client.CheckGrpcError(err)
 
 	if response.GetSuccess() {
 		fmt.Println("true")

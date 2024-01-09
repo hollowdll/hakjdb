@@ -28,7 +28,7 @@ func showDbInfo() {
 	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
 	defer cancel()
 	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &kvdbserver.GetDatabaseInfoRequest{DbName: dbName})
-	cobra.CheckErr(err)
+	client.CheckGrpcError(err)
 
 	var info string
 	info += fmt.Sprintf("name: %s\n", response.Data.GetName())

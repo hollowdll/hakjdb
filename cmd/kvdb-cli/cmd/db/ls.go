@@ -23,7 +23,7 @@ func showDatabaseNames() {
 	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
 	defer cancel()
 	response, err := client.GrpcDatabaseClient.GetAllDatabases(ctx, &kvdbserver.GetAllDatabasesRequest{})
-	cobra.CheckErr(err)
+	client.CheckGrpcError(err)
 
 	if len(response.DbNames) > 0 {
 		fmt.Println(strings.Join(response.DbNames, "\n"))

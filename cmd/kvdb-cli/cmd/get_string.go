@@ -34,7 +34,7 @@ func getString(key string) {
 	defer cancel()
 
 	response, err := client.GrpcStorageClient.GetString(ctx, &kvdbserver.GetStringRequest{Key: key})
-	cobra.CheckErr(err)
+	client.CheckGrpcError(err)
 
 	fmt.Fprintf(os.Stdout, "\"%s\"\n", response.GetValue())
 }

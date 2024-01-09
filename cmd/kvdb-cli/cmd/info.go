@@ -22,7 +22,7 @@ func showServerInfo() {
 	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
 	defer cancel()
 	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserver.GetServerInfoRequest{})
-	cobra.CheckErr(err)
+	client.CheckGrpcError(err)
 
 	var info string
 	info += fmt.Sprintf("server_version: %s\n", response.Data.GetVersion())

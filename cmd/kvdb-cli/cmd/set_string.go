@@ -33,7 +33,7 @@ func setString(key string, value string) {
 	defer cancel()
 
 	_, err := client.GrpcStorageClient.SetString(ctx, &kvdbserver.SetStringRequest{Key: key, Value: value})
-	cobra.CheckErr(err)
+	client.CheckGrpcError(err)
 
 	fmt.Println("OK")
 }
