@@ -24,7 +24,7 @@ var (
 	ErrDatabaseKeyRequired = errors.New("key required")
 
 	// ErrDatabaseKeyTooLong is returned when inserting a key that is larger than DbKeyMaxSize.
-	ErrDatabaseKeyTooLong = errors.New("key required")
+	ErrDatabaseKeyTooLong = errors.New("key too long")
 
 	// ErrDatabaseKeyInvalid is returned when inserting a key with a name that contains
 	// invalid characters.
