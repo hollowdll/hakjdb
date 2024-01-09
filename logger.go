@@ -24,6 +24,8 @@ type Logger interface {
 
 	Fatal(v ...any)
 	Fatalf(format string, v ...any)
+
+	EnableDebug()
 }
 
 type DefaultLogger struct {

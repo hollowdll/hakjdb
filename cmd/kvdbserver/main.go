@@ -13,9 +13,16 @@ func main() {
 	initServer()
 }
 
+// initServer initializes the server.
 func initServer() {
 	server := newServer()
 	initConfig(server)
+
+	// Enable debug logs.
+	if viper.GetBool(configKeyDebugMode) {
+		server.logger.EnableDebug()
+		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
+	}
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(configKeyPort)))
 	if err != nil {
