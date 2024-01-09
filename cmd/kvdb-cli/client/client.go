@@ -11,8 +11,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// ClientCtxTimeout specifies how long to wait until operation terminates.
-const ClientCtxTimeout = time.Second * 10
+const (
+	// ClientCtxTimeout specifies how long to wait until operation terminates.
+	ClientCtxTimeout = time.Second * 10
+	// ValueNone is a special value for values that do not exist.
+	ValueNone = "(None)"
+)
 
 var (
 	GrpcDatabaseClient   kvdbserver.DatabaseServiceClient

@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
@@ -36,5 +35,9 @@ func getString(key string) {
 	response, err := client.GrpcStorageClient.GetString(ctx, &kvdbserver.GetStringRequest{Key: key})
 	client.CheckGrpcError(err)
 
-	fmt.Fprintf(os.Stdout, "\"%s\"\n", response.GetValue())
+	if response.GetFound() {
+		fmt.Printf("\"%s\"\n", response.GetValue())
+	} else {
+		fmt.Println(client.ValueNone)
+	}
 }

@@ -21,6 +21,8 @@ message GetStringRequest {
 message GetStringResponse {
     // Returned value.
     string value = 1;
+    // True if key exists. False otherwise.
+    bool found = 2;
 }
 
 message DeleteKeyRequest {

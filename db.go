@@ -89,11 +89,12 @@ func CreateDatabase(name string) (*Database, error) {
 }
 
 // GetString retrieves a string value using a key.
-func (db *Database) GetString(key DatabaseKey) DatabaseStringValue {
+func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
-	return db.data[key]
+	value, found := db.data[key]
+	return value, found
 }
 
 // SetString sets a string value using a key. Validates key before storing.
