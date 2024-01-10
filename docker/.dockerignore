@@ -1,0 +1,15 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+data
+logs
+*.log
+.kvdb-cli.json
+.kvdbserver.json
+kvdb-cli
+Dockerfile.alpine

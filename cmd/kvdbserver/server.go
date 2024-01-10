@@ -52,7 +52,7 @@ func getOsInfo() (string, error) {
 
 	switch osInfo {
 	case "linux":
-		cmd := exec.Command("uname", "-o", "-s", "-r")
+		cmd := exec.Command("uname", "-r", "-m")
 		output, err := cmd.Output()
 
 		if err != nil {
