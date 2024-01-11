@@ -40,6 +40,11 @@ func newDatabase(name string) *Database {
 	}
 }
 
+// GetName returns the name of the database.
+func (db *Database) GetName() string {
+	return db.Name
+}
+
 // update updates the database changing some of its fields.
 func (db *Database) update() {
 	db.UpdatedAt = time.Now()
