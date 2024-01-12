@@ -141,3 +141,48 @@ func TestIsBlank(t *testing.T) {
 		}
 	}
 }
+
+func TestIsTooLong(t *testing.T) {
+	type TestCase struct {
+		input       string
+		targetBytes int
+		expected    bool
+	}
+	cases := []TestCase{
+		{
+			input:       "abc",
+			targetBytes: 2,
+			expected:    true,
+		},
+		{
+			input:       "abc",
+			targetBytes: 4,
+			expected:    false,
+		},
+		{
+			input:       "abcdef",
+			targetBytes: 6,
+			expected:    false,
+		},
+	}
+	for _, tc := range cases {
+		result := isTooLong(tc.input, tc.targetBytes)
+		if result != tc.expected {
+			t.Errorf("input = '%s'; got = %v; expected = %v", tc.input, result, tc.expected)
+		}
+	}
+}
+
+func TestDatabaseNameContainsValidCharacters(t *testing.T) {
+	cases := []string{
+		"ABC09",
+		"x_y-zfhL123",
+		"XYZ-abc",
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_",
+	}
+	for _, tc := range cases {
+		if !databaseNameContainsValidCharacters(tc) {
+			t.Errorf("database name '%s' contains invalid characters; got = %v; expected = %v", tc, false, true)
+		}
+	}
+}

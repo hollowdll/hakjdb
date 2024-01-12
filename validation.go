@@ -25,9 +25,9 @@ func isTooLong(input string, targetBytes int) bool {
 	return len(input) > targetBytes
 }
 
-// dbNamecontainsValidCharacters checks if database name
+// databaseNameContainsValidCharacters checks if database name
 // contains valid characters by matching it against a regexp.
-func dbNamecontainsValidCharacters(name string) bool {
+func databaseNameContainsValidCharacters(name string) bool {
 	pattern := regexp.MustCompile("^[A-Za-z0-9-_]+$")
 	return pattern.MatchString(name)
 }
@@ -41,7 +41,7 @@ func validateDatabaseName(name string) error {
 	if isTooLong(name, DbNameMaxSize) {
 		return kvdberrors.ErrDatabaseNameTooLong
 	}
-	if !dbNamecontainsValidCharacters(name) {
+	if !databaseNameContainsValidCharacters(name) {
 		return kvdberrors.ErrDatabaseNameInvalid
 	}
 
