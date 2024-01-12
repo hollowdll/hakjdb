@@ -94,3 +94,50 @@ func TestValidateDatabaseKey(t *testing.T) {
 		}
 	}
 }
+
+func TestIsBlank(t *testing.T) {
+	type TestCase struct {
+		input    string
+		expected bool
+	}
+	cases := []TestCase{
+		{
+			input:    "",
+			expected: true,
+		},
+		{
+			input:    " ",
+			expected: true,
+		},
+		{
+			input:    "  ",
+			expected: true,
+		},
+		{
+			input:    "   ",
+			expected: true,
+		},
+		{
+			input:    "           ",
+			expected: true,
+		},
+		{
+			input:    "a",
+			expected: false,
+		},
+		{
+			input:    "  a  ",
+			expected: false,
+		},
+		{
+			input:    " a b ",
+			expected: false,
+		},
+	}
+	for _, test := range cases {
+		result := isBlank(test.input)
+		if result != test.expected {
+			t.Errorf("input = '%s'; got = %v; expected = %v", test.input, result, test.expected)
+		}
+	}
+}
