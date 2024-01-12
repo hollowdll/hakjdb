@@ -20,11 +20,38 @@ func TestCreateDatabase(t *testing.T) {
 
 // TODO: test case for overwriting key
 func TestDatabaseSetString(t *testing.T) {
-	db := newDatabase("test")
-	err := db.SetString("key1", "value1")
-	if err != nil {
-		t.Fatalf("error setting string value: %v", err)
-	}
+	t.Run("SetNonExistentKey", func(t *testing.T) {
+		db := newDatabase("test")
+		err := db.SetString("key1", "value1")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var expectedKeys uint32 = 1
+		keys := db.GetKeyCount()
+		if keys != expectedKeys {
+			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
+		}
+	})
+
+	t.Run("OverwriteExistingKey", func(t *testing.T) {
+		db := newDatabase("test")
+		err := db.SetString("key1", "value1")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = db.SetString("key1", "value2")
+		if err != nil {
+			t.Fatalf("error overwriting key: %v", err)
+		}
+
+		var expectedKeys uint32 = 1
+		keys := db.GetKeyCount()
+		if keys != expectedKeys {
+			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
+		}
+	})
 }
 
 func TestDatabaseGetString(t *testing.T) {
