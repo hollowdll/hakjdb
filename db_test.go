@@ -18,6 +18,52 @@ func TestCreateDatabase(t *testing.T) {
 	}
 }
 
+// TODO: test case for overwriting key
+func TestDatabaseSetString(t *testing.T) {
+	db := newDatabase("test")
+	err := db.SetString("key1", "value1")
+	if err != nil {
+		t.Fatalf("error setting string value: %v", err)
+	}
+}
+
+func TestDatabaseGetString(t *testing.T) {
+	t.Run("GetNonExistentKey", func(t *testing.T) {
+		db := newDatabase("test")
+		value, found := db.GetString("key1")
+
+		expectedValue := DatabaseStringValue("")
+		if value != expectedValue {
+			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		}
+
+		expectedFound := false
+		if found != expectedFound {
+			t.Errorf("expected found = %v; got = %v", expectedFound, found)
+		}
+	})
+
+	t.Run("GetExistingKey", func(t *testing.T) {
+		db := newDatabase("test")
+		expectedValue := DatabaseStringValue("value1")
+		key := DatabaseKey("key1")
+		err := db.SetString(key, expectedValue)
+		if err != nil {
+			t.Fatal(err)
+		}
+		value, found := db.GetString(key)
+
+		if value != expectedValue {
+			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		}
+
+		expectedFound := true
+		if found != expectedFound {
+			t.Errorf("expected found = %v; got = %v", expectedFound, found)
+		}
+	})
+}
+
 func TestGetDatabaseKeyCount(t *testing.T) {
 	db := newDatabase("test")
 	count := db.GetKeyCount()
