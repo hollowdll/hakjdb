@@ -1,6 +1,9 @@
 package kvdb
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestValidateDatabaseName(t *testing.T) {
 	type TestCase struct {
@@ -37,7 +40,7 @@ func TestValidateDatabaseName(t *testing.T) {
 			valid:  true,
 		},
 		{
-			dbName: "This_should_be_too_long_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			dbName: strings.Repeat("a", DbNameMaxSize+1),
 			valid:  false,
 		},
 	}
@@ -47,6 +50,47 @@ func TestValidateDatabaseName(t *testing.T) {
 			t.Errorf("database name %s should be valid but is invalid", test.dbName)
 		} else if !test.valid && err == nil {
 			t.Errorf("database name %s should be invalid but is valid", test.dbName)
+		}
+	}
+}
+
+func TestValidateDatabaseKey(t *testing.T) {
+	type TestCase struct {
+		key   DatabaseKey
+		valid bool
+	}
+	cases := []TestCase{
+		{
+			key:   "",
+			valid: false,
+		},
+		{
+			key:   "   ",
+			valid: false,
+		},
+		{
+			key:   "valid",
+			valid: true,
+		},
+		{
+			key:   "012VaLId!?-a_b_c/",
+			valid: true,
+		},
+		{
+			key:   "{[()]};:,.",
+			valid: true,
+		},
+		{
+			key:   DatabaseKey(strings.Repeat("a", DbKeyMaxSize+1)),
+			valid: false,
+		},
+	}
+	for _, test := range cases {
+		err := validateDatabaseKey(test.key)
+		if test.valid && err != nil {
+			t.Errorf("key %s should be valid but is invalid", test.key)
+		} else if !test.valid && err == nil {
+			t.Errorf("key %s should be invalid but is valid", test.key)
 		}
 	}
 }
