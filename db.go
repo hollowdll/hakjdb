@@ -47,7 +47,7 @@ func (db *Database) GetName() string {
 
 // update updates the database changing some of its fields.
 func (db *Database) update() {
-	db.UpdatedAt = time.Now()
+	db.UpdatedAt = time.Now().UTC()
 }
 
 // keyExists returns true if key exists in the database.

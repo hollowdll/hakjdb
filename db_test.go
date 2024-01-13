@@ -1,6 +1,9 @@
 package kvdb
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestCreateDatabase(t *testing.T) {
 	db, err := CreateDatabase("test")
@@ -51,6 +54,22 @@ func TestDatabaseSetString(t *testing.T) {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
 		}
 	})
+
+	t.Run("DatabaseIsUpdated", func(t *testing.T) {
+		db := newDatabase("test")
+		originalTime := db.UpdatedAt
+
+		time.Sleep(10 * time.Millisecond)
+		err := db.SetString("key1", "value1")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		updatedTime := db.UpdatedAt
+		if !updatedTime.After(originalTime) {
+			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
+		}
+	})
 }
 
 func TestDatabaseDeleteKey(t *testing.T) {
@@ -81,6 +100,36 @@ func TestDatabaseDeleteKey(t *testing.T) {
 		expectedResult = false
 		if result != expectedResult {
 			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+	})
+
+	t.Run("DatabaseIsNotUpdatedIfKeyNonExistent", func(t *testing.T) {
+		db := newDatabase("test")
+		originalTime := db.UpdatedAt
+
+		time.Sleep(10 * time.Millisecond)
+		db.DeleteKey("key1")
+
+		updatedTime := db.UpdatedAt
+		if !updatedTime.Equal(originalTime) {
+			t.Errorf("expected times to be equal; updated time = %s; original time = %s", updatedTime, originalTime)
+		}
+	})
+
+	t.Run("DatabaseIsUpdatedIfKeyDeleted", func(t *testing.T) {
+		db := newDatabase("test")
+		err := db.SetString("key1", "value1")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		originalTime := db.UpdatedAt
+		time.Sleep(10 * time.Millisecond)
+		db.DeleteKey("key1")
+
+		updatedTime := db.UpdatedAt
+		if !updatedTime.After(originalTime) {
+			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
 		}
 	})
 }
