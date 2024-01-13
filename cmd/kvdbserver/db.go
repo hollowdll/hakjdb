@@ -12,7 +12,7 @@ import (
 )
 
 // databaseExists returns true if a database exists on the server
-func (s *server) databaseExists(name string) bool {
+func (s *Server) databaseExists(name string) bool {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -22,7 +22,7 @@ func (s *server) databaseExists(name string) bool {
 
 // CreateDatabase creates a new database to the server.
 // Fails if it already exists or the name is invalid.
-func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
+func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
 	s.logger.Debugf("Attempt to create database '%s'", req.GetDbName())
 	defer func() {
 		if err != nil {
@@ -49,7 +49,7 @@ func (s *server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 }
 
 // GetAllDatabases returns the names of all databases on the server.
-func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
+func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
 	s.logger.Debug("Attempt to get all databases")
 	defer func() {
 		if err != nil {
@@ -70,7 +70,7 @@ func (s *server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	return &kvdbserver.GetAllDatabasesResponse{DbNames: names}, nil
 }
 
-func (s *server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
+func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
 	s.logger.Debugf("Attempt to get info for database '%s'", req.GetDbName())
 	defer func() {
 		if err != nil {

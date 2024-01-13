@@ -15,7 +15,7 @@ func main() {
 
 // initServer initializes the server.
 func initServer() {
-	server := newServer()
+	server := NewServer()
 	initConfig(server)
 	server.logger.ClearFlags()
 

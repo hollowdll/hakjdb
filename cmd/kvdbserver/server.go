@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type server struct {
+type Server struct {
 	kvdbserver.UnimplementedDatabaseServiceServer
 	kvdbserver.UnimplementedServerServiceServer
 	kvdbserver.UnimplementedStorageServiceServer
@@ -28,8 +28,8 @@ type server struct {
 	mutex     sync.RWMutex
 }
 
-func newServer() *server {
-	return &server{
+func NewServer() *Server {
+	return &Server{
 		startTime: time.Now(),
 		databases: make(map[string]*kvdb.Database),
 		logger:    kvdb.NewDefaultLogger(),
@@ -37,7 +37,7 @@ func newServer() *server {
 }
 
 // getTotalDataSize returns the total amount of stored data on this server in bytes.
-func (s *server) getTotalDataSize() uint64 {
+func (s *Server) getTotalDataSize() uint64 {
 	var sum uint64
 	for _, db := range s.databases {
 		sum += db.GetStoredSizeBytes()
@@ -75,7 +75,7 @@ func getOsInfo() (string, error) {
 }
 
 // GetServerInfo returns information about the server.
-func (s *server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
+func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
 	s.logger.Debug("Attempt to get server info")
 	defer func() {
 		if err != nil {

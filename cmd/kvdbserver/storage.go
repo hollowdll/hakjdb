@@ -14,7 +14,7 @@ import (
 
 // SetString sets a string value using a key.
 // Accepts database name in gRPC metadata.
-func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
+func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
 	s.logger.Debug("Attempt to set string value")
 	defer func() {
 		if err != nil {
@@ -48,7 +48,7 @@ func (s *server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 
 // GetString gets a string value using a key.
 // Accepts database name in gRPC metadata.
-func (s *server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
+func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
 	s.logger.Debug("Attempt to get string value")
 	defer func() {
 		if err != nil {
@@ -78,7 +78,7 @@ func (s *server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 
 // DeleteKey deletes a key and its value.
 // Accepts database name in gRPC metadata.
-func (s *server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
+func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
 	s.logger.Debug("Attempt to delete key")
 	defer func() {
 		if err != nil {

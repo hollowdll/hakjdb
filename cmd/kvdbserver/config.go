@@ -15,7 +15,7 @@ const (
 )
 
 // initConfig initializes server configurations.
-func initConfig(s *server) {
+func initConfig(s *Server) {
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
 		s.logger.Fatalf("Failed to get executable's parent directory: %s", err)
