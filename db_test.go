@@ -18,7 +18,6 @@ func TestCreateDatabase(t *testing.T) {
 	}
 }
 
-// TODO: test case for overwriting key
 func TestDatabaseSetString(t *testing.T) {
 	t.Run("SetNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")
@@ -50,6 +49,38 @@ func TestDatabaseSetString(t *testing.T) {
 		keys := db.GetKeyCount()
 		if keys != expectedKeys {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
+		}
+	})
+}
+
+func TestDatabaseDeleteKey(t *testing.T) {
+	t.Run("DeleteNonExistentKey", func(t *testing.T) {
+		db := newDatabase("test")
+		result := db.DeleteKey("key1")
+		expectedResult := false
+
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+	})
+
+	t.Run("DeleteExistingKey", func(t *testing.T) {
+		db := newDatabase("test")
+		err := db.SetString("key1", "value1")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		result := db.DeleteKey("key1")
+		expectedResult := true
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+
+		result = db.DeleteKey("key1")
+		expectedResult = false
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
 		}
 	})
 }
