@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/viper"
 )
@@ -9,6 +8,7 @@ import (
 const (
 	configFileName string = ".kvdbserver"
 	configFileType string = "json"
+	dataDirName    string = "data"
 
 	configKeyPort      string = "port"
 	configKeyDebugMode string = "debug_mode"
@@ -16,7 +16,11 @@ const (
 
 // initConfig initializes server configurations.
 func initConfig(s *server) {
-	configDirPath, err := kvdb.GetDataDirPath()
+	parentDir, err := common.GetExecParentDirPath()
+	if err != nil {
+		s.logger.Fatalf("Failed to get executable's parent directory: %s", err)
+	}
+	configDirPath, err := common.GetDirPath(parentDir, dataDirName)
 	if err != nil {
 		s.logger.Fatalf("Failed to get data directory: %s", err)
 	}

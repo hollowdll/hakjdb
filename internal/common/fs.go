@@ -16,8 +16,29 @@ func GetExecParentDirPath() (string, error) {
 	return path, nil
 }
 
-// FileExists returns a bool indicating if a file exists.
-func FileExists(path string) bool {
-	_, err := os.Stat(path)
-	return os.IsExist(err)
+// GetDirPath gets path to a directory and returns it.
+// parent is the parent directory and dirName the name of the directory.
+// Creates the directory if it does not exist.
+func GetDirPath(parent string, dirName string) (string, error) {
+	path := filepath.Join(parent, dirName)
+	if err := createDirIfNotExist(path); err != nil {
+		return "", err
+	}
+
+	return path, nil
+}
+
+// createDirIfNotExist creates a directory if it doesn't exist.
+// Does nothing if the directory exists.
+func createDirIfNotExist(dirPath string) error {
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		err := os.Mkdir(dirPath, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	}
+
+	return nil
 }
