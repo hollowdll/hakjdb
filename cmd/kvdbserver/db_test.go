@@ -14,6 +14,7 @@ import (
 func TestCreateDatabase(t *testing.T) {
 	t.Run("DatabaseNonExistent", func(t *testing.T) {
 		server := main.NewServer()
+		server.DisableLogger()
 		dbName := "test"
 
 		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
@@ -26,6 +27,7 @@ func TestCreateDatabase(t *testing.T) {
 
 	t.Run("DatabaseAlreadyExists", func(t *testing.T) {
 		server := main.NewServer()
+		server.DisableLogger()
 		dbName := "test"
 
 		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
@@ -44,6 +46,7 @@ func TestCreateDatabase(t *testing.T) {
 
 	t.Run("InvalidArguments", func(t *testing.T) {
 		server := main.NewServer()
+		server.DisableLogger()
 		dbName := "   "
 
 		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}

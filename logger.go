@@ -2,6 +2,7 @@ package kvdb
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"time"
 )
@@ -22,10 +23,16 @@ type Logger interface {
 	Fatal(v ...any)
 	Fatalf(format string, v ...any)
 
+	// EnableDebug enables debug logs.
 	EnableDebug()
+	// ClearFlags clears all default logger output flags.
 	ClearFlags()
+	// Disable disables all log outputs.
+	Disable()
 }
 
+// DefaultLogger is a default implementation of the Logger interface.
+// Debug logs are disabled by default. Call EnableDebug to enable them.
 type DefaultLogger struct {
 	Logger *log.Logger
 	debug  bool
@@ -44,6 +51,10 @@ func (l *DefaultLogger) EnableDebug() {
 
 func (l *DefaultLogger) ClearFlags() {
 	l.Logger.SetFlags(0)
+}
+
+func (l *DefaultLogger) Disable() {
+	l.Logger.SetOutput(io.Discard)
 }
 
 func (l *DefaultLogger) Debug(v ...any) {

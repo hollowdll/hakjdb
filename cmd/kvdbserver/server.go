@@ -36,6 +36,11 @@ func NewServer() *Server {
 	}
 }
 
+// DisableLogger disables all log outputs from this server.
+func (s *Server) DisableLogger() {
+	s.logger.Disable()
+}
+
 // getTotalDataSize returns the total amount of stored data on this server in bytes.
 func (s *Server) getTotalDataSize() uint64 {
 	var sum uint64
