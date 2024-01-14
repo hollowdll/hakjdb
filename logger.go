@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"time"
 )
 
@@ -32,6 +33,7 @@ type Logger interface {
 }
 
 // DefaultLogger is a default implementation of the Logger interface.
+// Log output defaults to standard error stream.
 // Debug logs are disabled by default. Call EnableDebug to enable them.
 type DefaultLogger struct {
 	Logger *log.Logger
@@ -40,7 +42,7 @@ type DefaultLogger struct {
 
 func NewDefaultLogger() *DefaultLogger {
 	return &DefaultLogger{
-		Logger: log.Default(),
+		Logger: log.New(os.Stderr, "", 0),
 		debug:  false,
 	}
 }
