@@ -33,8 +33,8 @@ func TestCreateDatabase(t *testing.T) {
 		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), request)
 		assert.NoErrorf(t, err, "expected no error; error = %s", err)
-		response, err := server.CreateDatabase(context.Background(), request)
 
+		response, err := server.CreateDatabase(context.Background(), request)
 		assert.Error(t, err, "expected error")
 		assert.Nil(t, response, "expected response to be nil")
 
@@ -51,7 +51,6 @@ func TestCreateDatabase(t *testing.T) {
 
 		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
 		response, err := server.CreateDatabase(context.Background(), request)
-
 		assert.Error(t, err, "expected error")
 		assert.Nil(t, response, "expected response to be nil")
 
@@ -95,6 +94,45 @@ func TestGetAllDatabases(t *testing.T) {
 		for _, db := range response.DbNames {
 			assert.Equalf(t, true, stringInSlice(db, dbs), "expected database name %s to be in %v", db, dbs)
 		}
+	})
+}
+
+func TestGetDatabaseInfo(t *testing.T) {
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		server := main.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+
+		request := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+		response, err := server.GetDatabaseInfo(context.Background(), request)
+		assert.Error(t, err, "expected error")
+		assert.Nil(t, response, "expected response to be nil")
+
+		st, ok := status.FromError(err)
+		assert.NotNil(t, st, "expected status to be non-nil")
+		assert.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
+	})
+
+	t.Run("DatabaseExists", func(t *testing.T) {
+		server := main.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+
+		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		_, err := server.CreateDatabase(context.Background(), requestCreate)
+		assert.NoErrorf(t, err, "expected no error; error = %s", err)
+
+		requestGet := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+		response, err := server.GetDatabaseInfo(context.Background(), requestGet)
+
+		expectedKeyCount := uint32(0)
+		expectedDataSize := uint64(0)
+		assert.NoErrorf(t, err, "expected no error; error = %s", err)
+		assert.NotNil(t, response, "expected response to be non-nil")
+		assert.Equalf(t, dbName, response.Data.Name, "expected database name = %s; got = %s", dbName, response.Data.Name)
+		assert.Equalf(t, expectedKeyCount, response.Data.KeyCount, "expected keys = %d; got = %d", expectedKeyCount, response.Data.KeyCount)
+		assert.Equalf(t, expectedDataSize, response.Data.DataSize, "expected data size = %d; got = %d", expectedDataSize, response.Data.DataSize)
 	})
 }
 
