@@ -1,5 +1,10 @@
 # kvdb
-Key-value database. Documentation coming soon.
+In-memory key-value store. Can be used as a database or cache.
+
+Currently supported data types:
+- `Strings`
+
+Proper documentation coming soon.
 
 # Docker
 
