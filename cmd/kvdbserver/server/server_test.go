@@ -1,17 +1,17 @@
-package main_test
+package server_test
 
 import (
 	"context"
 	"testing"
 
-	main "github.com/hollowdll/kvdb/cmd/kvdbserver"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetServerInfo(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 
 		request := &kvdbserver.GetServerInfoRequest{}

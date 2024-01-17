@@ -1,10 +1,10 @@
-package main_test
+package server_test
 
 import (
 	"context"
 	"testing"
 
-	main "github.com/hollowdll/kvdb/cmd/kvdbserver"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +15,7 @@ import (
 
 func TestSetString(t *testing.T) {
 	t.Run("MissingMetadata", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 
 		request := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
@@ -30,7 +30,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
@@ -48,7 +48,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -65,7 +65,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("Success", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -81,7 +81,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("InvalidInput", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -104,7 +104,7 @@ func TestSetString(t *testing.T) {
 
 func TestGetString(t *testing.T) {
 	t.Run("MissingMetadata", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 
 		request := &kvdbserver.GetStringRequest{Key: "key1"}
@@ -119,7 +119,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
@@ -136,7 +136,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -153,7 +153,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("SuccessKeyNotFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -171,7 +171,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("SuccessKeyFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		expectedValue := "value1"
@@ -196,7 +196,7 @@ func TestGetString(t *testing.T) {
 
 func TestDeleteKey(t *testing.T) {
 	t.Run("MissingMetadata", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 
 		request := &kvdbserver.DeleteKeyRequest{Key: "key1"}
@@ -211,7 +211,7 @@ func TestDeleteKey(t *testing.T) {
 	})
 
 	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
@@ -228,7 +228,7 @@ func TestDeleteKey(t *testing.T) {
 	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -245,7 +245,7 @@ func TestDeleteKey(t *testing.T) {
 	})
 
 	t.Run("SuccessKeyNotFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
@@ -263,7 +263,7 @@ func TestDeleteKey(t *testing.T) {
 	})
 
 	t.Run("SuccessKeyFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))

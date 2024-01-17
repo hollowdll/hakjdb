@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/hollowdll/kvdb/internal/common"
@@ -10,8 +10,12 @@ const (
 	configFileType string = "json"
 	dataDirName    string = "data"
 
-	configKeyPort      string = "port"
-	configKeyDebugMode string = "debug_mode"
+	// EnvPrefix is the prefix that environment variables use.
+	EnvPrefix string = "kvdb"
+	// ConfigKeyPort is the key for port configuration.
+	ConfigKeyPort string = "port"
+	// ConfigKeyDebugMode is the key for debug mode configuration.
+	ConfigKeyDebugMode string = "debug_mode"
 )
 
 // initConfig initializes server configurations.
@@ -29,10 +33,10 @@ func initConfig(s *Server) {
 	viper.SetConfigType(configFileType)
 	viper.SetConfigName(configFileName)
 
-	viper.SetDefault(configKeyPort, common.ServerDefaultPort)
-	viper.SetDefault(configKeyDebugMode, false)
+	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
+	viper.SetDefault(ConfigKeyDebugMode, false)
 
-	viper.SetEnvPrefix("kvdb")
+	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
 
 	viper.SafeWriteConfig()

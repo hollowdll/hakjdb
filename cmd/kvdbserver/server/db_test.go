@@ -1,10 +1,10 @@
-package main_test
+package server_test
 
 import (
 	"context"
 	"testing"
 
-	main "github.com/hollowdll/kvdb/cmd/kvdbserver"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -13,7 +13,7 @@ import (
 
 func TestCreateDatabase(t *testing.T) {
 	t.Run("DatabaseNonExistent", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "test"
 
@@ -26,7 +26,7 @@ func TestCreateDatabase(t *testing.T) {
 	})
 
 	t.Run("DatabaseAlreadyExists", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "test"
 
@@ -45,7 +45,7 @@ func TestCreateDatabase(t *testing.T) {
 	})
 
 	t.Run("InvalidArguments", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "   "
 
@@ -63,7 +63,7 @@ func TestCreateDatabase(t *testing.T) {
 
 func TestGetAllDatabases(t *testing.T) {
 	t.Run("NoDatabases", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		expected := 0
 		request := &kvdbserver.GetAllDatabasesRequest{}
@@ -75,7 +75,7 @@ func TestGetAllDatabases(t *testing.T) {
 	})
 
 	t.Run("MultipleDatabases", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 
 		dbs := []string{"db0", "db1", "db2"}
@@ -99,7 +99,7 @@ func TestGetAllDatabases(t *testing.T) {
 
 func TestGetDatabaseInfo(t *testing.T) {
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 
@@ -115,7 +115,7 @@ func TestGetDatabaseInfo(t *testing.T) {
 	})
 
 	t.Run("DatabaseExists", func(t *testing.T) {
-		server := main.NewServer()
+		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
 
