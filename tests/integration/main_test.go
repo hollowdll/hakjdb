@@ -24,7 +24,8 @@ func setupServer() *grpc.Server {
 	server := kvdbs.NewServer()
 	server.DisableLogger()
 
-	viper.SetDefault(kvdbs.ConfigKeyPort, common.ServerDefaultPort)
+	viper.SetDefault("port", common.ServerDefaultPort)
+	viper.SetDefault("host", common.ServerDefaultHost)
 	viper.SetEnvPrefix(kvdbs.EnvPrefix)
 	viper.AutomaticEnv()
 
@@ -33,11 +34,12 @@ func setupServer() *grpc.Server {
 	kvdbserver.RegisterServerServiceServer(grpcServer, server)
 	kvdbserver.RegisterStorageServiceServer(grpcServer, server)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(kvdbs.ConfigKeyPort)))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16("port")))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
 
+	// Run in goroutine so execution won't be blocked.
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
@@ -45,4 +47,8 @@ func setupServer() *grpc.Server {
 	}()
 
 	return grpcServer
+}
+
+func getServerAddress() string {
+	return fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
 }
