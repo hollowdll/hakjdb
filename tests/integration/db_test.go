@@ -23,8 +23,7 @@ func TestCreateDatabase(t *testing.T) {
 
 	req := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
 	res, err := databaseClient.CreateDatabase(ctx, req)
-
-	assert.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res)
 	assert.Equalf(t, dbName, res.DbName, "expected database name = %s; got = %s", dbName, res.DbName)
 }
@@ -40,12 +39,12 @@ func TestCreateDatabaseAndGetInfo(t *testing.T) {
 
 	req1 := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
 	res1, err := databaseClient.CreateDatabase(ctx, req1)
-	assert.NoErrorf(t, err, "expected no error; error = %v", err)
-	assert.NotNil(t, res1)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, res1)
 
 	req2 := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
 	res2, err := databaseClient.GetDatabaseInfo(ctx, req2)
-	assert.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res2)
 	assert.Equalf(t, dbName, res2.Data.Name, "expected database name = %s; got = %s", dbName, res2.Data.Name)
 }
@@ -61,8 +60,8 @@ func TestCreateDatabaseAlreadyExists(t *testing.T) {
 
 	req1 := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
 	res1, err := databaseClient.CreateDatabase(ctx, req1)
-	assert.NoErrorf(t, err, "expected no error; error = %v", err)
-	assert.NotNil(t, res1)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, res1)
 
 	req2 := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
 	res2, err := databaseClient.CreateDatabase(ctx, req2)

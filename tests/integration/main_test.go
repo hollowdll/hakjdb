@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-// Setups server for tests.
+// Sets up server for tests.
 func setupServer() *grpc.Server {
 	server := kvdbs.NewServer()
 	server.DisableLogger()
