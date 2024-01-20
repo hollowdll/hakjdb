@@ -11,6 +11,6 @@ var CmdConnect = &cobra.Command{
 }
 
 func init() {
-	CmdConnect.AddCommand(cmdConnectLs)
+	CmdConnect.AddCommand(cmdConnectShow)
 	CmdConnect.AddCommand(cmdConnectSet)
 }

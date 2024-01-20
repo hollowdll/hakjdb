@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cmdConnectLs = &cobra.Command{
-	Use:   "ls",
+var cmdConnectShow = &cobra.Command{
+	Use:   "show",
 	Short: "Show connection settings",
 	Long:  "Show connection settings to a kvdb server",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -20,6 +20,6 @@ var cmdConnectLs = &cobra.Command{
 func showConnectionSettings() {
 	var output string
 	output += fmt.Sprintf("Host: %s\n", viper.GetString(config.ConfigKeyHost))
-	output += fmt.Sprintf("Port: %d\n", viper.GetUint16(config.ConfigKeyPort))
+	output += fmt.Sprintf("Port: %d", viper.GetUint16(config.ConfigKeyPort))
 	fmt.Println(output)
 }
