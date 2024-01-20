@@ -10,7 +10,7 @@ import (
 )
 
 var cmdDbCreate = &cobra.Command{
-	Use:   "create [flags]",
+	Use:   "create",
 	Short: "Create a new database",
 	Long:  "Create a new database",
 	Run: func(cmd *cobra.Command, args []string) {

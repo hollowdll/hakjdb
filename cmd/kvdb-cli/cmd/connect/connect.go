@@ -5,9 +5,9 @@ import (
 )
 
 var CmdConnect = &cobra.Command{
-	Use:   "connect [command]",
+	Use:   "connect",
 	Short: "Manage connection settings",
-	Long:  "Manage connection settings to the server",
+	Long:  "Manage connection settings to a kvdb server",
 }
 
 func init() {

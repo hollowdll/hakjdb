@@ -8,7 +8,8 @@ import (
 )
 
 // CheckGrpcError checks if error is a gRPC error.
-// Prints the gRPC status message if it is. Otherwise prints the error.
+// Prints error with the gRPC status message if it is.
+// Otherwise prints the error if it is not nil.
 func CheckGrpcError(err error) {
 	if err != nil {
 		if st, ok := status.FromError(err); ok {

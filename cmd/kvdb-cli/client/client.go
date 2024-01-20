@@ -2,10 +2,10 @@ package client
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -30,8 +30,7 @@ func InitClient() {
 	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error: failed to connect to the server:", err)
-		os.Exit(1)
+		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}
 
 	GrpcDatabaseClient = kvdbserver.NewDatabaseServiceClient(conn)
