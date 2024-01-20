@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"runtime"
@@ -14,6 +15,8 @@ import (
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
+	"github.com/spf13/viper"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -59,20 +62,16 @@ func getOsInfo() (string, error) {
 	case "linux":
 		cmd := exec.Command("uname", "-r", "-m")
 		output, err := cmd.Output()
-
 		if err != nil {
 			return "", err
 		}
-
 		return "Linux " + strings.TrimSpace(string(output)), nil
 	case "windows":
 		cmd := exec.Command("cmd", "/c", "ver")
 		output, err := cmd.Output()
-
 		if err != nil {
 			return "", err
 		}
-
 		return strings.TrimSpace(string(output)), nil
 	default:
 		return osInfo, nil
@@ -92,8 +91,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 
 	osInfo, err := getOsInfo()
 	if err != nil {
-		errMsg := fmt.Sprintf("%s", err)
-		return nil, status.Error(codes.Internal, errMsg)
+		return nil, status.Errorf(codes.Internal, "%s", err)
 	}
 
 	s.mutex.RLock()
@@ -112,4 +110,39 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	}
 
 	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
+}
+
+// initServer initializes the server.
+// Returns the initialized Server and grpc.Server.
+func initServer() (*Server, *grpc.Server) {
+	server := NewServer()
+	initConfig(server)
+	server.logger.ClearFlags()
+
+	// Enable debug logs.
+	if viper.GetBool(ConfigKeyDebugMode) {
+		server.logger.EnableDebug()
+		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
+	}
+
+	grpcServer := grpc.NewServer()
+	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
+	kvdbserver.RegisterServerServiceServer(grpcServer, server)
+	kvdbserver.RegisterStorageServiceServer(grpcServer, server)
+
+	return server, grpcServer
+}
+
+// StartServer initializes and starts the server.
+func StartServer() {
+	server, grpcServer := initServer()
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(ConfigKeyPort)))
+	if err != nil {
+		server.logger.Fatalf("Failed to listen: %v", err)
+	}
+	server.logger.Infof("Server listening at %v", listener.Addr())
+
+	if err := grpcServer.Serve(listener); err != nil {
+		server.logger.Fatalf("Failed to serve gRPC: %v", err)
+	}
 }
