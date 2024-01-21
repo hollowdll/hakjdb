@@ -38,6 +38,26 @@ These will build the binaries to `bin/` directory in the project root. You can c
 
 For more advanced build, use `go help build` to see more build options.
 
+# Environment
+
+## Server
+
+Environment variables for the server
+
+| Name            | Default value | Description |
+|-----------------|---------------|-------------|
+| KVDB_PORT       | 12345         | Server TCP/IP port. |
+| KVDB_DEBUG_MODE | false         | Controls whether debug mode is enabled. If enabled, debug logs will show. |
+
+## Tests
+
+Environment variables for tests
+
+| Name            | Default value | Description |
+|-----------------|---------------|-------------|
+| KVDB_PORT       | 12345         | Test server TCP/IP port. |
+| KVDB_HOST       | localhost     | Test server address. |
+
 # Docker
 
 Images will eventually be available in an image registry. For now you have to build them.
