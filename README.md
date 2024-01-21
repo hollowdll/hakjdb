@@ -1,12 +1,24 @@
-# kvdb
-In-memory key-value store. Can be used as a database or cache.
+# Overview
+kvdb is an in-memory key-value store. It can be used as a database or cache.
 
+Components:
+- `kvdbserver` - The server process
+- `kvdb-cli` - CLI tool to manage the server
+  
 **Note!** This project is in early development. No releases yet, but we are close to v0.1.0. Lots of cool stuff coming after that.
 
 # Data types
 
 Currently supported data types:
 - `String`
+
+# Getting started
+
+Coming soon.
+
+# How to use
+
+Coming soon.
 
 # Build binaries
 
@@ -64,7 +76,7 @@ Environment variables for tests
 
 Images are available in Docker Hub. See [repository](https://hub.docker.com/r/hakj/kvdb)
 
-## Pull server image
+## Pull the server image
 
 ```bash
 docker pull hakj/kvdb
