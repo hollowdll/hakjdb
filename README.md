@@ -1,10 +1,42 @@
 # kvdb
 In-memory key-value store. Can be used as a database or cache.
 
-Currently supported data types:
-- `Strings`
+# Data types
 
-Proper documentation coming soon.
+Currently supported data types:
+- `String`
+
+# Build binaries
+
+To build the binaries, you first need to install Go.
+
+Instructions [here](https://go.dev/doc/install)
+
+You may also need tools to work with gRPC and Protocol Buffers in Go. This is needed if you want to compile `.proto` files and generate Go code.
+
+- [Protocol Buffer compiler](https://github.com/protocolbuffers/protobuf#protobuf-compiler-installation)
+- [Quickstart](https://grpc.io/docs/languages/go/quickstart/)
+
+After you have successfully installed go, clone this repository.
+
+Change directory to the project root
+```bash
+cd kvdb
+```
+
+Build the server binary
+```bash
+go build -o ./bin/kvdbserver/ ./cmd/kvdbserver/
+```
+
+Build the CLI tool
+```bash
+go build -o ./bin/kvdb-cli/ ./cmd/kvdb-cli/
+```
+
+These will build the binaries to `bin/` directory in the project root. You can change the output directory and binary names to whatever you like by modifying the path with `-o` flag.
+
+For more advanced build, use `go help build` to see more build options.
 
 # Docker
 
