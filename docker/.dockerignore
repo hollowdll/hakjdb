@@ -4,8 +4,7 @@
 *.dll
 *.so
 *.dylib
-/cmd/kvdb-cli/kvdb-cli
-/cmd/kvdbserver/kvdbserver
+bin/
 
 # Test binary, built with `go test -c`
 *.test
@@ -34,4 +33,4 @@ logs
 ### Above is copied from .gitignore ###
 
 # Directories
-/cmd/kvdb-cli
+cmd/kvdb-cli
