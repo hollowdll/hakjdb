@@ -1,6 +1,8 @@
 # kvdb
 In-memory key-value store. Can be used as a database or cache.
 
+**Note!** This project is in early development. No releases yet, but we are close to v0.1.0. Lots of cool stuff coming after that.
+
 # Data types
 
 Currently supported data types:
@@ -60,7 +62,13 @@ Environment variables for tests
 
 # Docker
 
-Images will eventually be available in an image registry. For now you have to build them.
+Images are available in Docker Hub. See [repository](https://hub.docker.com/r/hakj/kvdb)
+
+## Pull server image
+
+```bash
+docker pull hakj/kvdb
+```
 
 ## Build the server image
 
@@ -68,7 +76,11 @@ Make sure to be in the project root
 ```bash
 cd kvdb
 ```
-Alpine Linux
+Debian based image
+```bash
+docker build -f "./docker/Dockerfile.bookworm" -t kvdb:latest .
+```
+Alpine Linux based image
 ```bash
 docker build -f "./docker/Dockerfile.alpine" -t kvdb:alpine .
 ```
@@ -76,5 +88,4 @@ Example of running the image
 ```bash
 docker run -p 12345:12345 --rm -it kvdb:alpine
 ```
-
-You can now access the server with `kvdb-cli` through port `12345`.
+You can access the server through port `12345`.
