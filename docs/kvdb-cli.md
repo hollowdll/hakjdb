@@ -45,3 +45,23 @@ For example, this changes the address and port:
 $ kvdb-cli connect set -a some.other.host.or.IP -p 9000
 ```
 Now kvdb-cli tries to connect to a different address and port.
+
+## Server information
+
+To show information about the server, use command:
+```bash
+$ kvdb-cli info
+```
+
+This will show something like this:
+```bash
+server_version: 0.0.0
+go_version: go1.21.0
+db_count: 0
+total_data_size: 0B
+os: Microsoft Windows [Version 10.0.19045.3930]
+arch: amd64
+process_id: 2484
+uptime_seconds: 2646
+tcp_port: 12345
+```
