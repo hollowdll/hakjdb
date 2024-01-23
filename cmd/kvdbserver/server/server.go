@@ -12,7 +12,6 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/viper"
@@ -30,6 +29,9 @@ type Server struct {
 	logger    kvdb.Logger
 	mutex     sync.RWMutex
 }
+
+// portInUse is the TCP/IP port the server uses.
+var portInUse uint16
 
 func NewServer() *Server {
 	return &Server{
@@ -106,7 +108,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		Arch:          runtime.GOARCH,
 		ProcessId:     uint32(os.Getpid()),
 		UptimeSeconds: uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:       uint32(common.ServerDefaultPort),
+		TcpPort:       uint32(portInUse),
 	}
 
 	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
@@ -136,7 +138,8 @@ func initServer() (*Server, *grpc.Server) {
 // StartServer initializes and starts the server.
 func StartServer() {
 	server, grpcServer := initServer()
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(ConfigKeyPort)))
+	portInUse = viper.GetUint16(ConfigKeyPort)
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", portInUse))
 	if err != nil {
 		server.logger.Fatalf("Failed to listen: %v", err)
 	}
