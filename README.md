@@ -14,11 +14,7 @@ Currently supported data types:
 
 # Getting started
 
-Coming soon.
-
-# How to use
-
-Coming soon.
+- [Using the CLI](./docs/kvdb-cli.md)
 
 # Build binaries
 
