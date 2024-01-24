@@ -143,11 +143,33 @@ $ kvdb-cli set [key] [value] -d db-name
 For example:
 ```bash
 $ kvdb-cli set message "Hello World!" -d db0
+OK
 ```
 This would set key "message" to hold string "Hello World!" in database db0.
 
 Keep in mind that there are some limitations to keys. The maximum length of a key is 1024 bytes. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time.
 
 ## Get string
+
+To get a string value, you need to retrieve it with the key that is holding the value.
+
+To get a string value, use command:
+```bash
+$ kvdb-cli get [key] -d db-name
+```
+[key] is the name of the key holding the value to retrieve. Option -d specifies the name of the database.
+
+For example:
+```bash
+$ kvdb-cli get message -d db0
+"Hello World!"
+```
+This would get the string value that key "message" is holding in database db0.
+
+If the key doesn't exist, a special value (None) is returned:
+```bash
+$ kvdb-cli get message123 -d db0
+(None)
+```
 
 ## Delete key
