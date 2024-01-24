@@ -85,7 +85,7 @@ You can create a new database with the following command:
 ```bash
 $ kvdb-cli db create -n name-of-your-db
 ```
-Option -n specifies the name of the database you want to create. The maximum number of characters a name can have is 32.
+Option -n specifies the name of the database you want to create. The maximum length of a database name is 32 bytes.
 
 Database names are designed to be short. It is recommended to keep them short to minimize memory usage.
 
@@ -129,3 +129,25 @@ Meaning of the fields:
 - `updated_at`: UTC timestamp specifying when the database was last updated
 - `key_count`: Number of keys stored in the database
 - `data_size`: Size of the stored data in bytes
+
+## Set string
+
+To store a string value, you need to set a key to hold it. If the key already exists with some value, it is overwritten.
+
+To set a string value, use command:
+```bash
+$ kvdb-cli set [key] [value] -d db-name
+```
+[key] is the name of the key and [value] is the string value to store. Option -d specifies the name of the database.
+
+For example:
+```bash
+$ kvdb-cli set message "Hello World!" -d db0
+```
+This would set key "message" to hold string "Hello World!" in database db0.
+
+Keep in mind that there are some limitations to keys. The maximum length of a key is 1024 bytes. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time.
+
+## Get string
+
+## Delete key
