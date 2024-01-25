@@ -1,5 +1,5 @@
 # Overview
-kvdb is an in-memory key-value store. It can be used as a database or cache.
+kvdb is an in-memory key-value store written in go language. It can be used as a database or cache.
 
 Components:
 - `kvdbserver` - The server process
@@ -15,7 +15,8 @@ Currently supported data types:
 # Getting started
 
 - [Using the CLI](./docs/kvdb-cli.md)
-- [Configuring server](./docs/kvdbserver.md)
+- [Using the server](./docs/kvdbserver.md)
+- [Databases](./docs/databases.md)
 
 # Build binaries
 
@@ -58,7 +59,7 @@ Environment variables for the server
 | Name            | Default value | Description |
 |-----------------|---------------|-------------|
 | KVDB_PORT       | 12345         | Server TCP/IP port. |
-| KVDB_DEBUG_MODE | false         | Controls whether debug mode is enabled. If enabled, debug logs will show. |
+| KVDB_DEBUG_MODE | false         | Controls whether debug mode is enabled. If true, debug logs are shown in console. |
 
 ## Tests
 
