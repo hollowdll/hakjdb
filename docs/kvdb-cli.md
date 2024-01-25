@@ -4,7 +4,7 @@ kvdb-cli is a CLI (command line interface) to interact with a kvdb server.
 
 # Configuration file
 
-All configurations are saved to a configuration file and can be changed there. kvdb-cli creates this file with default configurations if it doesn't exist. The name of the configuration file is `.kvdb-cli.json`.
+Configurations are saved to a configuration file and can be changed there. kvdb-cli creates this file with default configurations if it doesn't exist. The name of the configuration file is `.kvdb-cli.json`.
 
 # Usage
 

@@ -15,6 +15,7 @@ Currently supported data types:
 # Getting started
 
 - [Using the CLI](./docs/kvdb-cli.md)
+- [Configuring server](./docs/kvdbserver.md)
 
 # Build binaries
 
@@ -70,7 +71,7 @@ Environment variables for tests
 
 # Docker
 
-Images are available in Docker Hub. See [repository](https://hub.docker.com/r/hakj/kvdb)
+Images are available in Docker Hub. See [repository](https://hub.docker.com/r/hakj/kvdb).
 
 ## Pull the server image
 
@@ -92,8 +93,11 @@ Alpine Linux based image
 ```bash
 docker build -f "./docker/Dockerfile.alpine" -t kvdb:alpine .
 ```
-Example of running the image
+
+## Start a container
+
+Example of starting a container
 ```bash
-docker run -p 12345:12345 --rm -it kvdb:alpine
+docker run -p 12345:12345 --rm -it kvdb
 ```
-You can access the server through port `12345`.
+This binds the host's port `12345` to the container's port `12345` so you can access the server outside the container.
