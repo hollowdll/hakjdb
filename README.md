@@ -12,11 +12,12 @@ Components:
 Currently supported data types:
 - `String`
 
-# Getting started
+# Documentation
 
 - [Using the CLI](./docs/kvdb-cli.md)
 - [Using the server](./docs/kvdbserver.md)
 - [Databases](./docs/databases.md)
+- [Data types](./docs/datatypes.md)
 
 # Build binaries
 
