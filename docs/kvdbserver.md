@@ -28,10 +28,8 @@ It is also possible to change configurations with environment variables. Environ
 
 Here is a list of all environment variables:
 
-| Name            | Default value | Description |
-|-----------------|---------------|-------------|
-| KVDB_PORT       | 12345         | Server TCP/IP port. |
-| KVDB_DEBUG_MODE | false         | Controls whether debug mode is enabled. If true, debug logs are shown in console. |
+- `KVDB_PORT`: Server TCP/IP port.
+- `KVDB_DEBUG_MODE`: Controls whether debug mode is enabled. If true, debug logs are shown in console.
 
 # Data directory
 

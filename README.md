@@ -50,25 +50,17 @@ These will build the binaries to `bin/` directory in the project root. You can c
 
 For more advanced build, use `go help build` to see more build options.
 
-# Environment
+# Environment variables
 
 ## Server
 
-Environment variables for the server
-
-| Name            | Default value | Description |
-|-----------------|---------------|-------------|
-| KVDB_PORT       | 12345         | Server TCP/IP port. |
-| KVDB_DEBUG_MODE | false         | Controls whether debug mode is enabled. If true, debug logs are shown in console. |
+- `KVDB_PORT`: Server TCP/IP port.
+- `KVDB_DEBUG_MODE`: Controls whether debug mode is enabled. If true, debug logs are shown in console.
 
 ## Tests
 
-Environment variables for tests
-
-| Name            | Default value | Description |
-|-----------------|---------------|-------------|
-| KVDB_PORT       | 12345         | Test server TCP/IP port. |
-| KVDB_HOST       | localhost     | Test server address. |
+- `KVDB_PORT`: Test server TCP/IP port. Default port is 12345.
+- `KVDB_HOST`: Test server address. Default address is localhost.
 
 # Docker
 
@@ -102,3 +94,20 @@ Example of starting a container
 docker run -p 12345:12345 --rm -it kvdb
 ```
 This binds the host's port `12345` to the container's port `12345` so you can access the server outside the container.
+
+# Running tests
+
+Change directory to the project root:
+```bash
+cd kvdb
+```
+
+Run all tests:
+```bash
+go test ./...
+```
+
+Run only integration tests:
+```bash
+go test ./tests/integration
+```
