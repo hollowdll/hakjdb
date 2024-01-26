@@ -195,4 +195,10 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 	if count != 2 {
 		t.Fatalf("key count should be 2 but got %d", count)
 	}
+
+	db.DeleteKey("key1")
+	count = db.GetKeyCount()
+	if count != 1 {
+		t.Fatalf("key count should be 1 but got %d", count)
+	}
 }

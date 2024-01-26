@@ -10,7 +10,7 @@ import (
 )
 
 // DbMaxKeyCount is the maximum number of keys a database can hold.
-const DbMaxKeyCount uint32 = math.MaxUint32 / 2
+const DbMaxKeyCount uint32 = math.MaxUint32
 
 // DatabaseKey represents key-value pair key. Key is stored as string.
 type DatabaseKey string
@@ -27,6 +27,7 @@ type Database struct {
 	// UTC timestamp describing when the database was updated.
 	UpdatedAt time.Time
 	data      map[DatabaseKey]DatabaseStringValue
+	keyCount  uint32
 	mutex     sync.RWMutex
 }
 
@@ -37,6 +38,7 @@ func newDatabase(name string) *Database {
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		data:      make(map[DatabaseKey]DatabaseStringValue),
+		keyCount:  0,
 	}
 }
 
@@ -64,7 +66,7 @@ func (db *Database) GetKeyCount() uint32 {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
-	return uint32(len(db.data))
+	return db.keyCount
 }
 
 // GetStoredSizeBytes returns the size of stored data in the database in bytes.
@@ -114,6 +116,12 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 		return kvdberrors.ErrMaxKeysExceeded
 	}
 
+	if !db.keyExists(key) {
+		db.mutex.Lock()
+		db.keyCount++
+		db.mutex.Unlock()
+	}
+
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 	db.data[key] = value
@@ -131,6 +139,7 @@ func (db *Database) DeleteKey(key DatabaseKey) bool {
 
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
+	db.keyCount--
 	delete(db.data, key)
 	db.update()
 
