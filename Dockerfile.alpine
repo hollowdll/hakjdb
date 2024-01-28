@@ -1,12 +1,12 @@
-FROM golang:alpine as builder
+FROM golang:1.21.6-alpine as builder
 WORKDIR /src
 COPY . .
 RUN go mod download
 
 WORKDIR /src/cmd/kvdbserver
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o kvdb .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o kvdbserver .
 
 FROM alpine:latest
 WORKDIR /kvdb
-COPY --from=builder /src/cmd/kvdbserver/kvdb .
-CMD ["./kvdb"]
+COPY --from=builder /src/cmd/kvdbserver/kvdbserver .
+CMD ["./kvdbserver"]

@@ -5,7 +5,7 @@ Components:
 - `kvdbserver` - The server process
 - `kvdb-cli` - CLI tool to manage the server
   
-**Note!** This project is in early development. No releases yet, but we are close to v0.1.0. Lots of cool stuff coming after that.
+**Note!** This project is in early development.
 
 # Data types
 

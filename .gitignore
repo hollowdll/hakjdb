@@ -22,9 +22,10 @@ bin/
 go.work
 
 # Generated
-data
-logs
+data/
+logs/
 *.log
+dist/
 
 # Config files
 .kvdb-cli.json
