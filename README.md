@@ -19,6 +19,12 @@ Currently supported data types:
 - [Databases](./docs/databases.md)
 - [Data types](./docs/datatypes.md)
 
+# Releases
+
+Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/kvdb/releases)
+
+However, it is recommended to build the binaries from source. Instructions on how to build from source below.
+
 # Build binaries
 
 To build the binaries, you first need to install Go.
