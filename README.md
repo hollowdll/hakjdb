@@ -91,11 +91,11 @@ cd kvdb
 ```
 Debian based image
 ```bash
-docker build -f "./docker/Dockerfile.bookworm" -t kvdb:latest .
+docker build -f "./Dockerfile.bookworm" -t kvdb:latest .
 ```
 Alpine Linux based image
 ```bash
-docker build -f "./docker/Dockerfile.alpine" -t kvdb:alpine .
+docker build -f "./Dockerfile.alpine" -t kvdb:alpine .
 ```
 
 ## Start a container
