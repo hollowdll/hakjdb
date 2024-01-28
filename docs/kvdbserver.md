@@ -4,6 +4,23 @@ kvdbserver is the server process that listens to requests from kvdb clients. It 
 
 The server API is implemented with gRPC and therefore requires HTTP/2. gRPC uses Protocol Buffers data format. Requests are made with RPCs (Remote Procedure Calls) and need a gRPC client.
 
+# How to use
+
+## Running the binary
+
+After you have the server binary, you can run it with:
+
+```bash
+./kvdbserver
+```
+This runs it from the current working directory. Make sure to be in the same directory as the binary.
+
+Now the server should be running with default configurations. The default TCP/IP port is 12345.
+
+## Running with Docker
+
+Another way to run the server is by using Docker. Instructions [here](../README.md#docker)
+
 # Configuration
 
 Configurations are saved to a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `.kvdbserver.json` and it is created to the data directory. Configurations are saved in JSON format.

@@ -32,17 +32,27 @@ You may also need tools to work with gRPC and Protocol Buffers in Go. This is ne
 
 After you have successfully installed go, clone this repository.
 
-Change directory to the project root
+Cloning with git:
+```bash
+git clone https://github.com/hollowdll/kvdb.git
+```
+
+Change directory to the project root:
 ```bash
 cd kvdb
 ```
 
-Build the server binary
+Get the dependencies:
+```bash
+go mod tidy
+```
+
+Build the server:
 ```bash
 go build -o ./bin/kvdbserver/ ./cmd/kvdbserver/
 ```
 
-Build the CLI tool
+Build the CLI:
 ```bash
 go build -o ./bin/kvdb-cli/ ./cmd/kvdb-cli/
 ```
