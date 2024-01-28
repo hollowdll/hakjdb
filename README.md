@@ -89,14 +89,20 @@ Make sure to be in the project root
 ```bash
 cd kvdb
 ```
-Debian based image
+Latest tag
 ```bash
 docker build -f "./Dockerfile.bookworm" -t kvdb:latest .
+```
+Debian based image
+```bash
+docker build -f "./Dockerfile.bookworm" -t kvdb:bookworm .
 ```
 Alpine Linux based image
 ```bash
 docker build -f "./Dockerfile.alpine" -t kvdb:alpine .
 ```
+
+These commands build the image only for a single architecture. If you want to build multi-arch images for other platforms, read [this](https://docs.docker.com/build/building/multi-platform/).
 
 ## Start a container
 
