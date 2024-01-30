@@ -24,7 +24,7 @@ func init() {
 }
 
 func createDatabase() {
-	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), client.CtxTimeoutSeconds)
 	defer cancel()
 	_, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{DbName: dbName})
 	client.CheckGrpcError(err)

@@ -55,19 +55,19 @@ $ kvdb-cli info
 
 This will show something like this:
 ```bash
-server_version: 0.0.0
-go_version: go1.21.0
+kvdb_version: 0.1.0
+go_version: go1.21.6
 db_count: 0
 total_data_size: 0B
-os: Microsoft Windows [Version 10.0.19045.3930]
+os: Linux 5.10.102.1-microsoft-standard-WSL2 x86_64
 arch: amd64
-process_id: 2484
-uptime_seconds: 2646
+process_id: 1
+uptime_seconds: 54
 tcp_port: 12345
 ```
 Meaning of the fields:
 
-- `server_version`: Version of the server
+- `kvdb_version`: Version of kvdb
 - `go_version`: Version of go used to compile the server
 - `db_count`: Number of databases
 - `total_data_size`: Total amount of stored data in bytes

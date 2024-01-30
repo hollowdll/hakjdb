@@ -25,7 +25,7 @@ func init() {
 }
 
 func showDbInfo() {
-	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), client.CtxTimeoutSeconds)
 	defer cancel()
 	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &kvdbserver.GetDatabaseInfoRequest{DbName: dbName})
 	client.CheckGrpcError(err)

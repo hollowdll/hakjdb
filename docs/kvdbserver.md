@@ -29,14 +29,14 @@ Here is a list of all configurations with their default values:
 
 ```json
 {
-  "debug_mode": false,
+  "debug_enabled": false,
   "port": 12345
 }
 ```
 
 Meaning of fields:
 
-- `debug_mode`: Specifies if debug mode is enabled. If enabled, debug logs are shown in console. Can be true or false.
+- `debug_enabled`: Specifies if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
 
 # Environment variables
@@ -46,7 +46,7 @@ It is also possible to change configurations with environment variables. Environ
 Here is a list of all environment variables:
 
 - `KVDB_PORT`: Server TCP/IP port.
-- `KVDB_DEBUG_MODE`: Controls whether debug mode is enabled. If true, debug logs are shown in console.
+- `KVDB_DEBUG_ENABLED`: Controls whether debug mode is enabled. If true, debug messages are logged.
 
 # Data directory
 

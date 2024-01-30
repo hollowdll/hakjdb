@@ -13,8 +13,8 @@ message GetServerInfoResponse {
 
 // Information about the server. Will have more fields in future versions.
 message ServerInfo {
-    // Version of the server.
-    string version = 1;
+    // Version of kvdb.
+    string kvdb_version = 1;
     // Version of go used to compile the server.
     string go_version = 2;
     // Number of databases.

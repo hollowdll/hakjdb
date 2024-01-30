@@ -72,7 +72,7 @@ For more advanced build, use `go help build` to see more build options.
 ## Server
 
 - `KVDB_PORT`: Server TCP/IP port.
-- `KVDB_DEBUG_MODE`: Controls whether debug mode is enabled. If true, debug logs are shown in console.
+- `KVDB_DEBUG_ENABLED`: Controls whether debug mode is enabled. If true, debug messages are logged.
 
 ## Tests
 

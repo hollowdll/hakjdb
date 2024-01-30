@@ -19,13 +19,13 @@ var cmdInfo = &cobra.Command{
 }
 
 func showServerInfo() {
-	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), client.CtxTimeoutSeconds)
 	defer cancel()
 	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserver.GetServerInfoRequest{})
 	client.CheckGrpcError(err)
 
 	var info string
-	info += fmt.Sprintf("server_version: %s\n", response.Data.GetVersion())
+	info += fmt.Sprintf("kvdb_version: %s\n", response.Data.GetKvdbVersion())
 	info += fmt.Sprintf("go_version: %s\n", response.Data.GetGoVersion())
 	info += fmt.Sprintf("db_count: %d\n", response.Data.GetDbCount())
 	info += fmt.Sprintf("total_data_size: %dB\n", response.Data.GetTotalDataSize())

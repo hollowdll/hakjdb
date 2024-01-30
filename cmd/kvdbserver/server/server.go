@@ -100,7 +100,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	defer s.mutex.RUnlock()
 
 	info := &kvdbserver.ServerInfo{
-		Version:       version.Version,
+		KvdbVersion:   version.Version,
 		GoVersion:     runtime.Version(),
 		DbCount:       uint32(len(s.databases)),
 		TotalDataSize: s.getTotalDataSize(),
@@ -122,7 +122,7 @@ func initServer() (*Server, *grpc.Server) {
 	server.logger.ClearFlags()
 
 	// Enable debug logs.
-	if viper.GetBool(ConfigKeyDebugMode) {
+	if viper.GetBool(ConfigKeyDebugEnabled) {
 		server.logger.EnableDebug()
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
 	}
