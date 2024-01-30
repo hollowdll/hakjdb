@@ -122,7 +122,7 @@ func initServer() (*Server, *grpc.Server) {
 	server.logger.ClearFlags()
 
 	// Enable debug logs.
-	if viper.GetBool(ConfigKeyDebugMode) {
+	if viper.GetBool(ConfigKeyDebugEnabled) {
 		server.logger.EnableDebug()
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
 	}

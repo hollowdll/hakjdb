@@ -15,7 +15,7 @@ const (
 	// ConfigKeyPort is the key for port configuration.
 	ConfigKeyPort string = "port"
 	// ConfigKeyDebugMode is the key for debug mode configuration.
-	ConfigKeyDebugMode string = "debug_mode"
+	ConfigKeyDebugEnabled string = "debug_enabled"
 )
 
 // initConfig initializes server configurations.
@@ -34,7 +34,7 @@ func initConfig(s *Server) {
 	viper.SetConfigName(configFileName)
 
 	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
-	viper.SetDefault(ConfigKeyDebugMode, false)
+	viper.SetDefault(ConfigKeyDebugEnabled, false)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
