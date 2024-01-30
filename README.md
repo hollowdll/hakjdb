@@ -21,7 +21,9 @@ Currently supported data types:
 
 # Releases
 
-Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/kvdb/releases)
+Release notes are available [here](./docs/changelog/).
+
+Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/kvdb/releases).
 
 However, it is recommended to build the binaries from source. Instructions on how to build from source below.
 
@@ -29,7 +31,7 @@ However, it is recommended to build the binaries from source. Instructions on ho
 
 To build the binaries, you first need to install Go.
 
-Instructions [here](https://go.dev/doc/install)
+Instructions [here](https://go.dev/doc/install).
 
 You may also need tools to work with gRPC and Protocol Buffers in Go. This is needed if you want to compile `.proto` files and generate Go code.
 
