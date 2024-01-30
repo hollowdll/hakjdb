@@ -19,7 +19,7 @@ var cmdInfo = &cobra.Command{
 }
 
 func showServerInfo() {
-	ctx, cancel := context.WithTimeout(context.Background(), client.ClientCtxTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), client.CtxTimeoutSeconds)
 	defer cancel()
 	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserver.GetServerInfoRequest{})
 	client.CheckGrpcError(err)

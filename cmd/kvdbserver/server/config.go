@@ -14,7 +14,7 @@ const (
 	EnvPrefix string = "kvdb"
 	// ConfigKeyPort is the key for port configuration.
 	ConfigKeyPort string = "port"
-	// ConfigKeyDebugMode is the key for debug mode configuration.
+	// ConfigKeyDebugEnabled is the key for debug mode configuration.
 	ConfigKeyDebugEnabled string = "debug_enabled"
 )
 

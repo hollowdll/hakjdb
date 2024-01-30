@@ -9,8 +9,10 @@ import (
 const (
 	configFileName string = ".kvdb-cli"
 	configFileType string = "json"
-	ConfigKeyHost  string = "host"
-	ConfigKeyPort  string = "port"
+	// ConfigKeyHost is the configuration key for host.
+	ConfigKeyHost string = "host"
+	// ConfigKeyPort is the configuration key for port.
+	ConfigKeyPort string = "port"
 )
 
 // InitConfig initializes and loads configurations.
@@ -26,6 +28,5 @@ func InitConfig() {
 	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
 
 	viper.SafeWriteConfig()
-	err = viper.ReadInConfig()
-	cobra.CheckErr(err)
+	cobra.CheckErr(viper.ReadInConfig())
 }

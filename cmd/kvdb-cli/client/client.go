@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	// ClientCtxTimeout specifies how long to wait until operation terminates.
-	ClientCtxTimeout = time.Second * 10
+	// CtxTimeoutSeconds specifies the number of seconds to wait until operation terminates.
+	CtxTimeoutSeconds = time.Second * 10
 	// ValueNone is a special value for values that do not exist.
 	ValueNone string = "(None)"
 )
