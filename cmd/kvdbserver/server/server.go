@@ -100,7 +100,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	defer s.mutex.RUnlock()
 
 	info := &kvdbserver.ServerInfo{
-		Version:       version.Version,
+		KvdbVersion:   version.Version,
 		GoVersion:     runtime.Version(),
 		DbCount:       uint32(len(s.databases)),
 		TotalDataSize: s.getTotalDataSize(),

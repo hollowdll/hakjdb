@@ -25,7 +25,7 @@ func showServerInfo() {
 	client.CheckGrpcError(err)
 
 	var info string
-	info += fmt.Sprintf("server_version: %s\n", response.Data.GetVersion())
+	info += fmt.Sprintf("kvdb_version: %s\n", response.Data.GetKvdbVersion())
 	info += fmt.Sprintf("go_version: %s\n", response.Data.GetGoVersion())
 	info += fmt.Sprintf("db_count: %d\n", response.Data.GetDbCount())
 	info += fmt.Sprintf("total_data_size: %dB\n", response.Data.GetTotalDataSize())
