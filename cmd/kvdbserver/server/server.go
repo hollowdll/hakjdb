@@ -24,10 +24,11 @@ type Server struct {
 	kvdbserver.UnimplementedDatabaseServiceServer
 	kvdbserver.UnimplementedServerServiceServer
 	kvdbserver.UnimplementedStorageServiceServer
-	startTime time.Time
-	databases map[string]*kvdb.Database
-	logger    kvdb.Logger
-	mutex     sync.RWMutex
+	startTime       time.Time
+	databases       map[string]*kvdb.Database
+	credentialStore InMemoryCredentialStore
+	logger          kvdb.Logger
+	mutex           sync.RWMutex
 }
 
 // portInUse is the TCP/IP port the server uses.
@@ -35,9 +36,10 @@ var portInUse uint16
 
 func NewServer() *Server {
 	return &Server{
-		startTime: time.Now(),
-		databases: make(map[string]*kvdb.Database),
-		logger:    kvdb.NewDefaultLogger(),
+		startTime:       time.Now(),
+		databases:       make(map[string]*kvdb.Database),
+		credentialStore: *newInMemoryCredentialStore(),
+		logger:          kvdb.NewDefaultLogger(),
 	}
 }
 
