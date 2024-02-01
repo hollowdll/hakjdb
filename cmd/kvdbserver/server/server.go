@@ -27,6 +27,7 @@ type Server struct {
 	startTime       time.Time
 	databases       map[string]*kvdb.Database
 	credentialStore InMemoryCredentialStore
+	passwordEnabled bool
 	logger          kvdb.Logger
 	mutex           sync.RWMutex
 }
@@ -38,7 +39,8 @@ func NewServer() *Server {
 	return &Server{
 		startTime:       time.Now(),
 		databases:       make(map[string]*kvdb.Database),
-		credentialStore: *newInMemoryCredentialStore(),
+		credentialStore: *NewInMemoryCredentialStore(),
+		passwordEnabled: false,
 		logger:          kvdb.NewDefaultLogger(),
 	}
 }
@@ -127,6 +129,18 @@ func initServer() (*Server, *grpc.Server) {
 	if viper.GetBool(ConfigKeyDebugEnabled) {
 		server.logger.EnableDebug()
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
+	}
+
+	// Enable password protection.
+	password, present := os.LookupEnv(EnvVarPassword)
+	if present {
+		if err := server.credentialStore.SetServerPassword([]byte(password)); err != nil {
+			server.logger.Fatalf("Failed to set server password: %v", err)
+		}
+		server.passwordEnabled = true
+		server.logger.Infof("Password protection is enabled. Clients need to authenticate using password.")
+	} else {
+		server.logger.Warningf("Password protection is disabled.")
 	}
 
 	grpcServer := grpc.NewServer()

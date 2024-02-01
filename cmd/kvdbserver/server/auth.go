@@ -7,7 +7,7 @@ type InMemoryCredentialStore struct {
 	serverPasswordHash []byte
 }
 
-func newInMemoryCredentialStore() *InMemoryCredentialStore {
+func NewInMemoryCredentialStore() *InMemoryCredentialStore {
 	return &InMemoryCredentialStore{
 		serverPasswordHash: nil,
 	}
