@@ -11,11 +11,14 @@ const (
 	dataDirName    string = "data"
 
 	// EnvPrefix is the prefix that environment variables use.
-	EnvPrefix string = "kvdb"
+	EnvPrefix string = "KVDB"
 	// ConfigKeyPort is the key for port configuration.
 	ConfigKeyPort string = "port"
 	// ConfigKeyDebugEnabled is the key for debug mode configuration.
 	ConfigKeyDebugEnabled string = "debug_enabled"
+
+	// EnvVarPassword is the environment variable for server password.
+	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 )
 
 // initConfig initializes server configurations.
