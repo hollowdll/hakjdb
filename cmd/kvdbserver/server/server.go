@@ -27,6 +27,7 @@ type Server struct {
 	startTime       time.Time
 	databases       map[string]*kvdb.Database
 	credentialStore InMemoryCredentialStore
+	// True if the server is password protected.
 	passwordEnabled bool
 	logger          kvdb.Logger
 	mutex           sync.RWMutex
@@ -143,7 +144,7 @@ func initServer() (*Server, *grpc.Server) {
 		server.logger.Warningf("Password protection is disabled.")
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
 	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
 	kvdbserver.RegisterServerServiceServer(grpcServer, server)
 	kvdbserver.RegisterStorageServiceServer(grpcServer, server)
