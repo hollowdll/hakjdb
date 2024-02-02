@@ -51,6 +51,11 @@ func (s *Server) DisableLogger() {
 	s.logger.Disable()
 }
 
+// EnablePassword enables server password protection.
+func (s *Server) EnablePassword() {
+	s.passwordEnabled = true
+}
+
 // getTotalDataSize returns the total amount of stored data on this server in bytes.
 func (s *Server) getTotalDataSize() uint64 {
 	var sum uint64
@@ -138,7 +143,7 @@ func initServer() (*Server, *grpc.Server) {
 		if err := server.credentialStore.SetServerPassword([]byte(password)); err != nil {
 			server.logger.Fatalf("Failed to set server password: %v", err)
 		}
-		server.passwordEnabled = true
+		server.EnablePassword()
 		server.logger.Infof("Password protection is enabled. Clients need to authenticate using password.")
 	} else {
 		server.logger.Warningf("Password protection is disabled.")
