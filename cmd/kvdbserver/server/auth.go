@@ -1,6 +1,16 @@
 package server
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"context"
+
+	kvdberrors "github.com/hollowdll/kvdb/errors"
+	"github.com/hollowdll/kvdb/internal/common"
+	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
+)
 
 // InMemoryCredentialStore stores server credentials like passwords in memory.
 type InMemoryCredentialStore struct {
@@ -27,11 +37,38 @@ func (cs *InMemoryCredentialStore) SetServerPassword(password []byte) error {
 
 // IsCorrectServerPassword checks if provided password matches the server password.
 // Returns true if matches, otherwise false.
-func (cs *InMemoryCredentialStore) IsCorrectServerPassword(password []byte) (bool, error) {
-	err := bcrypt.CompareHashAndPassword(cs.serverPasswordHash, password)
-	if err != nil {
-		return false, err
+func (cs *InMemoryCredentialStore) IsCorrectServerPassword(password []byte) error {
+	return bcrypt.CompareHashAndPassword(cs.serverPasswordHash, password)
+}
+
+// authInterceptor is unary interceptor to handle authorization for RPC calls.
+func (s *Server) authInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
+		s.logger.Errorf("Failed to authorize request: %v", err)
+		return nil, err
 	}
 
-	return true, nil
+	return handler(ctx, req)
+}
+
+// AuthorizeIncomingRpcCall checks that incoming RPC call provides valid credentials.
+func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
+	if s.passwordEnabled {
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error())
+		}
+
+		passwordValues := md.Get(common.GrpcMetadataKeyPassword)
+		if len(passwordValues) < 1 {
+			return status.Errorf(codes.Unauthenticated, "%s (%s)", kvdberrors.ErrMissingKeyInMetadata, common.GrpcMetadataKeyPassword)
+		}
+		password := passwordValues[0]
+
+		err := s.CredentialStore.IsCorrectServerPassword([]byte(password))
+		if err != nil {
+			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
+		}
+	}
+	return nil
 }

@@ -42,7 +42,7 @@ var (
 	// in gRPC metadata.
 	ErrMissingKeyInMetadata = errors.New("missing key in metadata")
 
-	// ErrWriteLogFile is returned when a write operation to a log file fails.
-	// Combine this with another error if needed.
-	ErrWriteLogFile = errors.New("failed to write to log file")
+	// ErrInvalidCredentials is returned in authorization process
+	// if provided credentials are incorrect.
+	ErrInvalidCredentials = errors.New("invalid credentials")
 )
