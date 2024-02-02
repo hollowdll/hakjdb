@@ -26,7 +26,7 @@ type Server struct {
 	kvdbserver.UnimplementedStorageServiceServer
 	startTime       time.Time
 	databases       map[string]*kvdb.Database
-	credentialStore InMemoryCredentialStore
+	CredentialStore InMemoryCredentialStore
 	// True if the server is password protected.
 	passwordEnabled bool
 	logger          kvdb.Logger
@@ -40,7 +40,7 @@ func NewServer() *Server {
 	return &Server{
 		startTime:       time.Now(),
 		databases:       make(map[string]*kvdb.Database),
-		credentialStore: *NewInMemoryCredentialStore(),
+		CredentialStore: *NewInMemoryCredentialStore(),
 		passwordEnabled: false,
 		logger:          kvdb.NewDefaultLogger(),
 	}
@@ -51,8 +51,10 @@ func (s *Server) DisableLogger() {
 	s.logger.Disable()
 }
 
-// EnablePassword enables server password protection.
+// EnablePassword enables server password protection
+// and sets the password to empty string.
 func (s *Server) EnablePassword() {
+	s.CredentialStore.SetServerPassword([]byte(""))
 	s.passwordEnabled = true
 }
 
@@ -140,10 +142,10 @@ func initServer() (*Server, *grpc.Server) {
 	// Enable password protection.
 	password, present := os.LookupEnv(EnvVarPassword)
 	if present {
-		if err := server.credentialStore.SetServerPassword([]byte(password)); err != nil {
+		server.EnablePassword()
+		if err := server.CredentialStore.SetServerPassword([]byte(password)); err != nil {
 			server.logger.Fatalf("Failed to set server password: %v", err)
 		}
-		server.EnablePassword()
 		server.logger.Infof("Password protection is enabled. Clients need to authenticate using password.")
 	} else {
 		server.logger.Warningf("Password protection is disabled.")

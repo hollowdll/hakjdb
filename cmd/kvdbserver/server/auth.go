@@ -43,18 +43,16 @@ func (cs *InMemoryCredentialStore) IsCorrectServerPassword(password []byte) erro
 
 // authInterceptor is unary interceptor to handle authorization for RPC calls.
 func (s *Server) authInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	if err := s.authorizeIncomingRpcCall(ctx); err != nil {
+	if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
+		s.logger.Errorf("Failed to authorize request: %v", err)
 		return nil, err
 	}
 
-	h, err := handler(ctx, req)
-	s.logger.Errorf("Failed to authorize request: %v", err)
-
-	return h, err
+	return handler(ctx, req)
 }
 
-// authorizeIncomingRpcCall checks that incoming RPC call provides valid credentials.
-func (s *Server) authorizeIncomingRpcCall(ctx context.Context) error {
+// AuthorizeIncomingRpcCall checks that incoming RPC call provides valid credentials.
+func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
 	if s.passwordEnabled {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
@@ -67,9 +65,9 @@ func (s *Server) authorizeIncomingRpcCall(ctx context.Context) error {
 		}
 		password := passwordValues[0]
 
-		err := s.credentialStore.IsCorrectServerPassword([]byte(password))
+		err := s.CredentialStore.IsCorrectServerPassword([]byte(password))
 		if err != nil {
-			return status.Errorf(codes.Unauthenticated, "invalid credentials: %v", err)
+			return status.Error(codes.Unauthenticated, "invalid credentials")
 		}
 	}
 	return nil
