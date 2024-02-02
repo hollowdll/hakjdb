@@ -53,7 +53,7 @@ func TestIsCorrectServerPassword(t *testing.T) {
 		assert.Error(t, err, "expected error")
 	})
 
-	t.Run("PasswordIsNil", func(t *testing.T) {
+	t.Run("PasswordIsNotSet", func(t *testing.T) {
 		credentialStore := server.NewInMemoryCredentialStore()
 		password := "pass123"
 

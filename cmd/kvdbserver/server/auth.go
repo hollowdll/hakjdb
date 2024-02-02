@@ -56,7 +56,7 @@ func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
 	if s.passwordEnabled {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return status.Errorf(codes.InvalidArgument, "%s", kvdberrors.ErrMissingMetadata)
+			return status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error())
 		}
 
 		passwordValues := md.Get(common.GrpcMetadataKeyPassword)
@@ -67,7 +67,7 @@ func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
 
 		err := s.CredentialStore.IsCorrectServerPassword([]byte(password))
 		if err != nil {
-			return status.Error(codes.Unauthenticated, "invalid credentials")
+			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
 		}
 	}
 	return nil
