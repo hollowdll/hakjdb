@@ -9,10 +9,15 @@ import (
 const (
 	configFileName string = ".kvdb-cli"
 	configFileType string = "json"
+	EnvPrefix      string = "KVDBCLI"
+
 	// ConfigKeyHost is the configuration key for host.
 	ConfigKeyHost string = "host"
 	// ConfigKeyPort is the configuration key for port.
 	ConfigKeyPort string = "port"
+
+	// EnvVarPassword is the environment variable for password.
+	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 )
 
 // InitConfig initializes and loads configurations.
