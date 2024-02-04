@@ -61,7 +61,7 @@ func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
 
 		passwordValues := md.Get(common.GrpcMetadataKeyPassword)
 		if len(passwordValues) < 1 {
-			return status.Errorf(codes.Unauthenticated, "%s (%s)", kvdberrors.ErrMissingKeyInMetadata, common.GrpcMetadataKeyPassword)
+			return status.Errorf(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
 		}
 		password := passwordValues[0]
 

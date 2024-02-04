@@ -8,6 +8,7 @@ import (
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc/metadata"
 )
 
 var cmdDbInfo = &cobra.Command{
@@ -25,7 +26,8 @@ func init() {
 }
 
 func showDbInfo() {
-	ctx, cancel := context.WithTimeout(context.Background(), client.CtxTimeoutSeconds)
+	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
+	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &kvdbserver.GetDatabaseInfoRequest{DbName: dbName})
 	client.CheckGrpcError(err)
