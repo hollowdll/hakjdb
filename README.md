@@ -83,7 +83,10 @@ For more advanced build, use `go help build` to see more build options.
 
 # Docker
 
-Images are available in Docker Hub. See [repository](https://hub.docker.com/r/hakj/kvdb).
+Images are available in Docker Hub with multiple tags. Links below.
+
+- [Repository](https://hub.docker.com/r/hakj/kvdb)
+- [Tags](https://hub.docker.com/r/hakj/kvdb/tags)
 
 ## Pull the server image
 
