@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	// CtxTimeoutSeconds specifies the number of seconds to wait until operation terminates.
-	CtxTimeoutSeconds = time.Second * 10
+	// CtxTimeout specifies the number of seconds to wait until operation terminates.
+	CtxTimeout time.Duration = time.Second * 10
 	// ValueNone is a special value for values that do not exist.
 	ValueNone string = "(None)"
 )

@@ -29,7 +29,7 @@ func setString(key string, value string) {
 	md := client.GetBaseGrpcMetadata()
 	md.Set(common.GrpcMetadataKeyDbName, dbName)
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeoutSeconds)
+	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
 	_, err := client.GrpcStorageClient.SetString(ctx, &kvdbserver.SetStringRequest{Key: key, Value: value})

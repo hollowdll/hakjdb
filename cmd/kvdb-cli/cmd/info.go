@@ -21,7 +21,7 @@ var cmdInfo = &cobra.Command{
 
 func showServerInfo() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeoutSeconds)
+	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserver.GetServerInfoRequest{})
 	client.CheckGrpcError(err)

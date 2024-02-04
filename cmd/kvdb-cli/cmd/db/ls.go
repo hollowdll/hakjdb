@@ -22,7 +22,7 @@ var cmdDbLs = &cobra.Command{
 
 func showDatabaseNames() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeoutSeconds)
+	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 	response, err := client.GrpcDatabaseClient.GetAllDatabases(ctx, &kvdbserver.GetAllDatabasesRequest{})
 	client.CheckGrpcError(err)

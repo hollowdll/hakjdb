@@ -29,7 +29,7 @@ func deleteKey(key string) {
 	md := client.GetBaseGrpcMetadata()
 	md.Set(common.GrpcMetadataKeyDbName, dbName)
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeoutSeconds)
+	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
 	response, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserver.DeleteKeyRequest{Key: key})
