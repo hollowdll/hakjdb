@@ -6,9 +6,17 @@ kvdb-cli is a CLI (command line interface) to interact with a kvdb server.
 
 Configurations are saved to a configuration file and can be changed there. kvdb-cli creates this file with default configurations if it doesn't exist. The name of the configuration file is `.kvdb-cli.json`.
 
-# Usage
+# Environment variables
 
-## How to use
+Here is a list of all environment variables:
+
+- `KVDBCLI_PASSWORD`: Provides password to access password protected server.
+
+# Password
+
+If the server is password protected, you can provide password with environment variable `KVDBCLI_PASSWORD`. kvdb-cli reads the value and sends it to the server in every request.
+
+# How to use
 
 Show help page for a command:
 ```bash

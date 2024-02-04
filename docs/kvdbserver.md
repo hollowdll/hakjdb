@@ -46,6 +46,7 @@ It is also possible to change configurations with environment variables. Environ
 Here is a list of all environment variables:
 
 - `KVDB_PORT`: Server TCP/IP port.
+- `KVDB_PASSWORD`: Server password. If not set, password protection is disabled.
 - `KVDB_DEBUG_ENABLED`: Controls whether debug mode is enabled. If true, debug messages are logged.
 
 # Data directory
@@ -62,7 +63,7 @@ There are five different types of logs:
 - `Warning`: Warning messages
 - `Fatal`: Fatal error messages.
 
-Debug messages are disabled by default. You can enable them by turning debug mode on.
+Debug messages are disabled by default. You can enable them by turning debug mode on. Debug mode can be enabled by modifying the configuration file or with environment variable `KVDB_DEBUG_ENABLED` set to true.
 
 # Security
 
