@@ -14,9 +14,11 @@ Here is a list of all environment variables:
 
 # Password
 
-If the server is password protected, you can provide password with environment variable `KVDBCLI_PASSWORD`. kvdb-cli reads the value and sends it to the server in every request.
+If the server is password protected, you can provide password with environment variable `KVDBCLI_PASSWORD`. kvdb-cli reads the value and sends it to the server in every request to perform authentication.
 
-# How to use
+# Usage
+
+## How to use
 
 Show help page for a command:
 ```bash
