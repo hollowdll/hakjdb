@@ -136,3 +136,7 @@ Run only integration tests:
 ```bash
 go test ./tests/integration
 ```
+
+# License
+
+This project is licensed under MIT license. It is free and open source software.
