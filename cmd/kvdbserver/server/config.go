@@ -17,6 +17,9 @@ const (
 	// ConfigKeyDebugEnabled is the key for debug mode configuration.
 	ConfigKeyDebugEnabled string = "debug_enabled"
 
+	// DefaultDatabase is the name of the default database.
+	DefaultDatabase string = "default"
+
 	// EnvVarPassword is the environment variable for server password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 )
