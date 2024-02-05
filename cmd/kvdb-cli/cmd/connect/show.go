@@ -20,6 +20,8 @@ var cmdConnectShow = &cobra.Command{
 func showConnectionSettings() {
 	var output string
 	output += fmt.Sprintf("Host: %s\n", viper.GetString(config.ConfigKeyHost))
-	output += fmt.Sprintf("Port: %d", viper.GetUint16(config.ConfigKeyPort))
+	output += fmt.Sprintf("Port: %d\n", viper.GetUint16(config.ConfigKeyPort))
+	output += fmt.Sprintf("Database: %s", viper.GetString(config.ConfigKeyDatabase))
+
 	fmt.Println(output)
 }
