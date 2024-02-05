@@ -7,26 +7,21 @@ import (
 )
 
 const (
-	defaultHost string = ""
-	defaultPort uint16 = 0
+	defaultHost   string = ""
+	defaultPort   uint16 = 0
+	defaultDbName string = ""
 )
 
 var (
 	host          string
 	port          uint16
+	dbName        string
 	cmdConnectSet = &cobra.Command{
 		Use:   "set",
 		Short: "Change connection settings",
 		Long:  "Change connection settings to a kvdb server",
 		Run: func(cmd *cobra.Command, args []string) {
-			if host != defaultHost {
-				viper.Set(config.ConfigKeyHost, host)
-			}
-			if port != defaultPort {
-				viper.Set(config.ConfigKeyPort, port)
-			}
-			err := viper.WriteConfig()
-			cobra.CheckErr(err)
+			setConnectionSettings()
 		},
 	}
 )
@@ -34,4 +29,19 @@ var (
 func init() {
 	cmdConnectSet.Flags().StringVarP(&host, "host", "a", defaultHost, "server address")
 	cmdConnectSet.Flags().Uint16VarP(&port, "port", "p", defaultPort, "port number")
+	cmdConnectSet.Flags().StringVarP(&dbName, "db", "d", defaultDbName, "default database")
+}
+
+func setConnectionSettings() {
+	if host != defaultHost {
+		viper.Set(config.ConfigKeyHost, host)
+	}
+	if port != defaultPort {
+		viper.Set(config.ConfigKeyPort, port)
+	}
+	if dbName != defaultDbName {
+		viper.Set(config.ConfigKeyDatabase, dbName)
+	}
+	err := viper.WriteConfig()
+	cobra.CheckErr(err)
 }

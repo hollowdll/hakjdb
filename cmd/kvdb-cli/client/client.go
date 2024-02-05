@@ -65,5 +65,8 @@ func GetBaseGrpcMetadata() metadata.MD {
 		md.Set(common.GrpcMetadataKeyPassword, password)
 	}
 
+	dbName := viper.GetString(config.ConfigKeyDatabase)
+	md.Set(common.GrpcMetadataKeyDbName, dbName)
+
 	return md
 }
