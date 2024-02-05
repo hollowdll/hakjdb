@@ -27,7 +27,9 @@ func init() {
 
 func setString(key string, value string) {
 	md := client.GetBaseGrpcMetadata()
-	md.Set(common.GrpcMetadataKeyDbName, dbName)
+	if len(dbName) > 0 {
+		md.Set(common.GrpcMetadataKeyDbName, dbName)
+	}
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()

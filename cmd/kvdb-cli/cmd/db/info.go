@@ -6,8 +6,10 @@ import (
 	"time"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -21,14 +23,16 @@ var cmdDbInfo = &cobra.Command{
 }
 
 func init() {
-	cmdDbInfo.Flags().StringVarP(&dbName, "name", "n", "", "name of the database (required)")
-	cmdDbInfo.MarkFlagRequired("name")
+	cmdDbInfo.Flags().StringVarP(&dbName, "name", "n", "", "name of the database")
 }
 
 func showDbInfo() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
+	if len(dbName) < 1 {
+		dbName = viper.GetString(config.ConfigKeyDatabase)
+	}
 	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &kvdbserver.GetDatabaseInfoRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
