@@ -10,6 +10,7 @@ Here is a list of all configurations with their default values:
 
 ```json
 {
+  "default_db": "default",
   "host": "localhost",
   "port": 12345
 }
@@ -17,6 +18,7 @@ Here is a list of all configurations with their default values:
 
 Meaning of fields:
 
+- `default_db`: Default database to use. Commands use this database by default.
 - `host`: Server's address to connect to. Can be hostname or IP address.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
 
@@ -46,7 +48,7 @@ Every command has its own help page.
 
 ## Connecting to a server
 
-By default, kvdb-cli tries to connect to a kvdb server at address 127.0.0.1 in port 12345. 127.0.0.1 is the same as your machine's localhost. Port 12345 is the server's default port.
+By default, kvdb-cli tries to connect to a kvdb server at address 127.0.0.1 in port 12345. 127.0.0.1 is the same as your machine's localhost. Port 12345 is the server's default port. The default database to use is 'default'.
 
 To see the current connection settings, use the following command:
 ```bash
@@ -57,6 +59,7 @@ It will show something like this:
 ```bash
 Host: localhost
 Port: 12345
+Database: default
 ```
 
 To change the connection settings, use the following command with desired flags:

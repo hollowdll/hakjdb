@@ -70,3 +70,7 @@ Debug messages are disabled by default. You can enable them by turning debug mod
 The server can be password protected to prevent unauthorized use. When password protection is enabled, all clients must authenticate using password. By default, password protection is disabled.
 
 Password protection can be enabled by setting password with environment variable `KVDB_PASSWORD`. The password is hashed using bcrypt and stored in the server's memory.
+
+# Default database
+
+When the server starts, it creates an empty default database 'default'.

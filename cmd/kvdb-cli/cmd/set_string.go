@@ -22,7 +22,7 @@ var cmdSetString = &cobra.Command{
 }
 
 func init() {
-	cmdSetString.Flags().StringVarP(&dbName, "db", "d", "", "name of the database")
+	cmdSetString.Flags().StringVarP(&dbName, "db", "d", "", "database to use")
 }
 
 func setString(key string, value string) {
