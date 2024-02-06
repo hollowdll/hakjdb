@@ -69,18 +69,6 @@ These will build the binaries to `bin/` directory in the project root. You can c
 
 For more advanced build, use `go help build` to see more build options.
 
-# Environment variables
-
-## Server
-
-- `KVDB_PORT`: Server TCP/IP port.
-- `KVDB_DEBUG_ENABLED`: Controls whether debug mode is enabled. If true, debug messages are logged.
-
-## Tests
-
-- `KVDB_PORT`: Test server TCP/IP port. Default port is 12345.
-- `KVDB_HOST`: Test server address. Default address is localhost.
-
 # Docker
 
 Images are available in Docker Hub with multiple tags. Links below.
@@ -139,6 +127,13 @@ Run only integration tests:
 ```bash
 go test ./tests/integration
 ```
+
+## Integration test environment variables
+
+Integration test environment is configurable. Below is a list of environment variables that can be used when running integration tests.
+
+- `KVDB_PORT`: Test server TCP/IP port. Default port is 12345.
+- `KVDB_HOST`: Test server address. The test client will try to connect to this. Default address is localhost.
 
 # License
 
