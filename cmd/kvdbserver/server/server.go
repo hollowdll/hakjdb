@@ -151,6 +151,14 @@ func initServer() (*Server, *grpc.Server) {
 		server.logger.Warningf("Password protection is disabled.")
 	}
 
+	// Create default database
+	db, err := kvdb.CreateDatabase(DefaultDatabase)
+	if err != nil {
+		server.logger.Fatalf("Failed to create default database: %v", err)
+	}
+	server.databases[db.Name] = db
+	server.logger.Infof("Created default database '%s'", db.Name)
+
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
 	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
 	kvdbserver.RegisterServerServiceServer(grpcServer, server)
