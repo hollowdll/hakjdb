@@ -22,8 +22,8 @@ const (
 	// EnvVarPassword is the environment variable for password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 
-	// DefaultDatabase is the name of the default database.
-	DefaultDatabase string = ""
+	// DefaultDatabase is the name of the default database to use.
+	DefaultDatabase string = "default"
 )
 
 // InitConfig initializes and loads configurations.
