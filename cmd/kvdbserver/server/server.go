@@ -152,7 +152,7 @@ func initServer() (*Server, *grpc.Server) {
 	}
 
 	// Create default database
-	db, err := kvdb.CreateDatabase(DefaultDatabase)
+	db, err := kvdb.CreateDatabase(viper.GetString(ConfigKeyDefaultDatabase))
 	if err != nil {
 		server.logger.Fatalf("Failed to create default database: %v", err)
 	}

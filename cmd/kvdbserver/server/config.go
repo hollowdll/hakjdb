@@ -12,10 +12,12 @@ const (
 
 	// EnvPrefix is the prefix that environment variables use.
 	EnvPrefix string = "KVDB"
-	// ConfigKeyPort is the key for port configuration.
+	// ConfigKeyPort is the configuration key for port.
 	ConfigKeyPort string = "port"
-	// ConfigKeyDebugEnabled is the key for debug mode configuration.
+	// ConfigKeyDebugEnabled is the configuration key for debug mode.
 	ConfigKeyDebugEnabled string = "debug_enabled"
+	// ConfigKeyDefaultDatabase is the configuration key for default database.
+	ConfigKeyDefaultDatabase string = "default_db"
 
 	// DefaultDatabase is the name of the default database.
 	DefaultDatabase string = "default"
@@ -41,6 +43,7 @@ func initConfig(s *Server) {
 
 	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
 	viper.SetDefault(ConfigKeyDebugEnabled, false)
+	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
