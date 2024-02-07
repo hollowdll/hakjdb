@@ -73,6 +73,12 @@ $ kvdb-cli connect set -a some.other.host.or.IP -p 9000
 ```
 Now kvdb-cli tries to connect to a different address and port.
 
+This only changes the default database to use:
+```bash
+$ kvdb-cli connect set -d some-db
+```
+Now commands will use database some-db as the default database. Note that this does not create the database.
+
 ## Server information
 
 To show information about the server, use command:

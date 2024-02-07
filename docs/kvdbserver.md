@@ -30,6 +30,7 @@ Here is a list of all configurations with their default values:
 ```json
 {
   "debug_enabled": false,
+  "default_db": "default",
   "port": 12345
 }
 ```
@@ -37,6 +38,7 @@ Here is a list of all configurations with their default values:
 Meaning of fields:
 
 - `debug_enabled`: Specifies if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
+- `default_db`: The name of the default database that is created at server startup.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
 
 # Environment variables
@@ -48,6 +50,7 @@ Here is a list of all environment variables:
 - `KVDB_PORT`: Server TCP/IP port.
 - `KVDB_PASSWORD`: Server password. If not set, password protection is disabled.
 - `KVDB_DEBUG_ENABLED`: Controls whether debug mode is enabled. If true, debug messages are logged.
+- `KVDB_DEFAULT_DB`: The name of the default database that is created at server startup.
 
 # Data directory
 
@@ -73,4 +76,4 @@ Password protection can be enabled by setting password with environment variable
 
 # Default database
 
-When the server starts, it creates an empty default database 'default'.
+When the server starts, it creates an empty default database 'default'. The name of the default database can be changed in the configuration file or with environment variable `KVDB_DEFAULT_DB`.
