@@ -136,6 +136,36 @@ func TestGetDatabaseInfo(t *testing.T) {
 	})
 }
 
+func TestDefaultDatabase(t *testing.T) {
+	t.Run("GetDatabaseInfo", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+
+		request := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+		response, err := server.GetDatabaseInfo(context.Background(), request)
+		assert.NoErrorf(t, err, "expected no error; error = %s", err)
+		assert.NotNil(t, response, "expected response to be non-nil")
+		assert.Equalf(t, dbName, response.Data.Name, "expected database name = %s; got = %s", dbName, response.Data.Name)
+	})
+
+	t.Run("GetAllDatabases", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+
+		request := &kvdbserver.GetAllDatabasesRequest{}
+		response, err := server.GetAllDatabases(context.Background(), request)
+		expectedDbCount := 1
+
+		assert.NoErrorf(t, err, "expected no error; error = %s", err)
+		assert.NotNil(t, response, "expected response to be non-nil")
+		assert.Equalf(t, expectedDbCount, len(response.DbNames), "expected databases = %d; got = %d", expectedDbCount, len(response.DbNames))
+	})
+}
+
 func stringInSlice(target string, slice []string) bool {
 	for _, elem := range slice {
 		if elem == target {

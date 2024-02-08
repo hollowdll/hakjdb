@@ -28,6 +28,7 @@ func TestMain(m *testing.M) {
 func setupServer() *grpc.Server {
 	server := kvdbs.NewServer()
 	server.DisableLogger()
+	server.CreateDefaultDatabase("default")
 
 	viper.SetDefault("port", common.ServerDefaultPort)
 	viper.SetDefault("host", common.ServerDefaultHost)

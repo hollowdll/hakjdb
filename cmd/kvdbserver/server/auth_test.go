@@ -9,7 +9,9 @@ import (
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 func TestSetServerPassword(t *testing.T) {
@@ -80,5 +82,21 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 
 		err := server.AuthorizeIncomingRpcCall(context.Background())
 		assert.NoErrorf(t, err, "expected no error; error = %s", err)
+	})
+
+	t.Run("InvalidCredentials", func(t *testing.T) {
+		server := server.NewServer()
+		password := "pass321!"
+		server.DisableLogger()
+		server.EnablePasswordProtection(password)
+
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyPassword, "incorrect"))
+		err := server.AuthorizeIncomingRpcCall(ctx)
+		require.Error(t, err, "expected error")
+
+		st, ok := status.FromError(err)
+		assert.NotNil(t, st, "expected status to be non-nil")
+		assert.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.Unauthenticated, st.Code(), "expected status = %s; got = %s", codes.Unauthenticated, st.Code())
 	})
 }
