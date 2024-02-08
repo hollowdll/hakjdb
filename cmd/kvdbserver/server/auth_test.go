@@ -67,8 +67,7 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 		server := server.NewServer()
 		password := "pass321"
 		server.DisableLogger()
-		server.EnablePassword()
-		server.CredentialStore.SetServerPassword([]byte(password))
+		server.EnablePasswordProtection(password)
 
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyPassword, password))
 		err := server.AuthorizeIncomingRpcCall(ctx)

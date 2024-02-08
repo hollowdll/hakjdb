@@ -3,7 +3,6 @@ package integration
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
@@ -23,7 +22,7 @@ func TestOverwriteAndGetString(t *testing.T) {
 	value1 := "value1"
 	value2 := "value2"
 	ctxMd := metadata.NewOutgoingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
-	ctx, cancel := context.WithTimeout(ctxMd, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctxMd, ctxTimeout)
 	defer cancel()
 
 	req1 := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
@@ -59,7 +58,7 @@ func TestSetGetDeleteString(t *testing.T) {
 	key := "key1"
 	value := "value1"
 	ctxMd := metadata.NewOutgoingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
-	ctx, cancel := context.WithTimeout(ctxMd, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctxMd, ctxTimeout)
 	defer cancel()
 
 	req1 := &kvdbserver.CreateDatabaseRequest{DbName: dbName}

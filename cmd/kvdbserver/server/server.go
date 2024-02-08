@@ -51,11 +51,18 @@ func (s *Server) DisableLogger() {
 	s.logger.Disable()
 }
 
-// EnablePassword enables server password protection
-// and sets the password to empty string.
-func (s *Server) EnablePassword() {
-	s.CredentialStore.SetServerPassword([]byte(""))
+// EnableDebugLogs enables server debug logs.
+func (s *Server) EnableDebugLogs() {
+	s.logger.EnableDebug()
+}
+
+// EnablePasswordProtection enables server password protection and sets the password.
+func (s *Server) EnablePasswordProtection(password string) {
+	if err := s.CredentialStore.SetServerPassword([]byte(password)); err != nil {
+		s.logger.Fatalf("Failed to set server password: %v", err)
+	}
 	s.passwordEnabled = true
+	s.logger.Infof("Password protection is enabled. Clients need to authenticate using password.")
 }
 
 // getTotalDataSize returns the total amount of stored data on this server in bytes.
@@ -66,6 +73,16 @@ func (s *Server) getTotalDataSize() uint64 {
 	}
 
 	return sum
+}
+
+// CreateDefaultDatabase creates an empty default database.
+func (s *Server) CreateDefaultDatabase(name string) {
+	db, err := kvdb.CreateDatabase(name)
+	if err != nil {
+		s.logger.Fatalf("Failed to create default database: %v", err)
+	}
+	s.databases[db.Name] = db
+	s.logger.Infof("Created default database '%s'", db.Name)
 }
 
 // getOsInfo returns information about the server's operating system.
@@ -133,31 +150,19 @@ func initServer() (*Server, *grpc.Server) {
 	initConfig(server)
 	server.logger.ClearFlags()
 
-	// Enable debug logs.
 	if viper.GetBool(ConfigKeyDebugEnabled) {
-		server.logger.EnableDebug()
+		server.EnableDebugLogs()
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
 	}
 
-	// Enable password protection.
 	password, present := os.LookupEnv(EnvVarPassword)
 	if present {
-		server.EnablePassword()
-		if err := server.CredentialStore.SetServerPassword([]byte(password)); err != nil {
-			server.logger.Fatalf("Failed to set server password: %v", err)
-		}
-		server.logger.Infof("Password protection is enabled. Clients need to authenticate using password.")
+		server.EnablePasswordProtection(password)
 	} else {
 		server.logger.Warningf("Password protection is disabled.")
 	}
 
-	// Create default database
-	db, err := kvdb.CreateDatabase(viper.GetString(ConfigKeyDefaultDatabase))
-	if err != nil {
-		server.logger.Fatalf("Failed to create default database: %v", err)
-	}
-	server.databases[db.Name] = db
-	server.logger.Infof("Created default database '%s'", db.Name)
+	server.CreateDefaultDatabase(viper.GetString(ConfigKeyDefaultDatabase))
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
 	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)

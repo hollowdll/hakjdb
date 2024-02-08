@@ -3,7 +3,6 @@ package integration
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +14,7 @@ func TestCreateDatabase(t *testing.T) {
 	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 	dbName := "TestCreateDatabase"
 
@@ -31,7 +30,7 @@ func TestCreateDatabaseAndGetInfo(t *testing.T) {
 	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 	dbName := "TestCreateDatabaseAndGetInfo"
 
@@ -52,7 +51,7 @@ func TestCreateDatabaseAlreadyExists(t *testing.T) {
 	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 	dbName := "TestCreateDatabaseAlreadyExists"
 
@@ -65,4 +64,20 @@ func TestCreateDatabaseAlreadyExists(t *testing.T) {
 	res2, err := databaseClient.CreateDatabase(ctx, req2)
 	assert.Error(t, err, "expected error")
 	assert.Nil(t, res2, "expected nil")
+}
+
+func TestDefaultDatabaseCreated(t *testing.T) {
+	conn, err := insecureConnection()
+	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
+	defer conn.Close()
+	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+	defer cancel()
+	dbName := "default"
+
+	req := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+	res, err := databaseClient.GetDatabaseInfo(ctx, req)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, res)
+	assert.Equalf(t, dbName, res.Data.Name, "expected database name = %s; got = %s", dbName, res.Data.Name)
 }
