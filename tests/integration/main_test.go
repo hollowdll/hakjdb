@@ -11,6 +11,7 @@ import (
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestMain(m *testing.M) {
@@ -52,4 +53,8 @@ func setupServer() *grpc.Server {
 
 func getServerAddress() string {
 	return fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
+}
+
+func insecureConnection() (*grpc.ClientConn, error) {
+	return grpc.Dial(getServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 }

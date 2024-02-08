@@ -8,12 +8,10 @@ import (
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestCreateDatabase(t *testing.T) {
-	conn, err := grpc.Dial(getServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := insecureConnection()
 	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
@@ -29,7 +27,7 @@ func TestCreateDatabase(t *testing.T) {
 }
 
 func TestCreateDatabaseAndGetInfo(t *testing.T) {
-	conn, err := grpc.Dial(getServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := insecureConnection()
 	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
@@ -50,7 +48,7 @@ func TestCreateDatabaseAndGetInfo(t *testing.T) {
 }
 
 func TestCreateDatabaseAlreadyExists(t *testing.T) {
-	conn, err := grpc.Dial(getServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := insecureConnection()
 	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
