@@ -39,8 +39,8 @@ message DeleteDatabaseRequest {
 }
 
 message DeleteDatabaseResponse {
-    // True if database was deleted.
-    bool ok = 1;
+    // Name of the deleted database.
+    string db_name = 1;
 }
 
 message DatabaseInfo {

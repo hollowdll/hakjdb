@@ -35,9 +35,5 @@ func deleteDatabase() {
 	res, err := client.GrpcDatabaseClient.DeleteDatabase(ctx, &kvdbserver.DeleteDatabaseRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
-	if res.Ok {
-		fmt.Println("OK")
-	} else {
-		fmt.Println(client.ValueNone)
-	}
+	fmt.Println(res.DbName)
 }

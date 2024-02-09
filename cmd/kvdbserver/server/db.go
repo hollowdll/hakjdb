@@ -120,5 +120,5 @@ func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatab
 	defer s.mutex.Unlock()
 	delete(s.databases, dbName)
 
-	return &kvdbserver.DeleteDatabaseResponse{Ok: true}, nil
+	return &kvdbserver.DeleteDatabaseResponse{DbName: dbName}, nil
 }
