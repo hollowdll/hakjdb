@@ -26,7 +26,7 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	s.logger.Debugf("Attempt to create database '%s'", req.GetDbName())
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to create database '%s': %s", req.GetDbName(), err)
+			s.logger.Errorf("Failed to create database '%s': %v", req.GetDbName(), err)
 		} else {
 			s.logger.Infof("Created database '%s'", req.GetDbName())
 		}
@@ -38,7 +38,7 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	}
 
 	if s.databaseExists(db.Name) {
-		return nil, status.Errorf(codes.AlreadyExists, "%s", kvdberrors.ErrDatabaseExists)
+		return nil, status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error())
 	}
 
 	s.mutex.Lock()
@@ -53,7 +53,7 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	s.logger.Debug("Attempt to get all databases")
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get all databases: %s", err)
+			s.logger.Errorf("Failed to get all databases: %v", err)
 		} else {
 			s.logger.Debug("Get all databases success")
 		}
@@ -70,18 +70,19 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	return &kvdbserver.GetAllDatabasesResponse{DbNames: names}, nil
 }
 
+// GetDatabaseInfo returns information about a database.
 func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
 	s.logger.Debugf("Attempt to get info for database '%s'", req.GetDbName())
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get info for database '%s': %s", req.GetDbName(), err)
+			s.logger.Errorf("Failed to get info for database '%s': %v", req.GetDbName(), err)
 		} else {
 			s.logger.Debugf("Get info for database '%s' success", req.GetDbName())
 		}
 	}()
 
 	if !s.databaseExists(req.GetDbName()) {
-		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
 	s.mutex.RLock()
@@ -97,4 +98,27 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 	}
 
 	return &kvdbserver.GetDatabaseInfoResponse{Data: data}, nil
+}
+
+// DeleteDatabase deletes a database if it exists.
+func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatabaseRequest) (res *kvdbserver.DeleteDatabaseResponse, err error) {
+	dbName := req.GetDbName()
+	s.logger.Debugf("Attempt to delete database '%s'", dbName)
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to delete database '%s': %v", dbName, err)
+		} else {
+			s.logger.Infof("Deleted database '%s'", dbName)
+		}
+	}()
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	delete(s.databases, dbName)
+
+	return &kvdbserver.DeleteDatabaseResponse{Ok: true}, nil
 }
