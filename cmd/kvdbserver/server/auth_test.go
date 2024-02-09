@@ -95,8 +95,8 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 		require.Error(t, err, "expected error")
 
 		st, ok := status.FromError(err)
-		assert.NotNil(t, st, "expected status to be non-nil")
-		assert.Equal(t, true, ok, "expected ok")
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equal(t, true, ok, "expected ok")
 		assert.Equal(t, codes.Unauthenticated, st.Code(), "expected status = %s; got = %s", codes.Unauthenticated, st.Code())
 	})
 }
