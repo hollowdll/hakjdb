@@ -28,6 +28,8 @@ type DatabaseServiceClient interface {
 	GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
 	// Gets and returns info about a database.
 	GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error)
+	// Deletes a database if it exists.
+	DeleteDatabase(ctx context.Context, in *DeleteDatabaseRequest, opts ...grpc.CallOption) (*DeleteDatabaseResponse, error)
 }
 
 type databaseServiceClient struct {
@@ -65,6 +67,15 @@ func (c *databaseServiceClient) GetDatabaseInfo(ctx context.Context, in *GetData
 	return out, nil
 }
 
+func (c *databaseServiceClient) DeleteDatabase(ctx context.Context, in *DeleteDatabaseRequest, opts ...grpc.CallOption) (*DeleteDatabaseResponse, error) {
+	out := new(DeleteDatabaseResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.DatabaseService/DeleteDatabase", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DatabaseServiceServer is the server API for DatabaseService service.
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility
@@ -75,6 +86,8 @@ type DatabaseServiceServer interface {
 	GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error)
 	// Gets and returns info about a database.
 	GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error)
+	// Deletes a database if it exists.
+	DeleteDatabase(context.Context, *DeleteDatabaseRequest) (*DeleteDatabaseResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }
 
@@ -90,6 +103,9 @@ func (UnimplementedDatabaseServiceServer) GetAllDatabases(context.Context, *GetA
 }
 func (UnimplementedDatabaseServiceServer) GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDatabaseInfo not implemented")
+}
+func (UnimplementedDatabaseServiceServer) DeleteDatabase(context.Context, *DeleteDatabaseRequest) (*DeleteDatabaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDatabase not implemented")
 }
 func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
 
@@ -158,6 +174,24 @@ func _DatabaseService_GetDatabaseInfo_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DatabaseService_DeleteDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDatabaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DatabaseServiceServer).DeleteDatabase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.DatabaseService/DeleteDatabase",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DatabaseServiceServer).DeleteDatabase(ctx, req.(*DeleteDatabaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +210,10 @@ var DatabaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDatabaseInfo",
 			Handler:    _DatabaseService_GetDatabaseInfo_Handler,
+		},
+		{
+			MethodName: "DeleteDatabase",
+			Handler:    _DatabaseService_DeleteDatabase_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
