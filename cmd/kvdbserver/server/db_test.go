@@ -167,6 +167,38 @@ func TestDefaultDatabase(t *testing.T) {
 	})
 }
 
+func TestDeleteDatabase(t *testing.T) {
+	t.Run("DatabaseExists", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+
+		req := &kvdbserver.DeleteDatabaseRequest{DbName: dbName}
+		res, err := server.DeleteDatabase(context.Background(), req)
+
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res, "expected response to be non-nil")
+		assert.Equalf(t, dbName, res.DbName, "expected db name = &s; got = %s", dbName, res.DbName)
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+
+		req := &kvdbserver.DeleteDatabaseRequest{DbName: dbName}
+		res, err := server.DeleteDatabase(context.Background(), req)
+		require.Error(t, err, "expected error")
+		require.Nil(t, res, "expected response to be nil")
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
+	})
+}
+
 func stringInSlice(target string, slice []string) bool {
 	for _, elem := range slice {
 		if elem == target {

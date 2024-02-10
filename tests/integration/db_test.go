@@ -81,3 +81,28 @@ func TestDefaultDatabaseCreated(t *testing.T) {
 	require.NotNil(t, res)
 	assert.Equalf(t, dbName, res.Data.Name, "expected database name = %s; got = %s", dbName, res.Data.Name)
 }
+
+func TestCreateAndDeleteDatabase(t *testing.T) {
+	conn, err := insecureConnection()
+	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
+	defer conn.Close()
+	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+	defer cancel()
+	dbName := "TestCreateAndDeleteDatabase"
+
+	req1 := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+	res1, err := databaseClient.CreateDatabase(ctx, req1)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, res1)
+
+	req2 := &kvdbserver.DeleteDatabaseRequest{DbName: dbName}
+	res2, err := databaseClient.DeleteDatabase(ctx, req2)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, res2)
+
+	req3 := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+	res3, err := databaseClient.GetDatabaseInfo(ctx, req3)
+	require.Error(t, err, "expected error")
+	require.Nil(t, res3)
+}
