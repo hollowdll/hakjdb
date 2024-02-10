@@ -50,7 +50,7 @@ Every command has its own help page.
 
 By default, kvdb-cli tries to connect to a kvdb server at address 127.0.0.1 in port 12345. 127.0.0.1 is the same as your machine's localhost. Port 12345 is the server's default port. The default database to use is 'default'.
 
-To see the current connection settings, use the following command:
+To see the current connection settings, use command:
 ```bash
 $ kvdb-cli connect show
 ```
@@ -73,7 +73,7 @@ $ kvdb-cli connect set -a some.other.host.or.IP -p 9000
 ```
 Now kvdb-cli tries to connect to a different address and port.
 
-This only changes the default database to use:
+This only changes the default database:
 ```bash
 $ kvdb-cli connect set -d some-db
 ```
@@ -114,7 +114,7 @@ Meaning of the fields:
 
 In order to store data on the server, you need to create a database. A database is like a namespace for keys. Each key stored in a database is unique to that database. You can't have two keys with the same name in one database.
 
-You can create a new database with the following command:
+To create a new database, use command:
 ```bash
 $ kvdb-cli db create -n name-of-your-db
 ```
@@ -127,6 +127,18 @@ The following list shows the allowed characters a database name can contain:
 - Letters a-z and A-Z
 - Numbers 0-9
 - Symbols - and _
+
+## Deleting a database
+
+Deleting a database erases the database and all its data. When a database is deleted, it can no longer be accessed. The database and its data cannot be restored so use this command with caution.
+
+To delete a database, use command:
+```bash
+$ kvdb-cli db delete -n name-of-your-db
+```
+Option -n specifies the name of the database you want to delete. If not specified, then the default database is used.
+
+If delete was successful, the command prints the name of the deleted database.
 
 ## Listing databases
 
