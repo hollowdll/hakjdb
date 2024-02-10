@@ -28,8 +28,8 @@ func createDatabase() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	_, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{DbName: dbName})
+	res, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserver.CreateDatabaseRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
-	fmt.Println("OK")
+	fmt.Println(res.DbName)
 }

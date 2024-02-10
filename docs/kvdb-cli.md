@@ -140,6 +140,9 @@ $ kvdb-cli db delete -n name-of-your-db
 
 If delete was successful, the command prints the name of the deleted database.
 
+> [!WARNING]
+> This command can have dangerous consequences. Use it with caution!
+
 ## Listing databases
 
 To list all the databases on the server, use command:
