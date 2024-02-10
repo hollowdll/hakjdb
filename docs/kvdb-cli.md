@@ -118,7 +118,7 @@ To create a new database, use command:
 ```bash
 $ kvdb-cli db create -n name-of-your-db
 ```
-Option -n specifies the name of the database you want to create. The maximum length of a database name is 32 bytes.
+- Option -n specifies the name of the database you want to create. The maximum length of a database name is 32 bytes.
 
 Database names are designed to be short. It is recommended to keep them short to minimize memory usage.
 
@@ -136,7 +136,7 @@ To delete a database, use command:
 ```bash
 $ kvdb-cli db delete -n name-of-your-db
 ```
-Option -n specifies the name of the database you want to delete. If not specified, then the default database is used.
+- Option -n specifies the name of the database you want to delete. If not specified, then the default database is used.
 
 If delete was successful, the command prints the name of the deleted database.
 
@@ -157,7 +157,7 @@ To show information about a database, use command:
 ```bash
 $ kvdb-cli db info -n name-of-your-db
 ```
-Option -n specifies the name of the database. If not specified, then the default database is used.
+- Option -n specifies the name of the database. If not specified, then the default database is used.
 
 Output is something like this:
 ```bash
@@ -183,9 +183,8 @@ To set a string value, use command:
 ```bash
 $ kvdb-cli set [key] [value] -d db-name
 ```
-[key] is the name of the key and [value] is the string value to store.
-
-Option -d specifies the name of the database. If not specified, then the default database is used.
+- [key] is the name of the key and [value] is the string value to store.
+- Option -d specifies the name of the database. If not specified, then the default database is used.
 
 For example:
 ```bash
@@ -204,9 +203,8 @@ To get a string value, use command:
 ```bash
 $ kvdb-cli get [key] -d db-name
 ```
-[key] is the name of the key holding the value to retrieve.
-
-Option -d specifies the name of the database. If not specified, then the default database is used.
+- [key] is the name of the key holding the value to retrieve.
+- Option -d specifies the name of the database. If not specified, then the default database is used.
 
 For example:
 ```bash
@@ -229,9 +227,8 @@ To delete a key, use command:
 ```bash
 $ kvdb-cli delete [key] -d db-name
 ```
-[key] is the name of the key to delete.
-
-Option -d specifies the name of the database. If not specified, then the default database is used.
+- [key] is the name of the key to delete.
+- Option -d specifies the name of the database. If not specified, then the default database is used.
 
 For example:
 ```bash
