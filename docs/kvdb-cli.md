@@ -157,7 +157,7 @@ To show information about a database, use command:
 ```bash
 $ kvdb-cli db info -n name-of-your-db
 ```
-Option -n specifies the name of the database.
+Option -n specifies the name of the database. If not specified, then the default database is used.
 
 Output is something like this:
 ```bash
@@ -183,7 +183,9 @@ To set a string value, use command:
 ```bash
 $ kvdb-cli set [key] [value] -d db-name
 ```
-[key] is the name of the key and [value] is the string value to store. Option -d specifies the name of the database.
+[key] is the name of the key and [value] is the string value to store.
+
+Option -d specifies the name of the database. If not specified, then the default database is used.
 
 For example:
 ```bash
@@ -202,7 +204,9 @@ To get a string value, use command:
 ```bash
 $ kvdb-cli get [key] -d db-name
 ```
-[key] is the name of the key holding the value to retrieve. Option -d specifies the name of the database.
+[key] is the name of the key holding the value to retrieve.
+
+Option -d specifies the name of the database. If not specified, then the default database is used.
 
 For example:
 ```bash
@@ -225,7 +229,9 @@ To delete a key, use command:
 ```bash
 $ kvdb-cli delete [key] -d db-name
 ```
-[key] is the name of the key to delete. Option -d specifies the name of the database.
+[key] is the name of the key to delete.
+
+Option -d specifies the name of the database. If not specified, then the default database is used.
 
 For example:
 ```bash
