@@ -33,6 +33,16 @@ message GetDatabaseInfoResponse {
     DatabaseInfo data = 1;
 }
 
+message DeleteDatabaseRequest {
+    // Name of the database.
+    string db_name = 1;
+}
+
+message DeleteDatabaseResponse {
+    // Name of the deleted database.
+    string db_name = 1;
+}
+
 message DatabaseInfo {
     // Name of the database.
     string name = 1;
@@ -53,4 +63,6 @@ service DatabaseService {
     rpc GetAllDatabases (GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
     // Gets and returns info about a database.
     rpc GetDatabaseInfo (GetDatabaseInfoRequest) returns (GetDatabaseInfoResponse) {}
+    // Deletes a database if it exists.
+    rpc DeleteDatabase (DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {}
 }
