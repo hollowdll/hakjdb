@@ -261,4 +261,4 @@ For example:
 $ kvdb-cli deletekeys
 OK
 ```
-This deletes all the keys in the default database.
+This deletes all the keys of the default database.
