@@ -136,7 +136,7 @@ To delete a database, use command:
 ```bash
 $ kvdb-cli db delete -n name-of-your-db
 ```
-- Option -n specifies the name of the database you want to delete. If not specified, then the default database is used.
+- Option -n specifies the name of the database you want to delete. If not specified, the default database is used.
 
 If delete was successful, the command prints the name of the deleted database.
 
@@ -160,7 +160,7 @@ To show information about a database, use command:
 ```bash
 $ kvdb-cli db info -n name-of-your-db
 ```
-- Option -n specifies the name of the database. If not specified, then the default database is used.
+- Option -n specifies the name of the database. If not specified, the default database is used.
 
 Output is something like this:
 ```bash
@@ -187,7 +187,7 @@ To set a string value, use command:
 $ kvdb-cli set [key] [value] -d db-name
 ```
 - [key] is the name of the key and [value] is the string value to store.
-- Option -d specifies the name of the database. If not specified, then the default database is used.
+- Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
 ```bash
@@ -207,7 +207,7 @@ To get a string value, use command:
 $ kvdb-cli get [key] -d db-name
 ```
 - [key] is the name of the key holding the value to retrieve.
-- Option -d specifies the name of the database. If not specified, then the default database is used.
+- Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
 ```bash
@@ -231,7 +231,7 @@ To delete a key, use command:
 $ kvdb-cli delete [key] -d db-name
 ```
 - [key] is the name of the key to delete.
-- Option -d specifies the name of the database. If not specified, then the default database is used.
+- Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
 ```bash
@@ -245,3 +245,20 @@ If the key does not exist, this returns false:
 $ kvdb-cli delete message -d db0
 false
 ```
+
+## Delete all keys
+
+Deleting all the keys of a database removes the keys and the values they are holding. This can be used to remove all the data stored in a database.
+
+To delete all the keys of a database, use command:
+```bash
+$ kvdb-cli deletekeys -d db-name
+```
+- Option -d specifies the name of the database. If not specified, the default database is used.
+
+For example:
+```bash
+$ kvdb-cli deletekeys
+OK
+```
+This deletes all the keys in the default database.
