@@ -110,7 +110,7 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 	return &kvdbserver.DeleteKeyResponse{Success: true}, nil
 }
 
-// DeleteAllKeys deletes all keys from a database.
+// DeleteAllKeys deletes all the keys of a database.
 // Accepts database name in gRPC metadata.
 func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
 	s.logger.Debug("Attempt to delete all keys")

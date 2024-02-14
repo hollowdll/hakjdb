@@ -46,6 +46,6 @@ service StorageService {
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
     // Deletes a key and its value.
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
-    // Deletes all keys from a database.
+    // Deletes all the keys of a database.
     rpc DeleteAllKeys(DeleteAllKeysRequest) returns (DeleteAllKeysResponse) {}
 }

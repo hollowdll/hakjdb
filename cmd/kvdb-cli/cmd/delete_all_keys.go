@@ -13,8 +13,8 @@ import (
 
 var cmdDeleteAllKeys = &cobra.Command{
 	Use:   "deletekeys",
-	Short: "Delete all keys in a database",
-	Long:  "Delete all keys in a database",
+	Short: "Delete all the keys of a database",
+	Long:  "Delete all the keys of a database",
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteAllKeys()
 	},
