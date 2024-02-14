@@ -24,21 +24,16 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		}
 	}()
 
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, status.Errorf(codes.InvalidArgument, "%s", kvdberrors.ErrMissingMetadata)
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	dbName := md.Get(common.GrpcMetadataKeyDbName)
-	if len(dbName) == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "%s (%s)", kvdberrors.ErrMissingKeyInMetadata, common.GrpcMetadataKeyDbName)
-	}
-
-	if !s.databaseExists(dbName[0]) {
+	if !s.databaseExists(dbName) {
 		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
 
-	err = s.databases[dbName[0]].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
+	err = s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
 	}
@@ -58,20 +53,16 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 		}
 	}()
 
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, status.Errorf(codes.InvalidArgument, "%s", kvdberrors.ErrMissingMetadata)
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	dbName := md.Get(common.GrpcMetadataKeyDbName)
-	if len(dbName) == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "%s (%s)", kvdberrors.ErrMissingKeyInMetadata, common.GrpcMetadataKeyDbName)
-	}
-
-	if !s.databaseExists(dbName[0]) {
+	if !s.databaseExists(dbName) {
 		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
-	value, found := s.databases[dbName[0]].GetString(kvdb.DatabaseKey(req.GetKey()))
+
+	value, found := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
 
 	return &kvdbserver.GetStringResponse{Value: string(value), Found: found}, nil
 }
@@ -88,24 +79,59 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 		}
 	}()
 
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, status.Errorf(codes.InvalidArgument, "%s", kvdberrors.ErrMissingMetadata)
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	dbName := md.Get(common.GrpcMetadataKeyDbName)
-	if len(dbName) == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "%s (%s)", kvdberrors.ErrMissingKeyInMetadata, common.GrpcMetadataKeyDbName)
-	}
-
-	if !s.databaseExists(dbName[0]) {
+	if !s.databaseExists(dbName) {
 		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
 	}
 
-	success := s.databases[dbName[0]].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
+	success := s.databases[dbName].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
 	if !success {
 		return &kvdbserver.DeleteKeyResponse{Success: false}, nil
 	}
 
 	return &kvdbserver.DeleteKeyResponse{Success: true}, nil
+}
+
+// DeleteAllKeys deletes all the keys of a database.
+// Accepts database name in gRPC metadata.
+func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
+	s.logger.Debug("Attempt to delete all keys")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to delete all keys: %s", err)
+		} else {
+			s.logger.Debug("Delete all keys success")
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
+	}
+
+	s.databases[dbName].DeleteAllKeys()
+
+	return &kvdbserver.DeleteAllKeysResponse{}, nil
+}
+
+func getDatabaseNameFromContext(ctx context.Context) (string, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return "", status.Errorf(codes.InvalidArgument, "%s", kvdberrors.ErrMissingMetadata)
+	}
+
+	dbName := md.Get(common.GrpcMetadataKeyDbName)
+	if len(dbName) < 1 {
+		return "", status.Errorf(codes.InvalidArgument, "%s (%s)", kvdberrors.ErrMissingKeyInMetadata, common.GrpcMetadataKeyDbName)
+	}
+
+	return dbName[0], nil
 }

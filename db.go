@@ -145,3 +145,14 @@ func (db *Database) DeleteKey(key DatabaseKey) bool {
 
 	return true
 }
+
+// DeleteAllKeys deletes all keys from the database.
+func (db *Database) DeleteAllKeys() {
+	db.mutex.Lock()
+	defer db.mutex.Unlock()
+	for key := range db.data {
+		delete(db.data, key)
+	}
+	db.keyCount = 0
+	db.update()
+}

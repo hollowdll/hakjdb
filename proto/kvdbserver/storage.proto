@@ -35,6 +35,10 @@ message DeleteKeyResponse {
     bool success = 1;
 }
 
+message DeleteAllKeysRequest {}
+
+message DeleteAllKeysResponse {}
+
 service StorageService {
     // Sets a string value using a key.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
@@ -42,4 +46,6 @@ service StorageService {
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
     // Deletes a key and its value.
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
+    // Deletes all the keys of a database.
+    rpc DeleteAllKeys(DeleteAllKeysRequest) returns (DeleteAllKeysResponse) {}
 }
