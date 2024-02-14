@@ -17,6 +17,7 @@ func TestOverwriteAndGetString(t *testing.T) {
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
 	storageClient := kvdbserver.NewStorageServiceClient(conn)
+
 	dbName := "TestSetAndGetString"
 	key := "key1"
 	value1 := "value1"
@@ -54,6 +55,7 @@ func TestSetGetDeleteString(t *testing.T) {
 	defer conn.Close()
 	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
 	storageClient := kvdbserver.NewStorageServiceClient(conn)
+
 	dbName := "TestSetGetDeleteString"
 	key := "key1"
 	value := "value1"
@@ -96,4 +98,43 @@ func TestSetGetDeleteString(t *testing.T) {
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res6)
 	assert.Equal(t, false, res6.Success, "expected success = %v; got = %v", false, res6.Success)
+}
+
+func TestDeleteAllKeys(t *testing.T) {
+	conn, err := insecureConnection()
+	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
+	defer conn.Close()
+	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
+	storageClient := kvdbserver.NewStorageServiceClient(conn)
+
+	dbName := "TestDeleteAllKeys"
+	ctxMd := metadata.NewOutgoingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+	ctx, cancel := context.WithTimeout(ctxMd, ctxTimeout)
+	defer cancel()
+
+	reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+	databaseClient.CreateDatabase(ctx, reqCreate)
+
+	reqSet1 := &kvdbserver.SetStringRequest{Key: "key1", Value: "value"}
+	storageClient.SetString(ctx, reqSet1)
+	reqSet2 := &kvdbserver.SetStringRequest{Key: "key2", Value: "value"}
+	storageClient.SetString(ctx, reqSet2)
+	reqSet3 := &kvdbserver.SetStringRequest{Key: "key3", Value: "value"}
+	storageClient.SetString(ctx, reqSet3)
+
+	expectedKeys := uint32(3)
+	reqGet := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+	resGet1, err := databaseClient.GetDatabaseInfo(ctx, reqGet)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, resGet1)
+	assert.Equalf(t, expectedKeys, resGet1.Data.KeyCount, "expected keys = %d; got = %d", expectedKeys, resGet1.Data.KeyCount)
+
+	reqDelete := &kvdbserver.DeleteAllKeysRequest{}
+	storageClient.DeleteAllKeys(ctx, reqDelete)
+
+	expectedKeys = uint32(0)
+	resGet2, err := databaseClient.GetDatabaseInfo(ctx, reqGet)
+	require.NoErrorf(t, err, "expected no error; error = %v", err)
+	require.NotNil(t, resGet2)
+	assert.Equalf(t, expectedKeys, resGet2.Data.KeyCount, "expected keys = %d; got = %d", expectedKeys, resGet2.Data.KeyCount)
 }
