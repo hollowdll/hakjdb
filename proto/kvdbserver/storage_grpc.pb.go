@@ -30,6 +30,8 @@ type StorageServiceClient interface {
 	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
 	// Deletes all the keys of a database.
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
+	// Returns all the keys of a database.
+	GetKeys(ctx context.Context, in *GetKeysRequest, opts ...grpc.CallOption) (*GetKeysResponse, error)
 }
 
 type storageServiceClient struct {
@@ -76,6 +78,15 @@ func (c *storageServiceClient) DeleteAllKeys(ctx context.Context, in *DeleteAllK
 	return out, nil
 }
 
+func (c *storageServiceClient) GetKeys(ctx context.Context, in *GetKeysRequest, opts ...grpc.CallOption) (*GetKeysResponse, error) {
+	out := new(GetKeysResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetKeys", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageServiceServer is the server API for StorageService service.
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
@@ -88,6 +99,8 @@ type StorageServiceServer interface {
 	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
 	// Deletes all the keys of a database.
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
+	// Returns all the keys of a database.
+	GetKeys(context.Context, *GetKeysRequest) (*GetKeysResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
 
@@ -106,6 +119,9 @@ func (UnimplementedStorageServiceServer) DeleteKey(context.Context, *DeleteKeyRe
 }
 func (UnimplementedStorageServiceServer) DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllKeys not implemented")
+}
+func (UnimplementedStorageServiceServer) GetKeys(context.Context, *GetKeysRequest) (*GetKeysResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetKeys not implemented")
 }
 func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 
@@ -192,6 +208,24 @@ func _StorageService_DeleteAllKeys_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StorageService_GetKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetKeysRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).GetKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.StorageService/GetKeys",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).GetKeys(ctx, req.(*GetKeysRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StorageService_ServiceDesc is the grpc.ServiceDesc for StorageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +248,10 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAllKeys",
 			Handler:    _StorageService_DeleteAllKeys_Handler,
+		},
+		{
+			MethodName: "GetKeys",
+			Handler:    _StorageService_GetKeys_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
