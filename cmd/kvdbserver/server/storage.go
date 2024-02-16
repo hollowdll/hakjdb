@@ -30,7 +30,7 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 	}
 
 	if !s.databaseExists(dbName) {
-		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
 	err = s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
@@ -59,7 +59,7 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 	}
 
 	if !s.databaseExists(dbName) {
-		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
 	value, found := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
@@ -85,7 +85,7 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 	}
 
 	if !s.databaseExists(dbName) {
-		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
 	success := s.databases[dbName].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
@@ -114,7 +114,7 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 	}
 
 	if !s.databaseExists(dbName) {
-		return nil, status.Errorf(codes.NotFound, "%s", kvdberrors.ErrDatabaseNotFound)
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
 	s.databases[dbName].DeleteAllKeys()
@@ -122,10 +122,34 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 	return &kvdbserver.DeleteAllKeysResponse{}, nil
 }
 
+// GetKeys returns all the keys of a database.
+// Accepts database name in gRPC metadata.
+func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (res *kvdbserver.GetKeysResponse, err error) {
+	s.logger.Debug("Attempt to get keys")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get keys: %s", err)
+		} else {
+			s.logger.Debug("Get keys success")
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	return &kvdbserver.GetKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
+}
+
 func getDatabaseNameFromContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", status.Errorf(codes.InvalidArgument, "%s", kvdberrors.ErrMissingMetadata)
+		return "", status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error())
 	}
 
 	dbName := md.Get(common.GrpcMetadataKeyDbName)

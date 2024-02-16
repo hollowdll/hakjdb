@@ -39,6 +39,13 @@ message DeleteAllKeysRequest {}
 
 message DeleteAllKeysResponse {}
 
+message GetKeysRequest {}
+
+message GetKeysResponse {
+    // List of returned keys.
+    repeated string keys = 1;
+}
+
 service StorageService {
     // Sets a string value using a key.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
@@ -48,4 +55,6 @@ service StorageService {
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
     // Deletes all the keys of a database.
     rpc DeleteAllKeys(DeleteAllKeysRequest) returns (DeleteAllKeysResponse) {}
+    // Returns all the keys of a database.
+    rpc GetKeys(GetKeysRequest) returns (GetKeysResponse) {}
 }

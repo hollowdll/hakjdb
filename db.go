@@ -130,8 +130,8 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	return nil
 }
 
-// DeleteKey deletes a key and its value. Returns true if key exists and it was deleted.
-// Returns false if key doesn't exist.
+// DeleteKey deletes a key and its value. Returns true if the key exists and it was deleted.
+// Returns false if the key doesn't exist.
 func (db *Database) DeleteKey(key DatabaseKey) bool {
 	if !db.keyExists(key) {
 		return false
@@ -146,7 +146,7 @@ func (db *Database) DeleteKey(key DatabaseKey) bool {
 	return true
 }
 
-// DeleteAllKeys deletes all keys from the database.
+// DeleteAllKeys deletes all keys.
 func (db *Database) DeleteAllKeys() {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
@@ -155,4 +155,17 @@ func (db *Database) DeleteAllKeys() {
 	}
 	db.keyCount = 0
 	db.update()
+}
+
+// GetKeys returns all keys.
+func (db *Database) GetKeys() []string {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
+	var keys []string
+	for key := range db.data {
+		keys = append(keys, string(key))
+	}
+
+	return keys
 }
