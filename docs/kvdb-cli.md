@@ -262,3 +262,22 @@ $ kvdb-cli deletekeys
 OK
 ```
 This deletes all the keys of the default database.
+
+## Get keys
+
+Getting keys returns a list of keys present in a database. The server will be blocked until the operation has finished. This command is intended for debugging purposes.
+
+To get all the keys of a database, use command:
+```bash
+$ kvdb-cli getkeys -d db-name
+```
+- Option -d specifies the name of the database. If not specified, the default database is used.
+
+For example:
+```bash
+$ kvdb-cli getkeys
+1) key1
+2) key2
+3) key3
+```
+This returns all the keys of the default database.
