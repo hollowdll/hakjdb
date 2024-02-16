@@ -369,3 +369,98 @@ func TestDeleteAllKeys(t *testing.T) {
 		require.NotNil(t, response)
 	})
 }
+
+func TestGetKeys(t *testing.T) {
+	t.Run("MissingMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
+	})
+
+	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
+	})
+
+	t.Run("NoKeysPresent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		server.CreateDatabase(context.Background(), reqCreate)
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(ctx, req)
+		expectedKeys := 0
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equal(t, expectedKeys, len(res.Keys), "expected keys = %d; got = %d", expectedKeys, len(res.Keys))
+	})
+
+	t.Run("KeysPresent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		server.CreateDatabase(context.Background(), reqCreate)
+
+		keys := []string{"key1", "key2", "key3"}
+		for _, key := range keys {
+			req := &kvdbserver.SetStringRequest{Key: key}
+			_, err := server.SetString(ctx, req)
+			require.NoErrorf(t, err, "expected no error; error = %v", err)
+		}
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %s", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, len(keys), len(res.Keys), "expected keys = %d; got = %d", len(keys), len(res.Keys))
+
+		for _, key := range res.Keys {
+			assert.Equalf(t, true, stringInSlice(key, keys), "expected key %s to be in %v", key, keys)
+		}
+	})
+}
