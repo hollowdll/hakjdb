@@ -33,6 +33,7 @@ func init() {
 	rootCmd.AddCommand(cmdDeleteKey)
 	rootCmd.AddCommand(cmdDeleteAllKeys)
 	rootCmd.AddCommand(cmdInfo)
+	rootCmd.AddCommand(cmdGetKeys)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
