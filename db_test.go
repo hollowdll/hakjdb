@@ -202,3 +202,39 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 		t.Fatalf("key count should be 1 but got %d", count)
 	}
 }
+
+func TestDeleteAllKeys(t *testing.T) {
+	t.Run("NoKeys", func(t *testing.T) {
+		db := newDatabase("test")
+		db.DeleteAllKeys()
+		count := db.GetKeyCount()
+		expectedCount := 0
+
+		if count != 0 {
+			t.Errorf("expected keys = %d; got = %d", expectedCount, count)
+		}
+	})
+
+	t.Run("MultipleKeys", func(t *testing.T) {
+		db := newDatabase("test")
+		keys := []DatabaseKey{"key1", "key2", "key3"}
+		for _, key := range keys {
+			err := db.SetString(key, "value")
+			if err != nil {
+				t.Fatalf("error setting string value")
+			}
+		}
+
+		count := db.GetKeyCount()
+		if count != uint32(len(keys)) {
+			t.Errorf("expected keys = %d; got = %d", len(keys), count)
+		}
+
+		db.DeleteAllKeys()
+		count = db.GetKeyCount()
+		expectedCount := 0
+		if count != 0 {
+			t.Errorf("expected keys = %d; got = %d", expectedCount, count)
+		}
+	})
+}
