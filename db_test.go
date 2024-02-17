@@ -3,6 +3,8 @@ package kvdb
 import (
 	"testing"
 	"time"
+
+	"github.com/hollowdll/kvdb/internal/common"
 )
 
 func TestCreateDatabase(t *testing.T) {
@@ -180,7 +182,7 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 
 	err := db.SetString("key1", "value1")
 	if err != nil {
-		t.Fatalf("error setting string value")
+		t.Fatal(err)
 	}
 	count = db.GetKeyCount()
 	if count != 1 {
@@ -189,7 +191,7 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 
 	err = db.SetString("key2", "value2")
 	if err != nil {
-		t.Fatalf("error setting string value")
+		t.Fatal(err)
 	}
 	count = db.GetKeyCount()
 	if count != 2 {
@@ -209,7 +211,6 @@ func TestDeleteAllKeys(t *testing.T) {
 		db.DeleteAllKeys()
 		count := db.GetKeyCount()
 		expectedCount := 0
-
 		if count != 0 {
 			t.Errorf("expected keys = %d; got = %d", expectedCount, count)
 		}
@@ -221,20 +222,53 @@ func TestDeleteAllKeys(t *testing.T) {
 		for _, key := range keys {
 			err := db.SetString(key, "value")
 			if err != nil {
-				t.Fatalf("error setting string value")
+				t.Fatal(err)
 			}
 		}
 
 		count := db.GetKeyCount()
 		if count != uint32(len(keys)) {
-			t.Errorf("expected keys = %d; got = %d", len(keys), count)
+			t.Fatalf("expected keys = %d; got = %d", len(keys), count)
 		}
 
 		db.DeleteAllKeys()
 		count = db.GetKeyCount()
-		expectedCount := 0
-		if count != 0 {
+		var expectedCount uint32 = 0
+		if count != expectedCount {
 			t.Errorf("expected keys = %d; got = %d", expectedCount, count)
+		}
+	})
+}
+
+func TestGetKeys(t *testing.T) {
+	t.Run("NoKeys", func(t *testing.T) {
+		db := newDatabase("test")
+		keys := db.GetKeys()
+		expectedKeys := 0
+		if len(keys) != expectedKeys {
+			t.Errorf("expected keys = %d; got = %d", expectedKeys, len(keys))
+		}
+	})
+
+	t.Run("MultipleKeys", func(t *testing.T) {
+		db := newDatabase("test")
+		keys := []string{"key1", "key2", "key3"}
+		for _, key := range keys {
+			err := db.SetString(DatabaseKey(key), "value")
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+
+		actualKeys := db.GetKeys()
+		if len(actualKeys) != len(keys) {
+			t.Fatalf("expected keys = %d; got = %d", len(keys), len(actualKeys))
+		}
+
+		for _, key := range actualKeys {
+			if !common.StringInSlice(key, keys) {
+				t.Fatalf("expected key %s to be in %v", key, keys)
+			}
 		}
 	})
 }
