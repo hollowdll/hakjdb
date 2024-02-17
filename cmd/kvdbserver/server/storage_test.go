@@ -460,7 +460,7 @@ func TestGetKeys(t *testing.T) {
 		assert.Equalf(t, len(keys), len(res.Keys), "expected keys = %d; got = %d", len(keys), len(res.Keys))
 
 		for _, key := range res.Keys {
-			assert.Equalf(t, true, stringInSlice(key, keys), "expected key %s to be in %v", key, keys)
+			assert.Equalf(t, true, common.StringInSlice(key, keys), "expected key %s to be in %v", key, keys)
 		}
 	})
 }

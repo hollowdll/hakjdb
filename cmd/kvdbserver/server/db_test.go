@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -93,7 +94,7 @@ func TestGetAllDatabases(t *testing.T) {
 		assert.Equalf(t, len(dbs), len(response.DbNames), "expected databases = %d; got = %d", len(dbs), len(response.DbNames))
 
 		for _, db := range response.DbNames {
-			assert.Equalf(t, true, stringInSlice(db, dbs), "expected database name %s to be in %v", db, dbs)
+			assert.Equalf(t, true, common.StringInSlice(db, dbs), "expected database name %s to be in %v", db, dbs)
 		}
 	})
 }
@@ -197,13 +198,4 @@ func TestDeleteDatabase(t *testing.T) {
 		require.Equal(t, true, ok, "expected ok")
 		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
 	})
-}
-
-func stringInSlice(target string, slice []string) bool {
-	for _, elem := range slice {
-		if elem == target {
-			return true
-		}
-	}
-	return false
 }
