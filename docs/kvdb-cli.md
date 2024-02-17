@@ -248,7 +248,7 @@ false
 
 ## Delete all keys
 
-Deleting all the keys of a database removes the keys and the values they are holding. This can be used to remove all the data stored in a database.
+Deleting all the keys of a database removes the keys and the values they are holding. This can be used to remove all the data stored in a database. The database will be blocked until the operation has finished.
 
 To delete all the keys of a database, use command:
 ```bash
@@ -265,7 +265,7 @@ This deletes all the keys of the default database.
 
 ## Get keys
 
-Getting keys returns a list of keys present in a database. The server will be blocked until the operation has finished. This command is intended for debugging purposes.
+Getting keys returns a list of keys present in a database. This command is intended for debugging purposes. The database will be blocked until the operation has finished.
 
 To get all the keys of a database, use command:
 ```bash
