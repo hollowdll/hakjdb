@@ -6,9 +6,10 @@ import (
 )
 
 const (
+	dataDirName    string = "data"
 	configFileName string = ".kvdbserver"
 	configFileType string = "json"
-	dataDirName    string = "data"
+	logFileName    string = "kvdb.log"
 
 	// EnvPrefix is the prefix that environment variables use.
 	EnvPrefix string = "KVDB"
@@ -18,6 +19,8 @@ const (
 	ConfigKeyDebugEnabled string = "debug_enabled"
 	// ConfigKeyDefaultDatabase is the configuration key for default database.
 	ConfigKeyDefaultDatabase string = "default_db"
+	// ConfigKeyLogFileEnabled is the configuration key for enabling log file.
+	ConfigKeyLogFileEnabled string = "logfile_enabled"
 
 	// DefaultDatabase is the name of the default database.
 	DefaultDatabase string = "default"
@@ -44,6 +47,7 @@ func initConfig(s *Server) {
 	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
 	viper.SetDefault(ConfigKeyDebugEnabled, false)
 	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
+	viper.SetDefault(ConfigKeyLogFileEnabled, false)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
