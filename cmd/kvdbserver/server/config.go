@@ -1,6 +1,8 @@
 package server
 
 import (
+	"path/filepath"
+
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/viper"
 )
@@ -33,14 +35,16 @@ const (
 func initConfig(s *Server) {
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
-		s.logger.Fatalf("Failed to get executable's parent directory: %s", err)
+		s.logger.Fatalf("Failed to get executable's parent directory: %v", err)
 	}
-	configDirPath, err := common.GetDirPath(parentDir, dataDirName)
+	dataDirPath, err := common.GetDirPath(parentDir, dataDirName)
 	if err != nil {
-		s.logger.Fatalf("Failed to get data directory: %s", err)
+		s.logger.Fatalf("Failed to get data directory: %v", err)
 	}
 
-	viper.AddConfigPath(configDirPath)
+	s.logFilePath = filepath.Join(dataDirPath, logFileName)
+
+	viper.AddConfigPath(dataDirPath)
 	viper.SetConfigType(configFileType)
 	viper.SetConfigName(configFileName)
 
@@ -54,6 +58,6 @@ func initConfig(s *Server) {
 
 	viper.SafeWriteConfig()
 	if err = viper.ReadInConfig(); err != nil {
-		s.logger.Fatalf("Failed to load configuration: %s", err)
+		s.logger.Fatalf("Failed to load configuration: %v", err)
 	}
 }

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/viper"
@@ -30,6 +31,7 @@ type Server struct {
 	// True if the server is password protected.
 	passwordEnabled bool
 	logger          kvdb.Logger
+	logFilePath     string
 	mutex           sync.RWMutex
 }
 
@@ -43,6 +45,7 @@ func NewServer() *Server {
 		CredentialStore: *NewInMemoryCredentialStore(),
 		passwordEnabled: false,
 		logger:          kvdb.NewDefaultLogger(),
+		logFilePath:     "",
 	}
 }
 
@@ -54,6 +57,15 @@ func (s *Server) DisableLogger() {
 // EnableDebugLogs enables server debug logs.
 func (s *Server) EnableDebugLogs() {
 	s.logger.EnableDebug()
+}
+
+// EnableLogFile enables logger to write logs to the log file.
+func (s *Server) EnableLogFile() {
+	s.logger.EnableLogFile(s.logFilePath)
+	err := common.CreateFileIfNotExist(s.logFilePath)
+	if err != nil {
+		s.logger.Fatalf("Failed to create log file: %v", err)
+	}
 }
 
 // EnablePasswordProtection enables server password protection and sets the password.
@@ -153,6 +165,11 @@ func initServer() (*Server, *grpc.Server) {
 	if viper.GetBool(ConfigKeyDebugEnabled) {
 		server.EnableDebugLogs()
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
+	}
+
+	if viper.GetBool(ConfigKeyLogFileEnabled) {
+		server.EnableLogFile()
+		server.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", server.logFilePath)
 	}
 
 	password, present := os.LookupEnv(EnvVarPassword)

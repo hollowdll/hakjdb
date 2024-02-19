@@ -26,6 +26,8 @@ type Logger interface {
 
 	// EnableDebug enables debug logs.
 	EnableDebug()
+	// EnableLogFile enables log file.
+	EnableLogFile(filePath string)
 	// ClearFlags clears all default logger output flags.
 	ClearFlags()
 	// Disable disables all log outputs.
@@ -36,19 +38,28 @@ type Logger interface {
 // Log output defaults to standard error stream.
 // Debug logs are disabled by default. Call EnableDebug to enable them.
 type DefaultLogger struct {
-	Logger *log.Logger
-	debug  bool
+	Logger         *log.Logger
+	debug          bool
+	logFileEnabled bool
+	logFilePath    string
 }
 
 func NewDefaultLogger() *DefaultLogger {
 	return &DefaultLogger{
-		Logger: log.New(os.Stderr, "", 0),
-		debug:  false,
+		Logger:         log.New(os.Stderr, "", 0),
+		debug:          false,
+		logFileEnabled: false,
+		logFilePath:    "",
 	}
 }
 
 func (l *DefaultLogger) EnableDebug() {
 	l.debug = true
+}
+
+func (l *DefaultLogger) EnableLogFile(filePath string) {
+	l.logFileEnabled = true
+	l.logFilePath = filePath
 }
 
 func (l *DefaultLogger) ClearFlags() {
