@@ -12,7 +12,6 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/viper"
@@ -61,10 +60,9 @@ func (s *Server) EnableDebugLogs() {
 
 // EnableLogFile enables logger to write logs to the log file.
 func (s *Server) EnableLogFile() {
-	s.logger.EnableLogFile(s.logFilePath)
-	err := common.CreateFileIfNotExist(s.logFilePath)
+	err := s.logger.EnableLogFile(s.logFilePath)
 	if err != nil {
-		s.logger.Fatalf("Failed to create log file: %v", err)
+		s.logger.Fatalf("Failed to enable log file: %v", err)
 	}
 }
 
@@ -162,14 +160,14 @@ func initServer() (*Server, *grpc.Server) {
 	initConfig(server)
 	server.logger.ClearFlags()
 
-	if viper.GetBool(ConfigKeyDebugEnabled) {
-		server.EnableDebugLogs()
-		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
-	}
-
 	if viper.GetBool(ConfigKeyLogFileEnabled) {
 		server.EnableLogFile()
 		server.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", server.logFilePath)
+	}
+
+	if viper.GetBool(ConfigKeyDebugEnabled) {
+		server.EnableDebugLogs()
+		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
 	}
 
 	password, present := os.LookupEnv(EnvVarPassword)
@@ -192,6 +190,8 @@ func initServer() (*Server, *grpc.Server) {
 // StartServer initializes and starts the server.
 func StartServer() {
 	server, grpcServer := initServer()
+	defer server.logger.CloseLogFile()
+
 	portInUse = viper.GetUint16(ConfigKeyPort)
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", portInUse))
 	if err != nil {
