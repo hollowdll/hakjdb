@@ -42,3 +42,19 @@ func createDirIfNotExist(dirPath string) error {
 
 	return nil
 }
+
+// CreateFileIfNotExist creates a file if it doesn't exist.
+func CreateFileIfNotExist(filePath string) error {
+	_, err := os.Stat(filePath)
+	if os.IsNotExist(err) {
+		file, err := os.Create(filePath)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+	} else if err != nil {
+		return err
+	}
+
+	return nil
+}
