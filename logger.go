@@ -124,27 +124,39 @@ func (l *DefaultLogger) Infof(format string, v ...any) {
 }
 
 func (l *DefaultLogger) Error(v ...any) {
-	l.Logger.Printf("%s [Error] %s", timestampPrefix(), fmt.Sprint(v...))
+	logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprint(v...))
+	l.Logger.Print(logMsg)
+	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Errorf(format string, v ...any) {
-	l.Logger.Printf("%s [Error] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+	logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+	l.Logger.Print(logMsg)
+	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Warning(v ...any) {
-	l.Logger.Printf("%s [Warning] %s", timestampPrefix(), fmt.Sprint(v...))
+	logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprint(v...))
+	l.Logger.Print(logMsg)
+	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Warningf(format string, v ...any) {
-	l.Logger.Printf("%s [Warning] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+	logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+	l.Logger.Print(logMsg)
+	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Fatal(v ...any) {
-	l.Logger.Fatalf("%s [Fatal] %s", timestampPrefix(), fmt.Sprint(v...))
+	logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprint(v...))
+	l.Logger.Fatal(logMsg)
+	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Fatalf(format string, v ...any) {
-	l.Logger.Fatalf("%s [Fatal] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+	logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+	l.Logger.Fatal(logMsg)
+	l.writeToFile(logMsg)
 }
 
 func timestampPrefix() string {

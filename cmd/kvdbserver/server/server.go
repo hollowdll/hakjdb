@@ -66,6 +66,14 @@ func (s *Server) EnableLogFile() {
 	}
 }
 
+// CloseLogger closes logger and releases its possible resources.
+func (s *Server) CloseLogger() {
+	err := s.logger.CloseLogFile()
+	if err != nil {
+		s.logger.Fatalf("Failed to close log file: %v", err)
+	}
+}
+
 // EnablePasswordProtection enables server password protection and sets the password.
 func (s *Server) EnablePasswordProtection(password string) {
 	if err := s.CredentialStore.SetServerPassword([]byte(password)); err != nil {
@@ -190,7 +198,7 @@ func initServer() (*Server, *grpc.Server) {
 // StartServer initializes and starts the server.
 func StartServer() {
 	server, grpcServer := initServer()
-	defer server.logger.CloseLogFile()
+	defer server.CloseLogger()
 
 	portInUse = viper.GetUint16(ConfigKeyPort)
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", portInUse))
