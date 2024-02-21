@@ -12,6 +12,7 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
+	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
@@ -177,8 +178,7 @@ func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (r
 	}()
 
 	if !s.logFileEnabled {
-		s.logger.Debug("Log file is not enabled")
-		return &kvdbserver.GetLogsResponse{Logs: []string{}, LogfileEnabled: false}, nil
+		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
 	}
 	s.logger.Debug("Log file is enabled")
 

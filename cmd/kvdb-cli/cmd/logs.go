@@ -28,11 +28,7 @@ func getLogs() {
 	res, err := client.GrpcServerClient.GetLogs(ctx, &kvdbserver.GetLogsRequest{})
 	client.CheckGrpcError(err)
 
-	if res.LogfileEnabled {
-		if len(res.Logs) > 0 {
-			fmt.Println(strings.Join(res.Logs, "\n"))
-		}
-	} else {
-		fmt.Println("Log file is not enabled. Enable the server's log file to get logs.")
+	if len(res.Logs) > 0 {
+		fmt.Println(strings.Join(res.Logs, "\n"))
 	}
 }
