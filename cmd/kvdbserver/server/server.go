@@ -177,14 +177,15 @@ func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (r
 	}()
 
 	if !s.logFileEnabled {
+		s.logger.Debug("Log file is not enabled")
 		return &kvdbserver.GetLogsResponse{Logs: []string{}, LogfileEnabled: false}, nil
 	}
+	s.logger.Debug("Log file is enabled")
 
 	lines, err := common.ReadFileLines(s.logFilePath)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	s.logger.Debugf("Log file lines: %v", lines)
 
 	return &kvdbserver.GetLogsResponse{Logs: lines, LogfileEnabled: true}, nil
 }
