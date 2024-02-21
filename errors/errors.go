@@ -45,4 +45,7 @@ var (
 	// ErrInvalidCredentials is returned in authorization process
 	// if provided credentials are incorrect.
 	ErrInvalidCredentials = errors.New("invalid credentials")
+
+	// ErrLogFileNotEnabled is returned when trying to access logs but log file is not enabled.
+	ErrLogFileNotEnabled = errors.New("log file is not enabled")
 )

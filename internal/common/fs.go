@@ -1,6 +1,7 @@
 package common
 
 import (
+	"bufio"
 	"os"
 	"path/filepath"
 )
@@ -57,4 +58,26 @@ func CreateFileIfNotExist(filePath string) error {
 	}
 
 	return nil
+}
+
+// ReadFileLines reads a file and returns its lines
+func ReadFileLines(filePath string) ([]string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var lines []string
+
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return lines, nil
 }

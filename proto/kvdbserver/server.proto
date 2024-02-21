@@ -33,7 +33,22 @@ message ServerInfo {
     uint32 tcp_port = 9;
 }
 
+// This will have fields in the future to do filtering.
+// For example to return only the latest 10 logs.
+message GetLogsRequest {
+    
+}
+
+message GetLogsResponse {
+    // List of returned logs.
+    repeated string logs = 1;
+    // True if log file is enabled. Otherwise false.
+    bool logfile_enabled = 2;
+}
+
 service ServerService {
-    // Gets and returns information about the server.
+    // Returns information about the server.
     rpc GetServerInfo (GetServerInfoRequest) returns (GetServerInfoResponse) {}
+    // Returns server logs.
+    rpc GetLogs (GetLogsRequest) returns (GetLogsResponse) {}
 }

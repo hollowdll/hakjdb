@@ -12,6 +12,8 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
+	kvdberrors "github.com/hollowdll/kvdb/errors"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/viper"
@@ -31,6 +33,7 @@ type Server struct {
 	passwordEnabled bool
 	logger          kvdb.Logger
 	logFilePath     string
+	logFileEnabled  bool
 	mutex           sync.RWMutex
 }
 
@@ -45,6 +48,7 @@ func NewServer() *Server {
 		passwordEnabled: false,
 		logger:          kvdb.NewDefaultLogger(),
 		logFilePath:     "",
+		logFileEnabled:  false,
 	}
 }
 
@@ -64,6 +68,7 @@ func (s *Server) EnableLogFile() {
 	if err != nil {
 		s.logger.Fatalf("Failed to enable log file: %v", err)
 	}
+	s.logFileEnabled = true
 }
 
 // CloseLogger closes logger and releases its possible resources.
@@ -140,7 +145,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 
 	osInfo, err := getOsInfo()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err)
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	s.mutex.RLock()
@@ -159,6 +164,30 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	}
 
 	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
+}
+
+// GetServerInfo returns information about the server.
+func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
+	s.logger.Debug("Attempt to get server logs")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get server logs: %s", err)
+		} else {
+			s.logger.Debug("Get server logs success")
+		}
+	}()
+
+	if !s.logFileEnabled {
+		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
+	}
+	s.logger.Debug("Log file is enabled")
+
+	lines, err := common.ReadFileLines(s.logFilePath)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &kvdbserver.GetLogsResponse{Logs: lines, LogfileEnabled: true}, nil
 }
 
 // initServer initializes the server.
