@@ -62,6 +62,11 @@ func (s *Server) EnableDebugLogs() {
 	s.logger.EnableDebug()
 }
 
+// SetLogFilePath sets the file path to the log file.
+func (s *Server) SetLogFilePath(filePath string) {
+	s.logFilePath = filePath
+}
+
 // EnableLogFile enables logger to write logs to the log file.
 func (s *Server) EnableLogFile() {
 	err := s.logger.EnableLogFile(s.logFilePath)
@@ -166,7 +171,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
 }
 
-// GetServerInfo returns information about the server.
+// GetLogs reads server logs from the log file and returns them.
 func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
 	s.logger.Debug("Attempt to get server logs")
 	defer func() {
