@@ -1,0 +1,4 @@
+2024-02-22T11:16:43.295+02:00 [Info] Info message
+2024-02-22T11:16:43.296+02:00 [Debug] Debug message
+2024-02-22T11:16:43.297+02:00 [Error] Error message
+2024-02-22T11:16:43.298+02:00 [Warning] Warning message
