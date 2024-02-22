@@ -38,7 +38,7 @@ type Server struct {
 }
 
 // portInUse is the TCP/IP port the server uses.
-var portInUse uint16
+var portInUse uint16 = common.ServerDefaultPort
 
 func NewServer() *Server {
 	return &Server{
