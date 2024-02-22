@@ -86,7 +86,7 @@ To show information about the server, use command:
 $ kvdb-cli info
 ```
 
-This will show something like this:
+Output is something like this:
 ```bash
 kvdb_version: 0.1.0
 go_version: go1.21.6
@@ -109,6 +109,21 @@ Meaning of the fields:
 - `process_id`: PID of the server process
 - `uptime_seconds`: Server process uptime in seconds
 - `tcp_port`: Server TCP/IP port
+
+## Logs
+
+Server logs can be fetched if the server's log file is enabled. If it is not enabled, this command will return an error. This command is intended for debugging purposes.
+
+To get all logs, use command:
+```bash
+$ kvdb-cli logs
+```
+
+Output is something like this:
+```bash
+2024-02-22T11:16:43.292+02:00 [Info] Some log
+2024-02-22T11:16:43.293+02:00 [Info] Another log
+```
 
 ## Creating a database
 

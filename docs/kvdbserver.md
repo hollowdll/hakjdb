@@ -23,7 +23,7 @@ Another way to run the server is by using Docker. Instructions [here](../README.
 
 # Configuration
 
-Configurations are saved to a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `.kvdbserver.json` and it is created to the data directory. Configurations are saved in JSON format.
+Configurations are saved to a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `.kvdbserver.json` and it is created to the [data directory](#data-directory). Configurations are saved in JSON format.
 
 Here is a list of all configurations with their default values:
 
@@ -31,14 +31,16 @@ Here is a list of all configurations with their default values:
 {
   "debug_enabled": false,
   "default_db": "default",
+  "logfile_enabled": false,
   "port": 12345
 }
 ```
 
 Meaning of fields:
 
-- `debug_enabled`: Specifies if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
+- `debug_enabled`: Determines if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
 - `default_db`: The name of the default database that is created at server startup.
+- `logfile_enabled`: Determines if log file is enabled. If enabled, logs will be written to the log file. Can be true or false.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
 
 # Environment variables
@@ -49,14 +51,21 @@ Here is a list of all environment variables:
 
 - `KVDB_PORT`: Server TCP/IP port.
 - `KVDB_PASSWORD`: Server password. If not set, password protection is disabled.
-- `KVDB_DEBUG_ENABLED`: Controls whether debug mode is enabled. If true, debug messages are logged.
+- `KVDB_DEBUG_ENABLED`: Determines if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
 - `KVDB_DEFAULT_DB`: The name of the default database that is created at server startup.
+- `KVDB_LOGFILE_ENABLED`: Determines if log file is enabled. If enabled, logs will be written to the log file. Can be true or false.
 
 # Data directory
 
-The server has a data directory `data/` that is created to the executable's parent directory if it doesn't exist. Server specific data is saved to this directory. Currently only configuration file gets saved here.
+The server has a data directory `data/` that is created to the executable's parent directory if it doesn't exist. Server specific files are saved to this directory.
+
+Here is a list of files in this directory:
+- Configuration file: `.kvdbserver.json`
+- Log file: `kvdb.log`
 
 # Logs
+
+## Log types
 
 There are five different types of logs:
 
@@ -67,6 +76,14 @@ There are five different types of logs:
 - `Fatal`: Fatal error messages.
 
 Debug messages are disabled by default. You can enable them by turning debug mode on. Debug mode can be enabled by modifying the configuration file or with environment variable `KVDB_DEBUG_ENABLED` set to true.
+
+## Log file
+
+By default logs will be written only to the standard error stream (stderr). To write logs to a file, you need to enable the log file. Log file is intended only for debugging purposes as it decreases the server's performance by doing additional writes. 
+
+The log file can be enabled in the configuration file or with environment variable `KVDB_LOGFILE_ENABLED`.
+
+The name of the log file is `kvdb.log`. If log file is enabled, the file is created to the [data directory](#data-directory) at server startup.
 
 # Security
 
