@@ -87,6 +87,8 @@ func (l *DefaultLogger) ClearFlags() {
 
 func (l *DefaultLogger) Disable() {
 	l.Logger.SetOutput(io.Discard)
+	l.FileLogger.SetOutput(io.Discard)
+	l.CloseLogFile()
 }
 
 func (l *DefaultLogger) writeToFile(logMsg string) {

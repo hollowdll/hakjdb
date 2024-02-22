@@ -42,7 +42,7 @@ func initConfig(s *Server) {
 		s.logger.Fatalf("Failed to get data directory: %v", err)
 	}
 
-	s.logFilePath = filepath.Join(dataDirPath, logFileName)
+	s.SetLogFilePath(filepath.Join(dataDirPath, logFileName))
 
 	viper.AddConfigPath(dataDirPath)
 	viper.SetConfigType(configFileType)
