@@ -45,6 +45,8 @@ Cloning with git:
 git clone https://github.com/hollowdll/kvdb.git
 ```
 
+Note: You can also download the source code for a specific release [here](https://github.com/hollowdll/kvdb/releases).
+
 Change directory to the project root:
 ```bash
 cd kvdb
