@@ -27,6 +27,8 @@ Binaries are available for download. Multiple platforms supported. You can downl
 
 However, it is recommended to build the binaries from source. Instructions on how to build from source below.
 
+Releases are managed with [GoReleaser](https://goreleaser.com/).
+
 # Build binaries
 
 To build the binaries, you first need to install Go.
