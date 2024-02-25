@@ -31,14 +31,16 @@ Releases are managed with [GoReleaser](https://goreleaser.com/).
 
 # Build binaries
 
-To build the binaries, you first need to install Go.
+To build the binaries, you first need to install Go. Minimum version required is go1.22.
 
-Instructions [here](https://go.dev/doc/install).
+Instructions for installing Go can be found [here](https://go.dev/doc/install).
 
 You may also need tools to work with gRPC and Protocol Buffers in Go. This is needed if you want to compile `.proto` files and generate Go code.
 
 - [Protocol Buffer compiler](https://github.com/protocolbuffers/protobuf#protobuf-compiler-installation)
 - [Quickstart](https://grpc.io/docs/languages/go/quickstart/)
+
+If you just want to compile the binaries, then installing only Go is enough.
 
 After you have successfully installed go, clone this repository.
 
