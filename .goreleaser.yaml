@@ -55,3 +55,9 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+release:
+  header: |
+    ## Release notes
+    
+    Release notes for this release are available [here](https://github.com/hollowdll/kvdb/blob/main/docs/changelog/{{ .Tag }}.md).
