@@ -84,7 +84,7 @@ func TestSetGetDeleteString(t *testing.T) {
 	res4, err := storageClient.DeleteKey(ctx, req4)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res4)
-	assert.Equal(t, true, res4.Success, "expected success = %v; got = %v", true, res4.Success)
+	assert.Equal(t, true, res4.Ok, "expected ok = %v; got = %v", true, res4.Ok)
 
 	req5 := &kvdbserver.GetStringRequest{Key: key}
 	res5, err := storageClient.GetString(ctx, req5)
@@ -97,7 +97,7 @@ func TestSetGetDeleteString(t *testing.T) {
 	res6, err := storageClient.DeleteKey(ctx, req6)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res6)
-	assert.Equal(t, false, res6.Success, "expected success = %v; got = %v", false, res6.Success)
+	assert.Equal(t, false, res6.Ok, "expected ok = %v; got = %v", false, res6.Ok)
 }
 
 func TestDeleteAllKeys(t *testing.T) {

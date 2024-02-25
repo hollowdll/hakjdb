@@ -88,12 +88,12 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	success := s.databases[dbName].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
-	if !success {
-		return &kvdbserver.DeleteKeyResponse{Success: false}, nil
+	ok := s.databases[dbName].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
+	if !ok {
+		return &kvdbserver.DeleteKeyResponse{Ok: false}, nil
 	}
 
-	return &kvdbserver.DeleteKeyResponse{Success: true}, nil
+	return &kvdbserver.DeleteKeyResponse{Ok: true}, nil
 }
 
 // DeleteAllKeys deletes all the keys of a database.

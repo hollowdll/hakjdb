@@ -43,12 +43,13 @@ message DeleteDatabaseResponse {
     string db_name = 1;
 }
 
+// DatabaseInfo represents information about a database.
 message DatabaseInfo {
     // Name of the database.
     string name = 1;
-    // Timestamp when created.
+    // UTC timestamp when the database was created.
     google.protobuf.Timestamp created_at = 2;
-    // Timestamp when updated.
+    // UTC timestamp when the database was updated.
     google.protobuf.Timestamp updated_at = 3;
     // Size of the data in bytes.
     uint64 data_size = 4;
@@ -57,12 +58,12 @@ message DatabaseInfo {
 }
 
 service DatabaseService {
-    // Creates a new database.
+    // CreateDatabase creates a new database.
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
-    // Gets and returns the names of all databases.
+    // GetAllDatabases returns the names of all databases.
     rpc GetAllDatabases (GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
-    // Gets and returns info about a database.
+    // GetDatabaseInfo returns information about a database.
     rpc GetDatabaseInfo (GetDatabaseInfoRequest) returns (GetDatabaseInfoResponse) {}
-    // Deletes a database if it exists.
+    // DeleteDatabase deletes a database.
     rpc DeleteDatabase (DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {}
 }

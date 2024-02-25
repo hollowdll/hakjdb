@@ -106,7 +106,7 @@ func (x *GetServerInfoResponse) GetData() *ServerInfo {
 	return nil
 }
 
-// Information about the server. Will have more fields in future versions.
+// ServerInfo represents information about the server. Will have more fields in future versions.
 type ServerInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

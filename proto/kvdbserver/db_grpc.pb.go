@@ -22,13 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DatabaseServiceClient interface {
-	// Creates a new database.
+	// CreateDatabase creates a new database.
 	CreateDatabase(ctx context.Context, in *CreateDatabaseRequest, opts ...grpc.CallOption) (*CreateDatabaseResponse, error)
-	// Gets and returns the names of all databases.
+	// GetAllDatabases returns the names of all databases.
 	GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
-	// Gets and returns info about a database.
+	// GetDatabaseInfo returns information about a database.
 	GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error)
-	// Deletes a database if it exists.
+	// DeleteDatabase deletes a database.
 	DeleteDatabase(ctx context.Context, in *DeleteDatabaseRequest, opts ...grpc.CallOption) (*DeleteDatabaseResponse, error)
 }
 
@@ -80,13 +80,13 @@ func (c *databaseServiceClient) DeleteDatabase(ctx context.Context, in *DeleteDa
 // All implementations must embed UnimplementedDatabaseServiceServer
 // for forward compatibility
 type DatabaseServiceServer interface {
-	// Creates a new database.
+	// CreateDatabase creates a new database.
 	CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error)
-	// Gets and returns the names of all databases.
+	// GetAllDatabases returns the names of all databases.
 	GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error)
-	// Gets and returns info about a database.
+	// GetDatabaseInfo returns information about a database.
 	GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error)
-	// Deletes a database if it exists.
+	// DeleteDatabase deletes a database.
 	DeleteDatabase(context.Context, *DeleteDatabaseRequest) (*DeleteDatabaseResponse, error)
 	mustEmbedUnimplementedDatabaseServiceServer()
 }

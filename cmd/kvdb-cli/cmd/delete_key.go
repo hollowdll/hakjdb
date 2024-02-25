@@ -37,7 +37,7 @@ func deleteKey(key string) {
 	response, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserver.DeleteKeyRequest{Key: key})
 	client.CheckGrpcError(err)
 
-	if response.GetSuccess() {
+	if response.Ok {
 		fmt.Println("true")
 	} else {
 		fmt.Println("false")

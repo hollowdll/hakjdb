@@ -11,7 +11,7 @@ message GetServerInfoResponse {
     ServerInfo data = 1;
 }
 
-// Information about the server. Will have more fields in future versions.
+// ServerInfo represents information about the server. Will have more fields in future versions.
 message ServerInfo {
     // Version of kvdb.
     string kvdb_version = 1;
@@ -47,8 +47,8 @@ message GetLogsResponse {
 }
 
 service ServerService {
-    // Returns information about the server.
+    // GetServerInfo returns information about the server.
     rpc GetServerInfo (GetServerInfoRequest) returns (GetServerInfoResponse) {}
-    // Returns server logs.
+    // GetLogs returns the server logs if the log file is enabled.
     rpc GetLogs (GetLogsRequest) returns (GetLogsResponse) {}
 }

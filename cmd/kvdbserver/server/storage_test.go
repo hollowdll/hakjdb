@@ -260,7 +260,7 @@ func TestDeleteKey(t *testing.T) {
 		expected := false
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, expected, response.Success, "expected success = %v; got = %v", expected, response.Success)
+		assert.Equalf(t, expected, response.Ok, "expected ok = %v; got = %v", expected, response.Ok)
 	})
 
 	t.Run("SuccessKeyFound", func(t *testing.T) {
@@ -282,7 +282,7 @@ func TestDeleteKey(t *testing.T) {
 		expected := true
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, expected, response.Success, "expected success = %v; got = %v", expected, response.Success)
+		assert.Equalf(t, expected, response.Ok, "expected ok = %v; got = %v", expected, response.Ok)
 	})
 }
 

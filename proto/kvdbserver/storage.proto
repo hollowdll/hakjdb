@@ -32,7 +32,7 @@ message DeleteKeyRequest {
 
 message DeleteKeyResponse {
     // True if key was deleted. False if it doesn't exist.
-    bool success = 1;
+    bool ok = 1;
 }
 
 message DeleteAllKeysRequest {}
@@ -47,14 +47,14 @@ message GetKeysResponse {
 }
 
 service StorageService {
-    // Sets a string value using a key.
+    // SetString sets a string value using a key.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
-    // Gets a string value using a key.
+    // GetString gets a string value using a key.
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
-    // Deletes a key and its value.
+    // DeleteKey deletes a key and its value.
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
-    // Deletes all the keys of a database.
+    // DeleteAllKeys deletes all the keys of a database.
     rpc DeleteAllKeys(DeleteAllKeysRequest) returns (DeleteAllKeysResponse) {}
-    // Returns all the keys of a database.
+    // GetKeys returns all the keys of a database.
     rpc GetKeys(GetKeysRequest) returns (GetKeysResponse) {}
 }

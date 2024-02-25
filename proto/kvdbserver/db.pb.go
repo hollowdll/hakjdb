@@ -395,6 +395,7 @@ func (x *DeleteDatabaseResponse) GetDbName() string {
 	return ""
 }
 
+// DatabaseInfo represents information about a database.
 type DatabaseInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -402,9 +403,9 @@ type DatabaseInfo struct {
 
 	// Name of the database.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// Timestamp when created.
+	// UTC timestamp when the database was created.
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// Timestamp when updated.
+	// UTC timestamp when the database was updated.
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Size of the data in bytes.
 	DataSize uint64 `protobuf:"varint,4,opt,name=data_size,json=dataSize,proto3" json:"data_size,omitempty"`

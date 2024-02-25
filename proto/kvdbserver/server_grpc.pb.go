@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServerServiceClient interface {
-	// Returns information about the server.
+	// GetServerInfo returns information about the server.
 	GetServerInfo(ctx context.Context, in *GetServerInfoRequest, opts ...grpc.CallOption) (*GetServerInfoResponse, error)
-	// Returns server logs.
+	// GetLogs returns the server logs if the log file is enabled.
 	GetLogs(ctx context.Context, in *GetLogsRequest, opts ...grpc.CallOption) (*GetLogsResponse, error)
 }
 
@@ -58,9 +58,9 @@ func (c *serverServiceClient) GetLogs(ctx context.Context, in *GetLogsRequest, o
 // All implementations must embed UnimplementedServerServiceServer
 // for forward compatibility
 type ServerServiceServer interface {
-	// Returns information about the server.
+	// GetServerInfo returns information about the server.
 	GetServerInfo(context.Context, *GetServerInfoRequest) (*GetServerInfoResponse, error)
-	// Returns server logs.
+	// GetLogs returns the server logs if the log file is enabled.
 	GetLogs(context.Context, *GetLogsRequest) (*GetLogsResponse, error)
 	mustEmbedUnimplementedServerServiceServer()
 }

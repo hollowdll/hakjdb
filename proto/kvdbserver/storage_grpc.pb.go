@@ -22,15 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageServiceClient interface {
-	// Sets a string value using a key.
+	// SetString sets a string value using a key.
 	SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error)
-	// Gets a string value using a key.
+	// GetString gets a string value using a key.
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
-	// Deletes a key and its value.
+	// DeleteKey deletes a key and its value.
 	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
-	// Deletes all the keys of a database.
+	// DeleteAllKeys deletes all the keys of a database.
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
-	// Returns all the keys of a database.
+	// GetKeys returns all the keys of a database.
 	GetKeys(ctx context.Context, in *GetKeysRequest, opts ...grpc.CallOption) (*GetKeysResponse, error)
 }
 
@@ -91,15 +91,15 @@ func (c *storageServiceClient) GetKeys(ctx context.Context, in *GetKeysRequest, 
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
 type StorageServiceServer interface {
-	// Sets a string value using a key.
+	// SetString sets a string value using a key.
 	SetString(context.Context, *SetStringRequest) (*SetStringResponse, error)
-	// Gets a string value using a key.
+	// GetString gets a string value using a key.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
-	// Deletes a key and its value.
+	// DeleteKey deletes a key and its value.
 	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
-	// Deletes all the keys of a database.
+	// DeleteAllKeys deletes all the keys of a database.
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
-	// Returns all the keys of a database.
+	// GetKeys returns all the keys of a database.
 	GetKeys(context.Context, *GetKeysRequest) (*GetKeysResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
