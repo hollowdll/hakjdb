@@ -1,6 +1,8 @@
 # API
 
-The kvdb API uses gRPC. You need a gRPC client to connect to the server. The protobuf gRPC service definitions are in the `proto/kvdbserver/` directory. This directory contains all the .proto files needed to build the gRPC client.
+The kvdb API uses gRPC. You need a gRPC client to connect to the server. All requests to the server are made with Remote Procedure Calls.
+
+The protobuf gRPC service definitions are in the `proto/kvdbserver/` directory. This directory contains all the .proto files needed to build the gRPC client.
 
 [Link to the directory](../proto/kvdbserver/)
 
