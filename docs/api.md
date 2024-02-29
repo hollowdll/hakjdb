@@ -6,6 +6,12 @@ The protobuf gRPC service definitions are in the `proto/kvdbserver/` directory. 
 
 [Link to the directory](../proto/kvdbserver/)
 
+# Authentication
+
+If the server is password protected, the client needs to authenticate with password. The password is sent in gRPC metadata and needs to be included in all requests.
+
+The gRPC metadata key for password is `password`. The actual password to send is set as the value of the key.
+
 # gRPC services
 
 ## ServerService
