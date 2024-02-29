@@ -40,6 +40,9 @@ RPCs:
 
 The storage service `StorageService` is defined in the `storage.proto` file. This service contains RPCs to work with operations related to data storage.
 
+Common gRPC metadata keys for this service's RPCs:
+- `database-name`: The database to use. Required.
+
 RPCs:
 - SetString
 - GetString
