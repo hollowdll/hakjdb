@@ -18,6 +18,7 @@ Currently supported data types:
 - [Using the server](./docs/kvdbserver.md)
 - [Databases](./docs/databases.md)
 - [Data types](./docs/datatypes.md)
+- [API](./docs/api.md)
 
 # Releases
 

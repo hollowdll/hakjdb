@@ -14,4 +14,4 @@ The following list shows the allowed characters in a database name:
 
 # Keyspace
 
-In a database, each key is unique to that database. That means you cannot have two keys with the same name in the same database. The maximum length of a key is 1024 bytes. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time. The maximum number of keys a database can have is 4,294,967,295 (2^32 - 1).
+In a database, each key is unique. That means you cannot have two keys with the same name in the same database. The maximum length of a key is 1024 bytes. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time. The maximum number of keys a database can have is 4,294,967,295 (2^32 - 1).
