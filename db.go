@@ -18,6 +18,21 @@ type DatabaseKey string
 // DatabaseStringValue represents key-value pair string value. Value is stored as string.
 type DatabaseStringValue string
 
+// DatabaseData holds the data stored in a database.
+type databaseStoredData struct {
+	// stringData holds String keys.
+	stringData map[DatabaseKey]DatabaseStringValue
+	// hashMapData holds HashMap keys.
+	hashMapData map[DatabaseKey]map[string]string
+}
+
+func newDatabaseStoredData() *databaseStoredData {
+	return &databaseStoredData{
+		stringData:  make(map[DatabaseKey]DatabaseStringValue),
+		hashMapData: make(map[DatabaseKey]map[string]string),
+	}
+}
+
 // Database containing key-value pairs of data.
 type Database struct {
 	// Name of the database.
@@ -25,20 +40,22 @@ type Database struct {
 	// UTC timestamp describing when the database was created.
 	CreatedAt time.Time
 	// UTC timestamp describing when the database was updated.
-	UpdatedAt time.Time
-	data      map[DatabaseKey]DatabaseStringValue
-	keyCount  uint32
-	mutex     sync.RWMutex
+	UpdatedAt  time.Time
+	data       map[DatabaseKey]DatabaseStringValue
+	storedData databaseStoredData
+	keyCount   uint32
+	mutex      sync.RWMutex
 }
 
 // Creates a new instance of Database.
 func newDatabase(name string) *Database {
 	return &Database{
-		Name:      name,
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
-		data:      make(map[DatabaseKey]DatabaseStringValue),
-		keyCount:  0,
+		Name:       name,
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
+		data:       make(map[DatabaseKey]DatabaseStringValue),
+		storedData: *newDatabaseStoredData(),
+		keyCount:   0,
 	}
 }
 
@@ -104,7 +121,9 @@ func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 	return value, found
 }
 
-// SetString sets a string value using a key. Validates key before storing.
+// SetString sets a string value using a key, overwriting previous value.
+// Creates the key if it doesn't exist.
+// Validates the key before storing it.
 func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error {
 	err := validateDatabaseKey(key)
 	if err != nil {
@@ -116,14 +135,14 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 		return kvdberrors.ErrMaxKeysExceeded
 	}
 
-	if !db.keyExists(key) {
-		db.mutex.Lock()
-		db.keyCount++
-		db.mutex.Unlock()
-	}
-
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
+
+	_, exists := db.data[key]
+	if !exists {
+		db.keyCount++
+	}
+
 	db.data[key] = value
 	db.update()
 
@@ -168,4 +187,39 @@ func (db *Database) GetKeys() []string {
 	}
 
 	return keys
+}
+
+// SetHashMap sets a HashMap value using a key, overwriting previous fields.
+// Creates the key if it doesn't exist.
+// Validates the key before storing it.
+func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error {
+	err := validateDatabaseKey(key)
+	if err != nil {
+		return err
+	}
+
+	// Max key count exceeded
+	if db.GetKeyCount() >= DbMaxKeyCount {
+		return kvdberrors.ErrMaxKeysExceeded
+	}
+
+	// Lock mutex early to ensure the existence of the key
+	db.mutex.Lock()
+	defer db.mutex.Unlock()
+
+	_, exists := db.storedData.hashMapData[key]
+	if !exists {
+		db.storedData.hashMapData[key] = make(map[string]string)
+	}
+
+	for field, fieldValue := range fields {
+		db.storedData.hashMapData[key][field] = fieldValue
+	}
+
+	if !exists {
+		db.keyCount++
+	}
+	db.update()
+
+	return nil
 }
