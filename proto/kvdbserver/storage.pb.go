@@ -485,7 +485,7 @@ type SetHashMapRequest struct {
 
 	// The key to use.
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	// The fields and their corresponding values to set.
+	// The fields to be set and their corresponding values.
 	Fields map[string]string `protobuf:"bytes,2,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 

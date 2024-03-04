@@ -49,7 +49,7 @@ message GetKeysResponse {
 message SetHashMapRequest {
     // The key to use.
     string key = 1;
-    // The fields and their corresponding values to set.
+    // The fields to be set and their corresponding values.
     map<string, string> fields = 2;
 }
 
