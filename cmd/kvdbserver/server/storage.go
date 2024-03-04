@@ -146,6 +146,61 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 	return &kvdbserver.GetKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
 }
 
+// SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
+// Accepts database name in gRPC metadata.
+func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapRequest) (res *kvdbserver.SetHashMapResponse, err error) {
+	s.logger.Debug("Attempt to set HashMap fields")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to set HashMap fields: %s", err)
+		} else {
+			s.logger.Debug("Set HashMap fields success")
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	err = s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return &kvdbserver.SetHashMapResponse{}, nil
+}
+
+// GetHashMapFieldValue returns a single HashMap field value using a key.
+// Accepts database name in gRPC metadata.
+func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHashMapFieldValueRequest) (res *kvdbserver.GetHashMapFieldValueResponse, err error) {
+	s.logger.Debug("Attempt to get HashMap field value")
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("Failed to get HashMap field value: %s", err)
+		} else {
+			s.logger.Debug("Get HashMap field value success")
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	value, ok := s.databases[dbName].GetHashMapFieldValue(kvdb.DatabaseKey(req.Key), req.Field)
+
+	return &kvdbserver.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
+}
+
 func getDatabaseNameFromContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

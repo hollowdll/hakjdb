@@ -46,15 +46,49 @@ message GetKeysResponse {
     repeated string keys = 1;
 }
 
+message SetHashMapRequest {
+    // The key to use.
+    string key = 1;
+    // The fields to be set and their corresponding values.
+    map<string, string> fields = 2;
+}
+
+message SetHashMapResponse {}
+
+message GetHashMapFieldValueRequest {
+    // The key to use.
+    string key = 1;
+    // The field whose value should be returned.
+    string field = 2;
+}
+
+message GetHashMapFieldValueResponse {
+    // The returned value.
+    string value = 1;
+    // True if the field exists. False if the key or field doesn't exist.
+    bool ok = 2;
+}
+
 service StorageService {
     // SetString sets a string value using a key.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
+
     // GetString gets a string value using a key.
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
+
     // DeleteKey deletes a key and its value.
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
+
     // DeleteAllKeys deletes all the keys of a database.
     rpc DeleteAllKeys(DeleteAllKeysRequest) returns (DeleteAllKeysResponse) {}
+
     // GetKeys returns all the keys of a database.
     rpc GetKeys(GetKeysRequest) returns (GetKeysResponse) {}
+
+    // SetHashMap sets fields in a HashMap value using a key.
+    // Previous fields are overwritten. Creates the key if it doesn't exist.
+    rpc SetHashMap(SetHashMapRequest) returns (SetHashMapResponse) {}
+
+    // GetHashMapFieldValue returns a single HashMap field value using a key.
+    rpc GetHashMapFieldValue(GetHashMapFieldValueRequest) returns (GetHashMapFieldValueResponse) {}
 }

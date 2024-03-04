@@ -32,6 +32,11 @@ type StorageServiceClient interface {
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
 	// GetKeys returns all the keys of a database.
 	GetKeys(ctx context.Context, in *GetKeysRequest, opts ...grpc.CallOption) (*GetKeysResponse, error)
+	// SetHashMap sets fields in a HashMap value using a key.
+	// Previous fields are overwritten. Creates the key if it doesn't exist.
+	SetHashMap(ctx context.Context, in *SetHashMapRequest, opts ...grpc.CallOption) (*SetHashMapResponse, error)
+	// GetHashMapFieldValue returns a single HashMap field value using a key.
+	GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error)
 }
 
 type storageServiceClient struct {
@@ -87,6 +92,24 @@ func (c *storageServiceClient) GetKeys(ctx context.Context, in *GetKeysRequest, 
 	return out, nil
 }
 
+func (c *storageServiceClient) SetHashMap(ctx context.Context, in *SetHashMapRequest, opts ...grpc.CallOption) (*SetHashMapResponse, error) {
+	out := new(SetHashMapResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/SetHashMap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storageServiceClient) GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error) {
+	out := new(GetHashMapFieldValueResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetHashMapFieldValue", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageServiceServer is the server API for StorageService service.
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
@@ -101,6 +124,11 @@ type StorageServiceServer interface {
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
 	// GetKeys returns all the keys of a database.
 	GetKeys(context.Context, *GetKeysRequest) (*GetKeysResponse, error)
+	// SetHashMap sets fields in a HashMap value using a key.
+	// Previous fields are overwritten. Creates the key if it doesn't exist.
+	SetHashMap(context.Context, *SetHashMapRequest) (*SetHashMapResponse, error)
+	// GetHashMapFieldValue returns a single HashMap field value using a key.
+	GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
 
@@ -122,6 +150,12 @@ func (UnimplementedStorageServiceServer) DeleteAllKeys(context.Context, *DeleteA
 }
 func (UnimplementedStorageServiceServer) GetKeys(context.Context, *GetKeysRequest) (*GetKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetKeys not implemented")
+}
+func (UnimplementedStorageServiceServer) SetHashMap(context.Context, *SetHashMapRequest) (*SetHashMapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetHashMap not implemented")
+}
+func (UnimplementedStorageServiceServer) GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHashMapFieldValue not implemented")
 }
 func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 
@@ -226,6 +260,42 @@ func _StorageService_GetKeys_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StorageService_SetHashMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetHashMapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).SetHashMap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.StorageService/SetHashMap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).SetHashMap(ctx, req.(*SetHashMapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StorageService_GetHashMapFieldValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHashMapFieldValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).GetHashMapFieldValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.StorageService/GetHashMapFieldValue",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).GetHashMapFieldValue(ctx, req.(*GetHashMapFieldValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StorageService_ServiceDesc is the grpc.ServiceDesc for StorageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -252,6 +322,14 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetKeys",
 			Handler:    _StorageService_GetKeys_Handler,
+		},
+		{
+			MethodName: "SetHashMap",
+			Handler:    _StorageService_SetHashMap_Handler,
+		},
+		{
+			MethodName: "GetHashMapFieldValue",
+			Handler:    _StorageService_GetHashMapFieldValue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
