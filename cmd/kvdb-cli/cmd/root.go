@@ -4,6 +4,7 @@ import (
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/connect"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/db"
+	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/hashmap"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/cobra"
@@ -28,6 +29,7 @@ func init() {
 
 	rootCmd.AddCommand(db.CmdDb)
 	rootCmd.AddCommand(connect.CmdConnect)
+	rootCmd.AddCommand(hashmap.CmdHashMap)
 	rootCmd.AddCommand(cmdGetString)
 	rootCmd.AddCommand(cmdSetString)
 	rootCmd.AddCommand(cmdDeleteKey)
