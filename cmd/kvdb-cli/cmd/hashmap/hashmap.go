@@ -15,4 +15,5 @@ var (
 
 func init() {
 	CmdHashMap.AddCommand(cmdSetHashMap)
+	CmdHashMap.AddCommand(cmdGetHashMapFieldValue)
 }
