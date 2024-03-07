@@ -272,3 +272,101 @@ func TestGetKeys(t *testing.T) {
 		}
 	})
 }
+
+func TestSetHashMap(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field1"] = "value1"
+	fields["field2"] = "value2"
+	fields["field3"] = "value3"
+
+	t.Run("SetNonExistentKey", func(t *testing.T) {
+		db := newDatabase("test")
+		err := db.SetHashMap("key1", fields)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var expectedKeys uint32 = 1
+		keys := db.GetKeyCount()
+		if keys != expectedKeys {
+			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
+		}
+	})
+
+	t.Run("OverwriteExistingHashMapKey", func(t *testing.T) {
+		db := newDatabase("test")
+		err := db.SetHashMap("key1", fields)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = db.SetHashMap("key1", make(map[string]string))
+		if err != nil {
+			t.Fatalf("error overwriting key: %v", err)
+		}
+
+		var expectedKeys uint32 = 1
+		keys := db.GetKeyCount()
+		if keys != expectedKeys {
+			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
+		}
+	})
+
+	t.Run("DatabaseIsUpdated", func(t *testing.T) {
+		db := newDatabase("test")
+		originalTime := db.UpdatedAt
+
+		time.Sleep(10 * time.Millisecond)
+		err := db.SetHashMap("key1", fields)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		updatedTime := db.UpdatedAt
+		if !updatedTime.After(originalTime) {
+			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
+		}
+	})
+}
+
+func TestGetHashMapFieldValue(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field1"] = "value1"
+	fields["field2"] = "value2"
+	fields["field3"] = "value3"
+
+	t.Run("GetNonExistentKey", func(t *testing.T) {
+		db := newDatabase("test")
+		value, ok := db.GetHashMapFieldValue("key1", "field1")
+
+		expectedValue := ""
+		if value != expectedValue {
+			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		}
+
+		expectedOk := false
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("GetExistingKeyAndField", func(t *testing.T) {
+		db := newDatabase("test")
+		key := DatabaseKey("key1")
+		err := db.SetHashMap(key, fields)
+		if err != nil {
+			t.Fatal(err)
+		}
+		value, ok := db.GetHashMapFieldValue(key, "field2")
+
+		expectedValue := "value2"
+		if value != expectedValue {
+			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+}
