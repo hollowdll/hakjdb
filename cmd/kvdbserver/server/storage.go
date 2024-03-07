@@ -29,6 +29,9 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, err
 	}
 
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
@@ -58,6 +61,9 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 		return nil, err
 	}
 
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
@@ -83,6 +89,9 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 	if err != nil {
 		return nil, err
 	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
@@ -113,6 +122,9 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 		return nil, err
 	}
 
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
@@ -139,6 +151,9 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 		return nil, err
 	}
 
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
@@ -162,6 +177,9 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 	if err != nil {
 		return nil, err
 	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
@@ -191,6 +209,9 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 	if err != nil {
 		return nil, err
 	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())

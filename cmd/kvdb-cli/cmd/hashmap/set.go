@@ -13,8 +13,8 @@ import (
 
 var cmdSetHashMap = &cobra.Command{
 	Use:   "set [key] [[field] [value] ...]",
-	Short: "Set HashMap fields and their corresponding values",
-	Long:  "Set HashMap fields and their corresponding values",
+	Short: "Set HashMap fields and values",
+	Long:  "Set HashMap fields and their corresponding values using a key",
 	Args:  cobra.MatchAll(cobra.MinimumNArgs(3)),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args)%2 == 0 {

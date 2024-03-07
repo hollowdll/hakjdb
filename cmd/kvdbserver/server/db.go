@@ -13,9 +13,6 @@ import (
 
 // databaseExists returns true if a database exists on the server
 func (s *Server) databaseExists(name string) bool {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
 	_, exists := s.databases[name]
 	return exists
 }
@@ -32,17 +29,17 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 		}
 	}()
 
-	db, err := kvdb.CreateDatabase(req.GetDbName())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
-	}
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 
-	if s.databaseExists(db.Name) {
+	if s.databaseExists(req.GetDbName()) {
 		return nil, status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error())
 	}
 
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
+	db, err := kvdb.CreateDatabase(req.GetDbName())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
 	s.databases[db.Name] = db
 
 	return &kvdbserver.CreateDatabaseResponse{DbName: db.Name}, nil
@@ -81,12 +78,12 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 		}
 	}()
 
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	if !s.databaseExists(req.GetDbName()) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 
 	db := s.databases[req.GetDbName()]
 	data := &kvdbserver.DatabaseInfo{
@@ -112,12 +109,13 @@ func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatab
 		}
 	}()
 
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
 	delete(s.databases, dbName)
 
 	return &kvdbserver.DeleteDatabaseResponse{DbName: dbName}, nil

@@ -14,7 +14,7 @@ import (
 var cmdGetHashMapFieldValue = &cobra.Command{
 	Use:   "get [key] [field]",
 	Short: "Get a HashMap field value",
-	Long:  "Get a HashMap field value",
+	Long:  "Get a HashMap field value using a key",
 	Args:  cobra.MatchAll(cobra.ExactArgs(2)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getHashMapFieldValue(args[0], args[1])

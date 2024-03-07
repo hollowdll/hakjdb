@@ -182,6 +182,9 @@ func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (r
 		}
 	}()
 
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	if !s.logFileEnabled {
 		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
 	}
