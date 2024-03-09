@@ -350,6 +350,26 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		}
 	})
 
+	t.Run("GetNonExistentField", func(t *testing.T) {
+		db := newDatabase("test")
+		key := DatabaseKey("key1")
+		err := db.SetHashMap(key, fields)
+		if err != nil {
+			t.Fatal(err)
+		}
+		value, ok := db.GetHashMapFieldValue(key, "field12345")
+
+		expectedValue := ""
+		if value != expectedValue {
+			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		}
+
+		expectedOk := false
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
 	t.Run("GetExistingKeyAndField", func(t *testing.T) {
 		db := newDatabase("test")
 		key := DatabaseKey("key1")
