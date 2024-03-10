@@ -46,6 +46,8 @@ Common gRPC metadata keys for this service's RPCs:
 RPCs:
 - SetString
 - GetString
+- SetHashMap
+- GetHashMapFieldValue
 - DeleteKey
 - DeleteAllKeys
 - GetKeys

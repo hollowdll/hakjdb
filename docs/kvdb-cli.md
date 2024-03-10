@@ -90,7 +90,7 @@ Output is something like this:
 ```bash
 kvdb_version: 0.1.0
 go_version: go1.21.6
-db_count: 0
+db_count: 1
 total_data_size: 0B
 os: Linux 5.10.102.1-microsoft-standard-WSL2 x86_64
 arch: amd64
@@ -195,7 +195,7 @@ Meaning of the fields:
 
 ## Set string
 
-To store a string value, you need to set a key to hold it. If the key already exists with some value, it is overwritten.
+To store a string value, you need to set a key to hold it. If the key already exists with some value, it is overwritten. Creates the key if it doesn't exist.
 
 To set a string value, use command:
 ```bash
@@ -209,9 +209,7 @@ For example:
 $ kvdb-cli set message "Hello World!" -d db0
 OK
 ```
-This would set key "message" to hold string "Hello World!" in database db0.
-
-Keep in mind that there are some limitations to keys. The maximum length of a key is 1024 bytes. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time.
+This sets key "message" to hold string "Hello World!" in database db0.
 
 ## Get string
 
@@ -229,7 +227,7 @@ For example:
 $ kvdb-cli get message -d db0
 "Hello World!"
 ```
-This would get the string value that key "message" is holding in database db0.
+This gets the string value that key "message" is holding in database db0.
 
 If the key doesn't exist, a special value (None) is returned:
 ```bash
@@ -253,7 +251,7 @@ For example:
 $ kvdb-cli delete message -d db0
 true
 ```
-This would delete key "message" in database db0. If the key exists and was deleted, this returns true.
+This deletes key "message" in database db0. If the key exists and was deleted, this returns true.
 
 If the key does not exist, this returns false:
 ```bash
@@ -296,3 +294,25 @@ $ kvdb-cli getkeys
 3) key3
 ```
 This returns all the keys of the default database.
+
+## Set HashMap
+
+To store a HashMap and set fields in it, you need to set a key to hold the HashMap. If the key already exists with some fields, the fields are overwritten with the new values. Creates a new HashMap if the key doesn't exist.
+
+To set HashMap field values, use command:
+```bash
+$ kvdb-cli hashmap set [key] [[field] [value] ...] -d db-name
+```
+- [key] is the name of the key.
+- [field] is the name of a field.
+- [value] is the value of a field.
+- Option -d specifies the name of the database. If not specified, the default database is used.
+
+The command can be used to set multiple fields.
+
+For example:
+```bash
+$ kvdb-cli hashmap set key1 name "John" age "35"
+OK
+```
+This sets key "key1" to hold a HashMap with fields "name" and "age" set to their respective values.
