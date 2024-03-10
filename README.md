@@ -11,6 +11,7 @@ Components:
 
 Currently supported data types:
 - `String`
+- `HashMap`
 
 # Documentation
 
