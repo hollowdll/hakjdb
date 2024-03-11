@@ -49,6 +49,7 @@ message GetLogsResponse {
 service ServerService {
     // GetServerInfo returns information about the server.
     rpc GetServerInfo (GetServerInfoRequest) returns (GetServerInfoResponse) {}
+    
     // GetLogs returns the server logs if the log file is enabled.
     rpc GetLogs (GetLogsRequest) returns (GetLogsResponse) {}
 }

@@ -7,7 +7,7 @@ package kvdbserverapi;
 import "google/protobuf/timestamp.proto";
 
 message CreateDatabaseRequest {
-    // Name of the database.
+    // Name of the database to create.
     string db_name = 1;
 }
 
@@ -60,10 +60,13 @@ message DatabaseInfo {
 service DatabaseService {
     // CreateDatabase creates a new database.
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
+
     // GetAllDatabases returns the names of all databases.
     rpc GetAllDatabases (GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
+
     // GetDatabaseInfo returns information about a database.
     rpc GetDatabaseInfo (GetDatabaseInfoRequest) returns (GetDatabaseInfoResponse) {}
+
     // DeleteDatabase deletes a database.
     rpc DeleteDatabase (DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {}
 }
