@@ -57,6 +57,7 @@ message DatabaseInfo {
     uint32 key_count = 5;
 }
 
+// DatabaseService provides database-related operations.
 service DatabaseService {
     // CreateDatabase creates a new database.
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}

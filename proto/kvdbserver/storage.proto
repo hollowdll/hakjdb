@@ -69,8 +69,10 @@ message GetHashMapFieldValueResponse {
     bool ok = 2;
 }
 
+// StorageService provides operations on data storage.
 service StorageService {
     // SetString sets a String value using a key. Creates the key if it doesn't exist.
+    // Overwrites the key if it is holding a value of another data type.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
 
     // GetString gets a String value using a key.
