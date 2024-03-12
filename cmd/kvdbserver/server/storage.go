@@ -190,14 +190,15 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
+	if err := kvdb.ValidateDatabaseKey(kvdb.DatabaseKey(req.GetKey())); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
 	if s.databases[dbName].MaxKeysReached() {
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	err = s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
+	s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)
 
 	return &kvdbserver.SetHashMapResponse{}, nil
 }

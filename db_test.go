@@ -244,10 +244,7 @@ func TestSetHashMap(t *testing.T) {
 
 	t.Run("SetNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")
-		err := db.SetHashMap("key1", fields)
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetHashMap("key1", fields)
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -258,15 +255,8 @@ func TestSetHashMap(t *testing.T) {
 
 	t.Run("OverwriteExistingHashMapKey", func(t *testing.T) {
 		db := newDatabase("test")
-		err := db.SetHashMap("key1", fields)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		err = db.SetHashMap("key1", make(map[string]string))
-		if err != nil {
-			t.Fatalf("error overwriting key: %v", err)
-		}
+		db.SetHashMap("key1", fields)
+		db.SetHashMap("key1", make(map[string]string))
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -280,10 +270,7 @@ func TestSetHashMap(t *testing.T) {
 		originalTime := db.UpdatedAt
 
 		time.Sleep(10 * time.Millisecond)
-		err := db.SetHashMap("key1", fields)
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetHashMap("key1", fields)
 
 		updatedTime := db.UpdatedAt
 		if !updatedTime.After(originalTime) {
@@ -316,10 +303,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 	t.Run("GetNonExistentField", func(t *testing.T) {
 		db := newDatabase("test")
 		key := DatabaseKey("key1")
-		err := db.SetHashMap(key, fields)
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetHashMap(key, fields)
 		value, ok := db.GetHashMapFieldValue(key, "field12345")
 
 		expectedValue := ""
@@ -336,10 +320,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 	t.Run("GetExistingKeyAndField", func(t *testing.T) {
 		db := newDatabase("test")
 		key := DatabaseKey("key1")
-		err := db.SetHashMap(key, fields)
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetHashMap(key, fields)
 		value, ok := db.GetHashMapFieldValue(key, "field2")
 
 		expectedValue := "value2"

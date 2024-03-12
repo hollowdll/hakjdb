@@ -229,13 +229,7 @@ func (db *Database) GetKeys() []string {
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Creates the key if it doesn't exist.
 // Validates the key before storing it.
-func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error {
-	err := ValidateDatabaseKey(key)
-	if err != nil {
-		return err
-	}
-
-	// Lock mutex early to ensure the existence of the key
+func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -255,8 +249,6 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error 
 		db.storedData.hashMapData[key][field] = fieldValue
 	}
 	db.update()
-
-	return nil
 }
 
 // GetHashMapFieldValue returns a single HashMap field value using a key.
