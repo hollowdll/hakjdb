@@ -30,9 +30,9 @@ var (
 	// invalid characters.
 	ErrDatabaseKeyInvalid = errors.New("key contains invalid characters")
 
-	// ErrMaxKeysExceeded is returned when trying to insert keys into a database
-	// that has reached DbMaxKeyCount.
-	ErrMaxKeysExceeded = errors.New("max keys exceeded")
+	// ErrMaxKeysReached is returned when trying to insert keys into a database
+	// that has reached the maximum key limit.
+	ErrMaxKeysReached = errors.New("max key limit reached")
 
 	// ErrMissingMetadata is returned when gRPC requires metadata
 	// but it is missing.

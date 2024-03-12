@@ -81,7 +81,7 @@ func TestSetString(t *testing.T) {
 		assert.NotNil(t, response, "expected response to be non-nil")
 	})
 
-	t.Run("InvalidInput", func(t *testing.T) {
+	t.Run("InvalidKey", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "db0"
@@ -539,7 +539,7 @@ func TestSetHashMap(t *testing.T) {
 		require.NotNil(t, res)
 	})
 
-	t.Run("InvalidInput", func(t *testing.T) {
+	t.Run("InvalidKey", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "default"

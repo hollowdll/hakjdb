@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"sync"
 	"time"
-
-	kvdberrors "github.com/hollowdll/kvdb/errors"
 )
 
 // DbMaxKeyCount is the maximum number of keys a database can hold.
@@ -52,15 +50,17 @@ func newDatabaseStoredData() *databaseStoredData {
 
 // Database containing key-value pairs of data.
 type Database struct {
-	// Name of the database.
+	// The name of the database.
 	Name string
 	// UTC timestamp describing when the database was created.
 	CreatedAt time.Time
 	// UTC timestamp describing when the database was updated.
-	UpdatedAt  time.Time
+	UpdatedAt time.Time
+	// The data stored in this database.
 	storedData databaseStoredData
-	keyCount   uint32
-	mutex      sync.RWMutex
+	// The current number of keys in this database.
+	keyCount uint32
+	mutex    sync.RWMutex
 }
 
 // Creates a new instance of Database.
@@ -102,6 +102,11 @@ func (db *Database) GetKeyCount() uint32 {
 	return db.keyCount
 }
 
+// MaxKeysReached returns true if the maximum key limit is reached or exceeded.
+func (db *Database) MaxKeysReached() bool {
+	return db.keyCount >= DbMaxKeyCount
+}
+
 // GetStoredSizeBytes returns the size of stored data in bytes.
 func (db *Database) GetStoredSizeBytes() uint64 {
 	db.mutex.RLock()
@@ -131,14 +136,9 @@ func (db *Database) GetStoredSizeBytes() uint64 {
 	return size
 }
 
-// CreateDatabase creates a new database with a name. Validates input.
-func CreateDatabase(name string) (*Database, error) {
-	err := validateDatabaseName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	return newDatabase(name), nil
+// CreateDatabase creates a new database with a name.
+func CreateDatabase(name string) *Database {
+	return newDatabase(name)
 }
 
 // GetString retrieves a string value using a key.
@@ -154,17 +154,7 @@ func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 // SetString sets a string value using a key, overwriting previous value.
 // Creates the key if it doesn't exist.
 // Validates the key before storing it.
-func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error {
-	err := validateDatabaseKey(key)
-	if err != nil {
-		return err
-	}
-
-	// Max key count exceeded
-	if db.GetKeyCount() >= DbMaxKeyCount {
-		return kvdberrors.ErrMaxKeysExceeded
-	}
-
+func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -177,8 +167,6 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 
 	db.storedData.stringData[key] = value
 	db.update()
-
-	return nil
 }
 
 // DeleteKey deletes a key and the value it is holding.
@@ -241,18 +229,7 @@ func (db *Database) GetKeys() []string {
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Creates the key if it doesn't exist.
 // Validates the key before storing it.
-func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error {
-	err := validateDatabaseKey(key)
-	if err != nil {
-		return err
-	}
-
-	// Max key count exceeded
-	if db.GetKeyCount() >= DbMaxKeyCount {
-		return kvdberrors.ErrMaxKeysExceeded
-	}
-
-	// Lock mutex early to ensure the existence of the key
+func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -272,8 +249,6 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error 
 		db.storedData.hashMapData[key][field] = fieldValue
 	}
 	db.update()
-
-	return nil
 }
 
 // GetHashMapFieldValue returns a single HashMap field value using a key.

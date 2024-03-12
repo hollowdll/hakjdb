@@ -89,6 +89,7 @@ service StorageService {
 
     // SetHashMap sets fields in a HashMap using a key.
     // Previous fields are overwritten. Creates the key if it doesn't exist.
+    // Overwrites the key if it is holding a value of another data type.
     rpc SetHashMap(SetHashMapRequest) returns (SetHashMapResponse) {}
 
     // GetHashMapFieldValue returns a single HashMap field value using a key.

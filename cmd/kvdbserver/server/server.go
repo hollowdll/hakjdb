@@ -105,10 +105,10 @@ func (s *Server) getTotalDataSize() uint64 {
 
 // CreateDefaultDatabase creates an empty default database.
 func (s *Server) CreateDefaultDatabase(name string) {
-	db, err := kvdb.CreateDatabase(name)
-	if err != nil {
+	if err := kvdb.ValidateDatabaseName(name); err != nil {
 		s.logger.Fatalf("Failed to create default database: %v", err)
 	}
+	db := kvdb.CreateDatabase(name)
 	s.databases[db.Name] = db
 	s.logger.Infof("Created default database '%s'", db.Name)
 }

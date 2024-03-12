@@ -45,7 +45,7 @@ func TestValidateDatabaseName(t *testing.T) {
 		},
 	}
 	for _, test := range cases {
-		err := validateDatabaseName(test.dbName)
+		err := ValidateDatabaseName(test.dbName)
 		if test.valid && err != nil {
 			t.Errorf("database name %s should be valid but is invalid", test.dbName)
 		} else if !test.valid && err == nil {
@@ -86,7 +86,7 @@ func TestValidateDatabaseKey(t *testing.T) {
 		},
 	}
 	for _, test := range cases {
-		err := validateDatabaseKey(test.key)
+		err := ValidateDatabaseKey(test.key)
 		if test.valid && err != nil {
 			t.Errorf("key %s should be valid but is invalid", test.key)
 		} else if !test.valid && err == nil {

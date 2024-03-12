@@ -36,10 +36,15 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	err = s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
+	if err := kvdb.ValidateDatabaseKey(kvdb.DatabaseKey(req.GetKey())); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+
+	if s.databases[dbName].MaxKeysReached() {
+		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
+	}
+
+	s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 
 	return &kvdbserver.SetStringResponse{}, nil
 }
@@ -185,10 +190,15 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	err = s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)
-	if err != nil {
+	if err := kvdb.ValidateDatabaseKey(kvdb.DatabaseKey(req.GetKey())); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+
+	if s.databases[dbName].MaxKeysReached() {
+		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
+	}
+
+	s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)
 
 	return &kvdbserver.SetHashMapResponse{}, nil
 }
