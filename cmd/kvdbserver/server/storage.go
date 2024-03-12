@@ -36,14 +36,15 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
+	if err := kvdb.ValidateDatabaseKey(kvdb.DatabaseKey(req.GetKey())); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
 	if s.databases[dbName].MaxKeysReached() {
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	err = s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
-	}
+	s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 
 	return &kvdbserver.SetStringResponse{}, nil
 }

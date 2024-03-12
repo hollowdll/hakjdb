@@ -154,12 +154,7 @@ func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 // SetString sets a string value using a key, overwriting previous value.
 // Creates the key if it doesn't exist.
 // Validates the key before storing it.
-func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error {
-	err := ValidateDatabaseKey(key)
-	if err != nil {
-		return err
-	}
-
+func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -172,8 +167,6 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 
 	db.storedData.stringData[key] = value
 	db.update()
-
-	return nil
 }
 
 // DeleteKey deletes a key and the value it is holding.

@@ -23,10 +23,7 @@ func TestCreateDatabase(t *testing.T) {
 func TestDatabaseSetString(t *testing.T) {
 	t.Run("SetNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")
-		err := db.SetString("key1", "value1")
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetString("key1", "value1")
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -37,15 +34,8 @@ func TestDatabaseSetString(t *testing.T) {
 
 	t.Run("OverwriteExistingKey", func(t *testing.T) {
 		db := newDatabase("test")
-		err := db.SetString("key1", "value1")
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		err = db.SetString("key1", "value2")
-		if err != nil {
-			t.Fatalf("error overwriting key: %v", err)
-		}
+		db.SetString("key1", "value1")
+		db.SetString("key1", "value2")
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -59,10 +49,7 @@ func TestDatabaseSetString(t *testing.T) {
 		originalTime := db.UpdatedAt
 
 		time.Sleep(10 * time.Millisecond)
-		err := db.SetString("key1", "value1")
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetString("key1", "value1")
 
 		updatedTime := db.UpdatedAt
 		if !updatedTime.After(originalTime) {
@@ -84,10 +71,7 @@ func TestDatabaseDeleteKey(t *testing.T) {
 
 	t.Run("DeleteExistingKey", func(t *testing.T) {
 		db := newDatabase("test")
-		err := db.SetString("key1", "value1")
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetString("key1", "value1")
 
 		result := db.DeleteKey("key1")
 		expectedResult := true
@@ -117,10 +101,7 @@ func TestDatabaseDeleteKey(t *testing.T) {
 
 	t.Run("DatabaseIsUpdatedIfKeyDeleted", func(t *testing.T) {
 		db := newDatabase("test")
-		err := db.SetString("key1", "value1")
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetString("key1", "value1")
 
 		originalTime := db.UpdatedAt
 		time.Sleep(10 * time.Millisecond)
@@ -153,10 +134,7 @@ func TestDatabaseGetString(t *testing.T) {
 		db := newDatabase("test")
 		expectedValue := DatabaseStringValue("value1")
 		key := DatabaseKey("key1")
-		err := db.SetString(key, expectedValue)
-		if err != nil {
-			t.Fatal(err)
-		}
+		db.SetString(key, expectedValue)
 		value, found := db.GetString(key)
 
 		if value != expectedValue {
@@ -177,19 +155,13 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 		t.Fatalf("key count should be 0 but got %d", count)
 	}
 
-	err := db.SetString("key1", "value1")
-	if err != nil {
-		t.Fatal(err)
-	}
+	db.SetString("key1", "value1")
 	count = db.GetKeyCount()
 	if count != 1 {
 		t.Fatalf("key count should be 1 but got %d", count)
 	}
 
-	err = db.SetString("key2", "value2")
-	if err != nil {
-		t.Fatal(err)
-	}
+	db.SetString("key2", "value2")
 	count = db.GetKeyCount()
 	if count != 2 {
 		t.Fatalf("key count should be 2 but got %d", count)
@@ -217,10 +189,7 @@ func TestDeleteAllKeys(t *testing.T) {
 		db := newDatabase("test")
 		keys := []DatabaseKey{"key1", "key2", "key3"}
 		for _, key := range keys {
-			err := db.SetString(key, "value")
-			if err != nil {
-				t.Fatal(err)
-			}
+			db.SetString(key, "value")
 		}
 
 		count := db.GetKeyCount()
@@ -251,10 +220,7 @@ func TestGetKeys(t *testing.T) {
 		db := newDatabase("test")
 		keys := []string{"key1", "key2", "key3"}
 		for _, key := range keys {
-			err := db.SetString(DatabaseKey(key), "value")
-			if err != nil {
-				t.Fatal(err)
-			}
+			db.SetString(DatabaseKey(key), "value")
 		}
 
 		actualKeys := db.GetKeys()
