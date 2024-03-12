@@ -36,6 +36,10 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
+	if s.databases[dbName].MaxKeysReached() {
+		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
+	}
+
 	err = s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "%s", err)
@@ -183,6 +187,10 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 
 	if !s.databaseExists(dbName) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	if s.databases[dbName].MaxKeysReached() {
+		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
 	err = s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)

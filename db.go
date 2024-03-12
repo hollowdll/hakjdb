@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"sync"
 	"time"
-
-	kvdberrors "github.com/hollowdll/kvdb/errors"
 )
 
 // DbMaxKeyCount is the maximum number of keys a database can hold.
@@ -52,15 +50,17 @@ func newDatabaseStoredData() *databaseStoredData {
 
 // Database containing key-value pairs of data.
 type Database struct {
-	// Name of the database.
+	// The name of the database.
 	Name string
 	// UTC timestamp describing when the database was created.
 	CreatedAt time.Time
 	// UTC timestamp describing when the database was updated.
-	UpdatedAt  time.Time
+	UpdatedAt time.Time
+	// The data stored in this database.
 	storedData databaseStoredData
-	keyCount   uint32
-	mutex      sync.RWMutex
+	// The current number of keys in this database.
+	keyCount uint32
+	mutex    sync.RWMutex
 }
 
 // Creates a new instance of Database.
@@ -100,6 +100,11 @@ func (db *Database) GetKeyCount() uint32 {
 	defer db.mutex.RUnlock()
 
 	return db.keyCount
+}
+
+// MaxKeysReached returns true if the maximum key limit is reached or exceeded.
+func (db *Database) MaxKeysReached() bool {
+	return db.keyCount >= DbMaxKeyCount
 }
 
 // GetStoredSizeBytes returns the size of stored data in bytes.
@@ -153,11 +158,6 @@ func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error 
 	err := ValidateDatabaseKey(key)
 	if err != nil {
 		return err
-	}
-
-	// Max key count exceeded
-	if db.GetKeyCount() >= DbMaxKeyCount {
-		return kvdberrors.ErrMaxKeysExceeded
 	}
 
 	db.mutex.Lock()
@@ -240,11 +240,6 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error 
 	err := ValidateDatabaseKey(key)
 	if err != nil {
 		return err
-	}
-
-	// Max key count exceeded
-	if db.GetKeyCount() >= DbMaxKeyCount {
-		return kvdberrors.ErrMaxKeysExceeded
 	}
 
 	// Lock mutex early to ensure the existence of the key
