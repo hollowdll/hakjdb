@@ -8,12 +8,9 @@ import (
 )
 
 func TestCreateDatabase(t *testing.T) {
-	db, err := CreateDatabase("test")
+	db := CreateDatabase("test")
 	expectedDb := newDatabase("test")
 
-	if err != nil {
-		t.Fatal(err)
-	}
 	if db == nil {
 		t.Fatal("expected db but got nil")
 	}

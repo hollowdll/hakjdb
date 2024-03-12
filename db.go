@@ -131,14 +131,9 @@ func (db *Database) GetStoredSizeBytes() uint64 {
 	return size
 }
 
-// CreateDatabase creates a new database with a name. Validates input.
-func CreateDatabase(name string) (*Database, error) {
-	err := validateDatabaseName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	return newDatabase(name), nil
+// CreateDatabase creates a new database with a name.
+func CreateDatabase(name string) *Database {
+	return newDatabase(name)
 }
 
 // GetString retrieves a string value using a key.
@@ -155,7 +150,7 @@ func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 // Creates the key if it doesn't exist.
 // Validates the key before storing it.
 func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) error {
-	err := validateDatabaseKey(key)
+	err := ValidateDatabaseKey(key)
 	if err != nil {
 		return err
 	}
@@ -242,7 +237,7 @@ func (db *Database) GetKeys() []string {
 // Creates the key if it doesn't exist.
 // Validates the key before storing it.
 func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) error {
-	err := validateDatabaseKey(key)
+	err := ValidateDatabaseKey(key)
 	if err != nil {
 		return err
 	}

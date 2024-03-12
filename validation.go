@@ -32,9 +32,9 @@ func databaseNameContainsValidCharacters(name string) bool {
 	return pattern.MatchString(name)
 }
 
-// validateDatabaseName validates database name.
+// ValidateDatabaseName validates database name.
 // Returns error if validation error is matched.
-func validateDatabaseName(name string) error {
+func ValidateDatabaseName(name string) error {
 	if isBlank(name) {
 		return kvdberrors.ErrDatabaseNameRequired
 	}
@@ -48,9 +48,9 @@ func validateDatabaseName(name string) error {
 	return nil
 }
 
-// validateDatabaseKey validates database key.
+// ValidateDatabaseKey validates database key.
 // Returns error if validation error is matched.
-func validateDatabaseKey(key DatabaseKey) error {
+func ValidateDatabaseKey(key DatabaseKey) error {
 	if isBlank(string(key)) {
 		return kvdberrors.ErrDatabaseKeyRequired
 	}

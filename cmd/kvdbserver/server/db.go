@@ -36,10 +36,11 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 		return nil, status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error())
 	}
 
-	db, err := kvdb.CreateDatabase(req.GetDbName())
-	if err != nil {
+	if err := kvdb.ValidateDatabaseName(req.GetDbName()); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+
+	db := kvdb.CreateDatabase(req.GetDbName())
 	s.databases[db.Name] = db
 
 	return &kvdbserver.CreateDatabaseResponse{DbName: db.Name}, nil
