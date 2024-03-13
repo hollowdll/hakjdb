@@ -70,6 +70,10 @@ message GetHashMapFieldValueResponse {
 }
 
 // StorageService provides operations on data storage.
+//
+// Common gRPC metadata for this service's RPCs:
+// - password: The server password if the server is password protected.
+// - database-name: The database to use. Required.
 service StorageService {
     // SetString sets a String value using a key. Creates the key if it doesn't exist.
     // Overwrites the key if it is holding a value of another data type.

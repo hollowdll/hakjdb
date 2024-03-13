@@ -47,6 +47,9 @@ message GetLogsResponse {
 }
 
 // ServerService provides server-related operations.
+//
+// Common gRPC metadata for this service's RPCs:
+// - password: The server password if the server is password protected.
 service ServerService {
     // GetServerInfo returns information about the server.
     rpc GetServerInfo (GetServerInfoRequest) returns (GetServerInfoResponse) {}

@@ -58,6 +58,9 @@ message DatabaseInfo {
 }
 
 // DatabaseService provides database-related operations.
+//
+// Common gRPC metadata for this service's RPCs:
+// - password: The server password if the server is password protected.
 service DatabaseService {
     // CreateDatabase creates a new database.
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
