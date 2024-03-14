@@ -39,6 +39,11 @@ type Server struct {
 	mutex   sync.RWMutex
 }
 
+// ServerOptions contains options that can be passed to the server when creating it.
+type ServerOptions struct {
+	MaxKeys uint32
+}
+
 // portInUse is the TCP/IP port the server uses.
 var portInUse uint16 = common.ServerDefaultPort
 
@@ -52,6 +57,19 @@ func NewServer() *Server {
 		logFilePath:     "",
 		logFileEnabled:  false,
 		maxKeys:         common.DbMaxKeyCount,
+	}
+}
+
+func NewServerWithOptions(options *ServerOptions) *Server {
+	return &Server{
+		startTime:       time.Now(),
+		databases:       make(map[string]*kvdb.Database),
+		CredentialStore: *NewInMemoryCredentialStore(),
+		passwordEnabled: false,
+		logger:          kvdb.NewDefaultLogger(),
+		logFilePath:     "",
+		logFileEnabled:  false,
+		maxKeys:         options.MaxKeys,
 	}
 }
 
