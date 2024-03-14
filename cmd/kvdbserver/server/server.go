@@ -35,13 +35,13 @@ type Server struct {
 	logFilePath     string
 	logFileEnabled  bool
 	// The maximum number of keys a database can hold.
-	maxKeys uint32
-	mutex   sync.RWMutex
+	maxKeysPerDb uint32
+	mutex        sync.RWMutex
 }
 
 // ServerOptions contains options that can be passed to the server when creating it.
 type ServerOptions struct {
-	MaxKeys uint32
+	MaxKeysPerDb uint32
 }
 
 // portInUse is the TCP/IP port the server uses.
@@ -56,7 +56,7 @@ func NewServer() *Server {
 		logger:          kvdb.NewDefaultLogger(),
 		logFilePath:     "",
 		logFileEnabled:  false,
-		maxKeys:         common.DbMaxKeyCount,
+		maxKeysPerDb:    common.DbMaxKeyCount,
 	}
 }
 
@@ -69,7 +69,7 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		logger:          kvdb.NewDefaultLogger(),
 		logFilePath:     "",
 		logFileEnabled:  false,
-		maxKeys:         options.MaxKeys,
+		maxKeysPerDb:    options.MaxKeysPerDb,
 	}
 }
 
@@ -139,7 +139,7 @@ func (s *Server) DbMaxKeysReached(db *kvdb.Database) bool {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	return db.GetKeyCount() >= s.maxKeys
+	return db.GetKeyCount() >= s.maxKeysPerDb
 }
 
 // getOsInfo returns information about the server's operating system.
