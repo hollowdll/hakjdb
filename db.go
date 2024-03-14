@@ -1,14 +1,10 @@
 package kvdb
 
 import (
-	"math"
 	"reflect"
 	"sync"
 	"time"
 )
-
-// DbMaxKeyCount is the maximum number of keys a database can hold.
-const DbMaxKeyCount uint32 = math.MaxUint32
 
 // DatabaseKey represents key-value pair key. Key is stored as string.
 type DatabaseKey string
@@ -100,11 +96,6 @@ func (db *Database) GetKeyCount() uint32 {
 	defer db.mutex.RUnlock()
 
 	return db.keyCount
-}
-
-// MaxKeysReached returns true if the maximum key limit is reached or exceeded.
-func (db *Database) MaxKeysReached() bool {
-	return db.keyCount >= DbMaxKeyCount
 }
 
 // GetStoredSizeBytes returns the size of stored data in bytes.

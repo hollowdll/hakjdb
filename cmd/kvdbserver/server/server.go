@@ -34,7 +34,9 @@ type Server struct {
 	logger          kvdb.Logger
 	logFilePath     string
 	logFileEnabled  bool
-	mutex           sync.RWMutex
+	// The maximum number of keys a database can hold.
+	maxKeys uint32
+	mutex   sync.RWMutex
 }
 
 // portInUse is the TCP/IP port the server uses.
@@ -49,6 +51,7 @@ func NewServer() *Server {
 		logger:          kvdb.NewDefaultLogger(),
 		logFilePath:     "",
 		logFileEnabled:  false,
+		maxKeys:         common.DbMaxKeyCount,
 	}
 }
 
@@ -111,6 +114,14 @@ func (s *Server) CreateDefaultDatabase(name string) {
 	db := kvdb.CreateDatabase(name)
 	s.databases[db.Name] = db
 	s.logger.Infof("Created default database '%s'", db.Name)
+}
+
+// DbMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
+func (s *Server) DbMaxKeysReached(db *kvdb.Database) bool {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return db.GetKeyCount() >= s.maxKeys
 }
 
 // getOsInfo returns information about the server's operating system.
