@@ -101,6 +101,31 @@ func TestSetString(t *testing.T) {
 		require.Equal(t, true, ok, "expected ok")
 		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
 	})
+
+	t.Run("MaxKeyLimitReached", func(t *testing.T) {
+		server := server.NewServerWithOptions(&server.ServerOptions{MaxKeysPerDb: 1})
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		req := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		res, err := server.SetString(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+
+		req = &kvdbserver.SetStringRequest{Key: "key2", Value: "value1"}
+		res, err = server.SetString(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.FailedPrecondition
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
 }
 
 func TestGetString(t *testing.T) {
@@ -553,6 +578,31 @@ func TestSetHashMap(t *testing.T) {
 
 		expectedOk := true
 		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("MaxKeyLimitReached", func(t *testing.T) {
+		server := server.NewServerWithOptions(&server.ServerOptions{MaxKeysPerDb: 1})
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		res, err := server.SetHashMap(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+
+		req = &kvdbserver.SetHashMapRequest{Key: "key2", Fields: fields}
+		res, err = server.SetHashMap(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.FailedPrecondition
 		st, ok := status.FromError(err)
 		require.NotNil(t, st, "expected status to be non-nil")
 		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
