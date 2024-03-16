@@ -168,12 +168,13 @@ func getOsInfo() (string, error) {
 
 // GetServerInfo returns information about the server.
 func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
-	s.logger.Debug("Attempt to get server info")
+	logPrefix := "GetServerInfo"
+	s.logger.Debugf("%s: attempt to get server info", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get server info: %s", err)
+			s.logger.Errorf("%s: failed to get server info: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Get server info success")
+			s.logger.Debugf("%s: get server info success", logPrefix)
 		}
 	}()
 
@@ -202,12 +203,13 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 
 // GetLogs reads server logs from the log file and returns them.
 func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
-	s.logger.Debug("Attempt to get server logs")
+	logPrefix := "GetLogs"
+	s.logger.Debugf("%s: attempt to get server logs", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get server logs: %s", err)
+			s.logger.Errorf("%s: failed to get server logs: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Get server logs success")
+			s.logger.Debugf("%s: get server logs success", logPrefix)
 		}
 	}()
 
@@ -217,7 +219,7 @@ func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (r
 	if !s.logFileEnabled {
 		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
 	}
-	s.logger.Debug("Log file is enabled")
+	s.logger.Debugf("%s: log file is enabled", logPrefix)
 
 	lines, err := common.ReadFileLines(s.logFilePath)
 	if err != nil {
