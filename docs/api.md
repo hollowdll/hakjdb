@@ -18,6 +18,9 @@ The gRPC metadata key for password is `password`. The actual password to send is
 
 The server service `ServerService` is defined in the `server.proto` file. This service contains RPCs to work with operations related to the kvdb server.
 
+Common gRPC metadata for this service's RPCs:
+- `password`: The server password if the server is password protected.
+
 RPCs:
 - GetServerInfo
 - GetLogs
@@ -27,6 +30,9 @@ RPCs:
 ## DatabaseService
 
 The database service `DatabaseService` is defined in the `db.proto` file. This service contains RPCs to work with operations related to databases.
+
+Common gRPC metadata for this service's RPCs:
+- `password`: The server password if the server is password protected.
 
 RPCs:
 - CreateDatabase
@@ -40,7 +46,8 @@ RPCs:
 
 The storage service `StorageService` is defined in the `storage.proto` file. This service contains RPCs to work with operations related to data storage.
 
-Common gRPC metadata keys for this service's RPCs:
+Common gRPC metadata for this service's RPCs:
+- `password`: The server password if the server is password protected.
 - `database-name`: The database to use. Required.
 
 RPCs:
