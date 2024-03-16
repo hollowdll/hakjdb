@@ -15,12 +15,13 @@ import (
 // SetString sets a string value using a key.
 // Accepts database name in gRPC metadata.
 func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
-	s.logger.Debug("Attempt to set string value")
+	logPrefix := "SetString"
+	s.logger.Debugf("%s: attempt to set string value", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to set string value: %s", err)
+			s.logger.Errorf("%s: failed to set string value: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Set string value success")
+			s.logger.Debugf("%s: set string value success", logPrefix)
 		}
 	}()
 
@@ -52,12 +53,13 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 // GetString gets a string value using a key.
 // Accepts database name in gRPC metadata.
 func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
-	s.logger.Debug("Attempt to get string value")
+	logPrefix := "GetString"
+	s.logger.Debugf("%s: attempt to get string value", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get string value: %s", err)
+			s.logger.Errorf("%s: failed to get string value: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Get string value success")
+			s.logger.Debugf("%s: get string value success", logPrefix)
 		}
 	}()
 
@@ -81,12 +83,13 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 // DeleteKey deletes a key and its value.
 // Accepts database name in gRPC metadata.
 func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
-	s.logger.Debug("Attempt to delete key")
+	logPrefix := "DeleteKey"
+	s.logger.Debugf("%s: attempt to delete key", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to delete key: %s", err)
+			s.logger.Errorf("%s: failed to delete key: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Delete key success")
+			s.logger.Debugf("%s: delete key success", logPrefix)
 		}
 	}()
 
@@ -113,12 +116,13 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 // DeleteAllKeys deletes all the keys of a database.
 // Accepts database name in gRPC metadata.
 func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
-	s.logger.Debug("Attempt to delete all keys")
+	logPrefix := "DeleteAllKeys"
+	s.logger.Debugf("%s: attempt to delete all keys", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to delete all keys: %s", err)
+			s.logger.Errorf("%s: failed to delete all keys: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Delete all keys success")
+			s.logger.Debugf("%s: delete all keys success", logPrefix)
 		}
 	}()
 
@@ -142,12 +146,13 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 // GetKeys returns all the keys of a database.
 // Accepts database name in gRPC metadata.
 func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (res *kvdbserver.GetKeysResponse, err error) {
-	s.logger.Debug("Attempt to get keys")
+	logPrefix := "GetKeys"
+	s.logger.Debugf("%s: attempt to get keys", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get keys: %s", err)
+			s.logger.Errorf("%s: failed to get keys: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Get keys success")
+			s.logger.Debugf("%s: get keys success", logPrefix)
 		}
 	}()
 
@@ -169,12 +174,13 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Accepts database name in gRPC metadata.
 func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapRequest) (res *kvdbserver.SetHashMapResponse, err error) {
-	s.logger.Debug("Attempt to set HashMap fields")
+	logPrefix := "SetHashMap"
+	s.logger.Debugf("%s: attempt to set HashMap fields", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to set HashMap fields: %s", err)
+			s.logger.Errorf("%s: failed to set HashMap fields: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Set HashMap fields success")
+			s.logger.Debugf("%s: set HashMap fields success", logPrefix)
 		}
 	}()
 
@@ -206,12 +212,13 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 // GetHashMapFieldValue returns a single HashMap field value using a key.
 // Accepts database name in gRPC metadata.
 func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHashMapFieldValueRequest) (res *kvdbserver.GetHashMapFieldValueResponse, err error) {
-	s.logger.Debug("Attempt to get HashMap field value")
+	logPrefix := "GetHashMapFieldValue"
+	s.logger.Debugf("%s: attempt to get HashMap field value", logPrefix)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("Failed to get HashMap field value: %s", err)
+			s.logger.Errorf("%s: failed to get HashMap field value: %v", logPrefix, err)
 		} else {
-			s.logger.Debug("Get HashMap field value success")
+			s.logger.Debugf("%s: get HashMap field value success", logPrefix)
 		}
 	}()
 
