@@ -29,7 +29,7 @@ var (
 func init() {
 	cmdConnectSet.Flags().StringVarP(&host, "host", "a", defaultHost, "host name or IP address")
 	cmdConnectSet.Flags().Uint16VarP(&port, "port", "p", defaultPort, "port number")
-	cmdConnectSet.Flags().StringVarP(&dbName, "db", "d", defaultDbName, "database to use")
+	cmdConnectSet.Flags().StringVarP(&dbName, "database", "d", defaultDbName, "database to use")
 }
 
 func setConnectionSettings() {

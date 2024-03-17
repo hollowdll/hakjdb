@@ -22,7 +22,7 @@ var cmdGetHashMapFieldValue = &cobra.Command{
 }
 
 func init() {
-	cmdGetHashMapFieldValue.Flags().StringVarP(&dbName, "db", "d", "", "database to use")
+	cmdGetHashMapFieldValue.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
 func getHashMapFieldValue(key string, field string) {

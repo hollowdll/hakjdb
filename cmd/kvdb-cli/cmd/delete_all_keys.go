@@ -21,7 +21,7 @@ var cmdDeleteAllKeys = &cobra.Command{
 }
 
 func init() {
-	cmdDeleteAllKeys.Flags().StringVarP(&dbName, "db", "d", "", "database to use")
+	cmdDeleteAllKeys.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
 func deleteAllKeys() {

@@ -31,7 +31,7 @@ var cmdSetHashMap = &cobra.Command{
 }
 
 func init() {
-	cmdSetHashMap.Flags().StringVarP(&dbName, "db", "d", "", "database to use")
+	cmdSetHashMap.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
 func setHashMap(key string, fields map[string]string) {

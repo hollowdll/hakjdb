@@ -22,7 +22,7 @@ var cmdGetString = &cobra.Command{
 }
 
 func init() {
-	cmdGetString.Flags().StringVarP(&dbName, "db", "d", "", "database to use")
+	cmdGetString.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
 func getString(key string) {
