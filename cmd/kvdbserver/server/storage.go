@@ -75,9 +75,9 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	value, found := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
+	value, ok := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
 
-	return &kvdbserver.GetStringResponse{Value: string(value), Found: found}, nil
+	return &kvdbserver.GetStringResponse{Value: string(value), Ok: ok}, nil
 }
 
 // DeleteKey deletes a key and its value.

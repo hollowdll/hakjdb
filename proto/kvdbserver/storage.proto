@@ -22,7 +22,7 @@ message GetStringResponse {
     // The returned value.
     string value = 1;
     // True if the key exists. False if it doesn't exist.
-    bool found = 2;
+    bool ok = 2;
 }
 
 message DeleteKeyRequest {

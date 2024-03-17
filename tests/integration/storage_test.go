@@ -46,7 +46,7 @@ func TestOverwriteAndGetString(t *testing.T) {
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res4)
 	assert.Equal(t, value2, res4.Value, "expected value = %s; got = %s", value2, res4.Value)
-	assert.Equal(t, true, res4.Found, "expected found = %v; got = %v", true, res4.Found)
+	assert.Equal(t, true, res4.Ok, "expected ok = %v; got = %v", true, res4.Ok)
 }
 
 func TestSetGetDeleteString(t *testing.T) {
@@ -78,7 +78,7 @@ func TestSetGetDeleteString(t *testing.T) {
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res3)
 	assert.Equal(t, value, res3.Value, "expected value = %s; got = %s", value, res3.Value)
-	assert.Equal(t, true, res3.Found, "expected found = %v; got = %v", true, res3.Found)
+	assert.Equal(t, true, res3.Ok, "expected ok = %v; got = %v", true, res3.Ok)
 
 	req4 := &kvdbserver.DeleteKeyRequest{Key: key}
 	res4, err := storageClient.DeleteKey(ctx, req4)
@@ -91,7 +91,7 @@ func TestSetGetDeleteString(t *testing.T) {
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
 	require.NotNil(t, res5)
 	assert.Equal(t, "", res5.Value, "expected empty string; got = %s", value, res5.Value)
-	assert.Equal(t, false, res5.Found, "expected found = %v; got = %v", false, res5.Found)
+	assert.Equal(t, false, res5.Ok, "expected ok = %v; got = %v", false, res5.Ok)
 
 	req6 := &kvdbserver.DeleteKeyRequest{Key: key}
 	res6, err := storageClient.DeleteKey(ctx, req6)

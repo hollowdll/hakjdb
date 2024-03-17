@@ -37,7 +37,7 @@ func getString(key string) {
 	response, err := client.GrpcStorageClient.GetString(ctx, &kvdbserver.GetStringRequest{Key: key})
 	client.CheckGrpcError(err)
 
-	if response.GetFound() {
+	if response.Ok {
 		fmt.Printf("\"%s\"\n", response.GetValue())
 	} else {
 		fmt.Println(client.ValueNone)

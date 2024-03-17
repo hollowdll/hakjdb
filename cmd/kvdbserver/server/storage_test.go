@@ -192,7 +192,7 @@ func TestGetString(t *testing.T) {
 		response, err := server.GetString(ctxMd, request)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, false, response.Found, "expected found = %v; got = %v", false, response.Found)
+		assert.Equalf(t, false, response.Ok, "expected ok = %v; got = %v", false, response.Ok)
 		assert.Equalf(t, "", response.Value, "expected empty string; got = %s", response.Value)
 	})
 
@@ -215,7 +215,7 @@ func TestGetString(t *testing.T) {
 		response, err := server.GetString(ctxMd, requestGet)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, true, response.Found, "expected found = %v; got = %v", true, response.Found)
+		assert.Equalf(t, true, response.Ok, "expected ok = %v; got = %v", true, response.Ok)
 		assert.Equalf(t, expectedValue, response.Value, "expected value = %s; got = %s", expectedValue, response.Value)
 	})
 }
