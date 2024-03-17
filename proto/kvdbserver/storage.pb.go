@@ -25,9 +25,9 @@ type SetStringRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Key used to store the value.
+	// The key to use.
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	// Value to store.
+	// The value to store.
 	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -120,7 +120,7 @@ type GetStringRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Key used to get the value.
+	// The key to use.
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 }
 
@@ -168,9 +168,9 @@ type GetStringResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Returned value.
+	// The returned value.
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	// True if key exists. False otherwise.
+	// True if the key exists. False if it doesn't exist.
 	Found bool `protobuf:"varint,2,opt,name=found,proto3" json:"found,omitempty"`
 }
 
@@ -225,7 +225,7 @@ type DeleteKeyRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Key to delete.
+	// The key to delete.
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 }
 
@@ -273,7 +273,7 @@ type DeleteKeyResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// True if key was deleted. False if it doesn't exist.
+	// True if the key was deleted. False if it doesn't exist.
 	Ok bool `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
 }
 
