@@ -4,6 +4,18 @@ option go_package = "proto/kvdbserver";
 
 package kvdbserverapi;
 
+message GetTypeOfKeyRequest {
+    // The key whose data type should be returned.
+    string key = 1;
+}
+
+message GetTypeOfKeyResponse {
+    // The data type of the key.
+    string key_type = 1;
+    // True if the key exists. False if it doesn't exist.
+    bool ok = 2;
+}
+
 message SetStringRequest {
     // The key to use.
     string key = 1;
@@ -75,11 +87,14 @@ message GetHashMapFieldValueResponse {
 // - password: The server password if the server is password protected.
 // - database-name: The database to use. Required.
 service StorageService {
+    // GetTypeOfKey returns the data type of a key.
+    rpc GetTypeOfKey(GetTypeOfKeyRequest) returns (GetTypeOfKeyResponse) {}
+
     // SetString sets a String value using a key. Creates the key if it doesn't exist.
     // Overwrites the key if it is holding a value of another data type.
     rpc SetString(SetStringRequest) returns (SetStringResponse) {}
 
-    // GetString gets a String value using a key.
+    // GetString returns a String value using a key.
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
 
     // DeleteKey deletes a key and its value.
