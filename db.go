@@ -132,6 +132,21 @@ func CreateDatabase(name string) *Database {
 	return newDatabase(name)
 }
 
+// GetTypeOfKey returns the data type of the key if it exists.
+// The returned bool is true if the key exists and false if it doesn't.
+func (db *Database) GetTypeOfKey(key DatabaseKey) (string, bool) {
+	_, exists := db.storedData.stringData[key]
+	if exists {
+		return "String", true
+	}
+	_, exists = db.storedData.hashMapData[key]
+	if exists {
+		return "HashMap", true
+	}
+
+	return "", false
+}
+
 // GetString retrieves a string value using a key.
 // The returned boolean is true if the key exists.
 func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
