@@ -17,8 +17,7 @@ func (s *Server) databaseExists(name string) bool {
 	return exists
 }
 
-// CreateDatabase creates a new database to the server.
-// Fails if it already exists or the name is invalid.
+// CreateDatabase is the implementation of RPC CreateDatabase.
 func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
 	logPrefix := "CreateDatabase"
 	s.logger.Debugf("%s: attempt to create database '%s'", logPrefix, req.GetDbName())
@@ -47,7 +46,7 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	return &kvdbserver.CreateDatabaseResponse{DbName: db.Name}, nil
 }
 
-// GetAllDatabases returns the names of all databases on the server.
+// GetAllDatabases is the implementation of RPC GetAllDatabases.
 func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
 	logPrefix := "GetAllDatabases"
 	s.logger.Debugf("%s: attempt to get all databases", logPrefix)
@@ -70,7 +69,7 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 	return &kvdbserver.GetAllDatabasesResponse{DbNames: names}, nil
 }
 
-// GetDatabaseInfo returns information about a database.
+// GetDatabaseInfo is the implementation of RPC GetDatabaseInfo.
 func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
 	logPrefix := "GetDatabaseInfo"
 	s.logger.Debugf("%s: attempt to get information about database '%s'", logPrefix, req.GetDbName())
@@ -101,7 +100,7 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 	return &kvdbserver.GetDatabaseInfoResponse{Data: data}, nil
 }
 
-// DeleteDatabase deletes a database if it exists.
+// DeleteDatabase is the implementation of RPC DeleteDatabase.
 func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatabaseRequest) (res *kvdbserver.DeleteDatabaseResponse, err error) {
 	logPrefix := "DeleteDatabase"
 	s.logger.Debugf("%s: attempt to delete database '%s'", logPrefix, req.GetDbName())

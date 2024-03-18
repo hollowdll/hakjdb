@@ -41,8 +41,7 @@ func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyR
 	return &kvdbserver.GetTypeOfKeyResponse{KeyType: keyType, Ok: ok}, nil
 }
 
-// SetString sets a string value using a key.
-// Accepts database name in gRPC metadata.
+// SetString is the implementation of RPC SetString.
 func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
 	logPrefix := "SetString"
 	s.logger.Debugf("%s: attempt to set string value", logPrefix)
@@ -79,8 +78,7 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 	return &kvdbserver.SetStringResponse{}, nil
 }
 
-// GetString gets a string value using a key.
-// Accepts database name in gRPC metadata.
+// GetString is the implementation of RPC GetString.
 func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
 	logPrefix := "GetString"
 	s.logger.Debugf("%s: attempt to get string value", logPrefix)
@@ -109,8 +107,7 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 	return &kvdbserver.GetStringResponse{Value: string(value), Ok: ok}, nil
 }
 
-// DeleteKey deletes a key and its value.
-// Accepts database name in gRPC metadata.
+// DeleteKey is the implementation of RPC DeleteKey.
 func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
 	logPrefix := "DeleteKey"
 	s.logger.Debugf("%s: attempt to delete key", logPrefix)
@@ -142,8 +139,7 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 	return &kvdbserver.DeleteKeyResponse{Ok: true}, nil
 }
 
-// DeleteAllKeys deletes all the keys of a database.
-// Accepts database name in gRPC metadata.
+// DeleteAllKeys is the implementation of RPC DeleteAllKeys.
 func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
 	logPrefix := "DeleteAllKeys"
 	s.logger.Debugf("%s: attempt to delete all keys", logPrefix)
@@ -172,8 +168,7 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 	return &kvdbserver.DeleteAllKeysResponse{}, nil
 }
 
-// GetKeys returns all the keys of a database.
-// Accepts database name in gRPC metadata.
+// GetKeys is the implementation of RPC GetKeys.
 func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (res *kvdbserver.GetKeysResponse, err error) {
 	logPrefix := "GetKeys"
 	s.logger.Debugf("%s: attempt to get keys", logPrefix)
@@ -200,8 +195,7 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 	return &kvdbserver.GetKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
 }
 
-// SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
-// Accepts database name in gRPC metadata.
+// SetHashMap is the implementation of RPC SetHashMap.
 func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapRequest) (res *kvdbserver.SetHashMapResponse, err error) {
 	logPrefix := "SetHashMap"
 	s.logger.Debugf("%s: attempt to set HashMap fields", logPrefix)
@@ -238,8 +232,7 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 	return &kvdbserver.SetHashMapResponse{}, nil
 }
 
-// GetHashMapFieldValue returns a single HashMap field value using a key.
-// Accepts database name in gRPC metadata.
+// GetHashMapFieldValue is the implementation of RPC GetHashMapFieldValue.
 func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHashMapFieldValueRequest) (res *kvdbserver.GetHashMapFieldValueResponse, err error) {
 	logPrefix := "GetHashMapFieldValue"
 	s.logger.Debugf("%s: attempt to get HashMap field value", logPrefix)
@@ -268,6 +261,7 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 	return &kvdbserver.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
 }
 
+// getDatabaseNameFromContext gets the database name from the received gRPC metadata.
 func getDatabaseNameFromContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

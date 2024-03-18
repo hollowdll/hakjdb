@@ -166,7 +166,7 @@ func getOsInfo() (string, error) {
 	}
 }
 
-// GetServerInfo returns information about the server.
+// GetServerInfo is the implementation of RPC GetServerInfo.
 func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
 	logPrefix := "GetServerInfo"
 	s.logger.Debugf("%s: attempt to get server info", logPrefix)
@@ -201,7 +201,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
 }
 
-// GetLogs reads server logs from the log file and returns them.
+// GetLogs is the implementation of RPC GetLogs.
 func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
 	logPrefix := "GetLogs"
 	s.logger.Debugf("%s: attempt to get server logs", logPrefix)
