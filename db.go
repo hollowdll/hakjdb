@@ -12,23 +12,6 @@ type DatabaseKey string
 // DatabaseStringValue represents key-value pair string value. Value is stored as string.
 type DatabaseStringValue string
 
-/*
-type keyType int
-
-const (
-	stringKey keyType = iota
-	hashMapKey
-)
-*/
-
-/*
-// StringKey represents a database key that holds a String value.
-type StringKey string
-
-// HashMapKey represents a database key that holds a HashMap value.
-type HashMapKey string
-*/
-
 // DatabaseData holds the data stored in a database.
 type databaseStoredData struct {
 	// stringData holds String keys.
