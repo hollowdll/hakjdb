@@ -12,6 +12,35 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// GetTypeOfKey is the implementation of RPC GetTypeOfKey.
+func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyRequest) (res *kvdbserver.GetTypeOfKeyResponse, err error) {
+	logPrefix := "GetTypeOfKey"
+	s.logger.Debugf("%s: attempt to get key data type", logPrefix)
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("%s: failed to get the data type of a key: %v", logPrefix, err)
+		} else {
+			s.logger.Debugf("%s: get key data type success", logPrefix)
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	keyType, ok := s.databases[dbName].GetTypeOfKey(kvdb.DatabaseKey(req.Key))
+
+	return &kvdbserver.GetTypeOfKeyResponse{KeyType: keyType, Ok: ok}, nil
+}
+
 // SetString sets a string value using a key.
 // Accepts database name in gRPC metadata.
 func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
