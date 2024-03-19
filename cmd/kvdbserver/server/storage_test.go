@@ -14,6 +14,120 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func TestGetTypeOfKey(t *testing.T) {
+	t.Run("MissingMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.NotFound
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("KeyNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		expectedKeyType := ""
+		expectedOk := false
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedKeyType, res.KeyType, "expected key type = %s; got = %s", expectedKeyType, res.KeyType)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+
+	t.Run("String", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		server.SetString(ctx, reqSet)
+
+		expectedKeyType := "String"
+		expectedOk := true
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedKeyType, res.KeyType, "expected key type = %s; got = %s", expectedKeyType, res.KeyType)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+
+	t.Run("HashMap", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: make(map[string]string)}
+		server.SetHashMap(ctx, reqSet)
+
+		expectedKeyType := "HashMap"
+		expectedOk := true
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedKeyType, res.KeyType, "expected key type = %s; got = %s", expectedKeyType, res.KeyType)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+}
+
 func TestSetString(t *testing.T) {
 	t.Run("MissingMetadata", func(t *testing.T) {
 		server := server.NewServer()
