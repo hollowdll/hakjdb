@@ -37,6 +37,7 @@ func init() {
 	rootCmd.AddCommand(cmdInfo)
 	rootCmd.AddCommand(cmdGetKeys)
 	rootCmd.AddCommand(cmdLogs)
+	rootCmd.AddCommand(cmdGetKeyType)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
