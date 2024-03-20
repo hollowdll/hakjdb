@@ -20,6 +20,55 @@ func TestCreateDatabase(t *testing.T) {
 	}
 }
 
+func TestGetTypeOfKey(t *testing.T) {
+	t.Run("KeyNotFound", func(t *testing.T) {
+		db := newDatabase("test")
+		keyType, ok := db.GetTypeOfKey("key1")
+
+		expectedKeyType := ""
+		if keyType != expectedKeyType {
+			t.Errorf("expected key type = %s; got = %s", expectedKeyType, keyType)
+		}
+
+		expectedOk := false
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("String", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetString("key1", "value")
+		keyType, ok := db.GetTypeOfKey("key1")
+
+		expectedKeyType := "String"
+		if keyType != expectedKeyType {
+			t.Errorf("expected key type = %s; got = %s", expectedKeyType, keyType)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("HashMap", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetHashMap("key1", make(map[string]string))
+		keyType, ok := db.GetTypeOfKey("key1")
+
+		expectedKeyType := "HashMap"
+		if keyType != expectedKeyType {
+			t.Errorf("expected key type = %s; got = %s", expectedKeyType, keyType)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+}
+
 func TestDatabaseSetString(t *testing.T) {
 	t.Run("SetNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")

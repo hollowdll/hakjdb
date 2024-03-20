@@ -12,23 +12,6 @@ type DatabaseKey string
 // DatabaseStringValue represents key-value pair string value. Value is stored as string.
 type DatabaseStringValue string
 
-/*
-type keyType int
-
-const (
-	stringKey keyType = iota
-	hashMapKey
-)
-*/
-
-/*
-// StringKey represents a database key that holds a String value.
-type StringKey string
-
-// HashMapKey represents a database key that holds a HashMap value.
-type HashMapKey string
-*/
-
 // DatabaseData holds the data stored in a database.
 type databaseStoredData struct {
 	// stringData holds String keys.
@@ -132,6 +115,21 @@ func CreateDatabase(name string) *Database {
 	return newDatabase(name)
 }
 
+// GetTypeOfKey returns the data type of the key if it exists.
+// The returned bool is true if the key exists and false if it doesn't.
+func (db *Database) GetTypeOfKey(key DatabaseKey) (string, bool) {
+	_, exists := db.storedData.stringData[key]
+	if exists {
+		return "String", true
+	}
+	_, exists = db.storedData.hashMapData[key]
+	if exists {
+		return "HashMap", true
+	}
+
+	return "", false
+}
+
 // GetString retrieves a string value using a key.
 // The returned boolean is true if the key exists.
 func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
@@ -144,7 +142,6 @@ func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 
 // SetString sets a string value using a key, overwriting previous value.
 // Creates the key if it doesn't exist.
-// Validates the key before storing it.
 func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
@@ -219,7 +216,6 @@ func (db *Database) GetKeys() []string {
 
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Creates the key if it doesn't exist.
-// Validates the key before storing it.
 func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()

@@ -22,10 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageServiceClient interface {
+	// GetTypeOfKey returns the data type of a key.
+	GetTypeOfKey(ctx context.Context, in *GetTypeOfKeyRequest, opts ...grpc.CallOption) (*GetTypeOfKeyResponse, error)
 	// SetString sets a String value using a key. Creates the key if it doesn't exist.
 	// Overwrites the key if it is holding a value of another data type.
 	SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error)
-	// GetString gets a String value using a key.
+	// GetString returns a String value using a key.
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
 	// DeleteKey deletes a key and its value.
 	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
@@ -47,6 +49,15 @@ type storageServiceClient struct {
 
 func NewStorageServiceClient(cc grpc.ClientConnInterface) StorageServiceClient {
 	return &storageServiceClient{cc}
+}
+
+func (c *storageServiceClient) GetTypeOfKey(ctx context.Context, in *GetTypeOfKeyRequest, opts ...grpc.CallOption) (*GetTypeOfKeyResponse, error) {
+	out := new(GetTypeOfKeyResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetTypeOfKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *storageServiceClient) SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error) {
@@ -116,10 +127,12 @@ func (c *storageServiceClient) GetHashMapFieldValue(ctx context.Context, in *Get
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
 type StorageServiceServer interface {
+	// GetTypeOfKey returns the data type of a key.
+	GetTypeOfKey(context.Context, *GetTypeOfKeyRequest) (*GetTypeOfKeyResponse, error)
 	// SetString sets a String value using a key. Creates the key if it doesn't exist.
 	// Overwrites the key if it is holding a value of another data type.
 	SetString(context.Context, *SetStringRequest) (*SetStringResponse, error)
-	// GetString gets a String value using a key.
+	// GetString returns a String value using a key.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
 	// DeleteKey deletes a key and its value.
 	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
@@ -140,6 +153,9 @@ type StorageServiceServer interface {
 type UnimplementedStorageServiceServer struct {
 }
 
+func (UnimplementedStorageServiceServer) GetTypeOfKey(context.Context, *GetTypeOfKeyRequest) (*GetTypeOfKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTypeOfKey not implemented")
+}
 func (UnimplementedStorageServiceServer) SetString(context.Context, *SetStringRequest) (*SetStringResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetString not implemented")
 }
@@ -172,6 +188,24 @@ type UnsafeStorageServiceServer interface {
 
 func RegisterStorageServiceServer(s grpc.ServiceRegistrar, srv StorageServiceServer) {
 	s.RegisterService(&StorageService_ServiceDesc, srv)
+}
+
+func _StorageService_GetTypeOfKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTypeOfKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).GetTypeOfKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.StorageService/GetTypeOfKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).GetTypeOfKey(ctx, req.(*GetTypeOfKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _StorageService_SetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -307,6 +341,10 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "kvdbserverapi.StorageService",
 	HandlerType: (*StorageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetTypeOfKey",
+			Handler:    _StorageService_GetTypeOfKey_Handler,
+		},
 		{
 			MethodName: "SetString",
 			Handler:    _StorageService_SetString_Handler,
