@@ -51,6 +51,7 @@ Common gRPC metadata for this service's RPCs:
 - `database-name`: The database to use. Required.
 
 RPCs:
+- GetTypeOfKey
 - SetString
 - GetString
 - SetHashMap

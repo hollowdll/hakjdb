@@ -345,3 +345,25 @@ $ kvdb-cli hashmap get key123 name
 $ kvdb-cli hashmap get key1 field123
 (None)
 ```
+
+## Get key type
+
+To get the data type of the value a key is holding, use command:
+```bash
+$ kvdb-cli keytype [key] -d db-name
+```
+- [key] is the name of the key.
+- Option -d specifies the name of the database. If not specified, the default database is used.
+
+For example:
+```bash
+$ kvdb-cli keytype string-key
+"String"
+```
+This gets the data type of the value that key 'string-key' is holding.
+
+If the key doesn't exist, a special value (None) is returned:
+```bash
+$ kvdb-cli keytype this-key-does-not-exist
+(None)
+```
