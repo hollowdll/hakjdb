@@ -235,6 +235,7 @@ func initServer() (*Server, *grpc.Server) {
 	server := NewServer()
 	initConfig(server)
 	server.logger.ClearFlags()
+	server.logger.Infof("Starting kvdb v%s server ...", version.Version)
 
 	if viper.GetBool(ConfigKeyLogFileEnabled) {
 		server.EnableLogFile()
