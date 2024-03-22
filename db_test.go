@@ -437,12 +437,12 @@ func TestDeleteHashMapFields(t *testing.T) {
 		}
 	})
 
-	t.Run("NoFieldsRemoved", func(t *testing.T) {
+	t.Run("DuplicateFields", func(t *testing.T) {
 		db := newDatabase("test")
 		db.SetHashMap("key1", fields)
-		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{})
+		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field1", "field1", "field1"})
 
-		var expectedFieldsRemoved uint32 = 0
+		var expectedFieldsRemoved uint32 = 1
 		if fieldsRemoved != expectedFieldsRemoved {
 			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
 		}
