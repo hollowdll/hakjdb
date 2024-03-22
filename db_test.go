@@ -383,3 +383,73 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		}
 	})
 }
+
+func TestDeleteHashMapFields(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field1"] = "value1"
+	fields["field2"] = "value2"
+	fields["field3"] = "value3"
+
+	t.Run("KeyNotFound", func(t *testing.T) {
+		db := newDatabase("test")
+		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field2", "field3"})
+
+		var expectedFieldsRemoved uint32 = 0
+		if fieldsRemoved != expectedFieldsRemoved {
+			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+		}
+
+		expectedOk := false
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("DeleteExistingFields", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetHashMap("key1", fields)
+		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field2", "field3"})
+
+		var expectedFieldsRemoved uint32 = 2
+		if fieldsRemoved != expectedFieldsRemoved {
+			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("FieldsNotFound", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetHashMap("key1", fields)
+		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field123", "field1234"})
+
+		var expectedFieldsRemoved uint32 = 0
+		if fieldsRemoved != expectedFieldsRemoved {
+			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("NoFieldsRemoved", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetHashMap("key1", fields)
+		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{})
+
+		var expectedFieldsRemoved uint32 = 0
+		if fieldsRemoved != expectedFieldsRemoved {
+			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+}
