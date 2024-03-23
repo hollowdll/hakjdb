@@ -1,5 +1,5 @@
 # Overview
-kvdb is an in-memory key-value store written in go language.
+kvdb is an in-memory key-value store written in Go programming language.
 
 It uses a simple client-server model and is designed to be easy to use. It can be used as a database, session storage, or cache. It may not be suitable for complex needs.
 
