@@ -261,6 +261,35 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 	return &kvdbserver.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
 }
 
+// DeleteHashMapFields is the implementation of RPC DeleteHashMapFields.
+func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.DeleteHashMapFieldsRequest) (res *kvdbserver.DeleteHashMapFieldsResponse, err error) {
+	logPrefix := "DeleteHashMapFields"
+	s.logger.Debugf("%s: attempt to remove HashMap fields", logPrefix)
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("%s: failed to remove HashMap fields: %v", logPrefix, err)
+		} else {
+			s.logger.Debugf("%s: remove HashMap fields success", logPrefix)
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	fieldsRemoved, ok := s.databases[dbName].DeleteHashMapFields(kvdb.DatabaseKey(req.Key), req.Fields)
+
+	return &kvdbserver.DeleteHashMapFieldsResponse{FieldsRemoved: fieldsRemoved, Ok: ok}, nil
+}
+
 // getDatabaseNameFromContext gets the database name from the received gRPC metadata.
 func getDatabaseNameFromContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
