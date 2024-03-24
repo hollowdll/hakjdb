@@ -131,7 +131,7 @@ func (db *Database) GetTypeOfKey(key DatabaseKey) (string, bool) {
 }
 
 // GetString retrieves a string value using a key.
-// The returned boolean is true if the key exists.
+// The returned bool is true if the key exists.
 func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
@@ -239,7 +239,7 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
 }
 
 // GetHashMapFieldValue returns a single HashMap field value using a key.
-// The returned boolean is true if the field exists in the HashMap,
+// The returned bool is true if the field exists in the HashMap,
 // or false if the key or field doesn't exist.
 func (db *Database) GetHashMapFieldValue(key DatabaseKey, field string) (string, bool) {
 	db.mutex.RLock()
@@ -252,4 +252,34 @@ func (db *Database) GetHashMapFieldValue(key DatabaseKey, field string) (string,
 
 	fieldValue, exists := keyValue[field]
 	return fieldValue, exists
+}
+
+// DeleteHashMapFields removes fields from a HashMap using a key.
+// Returns the number of removed fields. The returned bool is true if the key exists and holds a HashMap.
+func (db *Database) DeleteHashMapFields(key DatabaseKey, fields []string) (uint32, bool) {
+	db.mutex.Lock()
+	defer db.mutex.Unlock()
+
+	keyValue, keyExists := db.storedData.hashMapData[key]
+	if !keyExists {
+		return 0, false
+	}
+	if len(keyValue) == 0 {
+		return 0, true
+	}
+
+	var fieldsRemoved uint32 = 0
+	for _, field := range fields {
+		_, fieldExists := db.storedData.hashMapData[key][field]
+		if fieldExists {
+			delete(db.storedData.hashMapData[key], field)
+			fieldsRemoved++
+		}
+	}
+
+	if fieldsRemoved > 0 {
+		db.update()
+	}
+
+	return fieldsRemoved, true
 }

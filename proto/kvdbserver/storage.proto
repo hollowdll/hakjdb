@@ -81,6 +81,20 @@ message GetHashMapFieldValueResponse {
     bool ok = 2;
 }
 
+message DeleteHashMapFieldsRequest {
+    // The key to use.
+    string key = 1;
+    // The fields to remove from the HashMap.
+    repeated string fields = 2;
+}
+
+message DeleteHashMapFieldsResponse {
+    // The number of fields removed.
+    uint32 fields_removed = 1;
+    // True if the key exists. False if it doesn't exist.
+    bool ok = 2;
+}
+
 // StorageService provides operations on data storage.
 //
 // Common gRPC metadata for this service's RPCs:
@@ -113,4 +127,7 @@ service StorageService {
 
     // GetHashMapFieldValue returns a single HashMap field value using a key.
     rpc GetHashMapFieldValue(GetHashMapFieldValueRequest) returns (GetHashMapFieldValueResponse) {}
+
+    // DeleteHashMapFields removes fields from a HashMap using a key.
+    rpc DeleteHashMapFields(DeleteHashMapFieldsRequest) returns (DeleteHashMapFieldsResponse) {}
 }
