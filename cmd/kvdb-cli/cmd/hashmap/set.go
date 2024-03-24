@@ -12,7 +12,7 @@ import (
 )
 
 var cmdSetHashMap = &cobra.Command{
-	Use:   "set [key] [[field] [value] ...]",
+	Use:   "set [key] [field value ...]",
 	Short: "Set HashMap fields and values",
 	Long:  "Set HashMap fields and their corresponding values using a key",
 	Args:  cobra.MatchAll(cobra.MinimumNArgs(3)),

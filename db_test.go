@@ -405,7 +405,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 		}
 	})
 
-	t.Run("DeleteExistingFields", func(t *testing.T) {
+	t.Run("FieldsExist", func(t *testing.T) {
 		db := newDatabase("test")
 		db.SetHashMap("key1", fields)
 		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field2", "field3"})
