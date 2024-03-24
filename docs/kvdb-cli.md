@@ -301,7 +301,7 @@ To store a HashMap and set fields in it, you need to set a key to hold the HashM
 
 To set HashMap field values, use command:
 ```bash
-$ kvdb-cli hashmap set [key] [[field] [value] ...] -d db-name
+$ kvdb-cli hashmap set [key] [field value ...] -d db-name
 ```
 - [key] is the name of the key.
 - [field] is the name of a field.
@@ -344,6 +344,37 @@ $ kvdb-cli hashmap get key123 name
 ```bash
 $ kvdb-cli hashmap get key1 field123
 (None)
+```
+
+## Remove fields from a HashMap
+
+To remove fields from a HashMap, use command:
+```bash
+$ kvdb-cli hashmap delete [key] [field ...] -d db-name
+```
+- [key] is the name of the key holding the HashMap.
+- [field] is a field to be removed.
+- Option -d specifies the name of the database. If not specified, the default database is used.
+
+The command can be used to remove multiple fields.
+
+For example:
+```bash
+$ kvdb-cli hashmap delete key1 field1
+1
+```
+This removes the field "field1" from the HashMap that "key1" is holding. The returned integer is the number of fields that were removed.
+
+If the key doesn't exist, a special value (None) is returned:
+```bash
+$ kvdb-cli hashmap delete key1234 field1
+(None)
+```
+
+Fields that do not exist are ignored:
+```bash
+$ kvdb-cli hashmap delete key1 field12345
+0
 ```
 
 ## Get key type
