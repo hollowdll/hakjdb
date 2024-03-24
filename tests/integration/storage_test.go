@@ -138,3 +138,51 @@ func TestDeleteAllKeys(t *testing.T) {
 	require.NotNil(t, resGet2)
 	assert.Equalf(t, expectedKeys, resGet2.Data.KeyCount, "expected keys = %d; got = %d", expectedKeys, resGet2.Data.KeyCount)
 }
+
+func TestSetGetDeleteHashMap(t *testing.T) {
+	conn, err := insecureConnection()
+	require.NoErrorf(t, err, "Failed to connect to the server: %v", err)
+	defer conn.Close()
+	databaseClient := kvdbserver.NewDatabaseServiceClient(conn)
+	storageClient := kvdbserver.NewStorageServiceClient(conn)
+
+	fields := make(map[string]string)
+	fields["field1"] = "value1"
+	fields["field2"] = "value2"
+	fields["field3"] = "value3"
+
+	dbName := "TestSetGetDeleteHashMap"
+	ctxMd := metadata.NewOutgoingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+	ctx, cancel := context.WithTimeout(ctxMd, ctxTimeout)
+	defer cancel()
+
+	reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+	databaseClient.CreateDatabase(ctx, reqCreate)
+
+	reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+	storageClient.SetHashMap(ctx, reqSet)
+
+	expectedValue := "value2"
+	expectedOk := true
+	reqGet := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+	res, _ := storageClient.GetHashMapFieldValue(ctx, reqGet)
+	require.NotNil(t, res)
+	assert.Equal(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
+	assert.Equal(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+
+	reqDelete := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: []string{"field2"}}
+	storageClient.DeleteHashMapFields(ctx, reqDelete)
+
+	expectedValue = ""
+	expectedOk = false
+	res, _ = storageClient.GetHashMapFieldValue(ctx, reqGet)
+	require.NotNil(t, res)
+	assert.Equal(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
+	assert.Equal(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+
+	expectedKeys := uint32(1)
+	reqInfo := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+	resInfo, _ := databaseClient.GetDatabaseInfo(ctx, reqInfo)
+	require.NotNil(t, resInfo)
+	assert.Equalf(t, expectedKeys, resInfo.Data.KeyCount, "expected keys = %d; got = %d", expectedKeys, resInfo.Data.KeyCount)
+}
