@@ -1,4 +1,4 @@
 package version
 
 // Version is the kvdb version.
-var Version = "0.7.1"
+const Version string = "0.8.0"
