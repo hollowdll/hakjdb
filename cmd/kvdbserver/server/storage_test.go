@@ -842,3 +842,143 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
 	})
 }
+
+func TestDeleteHashMapFields(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field1"] = "value1"
+	fields["field2"] = "value2"
+	fields["field3"] = "value3"
+	fieldsToRemove := []string{"field2", "field3"}
+
+	t.Run("MissingMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.NotFound
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("KeyNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		var expectedFieldsRemoved uint32 = 0
+		expectedOk := false
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedFieldsRemoved, res.FieldsRemoved, "expected fields removed = %d; got = %d", expectedFieldsRemoved, res.FieldsRemoved)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+
+	t.Run("FieldsNotExist", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: make(map[string]string)}
+		server.SetHashMap(ctx, reqSet)
+
+		var expectedFieldsRemoved uint32 = 0
+		expectedOk := true
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedFieldsRemoved, res.FieldsRemoved, "expected fields removed = %d; got = %d", expectedFieldsRemoved, res.FieldsRemoved)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+
+	t.Run("FieldsExist", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		server.SetHashMap(ctx, reqSet)
+
+		var expectedFieldsRemoved uint32 = 2
+		expectedOk := true
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedFieldsRemoved, res.FieldsRemoved, "expected fields removed = %d; got = %d", expectedFieldsRemoved, res.FieldsRemoved)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+
+	t.Run("DuplicateFields", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		server.SetHashMap(ctx, reqSet)
+
+		var expectedFieldsRemoved uint32 = 1
+		expectedOk := true
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: []string{"field3", "field3", "field3"}}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		assert.Equalf(t, expectedFieldsRemoved, res.FieldsRemoved, "expected fields removed = %d; got = %d", expectedFieldsRemoved, res.FieldsRemoved)
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+}
