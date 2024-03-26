@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	// DbNameMaxSize is the maximum length of database name in bytes.
-	DbNameMaxSize int = 32
-	// DbKeyMaxSize is the maximum length of database key in bytes.
+	// DbNameMaxSize is the maximum length of a database name in bytes.
+	DbNameMaxSize int = 64
+	// DbKeyMaxSize is the maximum length of a database key in bytes.
 	DbKeyMaxSize int = 1024
 )
 

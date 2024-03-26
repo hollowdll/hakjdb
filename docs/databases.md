@@ -4,7 +4,7 @@ Databases are like namespaces for grouping keys. They store the data in the serv
 
 # Naming
 
-Databases have names that identify them. You cannot have two databases with the same name. The maximum length of a database name is 32 bytes. It is recommended to keep the names short.
+Databases have names that identify them. You cannot have two databases with the same name. The maximum length of a database name is 64 bytes. It is recommended to keep the names short to minimize memory usage.
 
 The following list shows the allowed characters in a database name:
 

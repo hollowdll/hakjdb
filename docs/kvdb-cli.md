@@ -133,7 +133,7 @@ To create a new database, use command:
 ```bash
 $ kvdb-cli db create -n name-of-your-db
 ```
-- Option -n specifies the name of the database you want to create. The maximum length of a database name is 32 bytes.
+- Option -n specifies the name of the database you want to create. The maximum length of a database name is 64 bytes.
 
 Database names are designed to be short. It is recommended to keep them short to minimize memory usage.
 
