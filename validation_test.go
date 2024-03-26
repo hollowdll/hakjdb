@@ -6,6 +6,7 @@ import (
 )
 
 func TestValidateDatabaseName(t *testing.T) {
+	maxDbNameSize := 64
 	type TestCase struct {
 		dbName string
 		valid  bool
@@ -40,7 +41,11 @@ func TestValidateDatabaseName(t *testing.T) {
 			valid:  true,
 		},
 		{
-			dbName: strings.Repeat("a", DbNameMaxSize+1),
+			dbName: strings.Repeat("a", maxDbNameSize),
+			valid:  true,
+		},
+		{
+			dbName: strings.Repeat("a", maxDbNameSize+1),
 			valid:  false,
 		},
 	}
@@ -55,6 +60,7 @@ func TestValidateDatabaseName(t *testing.T) {
 }
 
 func TestValidateDatabaseKey(t *testing.T) {
+	maxKeySize := 1024
 	type TestCase struct {
 		key   DatabaseKey
 		valid bool
@@ -81,7 +87,11 @@ func TestValidateDatabaseKey(t *testing.T) {
 			valid: true,
 		},
 		{
-			key:   DatabaseKey(strings.Repeat("a", DbKeyMaxSize+1)),
+			key:   DatabaseKey(strings.Repeat("a", maxKeySize)),
+			valid: true,
+		},
+		{
+			key:   DatabaseKey(strings.Repeat("a", maxKeySize+1)),
 			valid: false,
 		},
 	}

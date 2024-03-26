@@ -46,7 +46,7 @@ func TestCreateDatabase(t *testing.T) {
 		assert.Equal(t, codes.AlreadyExists, st.Code(), "expected status = %s; got = %s", codes.AlreadyExists, st.Code())
 	})
 
-	t.Run("InvalidArguments", func(t *testing.T) {
+	t.Run("InvalidDatabaseName", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "   "
