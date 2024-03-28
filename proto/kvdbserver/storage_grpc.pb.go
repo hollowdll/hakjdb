@@ -43,6 +43,8 @@ type StorageServiceClient interface {
 	GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error)
 	// DeleteHashMapFields removes fields from a HashMap using a key.
 	DeleteHashMapFields(ctx context.Context, in *DeleteHashMapFieldsRequest, opts ...grpc.CallOption) (*DeleteHashMapFieldsResponse, error)
+	// GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap using a key.
+	GetAllHashMapFieldsAndValues(ctx context.Context, in *GetAllHashMapFieldsAndValuesRequest, opts ...grpc.CallOption) (*GetAllHashMapFieldsAndValuesResponse, error)
 }
 
 type storageServiceClient struct {
@@ -134,6 +136,15 @@ func (c *storageServiceClient) DeleteHashMapFields(ctx context.Context, in *Dele
 	return out, nil
 }
 
+func (c *storageServiceClient) GetAllHashMapFieldsAndValues(ctx context.Context, in *GetAllHashMapFieldsAndValuesRequest, opts ...grpc.CallOption) (*GetAllHashMapFieldsAndValuesResponse, error) {
+	out := new(GetAllHashMapFieldsAndValuesResponse)
+	err := c.cc.Invoke(ctx, "/kvdbserverapi.StorageService/GetAllHashMapFieldsAndValues", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageServiceServer is the server API for StorageService service.
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
@@ -159,6 +170,8 @@ type StorageServiceServer interface {
 	GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error)
 	// DeleteHashMapFields removes fields from a HashMap using a key.
 	DeleteHashMapFields(context.Context, *DeleteHashMapFieldsRequest) (*DeleteHashMapFieldsResponse, error)
+	// GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap using a key.
+	GetAllHashMapFieldsAndValues(context.Context, *GetAllHashMapFieldsAndValuesRequest) (*GetAllHashMapFieldsAndValuesResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
 
@@ -192,6 +205,9 @@ func (UnimplementedStorageServiceServer) GetHashMapFieldValue(context.Context, *
 }
 func (UnimplementedStorageServiceServer) DeleteHashMapFields(context.Context, *DeleteHashMapFieldsRequest) (*DeleteHashMapFieldsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteHashMapFields not implemented")
+}
+func (UnimplementedStorageServiceServer) GetAllHashMapFieldsAndValues(context.Context, *GetAllHashMapFieldsAndValuesRequest) (*GetAllHashMapFieldsAndValuesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllHashMapFieldsAndValues not implemented")
 }
 func (UnimplementedStorageServiceServer) mustEmbedUnimplementedStorageServiceServer() {}
 
@@ -368,6 +384,24 @@ func _StorageService_DeleteHashMapFields_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StorageService_GetAllHashMapFieldsAndValues_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllHashMapFieldsAndValuesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServiceServer).GetAllHashMapFieldsAndValues(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/kvdbserverapi.StorageService/GetAllHashMapFieldsAndValues",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServiceServer).GetAllHashMapFieldsAndValues(ctx, req.(*GetAllHashMapFieldsAndValuesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StorageService_ServiceDesc is the grpc.ServiceDesc for StorageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -410,6 +444,10 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteHashMapFields",
 			Handler:    _StorageService_DeleteHashMapFields_Handler,
+		},
+		{
+			MethodName: "GetAllHashMapFieldsAndValues",
+			Handler:    _StorageService_GetAllHashMapFieldsAndValues_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
