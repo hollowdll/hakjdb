@@ -290,6 +290,35 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.Delete
 	return &kvdbserver.DeleteHashMapFieldsResponse{FieldsRemoved: fieldsRemoved, Ok: ok}, nil
 }
 
+// GetAllHashMapFieldsAndValues is the implementation of RPC GetAllHashMapFieldsAndValues.
+func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserver.GetAllHashMapFieldsAndValuesRequest) (res *kvdbserver.GetAllHashMapFieldsAndValuesResponse, err error) {
+	logPrefix := "GetAllHashMapFieldsAndValues"
+	s.logger.Debugf("%s: attempt", logPrefix)
+	defer func() {
+		if err != nil {
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+		} else {
+			s.logger.Debugf("%s: success", logPrefix)
+		}
+	}()
+
+	dbName, err := getDatabaseNameFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	if !s.databaseExists(dbName) {
+		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
+	}
+
+	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(kvdb.DatabaseKey(req.Key))
+
+	return &kvdbserver.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+}
+
 // getDatabaseNameFromContext gets the database name from the received gRPC metadata.
 func getDatabaseNameFromContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
