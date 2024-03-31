@@ -17,4 +17,5 @@ func init() {
 	CmdHashMap.AddCommand(cmdSetHashMap)
 	CmdHashMap.AddCommand(cmdGetHashMapFieldValue)
 	CmdHashMap.AddCommand(cmdDeleteHashMapFields)
+	CmdHashMap.AddCommand(cmdGetAllHashMapFieldsAndValues)
 }
