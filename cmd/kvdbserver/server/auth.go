@@ -24,7 +24,9 @@ func NewInMemoryCredentialStore() *InMemoryCredentialStore {
 }
 
 // SetServerPassword sets a new password for the server.
+// The password is hashed using bcrypt before storing it in memory.
 // If password is set, clients must authenticate using it.
+// Max password size is 72 bytes.
 func (cs *InMemoryCredentialStore) SetServerPassword(password []byte) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
