@@ -3,6 +3,7 @@ package hashmap
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
@@ -39,13 +40,13 @@ func getAllHashMapFieldsAndValues(key string) {
 
 	if res.Ok {
 		if len(res.FieldValueMap) > 0 {
-			output := ""
+			var builder strings.Builder
 			element := 0
 			for field, value := range res.FieldValueMap {
-				element += 1
-				output += fmt.Sprintf("%d) \"%s\": \"%s\"\n", element, field, value)
+				element++
+				builder.WriteString(fmt.Sprintf("%d) \"%s\": \"%s\"\n", element, field, value))
 			}
-			fmt.Print(output)
+			fmt.Print(builder.String())
 		}
 	} else {
 		fmt.Println(client.ValueNone)
