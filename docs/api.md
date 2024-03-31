@@ -56,6 +56,7 @@ RPCs:
 - GetString
 - SetHashMap
 - GetHashMapFieldValue
+- GetAllHashMapFieldsAndValues
 - DeleteHashMapFields
 - DeleteKey
 - DeleteAllKeys

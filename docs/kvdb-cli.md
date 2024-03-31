@@ -346,6 +346,32 @@ $ kvdb-cli hashmap get key1 field123
 (None)
 ```
 
+## Get all HashMap fields and values
+
+To get all the fields and values of a HashMap, use command:
+```bash
+$ kvdb-cli hashmap getall [key] -d db-name
+```
+- [key] is the name of the key holding the HashMap.
+- Option -d specifies the name of the database. If not specified, the default database is used.
+
+For example:
+```bash
+$ kvdb-cli hashmap getall key1
+1) "field1": "value1"
+2) "field2": "value2"
+3) "field3": "value3"
+```
+This gets all the fields and values of the HashMap that "key1" is holding.
+
+If the key doesn't exist, a special value (None) is returned:
+```bash
+$ kvdb-cli hashmap getall key123
+(None)
+```
+
+If the HashMap doesn't contain any fields, then nothing is printed.
+
 ## Remove fields from a HashMap
 
 To remove fields from a HashMap, use command:

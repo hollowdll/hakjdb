@@ -38,7 +38,7 @@ func (cs *InMemoryCredentialStore) SetServerPassword(password []byte) error {
 }
 
 // IsCorrectServerPassword checks if provided password matches the server password.
-// Returns true if matches, otherwise false.
+// Returns nil if matches, otherwise an error is returned.
 func (cs *InMemoryCredentialStore) IsCorrectServerPassword(password []byte) error {
 	return bcrypt.CompareHashAndPassword(cs.serverPasswordHash, password)
 }
