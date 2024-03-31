@@ -982,3 +982,104 @@ func TestDeleteHashMapFields(t *testing.T) {
 		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
 	})
 }
+
+func TestGetAllHashMapFieldsAndValues(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field1"] = "value1"
+	fields["field2"] = "value2"
+	fields["field3"] = "value3"
+
+	t.Run("MissingMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.InvalidArgument
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "db0"
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.NotFound
+		st, ok := status.FromError(err)
+		require.NotNil(t, st, "expected status to be non-nil")
+		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("KeyNotFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		expectedElements := 0
+		expectedOk := false
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		require.NotNil(t, res.FieldValueMap)
+		assert.Equalf(t, expectedElements, len(res.FieldValueMap), "expected elements = %d; got = %d", expectedElements, len(res.FieldValueMap))
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+
+	t.Run("KeyFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		server.SetHashMap(ctx, reqSet)
+
+		expectedElements := 3
+		expectedOk := true
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		require.NotNil(t, res.FieldValueMap)
+		assert.Equalf(t, expectedElements, len(res.FieldValueMap), "expected elements = %d; got = %d", expectedElements, len(res.FieldValueMap))
+		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+	})
+}

@@ -283,3 +283,18 @@ func (db *Database) DeleteHashMapFields(key DatabaseKey, fields []string) (uint3
 
 	return fieldsRemoved, true
 }
+
+// GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap.
+// The returned map is empty if the key doesn't exist.
+// The returned bool is true if the key exists and holds a HashMap.
+func (db *Database) GetAllHashMapFieldsAndValues(key DatabaseKey) (map[string]string, bool) {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
+	value, exists := db.storedData.hashMapData[key]
+	if !exists {
+		return make(map[string]string), false
+	}
+
+	return value, true
+}

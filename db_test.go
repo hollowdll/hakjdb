@@ -453,3 +453,56 @@ func TestDeleteHashMapFields(t *testing.T) {
 		}
 	})
 }
+
+func TestGetAllHashMapFieldsAndValues(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field1"] = "value123"
+	fields["field2"] = "value777"
+	fields["field3"] = "value915"
+
+	t.Run("GetNonExistentKey", func(t *testing.T) {
+		db := newDatabase("test")
+		result, ok := db.GetAllHashMapFieldsAndValues("key1")
+
+		if result == nil {
+			t.Fatalf("expected result but got nil")
+		}
+
+		expectedElements := 0
+		if len(result) != expectedElements {
+			t.Errorf("expected elements = %d; got = %d", expectedElements, len(result))
+		}
+
+		expectedOk := false
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("GetExistingKey", func(t *testing.T) {
+		db := newDatabase("test")
+		key := DatabaseKey("key1")
+		db.SetHashMap(key, fields)
+		result, ok := db.GetAllHashMapFieldsAndValues(key)
+
+		expectedElements := 3
+		if len(result) != expectedElements {
+			t.Errorf("expected elements = %d; got = %d", expectedElements, len(result))
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+
+		for expectedField, expectedValue := range fields {
+			actualValue, exists := result[expectedField]
+			if !exists {
+				t.Errorf("expected field '%s' in result", expectedField)
+			}
+			if expectedValue != actualValue {
+				t.Errorf("expected field value = %s; got = %s", expectedValue, actualValue)
+			}
+		}
+	})
+}
