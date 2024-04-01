@@ -169,12 +169,12 @@ func getOsInfo() (string, error) {
 // GetServerInfo is the implementation of RPC GetServerInfo.
 func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
 	logPrefix := "GetServerInfo"
-	s.logger.Debugf("%s: attempt to get server info", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get server info: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get server info success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -204,12 +204,12 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 // GetLogs is the implementation of RPC GetLogs.
 func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
 	logPrefix := "GetLogs"
-	s.logger.Debugf("%s: attempt to get server logs", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get server logs: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get server logs success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 

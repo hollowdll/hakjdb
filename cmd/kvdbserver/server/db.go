@@ -20,10 +20,10 @@ func (s *Server) databaseExists(name string) bool {
 // CreateDatabase is the implementation of RPC CreateDatabase.
 func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
 	logPrefix := "CreateDatabase"
-	s.logger.Debugf("%s: attempt to create database '%s'", logPrefix, req.GetDbName())
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to create database '%s': %v", logPrefix, req.GetDbName(), err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
 			s.logger.Infof("Created database '%s'", req.GetDbName())
 		}
@@ -49,12 +49,12 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 // GetAllDatabases is the implementation of RPC GetAllDatabases.
 func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
 	logPrefix := "GetAllDatabases"
-	s.logger.Debugf("%s: attempt to get all databases", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get all databases: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get all databases success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -72,12 +72,12 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 // GetDatabaseInfo is the implementation of RPC GetDatabaseInfo.
 func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
 	logPrefix := "GetDatabaseInfo"
-	s.logger.Debugf("%s: attempt to get information about database '%s'", logPrefix, req.GetDbName())
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get info for database '%s': %v", logPrefix, req.GetDbName(), err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get information about database '%s' success", logPrefix, req.GetDbName())
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -103,10 +103,10 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 // DeleteDatabase is the implementation of RPC DeleteDatabase.
 func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatabaseRequest) (res *kvdbserver.DeleteDatabaseResponse, err error) {
 	logPrefix := "DeleteDatabase"
-	s.logger.Debugf("%s: attempt to delete database '%s'", logPrefix, req.GetDbName())
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to delete database '%s': %v", logPrefix, req.GetDbName(), err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
 			s.logger.Infof("Deleted database '%s'", req.GetDbName())
 		}

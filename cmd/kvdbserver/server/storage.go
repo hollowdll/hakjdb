@@ -15,12 +15,12 @@ import (
 // GetTypeOfKey is the implementation of RPC GetTypeOfKey.
 func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyRequest) (res *kvdbserver.GetTypeOfKeyResponse, err error) {
 	logPrefix := "GetTypeOfKey"
-	s.logger.Debugf("%s: attempt to get key data type", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get the data type of a key: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get key data type success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -44,12 +44,12 @@ func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyR
 // SetString is the implementation of RPC SetString.
 func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
 	logPrefix := "SetString"
-	s.logger.Debugf("%s: attempt to set string value", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to set string value: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: set string value success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -81,12 +81,12 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 // GetString is the implementation of RPC GetString.
 func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
 	logPrefix := "GetString"
-	s.logger.Debugf("%s: attempt to get string value", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get string value: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get string value success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -110,12 +110,12 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 // DeleteKey is the implementation of RPC DeleteKey.
 func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
 	logPrefix := "DeleteKey"
-	s.logger.Debugf("%s: attempt to delete key", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to delete key: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: delete key success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -142,12 +142,12 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 // DeleteAllKeys is the implementation of RPC DeleteAllKeys.
 func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
 	logPrefix := "DeleteAllKeys"
-	s.logger.Debugf("%s: attempt to delete all keys", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to delete all keys: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: delete all keys success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -171,12 +171,12 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 // GetKeys is the implementation of RPC GetKeys.
 func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (res *kvdbserver.GetKeysResponse, err error) {
 	logPrefix := "GetKeys"
-	s.logger.Debugf("%s: attempt to get keys", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get keys: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get keys success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -198,12 +198,12 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 // SetHashMap is the implementation of RPC SetHashMap.
 func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapRequest) (res *kvdbserver.SetHashMapResponse, err error) {
 	logPrefix := "SetHashMap"
-	s.logger.Debugf("%s: attempt to set HashMap fields", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to set HashMap fields: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: set HashMap fields success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -235,12 +235,12 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 // GetHashMapFieldValue is the implementation of RPC GetHashMapFieldValue.
 func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHashMapFieldValueRequest) (res *kvdbserver.GetHashMapFieldValueResponse, err error) {
 	logPrefix := "GetHashMapFieldValue"
-	s.logger.Debugf("%s: attempt to get HashMap field value", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to get HashMap field value: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: get HashMap field value success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -264,12 +264,12 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 // DeleteHashMapFields is the implementation of RPC DeleteHashMapFields.
 func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.DeleteHashMapFieldsRequest) (res *kvdbserver.DeleteHashMapFieldsResponse, err error) {
 	logPrefix := "DeleteHashMapFields"
-	s.logger.Debugf("%s: attempt to remove HashMap fields", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: failed to remove HashMap fields: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: remove HashMap fields success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 
@@ -293,12 +293,12 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.Delete
 // GetAllHashMapFieldsAndValues is the implementation of RPC GetAllHashMapFieldsAndValues.
 func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserver.GetAllHashMapFieldsAndValuesRequest) (res *kvdbserver.GetAllHashMapFieldsAndValuesResponse, err error) {
 	logPrefix := "GetAllHashMapFieldsAndValues"
-	s.logger.Debugf("%s: attempt", logPrefix)
+	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: success", logPrefix)
+			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
 

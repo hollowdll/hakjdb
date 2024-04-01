@@ -370,7 +370,7 @@ $ kvdb-cli hashmap getall key123
 (None)
 ```
 
-If the HashMap doesn't contain any fields, then nothing is printed.
+If the HashMap doesn't contain any fields, nothing is printed.
 
 ## Remove fields from a HashMap
 
