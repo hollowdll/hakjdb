@@ -27,9 +27,5 @@ logs/
 *.log
 dist/
 
-# Config files
-.kvdb-cli.json
-.kvdbserver.json
-
 # Environment variables
 .env

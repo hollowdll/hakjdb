@@ -23,17 +23,15 @@ Another way to run the server is by using Docker. Instructions [here](../README.
 
 # Configuration
 
-Configurations are saved to a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `.kvdbserver.json` and it is created to the [data directory](#data-directory). Configurations are saved in JSON format.
+Configurations are stored in a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `.kvdbserver.yaml` and it is created to the [data directory](#data-directory). Configurations are stored in YAML format.
 
 Here is a list of all configurations with their default values:
 
-```json
-{
-  "debug_enabled": false,
-  "default_db": "default",
-  "logfile_enabled": false,
-  "port": 12345
-}
+```yaml
+debug_enabled: false
+default_db: default
+logfile_enabled: false
+port: 12345
 ```
 
 Meaning of fields:
@@ -57,10 +55,10 @@ Here is a list of all environment variables:
 
 # Data directory
 
-The server has a data directory `data/` that is created to the executable's parent directory if it doesn't exist. Server specific files are saved to this directory.
+The server has a data directory `data/` that is created to the executable's parent directory if it doesn't exist. Server-specific files are stored in this directory.
 
 Here is a list of files in this directory:
-- Configuration file: `.kvdbserver.json`
+- Configuration file: `.kvdbserver.yaml`
 - Log file: `kvdb.log`
 
 # Logs

@@ -10,7 +10,7 @@ import (
 const (
 	dataDirName    string = "data"
 	configFileName string = ".kvdbserver"
-	configFileType string = "json"
+	configFileType string = "yaml"
 	logFileName    string = "kvdb.log"
 
 	// EnvPrefix is the prefix that environment variables use.
