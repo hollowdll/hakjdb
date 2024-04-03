@@ -8,7 +8,7 @@ import (
 
 const (
 	configFileName string = ".kvdb-cli"
-	configFileType string = "json"
+	configFileType string = "yaml"
 
 	// ConfigKeyHost is the configuration key for host.
 	ConfigKeyHost string = "host"

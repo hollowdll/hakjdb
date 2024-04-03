@@ -1,19 +1,17 @@
 # kvdb-cli
 
-kvdb-cli is a CLI (command line interface) to interact with a kvdb server.
+kvdb-cli is a CLI (command line interface) program to interact with a kvdb server.
 
 # Configuration
 
-Configurations are saved to a configuration file and can be changed there. kvdb-cli creates this file with default configurations if it doesn't exist. The name of the configuration file is `.kvdb-cli.json`. Configurations are saved in JSON format.
+Configurations are stored in a configuration file and can be changed there. kvdb-cli creates this file with default configurations if it doesn't exist. The name of the configuration file is `.kvdb-cli.yaml`. Configurations are stored in YAML format.
 
 Here is a list of all configurations with their default values:
 
-```json
-{
-  "default_db": "default",
-  "host": "localhost",
-  "port": 12345
-}
+```yaml
+default_db: default
+host: localhost
+port: 12345
 ```
 
 Meaning of fields:
