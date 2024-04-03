@@ -5,7 +5,7 @@ It uses a simple client-server model and is designed to be easy to use. It can b
 
 Data is stored at keys of different types. You can store data ranging from basic string values to large objects.
 
-Instances are easily configurable with environment variables and a simple JSON file.
+Instances are easily configurable with environment variables and a simple YAML file.
 
 Components:
 - `kvdbserver` - The server process
@@ -48,7 +48,7 @@ You may also need tools to work with gRPC and Protocol Buffers in Go. This is ne
 - [Protocol Buffer compiler](https://github.com/protocolbuffers/protobuf#protobuf-compiler-installation)
 - [Quickstart](https://grpc.io/docs/languages/go/quickstart/)
 
-If you just want to compile the binaries, then installing only Go is enough.
+If you just want to compile the binaries then installing only Go is enough.
 
 After you have successfully installed go, clone this repository.
 
