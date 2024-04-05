@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"sync"
 	"time"
+
+	"github.com/hollowdll/kvdb/internal/common"
 )
 
 // DatabaseKey represents key-value pair key. Key is stored as string.
@@ -216,7 +218,7 @@ func (db *Database) GetKeys() []string {
 
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Creates the key if it doesn't exist.
-func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
+func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) uint32 {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -232,10 +234,21 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
 		db.storedData.hashMapData[key] = make(map[string]string)
 	}
 
+	var fieldsAdded uint32 = 0
 	for field, fieldValue := range fields {
+		if uint32(len(db.storedData.hashMapData[key])) >= common.HashMapMaxFields {
+			return fieldsAdded
+		}
+
+		_, exists := db.storedData.hashMapData[key][field]
+		if !exists {
+			fieldsAdded++
+		}
 		db.storedData.hashMapData[key][field] = fieldValue
 	}
 	db.update()
+
+	return fieldsAdded
 }
 
 // GetHashMapFieldValue returns a single HashMap field value using a key.
