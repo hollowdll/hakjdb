@@ -36,12 +36,15 @@ type Server struct {
 	logFileEnabled  bool
 	// The maximum number of keys a database can hold.
 	maxKeysPerDb uint32
-	mutex        sync.RWMutex
+	// The maximum number of fields a HashMap can hold.
+	maxHashMapFields uint32
+	mutex            sync.RWMutex
 }
 
 // ServerOptions contains options that can be passed to the server when creating it.
 type ServerOptions struct {
-	MaxKeysPerDb uint32
+	MaxKeysPerDb     uint32
+	MaxHashMapFields uint32
 }
 
 // portInUse is the TCP/IP port the server uses.
@@ -49,27 +52,29 @@ var portInUse uint16 = common.ServerDefaultPort
 
 func NewServer() *Server {
 	return &Server{
-		startTime:       time.Now(),
-		databases:       make(map[string]*kvdb.Database),
-		CredentialStore: *NewInMemoryCredentialStore(),
-		passwordEnabled: false,
-		logger:          kvdb.NewDefaultLogger(),
-		logFilePath:     "",
-		logFileEnabled:  false,
-		maxKeysPerDb:    common.DbMaxKeyCount,
+		startTime:        time.Now(),
+		databases:        make(map[string]*kvdb.Database),
+		CredentialStore:  *NewInMemoryCredentialStore(),
+		passwordEnabled:  false,
+		logger:           kvdb.NewDefaultLogger(),
+		logFilePath:      "",
+		logFileEnabled:   false,
+		maxKeysPerDb:     common.DbMaxKeyCount,
+		maxHashMapFields: common.HashMapMaxFields,
 	}
 }
 
 func NewServerWithOptions(options *ServerOptions) *Server {
 	return &Server{
-		startTime:       time.Now(),
-		databases:       make(map[string]*kvdb.Database),
-		CredentialStore: *NewInMemoryCredentialStore(),
-		passwordEnabled: false,
-		logger:          kvdb.NewDefaultLogger(),
-		logFilePath:     "",
-		logFileEnabled:  false,
-		maxKeysPerDb:    options.MaxKeysPerDb,
+		startTime:        time.Now(),
+		databases:        make(map[string]*kvdb.Database),
+		CredentialStore:  *NewInMemoryCredentialStore(),
+		passwordEnabled:  false,
+		logger:           kvdb.NewDefaultLogger(),
+		logFilePath:      "",
+		logFileEnabled:   false,
+		maxKeysPerDb:     options.MaxKeysPerDb,
+		maxHashMapFields: options.MaxHashMapFields,
 	}
 }
 
@@ -140,6 +145,14 @@ func (s *Server) DbMaxKeysReached(db *kvdb.Database) bool {
 	defer s.mutex.RUnlock()
 
 	return db.GetKeyCount() >= s.maxKeysPerDb
+}
+
+// HashMapMaxFieldsReached returns true if a HashMap has reached or exceeded the maximum field limit.
+func (s *Server) HashMapMaxFieldsReached(db *kvdb.Database, key kvdb.DatabaseKey) bool {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return db.GetHashMapFieldCount(key) >= s.maxHashMapFields
 }
 
 // getOsInfo returns information about the server's operating system.

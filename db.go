@@ -298,3 +298,11 @@ func (db *Database) GetAllHashMapFieldsAndValues(key DatabaseKey) (map[string]st
 
 	return value, true
 }
+
+// GetHashMapFieldCount returns the number of fields in a HashMap.
+func (db *Database) GetHashMapFieldCount(key DatabaseKey) uint32 {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
+	return uint32(len(db.storedData.hashMapData[key]))
+}
