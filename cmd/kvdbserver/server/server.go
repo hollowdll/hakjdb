@@ -65,7 +65,7 @@ func NewServer() *Server {
 }
 
 func NewServerWithOptions(options *ServerOptions) *Server {
-	return &Server{
+	newServer := &Server{
 		startTime:        time.Now(),
 		databases:        make(map[string]*kvdb.Database),
 		CredentialStore:  *NewInMemoryCredentialStore(),
@@ -76,6 +76,14 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		maxKeysPerDb:     options.MaxKeysPerDb,
 		maxHashMapFields: options.MaxHashMapFields,
 	}
+	if newServer.maxKeysPerDb == 0 {
+		newServer.maxKeysPerDb = common.DbMaxKeyCount
+	}
+	if newServer.maxHashMapFields == 0 {
+		newServer.maxHashMapFields = common.HashMapMaxFields
+	}
+
+	return newServer
 }
 
 // DisableLogger disables all log outputs from this server.
