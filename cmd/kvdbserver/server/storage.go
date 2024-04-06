@@ -227,9 +227,9 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields, s.maxHashMapFields)
+	fieldsAdded := s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields, s.maxHashMapFields)
 
-	return &kvdbserver.SetHashMapResponse{}, nil
+	return &kvdbserver.SetHashMapResponse{FieldsAdded: fieldsAdded}, nil
 }
 
 // GetHashMapFieldValue is the implementation of RPC GetHashMapFieldValue.
