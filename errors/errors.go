@@ -48,4 +48,8 @@ var (
 
 	// ErrLogFileNotEnabled is returned when trying to access logs but log file is not enabled.
 	ErrLogFileNotEnabled = errors.New("log file is not enabled")
+
+	// ErrMaxHashMapFieldsReached is returned when trying to insert fields into a HashMap
+	// that has reached the maximum field limit.
+	ErrMaxHashMapFieldsReached = errors.New("max HashMap field limit reached")
 )

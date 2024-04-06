@@ -36,12 +36,15 @@ type Server struct {
 	logFileEnabled  bool
 	// The maximum number of keys a database can hold.
 	maxKeysPerDb uint32
-	mutex        sync.RWMutex
+	// The maximum number of fields a HashMap can hold.
+	maxHashMapFields uint32
+	mutex            sync.RWMutex
 }
 
 // ServerOptions contains options that can be passed to the server when creating it.
 type ServerOptions struct {
-	MaxKeysPerDb uint32
+	MaxKeysPerDb     uint32
+	MaxHashMapFields uint32
 }
 
 // portInUse is the TCP/IP port the server uses.
@@ -49,28 +52,38 @@ var portInUse uint16 = common.ServerDefaultPort
 
 func NewServer() *Server {
 	return &Server{
-		startTime:       time.Now(),
-		databases:       make(map[string]*kvdb.Database),
-		CredentialStore: *NewInMemoryCredentialStore(),
-		passwordEnabled: false,
-		logger:          kvdb.NewDefaultLogger(),
-		logFilePath:     "",
-		logFileEnabled:  false,
-		maxKeysPerDb:    common.DbMaxKeyCount,
+		startTime:        time.Now(),
+		databases:        make(map[string]*kvdb.Database),
+		CredentialStore:  *NewInMemoryCredentialStore(),
+		passwordEnabled:  false,
+		logger:           kvdb.NewDefaultLogger(),
+		logFilePath:      "",
+		logFileEnabled:   false,
+		maxKeysPerDb:     common.DbMaxKeyCount,
+		maxHashMapFields: common.HashMapMaxFields,
 	}
 }
 
 func NewServerWithOptions(options *ServerOptions) *Server {
-	return &Server{
-		startTime:       time.Now(),
-		databases:       make(map[string]*kvdb.Database),
-		CredentialStore: *NewInMemoryCredentialStore(),
-		passwordEnabled: false,
-		logger:          kvdb.NewDefaultLogger(),
-		logFilePath:     "",
-		logFileEnabled:  false,
-		maxKeysPerDb:    options.MaxKeysPerDb,
+	newServer := &Server{
+		startTime:        time.Now(),
+		databases:        make(map[string]*kvdb.Database),
+		CredentialStore:  *NewInMemoryCredentialStore(),
+		passwordEnabled:  false,
+		logger:           kvdb.NewDefaultLogger(),
+		logFilePath:      "",
+		logFileEnabled:   false,
+		maxKeysPerDb:     options.MaxKeysPerDb,
+		maxHashMapFields: options.MaxHashMapFields,
 	}
+	if newServer.maxKeysPerDb == 0 {
+		newServer.maxKeysPerDb = common.DbMaxKeyCount
+	}
+	if newServer.maxHashMapFields == 0 {
+		newServer.maxHashMapFields = common.HashMapMaxFields
+	}
+
+	return newServer
 }
 
 // DisableLogger disables all log outputs from this server.

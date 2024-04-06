@@ -311,9 +311,9 @@ The command can be used to set multiple fields.
 For example:
 ```bash
 $ kvdb-cli hashmap set key1 name "John" age "35"
-OK
+2
 ```
-This sets key "key1" to hold a HashMap with fields "name" and "age" set to their respective values.
+This sets key "key1" to hold a HashMap with fields "name" and "age" set to their respective values. The returned integer is the number of fields that were added.
 
 ## Get HashMap field value
 

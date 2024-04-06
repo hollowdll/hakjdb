@@ -665,17 +665,47 @@ func TestSetHashMap(t *testing.T) {
 		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("FieldsAdded", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 		dbName := "default"
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
-		res, err := server.SetHashMap(ctx, reqSet)
+		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		res, err := server.SetHashMap(ctx, req)
+
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
+		var expectedFieldsAdded uint32 = 3
+		assert.Equal(t, expectedFieldsAdded, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded, res.FieldsAdded)
+	})
+
+	t.Run("OverwriteFields", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+		fieldsOverwrite := make(map[string]string)
+		fieldsOverwrite["field1"] = "a"
+		fieldsOverwrite["field2"] = "b"
+		fieldsOverwrite["field3"] = "c"
+		fieldsOverwrite["new_field"] = "d"
+
+		req1 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		res, err := server.SetHashMap(ctx, req1)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		var expectedFieldsAdded1 uint32 = 3
+		assert.Equal(t, expectedFieldsAdded1, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded1, res.FieldsAdded)
+
+		req2 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fieldsOverwrite}
+		res, err = server.SetHashMap(ctx, req2)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		var expectedFieldsAdded2 uint32 = 1
+		assert.Equal(t, expectedFieldsAdded2, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded2, res.FieldsAdded)
 	})
 
 	t.Run("InvalidKey", func(t *testing.T) {
@@ -721,6 +751,33 @@ func TestSetHashMap(t *testing.T) {
 		require.NotNil(t, st, "expected status to be non-nil")
 		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
 		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
+
+	t.Run("MaxFieldLimitReached", func(t *testing.T) {
+		server := server.NewServerWithOptions(&server.ServerOptions{MaxHashMapFields: 4})
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+		fields2 := make(map[string]string)
+		fields2["field4"] = "val4"
+		fields2["field5"] = "val5"
+		fields2["field6"] = "val6"
+		fields2["field7"] = "val7"
+
+		req1 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		res, err := server.SetHashMap(ctx, req1)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		var expectedFieldsAdded1 uint32 = 3
+		assert.Equal(t, expectedFieldsAdded1, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded1, res.FieldsAdded)
+
+		req2 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields2}
+		res, err = server.SetHashMap(ctx, req2)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+		var expectedFieldsAdded2 uint32 = 1
+		assert.Equal(t, expectedFieldsAdded2, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded2, res.FieldsAdded)
 	})
 }
 

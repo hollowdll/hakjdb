@@ -27,7 +27,7 @@ func newDatabaseStoredData() *databaseStoredData {
 	}
 }
 
-// Database containing key-value pairs of data.
+// Database is a namespace for storing key-value pairs.
 type Database struct {
 	// The name of the database.
 	Name string
@@ -215,8 +215,8 @@ func (db *Database) GetKeys() []string {
 }
 
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
-// Creates the key if it doesn't exist.
-func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
+// Creates the key if it doesn't exist. Returns the number of added fields.
+func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string, maxFieldLimit uint32) uint32 {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -232,10 +232,21 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string) {
 		db.storedData.hashMapData[key] = make(map[string]string)
 	}
 
+	var fieldsAdded uint32 = 0
 	for field, fieldValue := range fields {
+		_, exists := db.storedData.hashMapData[key][field]
+		if !exists {
+			// ignore new fields if max limit is reached
+			if uint32(len(db.storedData.hashMapData[key])) >= maxFieldLimit {
+				continue
+			}
+			fieldsAdded++
+		}
 		db.storedData.hashMapData[key][field] = fieldValue
 	}
 	db.update()
+
+	return fieldsAdded
 }
 
 // GetHashMapFieldValue returns a single HashMap field value using a key.
@@ -297,4 +308,12 @@ func (db *Database) GetAllHashMapFieldsAndValues(key DatabaseKey) (map[string]st
 	}
 
 	return value, true
+}
+
+// GetHashMapFieldCount returns the number of fields in a HashMap.
+func (db *Database) GetHashMapFieldCount(key DatabaseKey) uint32 {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
+	return uint32(len(db.storedData.hashMapData[key]))
 }

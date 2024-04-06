@@ -43,8 +43,8 @@ func setHashMap(key string, fields map[string]string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	_, err := client.GrpcStorageClient.SetHashMap(ctx, &kvdbserver.SetHashMapRequest{Key: key, Fields: fields})
+	res, err := client.GrpcStorageClient.SetHashMap(ctx, &kvdbserver.SetHashMapRequest{Key: key, Fields: fields})
 	client.CheckGrpcError(err)
 
-	fmt.Println("OK")
+	fmt.Printf("%d\n", res.FieldsAdded)
 }
