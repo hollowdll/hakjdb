@@ -293,7 +293,12 @@ func TestSetHashMap(t *testing.T) {
 
 	t.Run("SetNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		fieldsAdded := db.SetHashMap("key1", fields, common.HashMapMaxFields)
+
+		var expectedFieldsAdded uint32 = 3
+		if fieldsAdded != expectedFieldsAdded {
+			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded, fieldsAdded)
+		}
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -305,7 +310,18 @@ func TestSetHashMap(t *testing.T) {
 	t.Run("OverwriteExistingHashMapKey", func(t *testing.T) {
 		db := newDatabase("test")
 		db.SetHashMap("key1", fields, common.HashMapMaxFields)
-		db.SetHashMap("key1", make(map[string]string), common.HashMapMaxFields)
+		fieldsAdded := db.SetHashMap("key1", make(map[string]string), common.HashMapMaxFields)
+
+		var expectedFieldsAdded uint32 = 0
+		if fieldsAdded != expectedFieldsAdded {
+			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded, fieldsAdded)
+		}
+
+		var expectedFields uint32 = 3
+		fieldCount := db.GetHashMapFieldCount("key1")
+		if fieldCount != expectedFields {
+			t.Errorf("expected fields = %d; got = %d", expectedFields, fieldCount)
+		}
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -324,6 +340,28 @@ func TestSetHashMap(t *testing.T) {
 		updatedTime := db.UpdatedAt
 		if !updatedTime.After(originalTime) {
 			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
+		}
+	})
+
+	t.Run("MaxFieldLimitReached", func(t *testing.T) {
+		db := newDatabase("test")
+		var maxFieldLimit uint32 = 2
+		fields2 := make(map[string]string)
+		fields2["field4"] = "value4"
+		fields2["field5"] = "value5"
+		fields2["field6"] = "value6"
+
+		fieldsAdded1 := db.SetHashMap("key1", fields, maxFieldLimit)
+		fieldsAdded2 := db.SetHashMap("key1", fields2, maxFieldLimit)
+
+		var expectedFieldsAdded1 uint32 = 2
+		if fieldsAdded1 != expectedFieldsAdded1 {
+			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded1, fieldsAdded1)
+		}
+
+		var expectedFieldsAdded2 uint32 = 0
+		if fieldsAdded2 != expectedFieldsAdded2 {
+			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded2, fieldsAdded2)
 		}
 	})
 }
