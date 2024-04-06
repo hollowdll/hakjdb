@@ -155,14 +155,6 @@ func (s *Server) DbMaxKeysReached(db *kvdb.Database) bool {
 	return db.GetKeyCount() >= s.maxKeysPerDb
 }
 
-// HashMapMaxFieldsReached returns true if a HashMap has reached or exceeded the maximum field limit.
-func (s *Server) HashMapMaxFieldsReached(db *kvdb.Database, key kvdb.DatabaseKey) bool {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	return db.GetHashMapFieldCount(key) >= s.maxHashMapFields
-}
-
 // getOsInfo returns information about the server's operating system.
 func getOsInfo() (string, error) {
 	osInfo := runtime.GOOS

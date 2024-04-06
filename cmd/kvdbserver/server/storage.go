@@ -227,11 +227,7 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	if s.HashMapMaxFieldsReached(s.databases[dbName], kvdb.DatabaseKey(req.Key)) {
-		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxHashMapFieldsReached.Error())
-	}
-
-	s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields)
+	s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields, s.maxHashMapFields)
 
 	return &kvdbserver.SetHashMapResponse{}, nil
 }
