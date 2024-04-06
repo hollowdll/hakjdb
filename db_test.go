@@ -544,3 +544,32 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 		}
 	})
 }
+
+func TestGetHashMapFieldCount(t *testing.T) {
+	fields := make(map[string]string)
+	fields["field_a"] = "a"
+	fields["field_b"] = "b"
+	fields["field_c"] = "c"
+	fields["field_d"] = ""
+
+	t.Run("KeyNotFound", func(t *testing.T) {
+		db := newDatabase("test")
+		fieldCount := db.GetHashMapFieldCount("key1")
+
+		var expectedFieldCount uint32 = 0
+		if fieldCount != expectedFieldCount {
+			t.Errorf("expected field count = %d; got = %d", expectedFieldCount, fieldCount)
+		}
+	})
+
+	t.Run("KeyFound", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		fieldCount := db.GetHashMapFieldCount("key1")
+
+		var expectedFieldCount uint32 = 4
+		if fieldCount != expectedFieldCount {
+			t.Errorf("expected field count = %d; got = %d", expectedFieldCount, fieldCount)
+		}
+	})
+}
