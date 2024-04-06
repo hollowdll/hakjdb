@@ -234,12 +234,12 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string, maxFie
 
 	var fieldsAdded uint32 = 0
 	for field, fieldValue := range fields {
-		if uint32(len(db.storedData.hashMapData[key])) >= maxFieldLimit {
-			return fieldsAdded
-		}
-
 		_, exists := db.storedData.hashMapData[key][field]
 		if !exists {
+			// ignore new fields if max limit is reached
+			if uint32(len(db.storedData.hashMapData[key])) >= maxFieldLimit {
+				continue
+			}
 			fieldsAdded++
 		}
 		db.storedData.hashMapData[key][field] = fieldValue
