@@ -15,42 +15,6 @@ import (
 )
 
 func TestGetTypeOfKey(t *testing.T) {
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
-		res, err := server.GetTypeOfKey(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
-		res, err := server.GetTypeOfKey(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -129,39 +93,6 @@ func TestGetTypeOfKey(t *testing.T) {
 }
 
 func TestSetString(t *testing.T) {
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		request := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
-		response, err := server.SetString(context.Background(), request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		request := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
-		response, err := server.SetString(ctxMd, request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -243,38 +174,6 @@ func TestSetString(t *testing.T) {
 }
 
 func TestGetString(t *testing.T) {
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		request := &kvdbserver.GetStringRequest{Key: "key1"}
-		response, err := server.GetString(context.Background(), request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		request := &kvdbserver.GetStringRequest{Key: "key1"}
-		response, err := server.GetString(ctxMd, request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -335,38 +234,6 @@ func TestGetString(t *testing.T) {
 }
 
 func TestDeleteKey(t *testing.T) {
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		request := &kvdbserver.DeleteKeyRequest{Key: "key1"}
-		response, err := server.DeleteKey(context.Background(), request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		request := &kvdbserver.DeleteKeyRequest{Key: "key1"}
-		response, err := server.DeleteKey(ctxMd, request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -426,38 +293,6 @@ func TestDeleteKey(t *testing.T) {
 }
 
 func TestDeleteAllKeys(t *testing.T) {
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.DeleteAllKeysRequest{}
-		res, err := server.DeleteAllKeys(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st)
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.DeleteAllKeysRequest{}
-		res, err := server.DeleteAllKeys(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st)
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -510,38 +345,6 @@ func TestDeleteAllKeys(t *testing.T) {
 }
 
 func TestGetKeys(t *testing.T) {
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.GetKeysRequest{}
-		res, err := server.GetKeys(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st)
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.GetKeysRequest{}
-		res, err := server.GetKeys(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st)
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -609,42 +412,6 @@ func TestSetHashMap(t *testing.T) {
 	fields["field1"] = "value1"
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
-
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
-		res, err := server.SetHashMap(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
-		res, err := server.SetHashMap(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
@@ -787,42 +554,6 @@ func TestGetHashMapFieldValue(t *testing.T) {
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
 
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
-		res, err := server.GetHashMapFieldValue(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
-		res, err := server.GetHashMapFieldValue(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -906,42 +637,6 @@ func TestDeleteHashMapFields(t *testing.T) {
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
 	fieldsToRemove := []string{"field2", "field3"}
-
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
-		res, err := server.DeleteHashMapFields(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
-		res, err := server.DeleteHashMapFields(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
@@ -1045,42 +740,6 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	fields["field1"] = "value1"
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
-
-	t.Run("MissingMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
-		res, err := server.GetAllHashMapFieldsAndValues(context.Background(), req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
-
-	t.Run("MissingDatabaseInMetadata", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "db0"
-		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
-
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
-		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
-		require.Error(t, err)
-		require.Nil(t, res)
-
-		expectedOk := true
-		expectedCode := codes.InvalidArgument
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equalf(t, expectedOk, ok, "expected ok = %v; got = %v", expectedOk, ok)
-		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
-	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
