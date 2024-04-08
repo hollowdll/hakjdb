@@ -741,6 +741,30 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
 
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()

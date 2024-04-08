@@ -5,18 +5,15 @@ import (
 
 	kvdb "github.com/hollowdll/kvdb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserver"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 // GetTypeOfKey is the implementation of RPC GetTypeOfKey.
 func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyRequest) (res *kvdbserver.GetTypeOfKeyResponse, err error) {
 	logPrefix := "GetTypeOfKey"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -42,7 +39,7 @@ func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyR
 // SetString is the implementation of RPC SetString.
 func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
 	logPrefix := "SetString"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -76,7 +73,7 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 // GetString is the implementation of RPC GetString.
 func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
 	logPrefix := "GetString"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -102,7 +99,7 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 // DeleteKey is the implementation of RPC DeleteKey.
 func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
 	logPrefix := "DeleteKey"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -131,7 +128,7 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 // DeleteAllKeys is the implementation of RPC DeleteAllKeys.
 func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
 	logPrefix := "DeleteAllKeys"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -157,7 +154,7 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 // GetKeys is the implementation of RPC GetKeys.
 func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (res *kvdbserver.GetKeysResponse, err error) {
 	logPrefix := "GetKeys"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -181,7 +178,7 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 // SetHashMap is the implementation of RPC SetHashMap.
 func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapRequest) (res *kvdbserver.SetHashMapResponse, err error) {
 	logPrefix := "SetHashMap"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -215,7 +212,7 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 // GetHashMapFieldValue is the implementation of RPC GetHashMapFieldValue.
 func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHashMapFieldValueRequest) (res *kvdbserver.GetHashMapFieldValueResponse, err error) {
 	logPrefix := "GetHashMapFieldValue"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -241,7 +238,7 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 // DeleteHashMapFields is the implementation of RPC DeleteHashMapFields.
 func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.DeleteHashMapFieldsRequest) (res *kvdbserver.DeleteHashMapFieldsResponse, err error) {
 	logPrefix := "DeleteHashMapFields"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -267,7 +264,7 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.Delete
 // GetAllHashMapFieldsAndValues is the implementation of RPC GetAllHashMapFieldsAndValues.
 func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserver.GetAllHashMapFieldsAndValuesRequest) (res *kvdbserver.GetAllHashMapFieldsAndValuesResponse, err error) {
 	logPrefix := "GetAllHashMapFieldsAndValues"
-	dbName := getDatabaseNameFromContext(ctx)
+	dbName := s.getDatabaseNameFromContext(ctx)
 
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -288,19 +285,4 @@ func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserv
 	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(kvdb.DatabaseKey(req.Key))
 
 	return &kvdbserver.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
-}
-
-// getDatabaseNameFromContext gets the database name from the incoming gRPC metadata.
-func getDatabaseNameFromContext(ctx context.Context) string {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return viper.GetString(ConfigKeyDefaultDatabase)
-	}
-
-	dbName := md.Get(common.GrpcMetadataKeyDbName)
-	if len(dbName) < 1 {
-		return viper.GetString(ConfigKeyDefaultDatabase)
-	}
-
-	return dbName[0]
 }

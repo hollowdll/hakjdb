@@ -19,6 +19,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -38,7 +39,11 @@ type Server struct {
 	maxKeysPerDb uint32
 	// The maximum number of fields a HashMap can hold.
 	maxHashMapFields uint32
-	mutex            sync.RWMutex
+	// The name of the default database that is created at server startup.
+	defaultDb string
+	// The TCP/IP port the server is using.
+	portInUse uint16
+	mutex     sync.RWMutex
 }
 
 // ServerOptions contains options that can be passed to the server when creating it.
@@ -46,9 +51,6 @@ type ServerOptions struct {
 	MaxKeysPerDb     uint32
 	MaxHashMapFields uint32
 }
-
-// portInUse is the TCP/IP port the server uses.
-var portInUse uint16 = common.ServerDefaultPort
 
 func NewServer() *Server {
 	return &Server{
@@ -61,6 +63,8 @@ func NewServer() *Server {
 		logFileEnabled:   false,
 		maxKeysPerDb:     common.DbMaxKeyCount,
 		maxHashMapFields: common.HashMapMaxFields,
+		defaultDb:        DefaultDatabase,
+		portInUse:        common.ServerDefaultPort,
 	}
 }
 
@@ -75,6 +79,8 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		logFileEnabled:   false,
 		maxKeysPerDb:     options.MaxKeysPerDb,
 		maxHashMapFields: options.MaxHashMapFields,
+		defaultDb:        DefaultDatabase,
+		portInUse:        common.ServerDefaultPort,
 	}
 	if newServer.maxKeysPerDb == 0 {
 		newServer.maxKeysPerDb = common.DbMaxKeyCount
@@ -144,7 +150,14 @@ func (s *Server) CreateDefaultDatabase(name string) {
 	}
 	db := kvdb.CreateDatabase(name)
 	s.databases[db.Name] = db
+	s.defaultDb = db.Name
 	s.logger.Infof("Created default database '%s'", db.Name)
+}
+
+// SetPort sets the port that the server should use.
+func (s *Server) SetPort(port uint16) {
+	s.portInUse = port
+	s.logger.Infof("Configured port to use: %d", port)
 }
 
 // DbMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
@@ -153,6 +166,21 @@ func (s *Server) DbMaxKeysReached(db *kvdb.Database) bool {
 	defer s.mutex.RUnlock()
 
 	return db.GetKeyCount() >= s.maxKeysPerDb
+}
+
+// getDatabaseNameFromContext gets the database name from the incoming gRPC metadata.
+func (s *Server) getDatabaseNameFromContext(ctx context.Context) string {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return s.defaultDb
+	}
+
+	dbName := md.Get(common.GrpcMetadataKeyDbName)
+	if len(dbName) < 1 {
+		return s.defaultDb
+	}
+
+	return dbName[0]
 }
 
 // getOsInfo returns information about the server's operating system.
@@ -208,7 +236,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		Arch:          runtime.GOARCH,
 		ProcessId:     uint32(os.Getpid()),
 		UptimeSeconds: uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:       uint32(portInUse),
+		TcpPort:       uint32(s.portInUse),
 	}
 
 	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
@@ -268,6 +296,7 @@ func initServer() (*Server, *grpc.Server) {
 	}
 
 	server.CreateDefaultDatabase(viper.GetString(ConfigKeyDefaultDatabase))
+	server.SetPort(viper.GetUint16(ConfigKeyPort))
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
 	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
@@ -282,8 +311,7 @@ func StartServer() {
 	server, grpcServer := initServer()
 	defer server.CloseLogger()
 
-	portInUse = viper.GetUint16(ConfigKeyPort)
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", portInUse))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", server.portInUse))
 	if err != nil {
 		server.logger.Fatalf("Failed to listen: %v", err)
 	}
