@@ -15,6 +15,30 @@ import (
 )
 
 func TestGetTypeOfKey(t *testing.T) {
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		res, err := server.GetTypeOfKey(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -93,6 +117,30 @@ func TestGetTypeOfKey(t *testing.T) {
 }
 
 func TestSetString(t *testing.T) {
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		res, err := server.SetString(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		res, err := server.SetString(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -174,6 +222,30 @@ func TestSetString(t *testing.T) {
 }
 
 func TestGetString(t *testing.T) {
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.GetStringRequest{Key: "key1"}
+		res, err := server.GetString(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetStringRequest{Key: "key1"}
+		res, err := server.GetString(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -234,6 +306,30 @@ func TestGetString(t *testing.T) {
 }
 
 func TestDeleteKey(t *testing.T) {
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		res, err := server.DeleteKey(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		res, err := server.DeleteKey(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -293,6 +389,30 @@ func TestDeleteKey(t *testing.T) {
 }
 
 func TestDeleteAllKeys(t *testing.T) {
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.DeleteAllKeysRequest{}
+		res, err := server.DeleteAllKeys(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.DeleteAllKeysRequest{}
+		res, err := server.DeleteAllKeys(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -345,6 +465,30 @@ func TestDeleteAllKeys(t *testing.T) {
 }
 
 func TestGetKeys(t *testing.T) {
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetKeysRequest{}
+		res, err := server.GetKeys(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -412,6 +556,30 @@ func TestSetHashMap(t *testing.T) {
 	fields["field1"] = "value1"
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
+
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		res, err := server.SetHashMap(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		res, err := server.SetHashMap(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
@@ -554,6 +722,30 @@ func TestGetHashMapFieldValue(t *testing.T) {
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
 
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		res, err := server.GetHashMapFieldValue(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		res, err := server.GetHashMapFieldValue(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
@@ -637,6 +829,30 @@ func TestDeleteHashMapFields(t *testing.T) {
 	fields["field2"] = "value2"
 	fields["field3"] = "value3"
 	fieldsToRemove := []string{"field2", "field3"}
+
+	t.Run("MetadataNotSent", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		server.CreateDefaultDatabase("default")
+
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
+
+	t.Run("DatabaseNotInMetadata", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
+
+		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		res, err := server.DeleteHashMapFields(ctx, req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
 		server := server.NewServer()
