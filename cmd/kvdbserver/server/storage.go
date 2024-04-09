@@ -104,12 +104,12 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 	logPrefix := "DeleteKey"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
@@ -133,12 +133,12 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 	logPrefix := "DeleteAllKeys"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
@@ -159,12 +159,12 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 	logPrefix := "GetKeys"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
@@ -183,12 +183,12 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 	logPrefix := "SetHashMap"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
@@ -217,12 +217,12 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 	logPrefix := "GetHashMapFieldValue"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
@@ -243,12 +243,12 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.Delete
 	logPrefix := "DeleteHashMapFields"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
@@ -269,12 +269,12 @@ func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserv
 	logPrefix := "GetAllHashMapFieldsAndValues"
 	dbName := s.getDatabaseNameFromContext(ctx)
 
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
 		}
 	}()
 
