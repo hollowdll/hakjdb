@@ -209,6 +209,9 @@ func getOsInfo() (string, error) {
 
 // GetServerInfo is the implementation of RPC GetServerInfo.
 func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	logPrefix := "GetServerInfo"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -223,9 +226,6 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 
 	info := &kvdbserver.ServerInfo{
 		KvdbVersion:   version.Version,
@@ -244,6 +244,9 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 
 // GetLogs is the implementation of RPC GetLogs.
 func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	logPrefix := "GetLogs"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -253,9 +256,6 @@ func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (r
 			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 
 	if !s.logFileEnabled {
 		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
