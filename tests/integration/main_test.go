@@ -35,6 +35,8 @@ func setupServer() *grpc.Server {
 	viper.SetEnvPrefix(kvdbs.EnvPrefix)
 	viper.AutomaticEnv()
 
+	server.SetPort(viper.GetUint16("port"))
+
 	grpcServer := grpc.NewServer()
 	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
 	kvdbserver.RegisterServerServiceServer(grpcServer, server)

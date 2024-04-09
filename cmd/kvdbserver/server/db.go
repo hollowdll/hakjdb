@@ -19,6 +19,9 @@ func (s *Server) databaseExists(name string) bool {
 
 // CreateDatabase is the implementation of RPC CreateDatabase.
 func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	logPrefix := "CreateDatabase"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -28,9 +31,6 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 			s.logger.Infof("Created database '%s'", req.GetDbName())
 		}
 	}()
-
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
 
 	if s.databaseExists(req.GetDbName()) {
 		return nil, status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error())
@@ -48,6 +48,9 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 
 // GetAllDatabases is the implementation of RPC GetAllDatabases.
 func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	logPrefix := "GetAllDatabases"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -57,9 +60,6 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 
 	var names []string
 	for key := range s.databases {
@@ -71,6 +71,9 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 
 // GetDatabaseInfo is the implementation of RPC GetDatabaseInfo.
 func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	logPrefix := "GetDatabaseInfo"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -80,9 +83,6 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 			s.logger.Debugf("%s: (success) %v", logPrefix, req)
 		}
 	}()
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
 
 	if !s.databaseExists(req.GetDbName()) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
@@ -102,6 +102,9 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 
 // DeleteDatabase is the implementation of RPC DeleteDatabase.
 func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatabaseRequest) (res *kvdbserver.DeleteDatabaseResponse, err error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	logPrefix := "DeleteDatabase"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
 	defer func() {
@@ -111,9 +114,6 @@ func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatab
 			s.logger.Infof("Deleted database '%s'", req.GetDbName())
 		}
 	}()
-
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
 
 	if !s.databaseExists(req.GetDbName()) {
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
