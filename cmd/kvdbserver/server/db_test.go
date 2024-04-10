@@ -6,7 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -19,7 +19,7 @@ func TestCreateDatabase(t *testing.T) {
 		server.DisableLogger()
 		dbName := "test"
 
-		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		request := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		response, err := server.CreateDatabase(context.Background(), request)
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
@@ -32,7 +32,7 @@ func TestCreateDatabase(t *testing.T) {
 		server.DisableLogger()
 		dbName := "test"
 
-		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		request := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), request)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
@@ -51,7 +51,7 @@ func TestCreateDatabase(t *testing.T) {
 		server.DisableLogger()
 		dbName := "   "
 
-		request := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		request := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		response, err := server.CreateDatabase(context.Background(), request)
 		require.Error(t, err, "expected error")
 		require.Nil(t, response, "expected response to be nil")
@@ -68,7 +68,7 @@ func TestGetAllDatabases(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 		expected := 0
-		request := &kvdbserver.GetAllDatabasesRequest{}
+		request := &kvdbserverpb.GetAllDatabasesRequest{}
 		response, err := server.GetAllDatabases(context.Background(), request)
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
@@ -82,12 +82,12 @@ func TestGetAllDatabases(t *testing.T) {
 
 		dbs := []string{"db0", "db1", "db2"}
 		for _, db := range dbs {
-			request := &kvdbserver.CreateDatabaseRequest{DbName: db}
+			request := &kvdbserverpb.CreateDatabaseRequest{DbName: db}
 			_, err := server.CreateDatabase(context.Background(), request)
 			require.NoErrorf(t, err, "expected no error; error = %s", err)
 		}
 
-		request := &kvdbserver.GetAllDatabasesRequest{}
+		request := &kvdbserverpb.GetAllDatabasesRequest{}
 		response, err := server.GetAllDatabases(context.Background(), request)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
@@ -105,7 +105,7 @@ func TestGetDatabaseInfo(t *testing.T) {
 		server.DisableLogger()
 		dbName := "db0"
 
-		request := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+		request := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
 		response, err := server.GetDatabaseInfo(context.Background(), request)
 		require.Error(t, err, "expected error")
 		require.Nil(t, response, "expected response to be nil")
@@ -121,11 +121,11 @@ func TestGetDatabaseInfo(t *testing.T) {
 		server.DisableLogger()
 		dbName := "db0"
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		requestGet := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+		requestGet := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
 		response, err := server.GetDatabaseInfo(context.Background(), requestGet)
 		expectedKeyCount := uint32(0)
 		expectedDataSize := uint64(0)
@@ -145,7 +145,7 @@ func TestDefaultDatabase(t *testing.T) {
 		dbName := "default"
 		server.CreateDefaultDatabase(dbName)
 
-		request := &kvdbserver.GetDatabaseInfoRequest{DbName: dbName}
+		request := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
 		response, err := server.GetDatabaseInfo(context.Background(), request)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
@@ -158,7 +158,7 @@ func TestDefaultDatabase(t *testing.T) {
 		dbName := "default"
 		server.CreateDefaultDatabase(dbName)
 
-		request := &kvdbserver.GetAllDatabasesRequest{}
+		request := &kvdbserverpb.GetAllDatabasesRequest{}
 		response, err := server.GetAllDatabases(context.Background(), request)
 		expectedDbCount := 1
 
@@ -175,7 +175,7 @@ func TestDeleteDatabase(t *testing.T) {
 		dbName := "default"
 		server.CreateDefaultDatabase(dbName)
 
-		req := &kvdbserver.DeleteDatabaseRequest{DbName: dbName}
+		req := &kvdbserverpb.DeleteDatabaseRequest{DbName: dbName}
 		res, err := server.DeleteDatabase(context.Background(), req)
 
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
@@ -188,7 +188,7 @@ func TestDeleteDatabase(t *testing.T) {
 		server.DisableLogger()
 		dbName := "default"
 
-		req := &kvdbserver.DeleteDatabaseRequest{DbName: dbName}
+		req := &kvdbserverpb.DeleteDatabaseRequest{DbName: dbName}
 		res, err := server.DeleteDatabase(context.Background(), req)
 		require.Error(t, err, "expected error")
 		require.Nil(t, res, "expected response to be nil")

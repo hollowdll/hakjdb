@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "proto/kvdbserver";
+option go_package = "proto/kvdbserverpb";
 
 package kvdbserverapi;
 

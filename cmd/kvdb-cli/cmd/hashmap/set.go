@@ -6,7 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -43,7 +43,7 @@ func setHashMap(key string, fields map[string]string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcStorageClient.SetHashMap(ctx, &kvdbserver.SetHashMapRequest{Key: key, Fields: fields})
+	res, err := client.GrpcStorageClient.SetHashMap(ctx, &kvdbserverpb.SetHashMapRequest{Key: key, Fields: fields})
 	client.CheckGrpcError(err)
 
 	fmt.Printf("%d\n", res.FieldsAdded)

@@ -6,7 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -20,7 +20,7 @@ func TestGetTypeOfKey(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.GetTypeOfKeyRequest{Key: "key1"}
 		res, err := server.GetTypeOfKey(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -33,7 +33,7 @@ func TestGetTypeOfKey(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.GetTypeOfKeyRequest{Key: "key1"}
 		res, err := server.GetTypeOfKey(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -45,7 +45,7 @@ func TestGetTypeOfKey(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.GetTypeOfKeyRequest{Key: "key1"}
 		res, err := server.GetTypeOfKey(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -67,7 +67,7 @@ func TestGetTypeOfKey(t *testing.T) {
 
 		expectedKeyType := ""
 		expectedOk := false
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.GetTypeOfKeyRequest{Key: "key1"}
 		res, err := server.GetTypeOfKey(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -82,12 +82,12 @@ func TestGetTypeOfKey(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		reqSet := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "value1"}
 		server.SetString(ctx, reqSet)
 
 		expectedKeyType := "String"
 		expectedOk := true
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.GetTypeOfKeyRequest{Key: "key1"}
 		res, err := server.GetTypeOfKey(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -102,12 +102,12 @@ func TestGetTypeOfKey(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: make(map[string]string)}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: make(map[string]string)}
 		server.SetHashMap(ctx, reqSet)
 
 		expectedKeyType := "HashMap"
 		expectedOk := true
-		req := &kvdbserver.GetTypeOfKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.GetTypeOfKeyRequest{Key: "key1"}
 		res, err := server.GetTypeOfKey(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -122,7 +122,7 @@ func TestSetString(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		req := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "value1"}
 		res, err := server.SetString(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -135,7 +135,7 @@ func TestSetString(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		req := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "value1"}
 		res, err := server.SetString(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -147,7 +147,7 @@ func TestSetString(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		request := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		request := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "value1"}
 		response, err := server.SetString(ctxMd, request)
 		require.Error(t, err, "expected error")
 		require.Nil(t, response, "expected response to be nil")
@@ -164,11 +164,11 @@ func TestSetString(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		request := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		request := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "value1"}
 		response, err := server.SetString(ctxMd, request)
 		assert.NoErrorf(t, err, "expected no error; error = %s", err)
 		assert.NotNil(t, response, "expected response to be non-nil")
@@ -180,11 +180,11 @@ func TestSetString(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		assert.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		request := &kvdbserver.SetStringRequest{Key: "      ", Value: "value1"}
+		request := &kvdbserverpb.SetStringRequest{Key: "      ", Value: "value1"}
 		response, err := server.SetString(ctxMd, request)
 		require.Error(t, err, "expected error")
 		require.Nil(t, response, "expected response to be nil")
@@ -202,12 +202,12 @@ func TestSetString(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.SetStringRequest{Key: "key1", Value: "value1"}
+		req := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "value1"}
 		res, err := server.SetString(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 
-		req = &kvdbserver.SetStringRequest{Key: "key2", Value: "value1"}
+		req = &kvdbserverpb.SetStringRequest{Key: "key2", Value: "value1"}
 		res, err = server.SetString(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -227,7 +227,7 @@ func TestGetString(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.GetStringRequest{Key: "key1"}
+		req := &kvdbserverpb.GetStringRequest{Key: "key1"}
 		res, err := server.GetString(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -240,7 +240,7 @@ func TestGetString(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.GetStringRequest{Key: "key1"}
+		req := &kvdbserverpb.GetStringRequest{Key: "key1"}
 		res, err := server.GetString(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -252,7 +252,7 @@ func TestGetString(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		request := &kvdbserver.GetStringRequest{Key: "key1"}
+		request := &kvdbserverpb.GetStringRequest{Key: "key1"}
 		response, err := server.GetString(ctxMd, request)
 		require.Error(t, err, "expected error")
 		require.Nil(t, response, "expected response to be nil")
@@ -269,11 +269,11 @@ func TestGetString(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		request := &kvdbserver.GetStringRequest{Key: "key1"}
+		request := &kvdbserverpb.GetStringRequest{Key: "key1"}
 		response, err := server.GetString(ctxMd, request)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
@@ -288,15 +288,15 @@ func TestGetString(t *testing.T) {
 		expectedValue := "value1"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		requestSet := &kvdbserver.SetStringRequest{Key: "key1", Value: expectedValue}
+		requestSet := &kvdbserverpb.SetStringRequest{Key: "key1", Value: expectedValue}
 		_, err = server.SetString(ctxMd, requestSet)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		requestGet := &kvdbserver.GetStringRequest{Key: "key1"}
+		requestGet := &kvdbserverpb.GetStringRequest{Key: "key1"}
 		response, err := server.GetString(ctxMd, requestGet)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response, "expected response to be non-nil")
@@ -311,7 +311,7 @@ func TestDeleteKey(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.DeleteKeyRequest{Key: "key1"}
 		res, err := server.DeleteKey(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -324,7 +324,7 @@ func TestDeleteKey(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		req := &kvdbserverpb.DeleteKeyRequest{Key: "key1"}
 		res, err := server.DeleteKey(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -336,7 +336,7 @@ func TestDeleteKey(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		request := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		request := &kvdbserverpb.DeleteKeyRequest{Key: "key1"}
 		response, err := server.DeleteKey(ctxMd, request)
 		require.Error(t, err, "expected error")
 		require.Nil(t, response, "expected response to be nil")
@@ -353,11 +353,11 @@ func TestDeleteKey(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		request := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		request := &kvdbserverpb.DeleteKeyRequest{Key: "key1"}
 		response, err := server.DeleteKey(ctxMd, request)
 		expected := false
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
@@ -371,15 +371,15 @@ func TestDeleteKey(t *testing.T) {
 		dbName := "db0"
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		requestCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), requestCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		requestSet := &kvdbserver.SetStringRequest{Key: "key1", Value: "v"}
+		requestSet := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "v"}
 		_, err = server.SetString(ctxMd, requestSet)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		requestGet := &kvdbserver.DeleteKeyRequest{Key: "key1"}
+		requestGet := &kvdbserverpb.DeleteKeyRequest{Key: "key1"}
 		response, err := server.DeleteKey(ctxMd, requestGet)
 		expected := true
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
@@ -394,7 +394,7 @@ func TestDeleteAllKeys(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.DeleteAllKeysRequest{}
+		req := &kvdbserverpb.DeleteAllKeysRequest{}
 		res, err := server.DeleteAllKeys(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -407,7 +407,7 @@ func TestDeleteAllKeys(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.DeleteAllKeysRequest{}
+		req := &kvdbserverpb.DeleteAllKeysRequest{}
 		res, err := server.DeleteAllKeys(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -419,7 +419,7 @@ func TestDeleteAllKeys(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.DeleteAllKeysRequest{}
+		req := &kvdbserverpb.DeleteAllKeysRequest{}
 		res, err := server.DeleteAllKeys(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -436,10 +436,10 @@ func TestDeleteAllKeys(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		reqCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		server.CreateDatabase(context.Background(), reqCreate)
 
-		req := &kvdbserver.DeleteAllKeysRequest{}
+		req := &kvdbserverpb.DeleteAllKeysRequest{}
 		response, err := server.DeleteAllKeys(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response)
@@ -451,13 +451,13 @@ func TestDeleteAllKeys(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		reqCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		server.CreateDatabase(context.Background(), reqCreate)
 
-		reqSet := &kvdbserver.SetStringRequest{Key: "key1", Value: "v"}
+		reqSet := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "v"}
 		server.SetString(ctx, reqSet)
 
-		req := &kvdbserver.DeleteAllKeysRequest{}
+		req := &kvdbserverpb.DeleteAllKeysRequest{}
 		response, err := server.DeleteAllKeys(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, response)
@@ -470,7 +470,7 @@ func TestGetKeys(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.GetKeysRequest{}
+		req := &kvdbserverpb.GetKeysRequest{}
 		res, err := server.GetKeys(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -483,7 +483,7 @@ func TestGetKeys(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.GetKeysRequest{}
+		req := &kvdbserverpb.GetKeysRequest{}
 		res, err := server.GetKeys(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -495,7 +495,7 @@ func TestGetKeys(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.GetKeysRequest{}
+		req := &kvdbserverpb.GetKeysRequest{}
 		res, err := server.GetKeys(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -512,10 +512,10 @@ func TestGetKeys(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		reqCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		server.CreateDatabase(context.Background(), reqCreate)
 
-		req := &kvdbserver.GetKeysRequest{}
+		req := &kvdbserverpb.GetKeysRequest{}
 		res, err := server.GetKeys(ctx, req)
 		expectedKeys := 0
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
@@ -529,17 +529,17 @@ func TestGetKeys(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqCreate := &kvdbserver.CreateDatabaseRequest{DbName: dbName}
+		reqCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		server.CreateDatabase(context.Background(), reqCreate)
 
 		keys := []string{"key1", "key2", "key3"}
 		for _, key := range keys {
-			req := &kvdbserver.SetStringRequest{Key: key}
+			req := &kvdbserverpb.SetStringRequest{Key: key}
 			_, err := server.SetString(ctx, req)
 			require.NoErrorf(t, err, "expected no error; error = %v", err)
 		}
 
-		req := &kvdbserver.GetKeysRequest{}
+		req := &kvdbserverpb.GetKeysRequest{}
 		res, err := server.GetKeys(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, res)
@@ -562,7 +562,7 @@ func TestSetHashMap(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -575,7 +575,7 @@ func TestSetHashMap(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -587,7 +587,7 @@ func TestSetHashMap(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -607,7 +607,7 @@ func TestSetHashMap(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(ctx, req)
 
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
@@ -628,14 +628,14 @@ func TestSetHashMap(t *testing.T) {
 		fieldsOverwrite["field3"] = "c"
 		fieldsOverwrite["new_field"] = "d"
 
-		req1 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req1 := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(ctx, req1)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 		var expectedFieldsAdded1 uint32 = 3
 		assert.Equal(t, expectedFieldsAdded1, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded1, res.FieldsAdded)
 
-		req2 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fieldsOverwrite}
+		req2 := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fieldsOverwrite}
 		res, err = server.SetHashMap(ctx, req2)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -650,7 +650,7 @@ func TestSetHashMap(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctxMd := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "    ", Fields: fields}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "    ", Fields: fields}
 		res, err := server.SetHashMap(ctxMd, reqSet)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -670,12 +670,12 @@ func TestSetHashMap(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 
-		req = &kvdbserver.SetHashMapRequest{Key: "key2", Fields: fields}
+		req = &kvdbserverpb.SetHashMapRequest{Key: "key2", Fields: fields}
 		res, err = server.SetHashMap(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -700,14 +700,14 @@ func TestSetHashMap(t *testing.T) {
 		fields2["field6"] = "val6"
 		fields2["field7"] = "val7"
 
-		req1 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		req1 := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		res, err := server.SetHashMap(ctx, req1)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 		var expectedFieldsAdded1 uint32 = 3
 		assert.Equal(t, expectedFieldsAdded1, res.FieldsAdded, "expected fields added = %d; got = %d", expectedFieldsAdded1, res.FieldsAdded)
 
-		req2 := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields2}
+		req2 := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields2}
 		res, err = server.SetHashMap(ctx, req2)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -727,7 +727,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
 		res, err := server.GetHashMapFieldValue(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -740,7 +740,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -752,7 +752,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -772,12 +772,12 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		server.SetHashMap(ctx, reqSet)
 
 		expectedValue := "value2"
 		expectedOk := true
-		reqGet := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		reqGet := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
 		res, err := server.GetHashMapFieldValue(ctx, reqGet)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -794,7 +794,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 
 		expectedValue := ""
 		expectedOk := false
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key2", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key2", Field: "field2"}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -809,12 +809,12 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		server.SetHashMap(ctx, reqSet)
 
 		expectedValue := ""
 		expectedOk := false
-		req := &kvdbserver.GetHashMapFieldValueRequest{Key: "key1", Field: "field123"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field123"}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -835,7 +835,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
 		res, err := server.DeleteHashMapFields(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -848,7 +848,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
 		res, err := server.DeleteHashMapFields(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -860,7 +860,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
 		res, err := server.DeleteHashMapFields(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -882,7 +882,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 
 		var expectedFieldsRemoved uint32 = 0
 		expectedOk := false
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
 		res, err := server.DeleteHashMapFields(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -897,12 +897,12 @@ func TestDeleteHashMapFields(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: make(map[string]string)}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: make(map[string]string)}
 		server.SetHashMap(ctx, reqSet)
 
 		var expectedFieldsRemoved uint32 = 0
 		expectedOk := true
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
 		res, err := server.DeleteHashMapFields(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -917,12 +917,12 @@ func TestDeleteHashMapFields(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		server.SetHashMap(ctx, reqSet)
 
 		var expectedFieldsRemoved uint32 = 2
 		expectedOk := true
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: fieldsToRemove}
 		res, err := server.DeleteHashMapFields(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -937,12 +937,12 @@ func TestDeleteHashMapFields(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		server.SetHashMap(ctx, reqSet)
 
 		var expectedFieldsRemoved uint32 = 1
 		expectedOk := true
-		req := &kvdbserver.DeleteHashMapFieldsRequest{Key: "key1", Fields: []string{"field3", "field3", "field3"}}
+		req := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: []string{"field3", "field3", "field3"}}
 		res, err := server.DeleteHashMapFields(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -962,7 +962,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		req := &kvdbserverpb.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
 		res, err := server.GetAllHashMapFieldsAndValues(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -975,7 +975,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		req := &kvdbserverpb.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
 		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -987,7 +987,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		req := &kvdbserverpb.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
 		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -1009,7 +1009,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 
 		expectedElements := 0
 		expectedOk := false
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		req := &kvdbserverpb.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
 		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -1025,12 +1025,12 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		reqSet := &kvdbserver.SetHashMapRequest{Key: "key1", Fields: fields}
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 		server.SetHashMap(ctx, reqSet)
 
 		expectedElements := 3
 		expectedOk := true
-		req := &kvdbserver.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
+		req := &kvdbserverpb.GetAllHashMapFieldsAndValuesRequest{Key: "key1"}
 		res, err := server.GetAllHashMapFieldsAndValues(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)

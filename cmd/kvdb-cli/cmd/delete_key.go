@@ -6,7 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -34,7 +34,7 @@ func deleteKey(key string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	response, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserver.DeleteKeyRequest{Key: key})
+	response, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserverpb.DeleteKeyRequest{Key: key})
 	client.CheckGrpcError(err)
 
 	if response.Ok {

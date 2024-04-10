@@ -6,7 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -18,7 +18,7 @@ func TestGetServerInfo(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 
-		req := &kvdbserver.GetServerInfoRequest{}
+		req := &kvdbserverpb.GetServerInfoRequest{}
 		res, err := server.GetServerInfo(context.Background(), req)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
 		assert.NotNil(t, res, "expected response to be non-nil")
@@ -30,7 +30,7 @@ func TestGetLogs(t *testing.T) {
 		server := server.NewServer()
 		server.DisableLogger()
 
-		req := &kvdbserver.GetLogsRequest{}
+		req := &kvdbserverpb.GetLogsRequest{}
 		res, err := server.GetLogs(context.Background(), req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -52,7 +52,7 @@ func TestGetLogs(t *testing.T) {
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, lines)
 
-		req := &kvdbserver.GetLogsRequest{}
+		req := &kvdbserverpb.GetLogsRequest{}
 		res, err := server.GetLogs(context.Background(), req)
 		expectedLogs := 4
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
@@ -72,7 +72,7 @@ func TestGetLogs(t *testing.T) {
 		server.EnableLogFile()
 		server.DisableLogger()
 
-		req := &kvdbserver.GetLogsRequest{}
+		req := &kvdbserverpb.GetLogsRequest{}
 		res, err := server.GetLogs(context.Background(), req)
 		expectedLogs := 0
 		require.NoErrorf(t, err, "expected no error; error = %v", err)

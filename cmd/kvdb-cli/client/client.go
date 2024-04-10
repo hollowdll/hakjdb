@@ -7,7 +7,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -23,9 +23,9 @@ const (
 )
 
 var (
-	GrpcDatabaseClient   kvdbserver.DatabaseServiceClient
-	GrpcStorageClient    kvdbserver.StorageServiceClient
-	GrpcServerClient     kvdbserver.ServerServiceClient
+	GrpcDatabaseClient   kvdbserverpb.DatabaseServiceClient
+	GrpcStorageClient    kvdbserverpb.StorageServiceClient
+	GrpcServerClient     kvdbserverpb.ServerServiceClient
 	grpcClientConnection *grpc.ClientConn
 )
 
@@ -37,9 +37,9 @@ func InitClient() {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}
 
-	GrpcDatabaseClient = kvdbserver.NewDatabaseServiceClient(conn)
-	GrpcStorageClient = kvdbserver.NewStorageServiceClient(conn)
-	GrpcServerClient = kvdbserver.NewServerServiceClient(conn)
+	GrpcDatabaseClient = kvdbserverpb.NewDatabaseServiceClient(conn)
+	GrpcStorageClient = kvdbserverpb.NewStorageServiceClient(conn)
+	GrpcServerClient = kvdbserverpb.NewServerServiceClient(conn)
 	grpcClientConnection = conn
 }
 

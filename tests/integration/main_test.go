@@ -9,7 +9,7 @@ import (
 
 	kvdbs "github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -38,9 +38,9 @@ func setupServer() *grpc.Server {
 	server.SetPort(viper.GetUint16("port"))
 
 	grpcServer := grpc.NewServer()
-	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
-	kvdbserver.RegisterServerServiceServer(grpcServer, server)
-	kvdbserver.RegisterStorageServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16("port")))
 	if err != nil {

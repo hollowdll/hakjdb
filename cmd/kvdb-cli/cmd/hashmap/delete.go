@@ -6,7 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -34,7 +34,7 @@ func deleteHashMapFields(key string, fields []string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcStorageClient.DeleteHashMapFields(ctx, &kvdbserver.DeleteHashMapFieldsRequest{Key: key, Fields: fields})
+	res, err := client.GrpcStorageClient.DeleteHashMapFields(ctx, &kvdbserverpb.DeleteHashMapFieldsRequest{Key: key, Fields: fields})
 	client.CheckGrpcError(err)
 
 	if res.Ok {

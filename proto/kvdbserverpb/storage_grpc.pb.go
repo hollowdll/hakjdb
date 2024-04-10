@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v4.23.3
-// source: proto/kvdbserver/storage.proto
+// source: proto/kvdbserverpb/storage.proto
 
-package kvdbserver
+package kvdbserverpb
 
 import (
 	context "context"
@@ -451,5 +451,5 @@ var StorageService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/kvdbserver/storage.proto",
+	Metadata: "proto/kvdbserverpb/storage.proto",
 }

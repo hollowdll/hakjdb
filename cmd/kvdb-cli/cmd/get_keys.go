@@ -7,7 +7,7 @@ import (
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -34,7 +34,7 @@ func getKeys() {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcStorageClient.GetKeys(ctx, &kvdbserver.GetKeysRequest{})
+	res, err := client.GrpcStorageClient.GetKeys(ctx, &kvdbserverpb.GetKeysRequest{})
 	client.CheckGrpcError(err)
 
 	for i, key := range res.Keys {

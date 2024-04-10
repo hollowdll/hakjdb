@@ -14,7 +14,7 @@ import (
 	kvdb "github.com/hollowdll/kvdb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -24,9 +24,9 @@ import (
 )
 
 type Server struct {
-	kvdbserver.UnimplementedDatabaseServiceServer
-	kvdbserver.UnimplementedServerServiceServer
-	kvdbserver.UnimplementedStorageServiceServer
+	kvdbserverpb.UnimplementedDatabaseServiceServer
+	kvdbserverpb.UnimplementedServerServiceServer
+	kvdbserverpb.UnimplementedStorageServiceServer
 	startTime       time.Time
 	databases       map[string]*kvdb.Database
 	CredentialStore InMemoryCredentialStore
@@ -208,7 +208,7 @@ func getOsInfo() (string, error) {
 }
 
 // GetServerInfo is the implementation of RPC GetServerInfo.
-func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInfoRequest) (res *kvdbserver.GetServerInfoResponse, err error) {
+func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerInfoRequest) (res *kvdbserverpb.GetServerInfoResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -227,7 +227,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	info := &kvdbserver.ServerInfo{
+	info := &kvdbserverpb.ServerInfo{
 		KvdbVersion:   version.Version,
 		GoVersion:     runtime.Version(),
 		DbCount:       uint32(len(s.databases)),
@@ -239,11 +239,11 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserver.GetServerInf
 		TcpPort:       uint32(s.portInUse),
 	}
 
-	return &kvdbserver.GetServerInfoResponse{Data: info}, nil
+	return &kvdbserverpb.GetServerInfoResponse{Data: info}, nil
 }
 
 // GetLogs is the implementation of RPC GetLogs.
-func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (res *kvdbserver.GetLogsResponse, err error) {
+func (s *Server) GetLogs(ctx context.Context, req *kvdbserverpb.GetLogsRequest) (res *kvdbserverpb.GetLogsResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -267,7 +267,7 @@ func (s *Server) GetLogs(ctx context.Context, req *kvdbserver.GetLogsRequest) (r
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &kvdbserver.GetLogsResponse{Logs: lines, LogfileEnabled: true}, nil
+	return &kvdbserverpb.GetLogsResponse{Logs: lines, LogfileEnabled: true}, nil
 }
 
 // initServer initializes the server.
@@ -299,9 +299,9 @@ func initServer() (*Server, *grpc.Server) {
 	server.SetPort(viper.GetUint16(ConfigKeyPort))
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
-	kvdbserver.RegisterDatabaseServiceServer(grpcServer, server)
-	kvdbserver.RegisterServerServiceServer(grpcServer, server)
-	kvdbserver.RegisterStorageServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
 
 	return server, grpcServer
 }

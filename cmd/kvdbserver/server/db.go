@@ -5,7 +5,7 @@ import (
 
 	kvdb "github.com/hollowdll/kvdb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -18,7 +18,7 @@ func (s *Server) databaseExists(name string) bool {
 }
 
 // CreateDatabase is the implementation of RPC CreateDatabase.
-func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatabaseRequest) (res *kvdbserver.CreateDatabaseResponse, err error) {
+func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserverpb.CreateDatabaseRequest) (res *kvdbserverpb.CreateDatabaseResponse, err error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -43,11 +43,11 @@ func (s *Server) CreateDatabase(ctx context.Context, req *kvdbserver.CreateDatab
 	db := kvdb.CreateDatabase(req.GetDbName())
 	s.databases[db.Name] = db
 
-	return &kvdbserver.CreateDatabaseResponse{DbName: db.Name}, nil
+	return &kvdbserverpb.CreateDatabaseResponse{DbName: db.Name}, nil
 }
 
 // GetAllDatabases is the implementation of RPC GetAllDatabases.
-func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllDatabasesRequest) (res *kvdbserver.GetAllDatabasesResponse, err error) {
+func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserverpb.GetAllDatabasesRequest) (res *kvdbserverpb.GetAllDatabasesResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -66,11 +66,11 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *kvdbserver.GetAllData
 		names = append(names, key)
 	}
 
-	return &kvdbserver.GetAllDatabasesResponse{DbNames: names}, nil
+	return &kvdbserverpb.GetAllDatabasesResponse{DbNames: names}, nil
 }
 
 // GetDatabaseInfo is the implementation of RPC GetDatabaseInfo.
-func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabaseInfoRequest) (res *kvdbserver.GetDatabaseInfoResponse, err error) {
+func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserverpb.GetDatabaseInfoRequest) (res *kvdbserverpb.GetDatabaseInfoResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -89,7 +89,7 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 	}
 
 	db := s.databases[req.GetDbName()]
-	data := &kvdbserver.DatabaseInfo{
+	data := &kvdbserverpb.DatabaseInfo{
 		Name:      db.Name,
 		CreatedAt: timestamppb.New(db.CreatedAt),
 		UpdatedAt: timestamppb.New(db.UpdatedAt),
@@ -97,11 +97,11 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *kvdbserver.GetDatabas
 		DataSize:  db.GetStoredSizeBytes(),
 	}
 
-	return &kvdbserver.GetDatabaseInfoResponse{Data: data}, nil
+	return &kvdbserverpb.GetDatabaseInfoResponse{Data: data}, nil
 }
 
 // DeleteDatabase is the implementation of RPC DeleteDatabase.
-func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatabaseRequest) (res *kvdbserver.DeleteDatabaseResponse, err error) {
+func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserverpb.DeleteDatabaseRequest) (res *kvdbserverpb.DeleteDatabaseResponse, err error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -121,5 +121,5 @@ func (s *Server) DeleteDatabase(ctx context.Context, req *kvdbserver.DeleteDatab
 
 	delete(s.databases, req.GetDbName())
 
-	return &kvdbserver.DeleteDatabaseResponse{DbName: req.GetDbName()}, nil
+	return &kvdbserverpb.DeleteDatabaseResponse{DbName: req.GetDbName()}, nil
 }

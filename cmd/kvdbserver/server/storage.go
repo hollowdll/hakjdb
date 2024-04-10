@@ -5,13 +5,13 @@ import (
 
 	kvdb "github.com/hollowdll/kvdb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 // GetTypeOfKey is the implementation of RPC GetTypeOfKey.
-func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyRequest) (res *kvdbserver.GetTypeOfKeyResponse, err error) {
+func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserverpb.GetTypeOfKeyRequest) (res *kvdbserverpb.GetTypeOfKeyResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -33,11 +33,11 @@ func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserver.GetTypeOfKeyR
 
 	keyType, ok := s.databases[dbName].GetTypeOfKey(kvdb.DatabaseKey(req.Key))
 
-	return &kvdbserver.GetTypeOfKeyResponse{KeyType: keyType, Ok: ok}, nil
+	return &kvdbserverpb.GetTypeOfKeyResponse{KeyType: keyType, Ok: ok}, nil
 }
 
 // SetString is the implementation of RPC SetString.
-func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest) (res *kvdbserver.SetStringResponse, err error) {
+func (s *Server) SetString(ctx context.Context, req *kvdbserverpb.SetStringRequest) (res *kvdbserverpb.SetStringResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -67,11 +67,11 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserver.SetStringRequest
 
 	s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
 
-	return &kvdbserver.SetStringResponse{}, nil
+	return &kvdbserverpb.SetStringResponse{}, nil
 }
 
 // GetString is the implementation of RPC GetString.
-func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest) (res *kvdbserver.GetStringResponse, err error) {
+func (s *Server) GetString(ctx context.Context, req *kvdbserverpb.GetStringRequest) (res *kvdbserverpb.GetStringResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -93,11 +93,11 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserver.GetStringRequest
 
 	value, ok := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
 
-	return &kvdbserver.GetStringResponse{Value: string(value), Ok: ok}, nil
+	return &kvdbserverpb.GetStringResponse{Value: string(value), Ok: ok}, nil
 }
 
 // DeleteKey is the implementation of RPC DeleteKey.
-func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest) (res *kvdbserver.DeleteKeyResponse, err error) {
+func (s *Server) DeleteKey(ctx context.Context, req *kvdbserverpb.DeleteKeyRequest) (res *kvdbserverpb.DeleteKeyResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -119,14 +119,14 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserver.DeleteKeyRequest
 
 	ok := s.databases[dbName].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
 	if !ok {
-		return &kvdbserver.DeleteKeyResponse{Ok: false}, nil
+		return &kvdbserverpb.DeleteKeyResponse{Ok: false}, nil
 	}
 
-	return &kvdbserver.DeleteKeyResponse{Ok: true}, nil
+	return &kvdbserverpb.DeleteKeyResponse{Ok: true}, nil
 }
 
 // DeleteAllKeys is the implementation of RPC DeleteAllKeys.
-func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKeysRequest) (res *kvdbserver.DeleteAllKeysResponse, err error) {
+func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserverpb.DeleteAllKeysRequest) (res *kvdbserverpb.DeleteAllKeysResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -148,11 +148,11 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserver.DeleteAllKey
 
 	s.databases[dbName].DeleteAllKeys()
 
-	return &kvdbserver.DeleteAllKeysResponse{}, nil
+	return &kvdbserverpb.DeleteAllKeysResponse{}, nil
 }
 
 // GetKeys is the implementation of RPC GetKeys.
-func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (res *kvdbserver.GetKeysResponse, err error) {
+func (s *Server) GetKeys(ctx context.Context, req *kvdbserverpb.GetKeysRequest) (res *kvdbserverpb.GetKeysResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -172,11 +172,11 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserver.GetKeysRequest) (r
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	return &kvdbserver.GetKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
+	return &kvdbserverpb.GetKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
 }
 
 // SetHashMap is the implementation of RPC SetHashMap.
-func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapRequest) (res *kvdbserver.SetHashMapResponse, err error) {
+func (s *Server) SetHashMap(ctx context.Context, req *kvdbserverpb.SetHashMapRequest) (res *kvdbserverpb.SetHashMapResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -206,11 +206,11 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserver.SetHashMapReque
 
 	fieldsAdded := s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields, s.maxHashMapFields)
 
-	return &kvdbserver.SetHashMapResponse{FieldsAdded: fieldsAdded}, nil
+	return &kvdbserverpb.SetHashMapResponse{FieldsAdded: fieldsAdded}, nil
 }
 
 // GetHashMapFieldValue is the implementation of RPC GetHashMapFieldValue.
-func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHashMapFieldValueRequest) (res *kvdbserver.GetHashMapFieldValueResponse, err error) {
+func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserverpb.GetHashMapFieldValueRequest) (res *kvdbserverpb.GetHashMapFieldValueResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -232,11 +232,11 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserver.GetHa
 
 	value, ok := s.databases[dbName].GetHashMapFieldValue(kvdb.DatabaseKey(req.Key), req.Field)
 
-	return &kvdbserver.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
+	return &kvdbserverpb.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
 }
 
 // DeleteHashMapFields is the implementation of RPC DeleteHashMapFields.
-func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.DeleteHashMapFieldsRequest) (res *kvdbserver.DeleteHashMapFieldsResponse, err error) {
+func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserverpb.DeleteHashMapFieldsRequest) (res *kvdbserverpb.DeleteHashMapFieldsResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -258,11 +258,11 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserver.Delete
 
 	fieldsRemoved, ok := s.databases[dbName].DeleteHashMapFields(kvdb.DatabaseKey(req.Key), req.Fields)
 
-	return &kvdbserver.DeleteHashMapFieldsResponse{FieldsRemoved: fieldsRemoved, Ok: ok}, nil
+	return &kvdbserverpb.DeleteHashMapFieldsResponse{FieldsRemoved: fieldsRemoved, Ok: ok}, nil
 }
 
 // GetAllHashMapFieldsAndValues is the implementation of RPC GetAllHashMapFieldsAndValues.
-func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserver.GetAllHashMapFieldsAndValuesRequest) (res *kvdbserver.GetAllHashMapFieldsAndValuesResponse, err error) {
+func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserverpb.GetAllHashMapFieldsAndValuesRequest) (res *kvdbserverpb.GetAllHashMapFieldsAndValuesResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -284,5 +284,5 @@ func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserv
 
 	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(kvdb.DatabaseKey(req.Key))
 
-	return &kvdbserver.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+	return &kvdbserverpb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }

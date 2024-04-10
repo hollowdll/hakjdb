@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/proto/kvdbserver"
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -23,7 +23,7 @@ func showServerInfo() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserver.GetServerInfoRequest{})
+	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserverpb.GetServerInfoRequest{})
 	client.CheckGrpcError(err)
 
 	var info string
