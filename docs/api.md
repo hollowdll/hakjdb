@@ -48,7 +48,7 @@ The storage service `StorageService` is defined in the `storage.proto` file. Thi
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
-- `database`: The database to use. Required.
+- `database`: The database to use.
 
 RPCs:
 - GetTypeOfKey
