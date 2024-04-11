@@ -22,8 +22,8 @@ Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
 
 RPCs:
-- GetServerInfo
-- GetLogs
+- [GetServerInfo](./rpc/getserverinfo.md)
+- [GetLogs](./rpc/getlogs.md)
 
 [Link to the protobuf definitions](../proto/kvdbserver/server.proto)
 
