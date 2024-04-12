@@ -2,7 +2,7 @@
 
 The kvdb API uses gRPC. You need a gRPC client to connect to the server. All requests to the server are made with Remote Procedure Calls.
 
-The protobuf gRPC service definitions are in the `proto/kvdbserver/` directory. This directory contains all the .proto files needed to build the gRPC client.
+The protobuf gRPC service definitions are in the `proto/kvdbserverpb/` directory. This directory contains all the .proto files needed for a gRPC client.
 
 [Link to the directory](../proto/kvdbserver/)
 
@@ -18,6 +18,8 @@ The gRPC metadata key for password is `password`. The actual password to send is
 
 The server service `ServerService` is defined in the `server.proto` file. This service contains RPCs to work with operations related to the kvdb server.
 
+[Link to the protobuf definitions](../proto/kvdbserver/server.proto)
+
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
 
@@ -25,11 +27,11 @@ RPCs:
 - [GetServerInfo](./rpc/server/getserverinfo.md)
 - [GetLogs](./rpc/server/getlogs.md)
 
-[Link to the protobuf definitions](../proto/kvdbserver/server.proto)
-
 ## DatabaseService
 
 The database service `DatabaseService` is defined in the `db.proto` file. This service contains RPCs to work with operations related to databases.
+
+[Link to the protobuf definitions](../proto/kvdbserver/db.proto)
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
@@ -40,11 +42,11 @@ RPCs:
 - [GetDatabaseInfo](./rpc/database/getdatabaseinfo.md)
 - [DeleteDatabase](./rpc/database/deletedatabase.md)
 
-[Link to the protobuf definitions](../proto/kvdbserver/db.proto)
-
 ## StorageService
 
 The storage service `StorageService` is defined in the `storage.proto` file. This service contains RPCs to work with operations related to data storage.
+
+[Link to the protobuf definitions](../proto/kvdbserver/storage.proto)
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
@@ -61,5 +63,3 @@ RPCs:
 - DeleteKey
 - DeleteAllKeys
 - GetKeys
-
-[Link to the protobuf definitions](../proto/kvdbserver/storage.proto)
