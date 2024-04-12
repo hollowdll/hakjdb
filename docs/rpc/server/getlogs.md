@@ -12,5 +12,5 @@ GetLogsResponse
 
 ## Errors
 
-- `FAILED_PRECONDITION` - Server log file is not enabled.
+- `FAILED_PRECONDITION` - The log file is not enabled.
 - `INTERNAL` - Something went wrong while trying to get server logs.
