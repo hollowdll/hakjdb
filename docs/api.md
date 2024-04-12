@@ -4,7 +4,7 @@ The kvdb API uses gRPC. You need a gRPC client to connect to the server. All req
 
 The protobuf gRPC service definitions are in the `proto/kvdbserverpb/` directory. This directory contains all the .proto files needed for a gRPC client.
 
-[Link to the directory](../proto/kvdbserver/)
+[Link to the directory](../proto/kvdbserverpb/)
 
 # Authentication
 
@@ -18,7 +18,7 @@ The gRPC metadata key for password is `password`. The actual password to send is
 
 The server service `ServerService` is defined in the `server.proto` file. This service contains RPCs to work with operations related to the kvdb server.
 
-[Link to the protobuf definitions](../proto/kvdbserver/server.proto)
+[Link to the protobuf definitions](../proto/kvdbserverpb/server.proto)
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
@@ -31,7 +31,7 @@ RPCs:
 
 The database service `DatabaseService` is defined in the `db.proto` file. This service contains RPCs to work with operations related to databases.
 
-[Link to the protobuf definitions](../proto/kvdbserver/db.proto)
+[Link to the protobuf definitions](../proto/kvdbserverpb/db.proto)
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
@@ -46,7 +46,7 @@ RPCs:
 
 The storage service `StorageService` is defined in the `storage.proto` file. This service contains RPCs to work with operations related to data storage.
 
-[Link to the protobuf definitions](../proto/kvdbserver/storage.proto)
+[Link to the protobuf definitions](../proto/kvdbserverpb/storage.proto)
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password if the server is password protected.
