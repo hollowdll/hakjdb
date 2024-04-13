@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type DatabaseServiceClient interface {
 	// CreateDatabase creates a new database.
 	CreateDatabase(ctx context.Context, in *CreateDatabaseRequest, opts ...grpc.CallOption) (*CreateDatabaseResponse, error)
-	// GetAllDatabases returns the names of all databases.
+	// GetAllDatabases returns the names of all the databases that exist on the server.
 	GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
 	// GetDatabaseInfo returns information about a database.
 	GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error)
@@ -82,7 +82,7 @@ func (c *databaseServiceClient) DeleteDatabase(ctx context.Context, in *DeleteDa
 type DatabaseServiceServer interface {
 	// CreateDatabase creates a new database.
 	CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error)
-	// GetAllDatabases returns the names of all databases.
+	// GetAllDatabases returns the names of all the databases that exist on the server.
 	GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error)
 	// GetDatabaseInfo returns information about a database.
 	GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error)

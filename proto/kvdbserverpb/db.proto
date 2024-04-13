@@ -65,7 +65,7 @@ service DatabaseService {
     // CreateDatabase creates a new database.
     rpc CreateDatabase (CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
 
-    // GetAllDatabases returns the names of all databases.
+    // GetAllDatabases returns the names of all the databases that exist on the server.
     rpc GetAllDatabases (GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
 
     // GetDatabaseInfo returns information about a database.

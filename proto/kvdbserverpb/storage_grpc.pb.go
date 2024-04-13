@@ -22,12 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageServiceClient interface {
-	// GetTypeOfKey returns the data type of a key.
+	// GetTypeOfKey returns the data type of the value a key is holding.
 	GetTypeOfKey(ctx context.Context, in *GetTypeOfKeyRequest, opts ...grpc.CallOption) (*GetTypeOfKeyResponse, error)
-	// SetString sets a String value using a key. Creates the key if it doesn't exist.
+	// SetString sets a key to hold a String value. Creates the key if it doesn't exist.
 	// Overwrites the key if it is holding a value of another data type.
 	SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error)
-	// GetString returns a String value using a key.
+	// GetString returns the value a String key is holding.
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
 	// DeleteKey deletes a key and its value.
 	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
@@ -35,15 +35,15 @@ type StorageServiceClient interface {
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
 	// GetKeys returns all the keys of a database.
 	GetKeys(ctx context.Context, in *GetKeysRequest, opts ...grpc.CallOption) (*GetKeysResponse, error)
-	// SetHashMap sets fields in a HashMap using a key.
-	// Previous fields are overwritten. Creates the key if it doesn't exist.
-	// Overwrites the key if it is holding a value of another data type.
+	// SetHashMap sets the specified fields and their values in the HashMap stored at a key.
+	// If the specified fields exist, they will be overwritten with the new values.
+	// Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
 	SetHashMap(ctx context.Context, in *SetHashMapRequest, opts ...grpc.CallOption) (*SetHashMapResponse, error)
-	// GetHashMapFieldValue returns a single HashMap field value using a key.
+	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
 	GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error)
-	// DeleteHashMapFields removes fields from a HashMap using a key.
+	// DeleteHashMapFields removes specified fields from the HashMap stored at a key.
 	DeleteHashMapFields(ctx context.Context, in *DeleteHashMapFieldsRequest, opts ...grpc.CallOption) (*DeleteHashMapFieldsResponse, error)
-	// GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap using a key.
+	// GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
 	GetAllHashMapFieldsAndValues(ctx context.Context, in *GetAllHashMapFieldsAndValuesRequest, opts ...grpc.CallOption) (*GetAllHashMapFieldsAndValuesResponse, error)
 }
 
@@ -149,12 +149,12 @@ func (c *storageServiceClient) GetAllHashMapFieldsAndValues(ctx context.Context,
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility
 type StorageServiceServer interface {
-	// GetTypeOfKey returns the data type of a key.
+	// GetTypeOfKey returns the data type of the value a key is holding.
 	GetTypeOfKey(context.Context, *GetTypeOfKeyRequest) (*GetTypeOfKeyResponse, error)
-	// SetString sets a String value using a key. Creates the key if it doesn't exist.
+	// SetString sets a key to hold a String value. Creates the key if it doesn't exist.
 	// Overwrites the key if it is holding a value of another data type.
 	SetString(context.Context, *SetStringRequest) (*SetStringResponse, error)
-	// GetString returns a String value using a key.
+	// GetString returns the value a String key is holding.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
 	// DeleteKey deletes a key and its value.
 	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
@@ -162,15 +162,15 @@ type StorageServiceServer interface {
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
 	// GetKeys returns all the keys of a database.
 	GetKeys(context.Context, *GetKeysRequest) (*GetKeysResponse, error)
-	// SetHashMap sets fields in a HashMap using a key.
-	// Previous fields are overwritten. Creates the key if it doesn't exist.
-	// Overwrites the key if it is holding a value of another data type.
+	// SetHashMap sets the specified fields and their values in the HashMap stored at a key.
+	// If the specified fields exist, they will be overwritten with the new values.
+	// Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
 	SetHashMap(context.Context, *SetHashMapRequest) (*SetHashMapResponse, error)
-	// GetHashMapFieldValue returns a single HashMap field value using a key.
+	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
 	GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error)
-	// DeleteHashMapFields removes fields from a HashMap using a key.
+	// DeleteHashMapFields removes specified fields from the HashMap stored at a key.
 	DeleteHashMapFields(context.Context, *DeleteHashMapFieldsRequest) (*DeleteHashMapFieldsResponse, error)
-	// GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap using a key.
+	// GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
 	GetAllHashMapFieldsAndValues(context.Context, *GetAllHashMapFieldsAndValuesRequest) (*GetAllHashMapFieldsAndValuesResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }

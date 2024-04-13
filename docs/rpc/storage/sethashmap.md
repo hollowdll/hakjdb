@@ -1,6 +1,6 @@
 # SetHashMap
 
-SetHashMap sets fields in a HashMap stored at a key. Previous fields are overwritten. Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
+SetHashMap sets the specified fields and their values in the HashMap stored at a key. If the specified fields exist, they will be overwritten with the new values. Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
 
 ## Request
 
