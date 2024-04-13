@@ -41,7 +41,7 @@ type StorageServiceClient interface {
 	SetHashMap(ctx context.Context, in *SetHashMapRequest, opts ...grpc.CallOption) (*SetHashMapResponse, error)
 	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
 	GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error)
-	// DeleteHashMapFields removes specified fields from the HashMap stored at a key.
+	// DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
 	DeleteHashMapFields(ctx context.Context, in *DeleteHashMapFieldsRequest, opts ...grpc.CallOption) (*DeleteHashMapFieldsResponse, error)
 	// GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
 	GetAllHashMapFieldsAndValues(ctx context.Context, in *GetAllHashMapFieldsAndValuesRequest, opts ...grpc.CallOption) (*GetAllHashMapFieldsAndValuesResponse, error)
@@ -168,7 +168,7 @@ type StorageServiceServer interface {
 	SetHashMap(context.Context, *SetHashMapRequest) (*SetHashMapResponse, error)
 	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
 	GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error)
-	// DeleteHashMapFields removes specified fields from the HashMap stored at a key.
+	// DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
 	DeleteHashMapFields(context.Context, *DeleteHashMapFieldsRequest) (*DeleteHashMapFieldsResponse, error)
 	// GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
 	GetAllHashMapFieldsAndValues(context.Context, *GetAllHashMapFieldsAndValuesRequest) (*GetAllHashMapFieldsAndValuesResponse, error)

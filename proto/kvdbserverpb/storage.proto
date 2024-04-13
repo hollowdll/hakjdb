@@ -143,7 +143,7 @@ service StorageService {
     // GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
     rpc GetHashMapFieldValue(GetHashMapFieldValueRequest) returns (GetHashMapFieldValueResponse) {}
 
-    // DeleteHashMapFields removes specified fields from the HashMap stored at a key.
+    // DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
     rpc DeleteHashMapFields(DeleteHashMapFieldsRequest) returns (DeleteHashMapFieldsResponse) {}
 
     // GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
