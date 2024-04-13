@@ -53,13 +53,13 @@ Common gRPC metadata for this service's RPCs:
 - `database`: The database to use. If omitted, the default database is used.
 
 RPCs:
-- GetTypeOfKey
-- SetString
-- GetString
-- SetHashMap
-- GetHashMapFieldValue
-- GetAllHashMapFieldsAndValues
-- DeleteHashMapFields
-- DeleteKey
-- DeleteAllKeys
-- GetKeys
+- [GetTypeOfKey](./rpc/storage/gettypeofkey.md)
+- [SetString](./rpc/storage/setstring.md)
+- [GetString](./rpc/storage/getstring.md)
+- [SetHashMap](./rpc/storage/sethashmap.md)
+- [GetHashMapFieldValue](./rpc/storage/gethashmapfieldvalue.md)
+- [GetAllHashMapFieldsAndValues](./rpc/storage/getallhashmapfieldsandvalues.md)
+- [DeleteHashMapFields](./rpc/storage/deletehashmapfields.md)
+- [DeleteKey](./rpc/storage/deletekey.md)
+- [DeleteAllKeys](./rpc/storage/deleteallkeys.md)
+- [GetKeys](./rpc/storage/getkeys.md)
