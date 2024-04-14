@@ -14,7 +14,7 @@ Sets a key to hold a String value. Creates the key if it doesn't exist. Overwrit
 ## Options
 
 - `-d`, `--database` - The database to use. If not specified, the default database is used.
-- `-h`, `--help` - Show help page
+- `-h`, `--help` - Show help page.
 
 ## Returns
 

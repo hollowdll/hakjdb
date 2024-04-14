@@ -13,7 +13,7 @@ Returns the value a String key is holding.
 ## Options
 
 - `-d`, `--database` - The database to use. If not specified, the default database is used.
-- `-h`, `--help` - Show help page
+- `-h`, `--help` - Show help page.
 
 ## Returns
 
