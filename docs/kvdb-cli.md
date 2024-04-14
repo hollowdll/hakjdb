@@ -35,57 +35,57 @@ If the server is password protected, you can provide password with environment v
 ## How to use
 
 Show help page for a command:
-```bash
-$ kvdb-cli help
+```sh
+kvdb-cli help
 ```
 or
-```bash
-$ kvdb-cli --help
+```sh
+kvdb-cli --help
 ```
 Every command has its own help page.
 
 ## Connecting to a server
 
-By default, kvdb-cli tries to connect to a kvdb server at address 127.0.0.1 in port 12345. 127.0.0.1 is the same as your machine's localhost. Port 12345 is the server's default port. The default database to use is 'default'.
+By default, kvdb-cli tries to connect to a kvdb server at address 127.0.0.1 in port 12345. 127.0.0.1 is the same as your machine's localhost. Port 12345 is the server's default port. The default database to use is `default`.
 
 To see the current connection settings, use command:
-```bash
-$ kvdb-cli connect show
+```sh
+kvdb-cli connect show
 ```
 
 It will show something like this:
-```bash
+```sh
 Host: localhost
 Port: 12345
 Database: default
 ```
 
 To change the connection settings, use the following command with desired flags:
-```bash
-$ kvdb-cli connect set
+```sh
+kvdb-cli connect set
 ```
 
 For example, this changes the address and port:
-```bash
-$ kvdb-cli connect set -a some.other.host.or.IP -p 9000
+```sh
+kvdb-cli connect set -a some.other.host.or.IP -p 9000
 ```
 Now kvdb-cli tries to connect to a different address and port.
 
 This only changes the default database:
-```bash
-$ kvdb-cli connect set -d some-db
+```sh
+kvdb-cli connect set -d some-db
 ```
 Now commands will use database some-db as the default database. Note that this does not create the database.
 
 ## Server information
 
 To show information about the server, use command:
-```bash
-$ kvdb-cli info
+```sh
+kvdb-cli info
 ```
 
 Output is something like this:
-```bash
+```sh
 kvdb_version: 0.1.0
 go_version: go1.21.6
 db_count: 1
@@ -113,12 +113,12 @@ Meaning of the fields:
 Server logs can be fetched if the server's log file is enabled. If it is not enabled, this command will return an error. This command is intended for debugging purposes.
 
 To get all logs, use command:
-```bash
-$ kvdb-cli logs
+```sh
+kvdb-cli logs
 ```
 
 Output is something like this:
-```bash
+```sh
 2024-02-22T11:16:43.292+02:00 [Info] Some log
 2024-02-22T11:16:43.293+02:00 [Info] Another log
 ```
@@ -128,8 +128,8 @@ Output is something like this:
 In order to store data on the server, you need to create a database. A database is like a namespace for keys. Each key stored in a database is unique to that database. You can't have two keys with the same name in one database.
 
 To create a new database, use command:
-```bash
-$ kvdb-cli db create -n name-of-your-db
+```sh
+kvdb-cli db create -n name-of-your-db
 ```
 - Option -n specifies the name of the database you want to create. The maximum length of a database name is 64 bytes.
 
@@ -146,8 +146,8 @@ The following list shows the allowed characters a database name can contain:
 Deleting a database erases the database and all its data. When a database is deleted, it can no longer be accessed. The database and its data cannot be restored so use this command with caution.
 
 To delete a database, use command:
-```bash
-$ kvdb-cli db delete -n name-of-your-db
+```sh
+kvdb-cli db delete -n name-of-your-db
 ```
 - Option -n specifies the name of the database you want to delete. If not specified, the default database is used.
 
@@ -159,8 +159,8 @@ If delete was successful, the command prints the name of the deleted database.
 ## Listing databases
 
 To list all the databases on the server, use command:
-```bash
-$ kvdb-cli db ls
+```sh
+kvdb-cli db ls
 db0
 db1
 db2
@@ -170,13 +170,13 @@ This lists the databases by their name.
 ## Database information
 
 To show information about a database, use command:
-```bash
-$ kvdb-cli db info -n name-of-your-db
+```sh
+kvdb-cli db info -n name-of-your-db
 ```
 - Option -n specifies the name of the database. If not specified, the default database is used.
 
 Output is something like this:
-```bash
+```sh
 name: name-of-your-db
 created_at: 2024-01-23T19:31:13Z00:00
 updated_at: 2024-01-23T19:31:13Z00:00
@@ -196,15 +196,15 @@ Meaning of the fields:
 To store a string value, you need to set a key to hold it. If the key already exists with some value, it is overwritten. Creates the key if it doesn't exist.
 
 To set a string value, use command:
-```bash
-$ kvdb-cli set [key] [value] -d db-name
+```sh
+kvdb-cli set [key] [value] -d db-name
 ```
 - [key] is the name of the key and [value] is the string value to store.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli set message "Hello World!" -d db0
+```sh
+kvdb-cli set message "Hello World!" -d db0
 OK
 ```
 This sets key "message" to hold string "Hello World!" in database db0.
@@ -214,22 +214,22 @@ This sets key "message" to hold string "Hello World!" in database db0.
 To get a string value, you need to retrieve it with the key that is holding the value.
 
 To get a string value, use command:
-```bash
-$ kvdb-cli get [key] -d db-name
+```sh
+kvdb-cli get [key] -d db-name
 ```
 - [key] is the name of the key holding the value to retrieve.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli get message -d db0
+```sh
+kvdb-cli get message -d db0
 "Hello World!"
 ```
 This gets the string value that key "message" is holding in database db0.
 
 If the key doesn't exist, a special value (None) is returned:
-```bash
-$ kvdb-cli get message123 -d db0
+```sh
+kvdb-cli get message123 -d db0
 (None)
 ```
 
@@ -238,22 +238,22 @@ $ kvdb-cli get message123 -d db0
 Deleting a key removes the key and the value it's holding. Does nothing if the key does not exist.
 
 To delete a key, use command:
-```bash
-$ kvdb-cli delete [key] -d db-name
+```sh
+kvdb-cli delete [key] -d db-name
 ```
 - [key] is the name of the key to delete.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli delete message -d db0
+```sh
+kvdb-cli delete message -d db0
 true
 ```
 This deletes key "message" in database db0. If the key exists and was deleted, this returns true.
 
 If the key does not exist, this returns false:
-```bash
-$ kvdb-cli delete message -d db0
+```sh
+kvdb-cli delete message -d db0
 false
 ```
 
@@ -262,14 +262,14 @@ false
 Deleting all the keys of a database removes the keys and the values they are holding. This can be used to remove all the data stored in a database. The database will be blocked until the operation has finished.
 
 To delete all the keys of a database, use command:
-```bash
-$ kvdb-cli deletekeys -d db-name
+```sh
+kvdb-cli deletekeys -d db-name
 ```
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli deletekeys
+```sh
+kvdb-cli deletekeys
 OK
 ```
 This deletes all the keys of the default database.
@@ -279,14 +279,14 @@ This deletes all the keys of the default database.
 Getting keys returns a list of keys present in a database. This command is intended for debugging purposes. The database will be blocked until the operation has finished.
 
 To get all the keys of a database, use command:
-```bash
-$ kvdb-cli getkeys -d db-name
+```sh
+kvdb-cli getkeys -d db-name
 ```
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli getkeys
+```sh
+kvdb-cli getkeys
 1) key1
 2) key2
 3) key3
@@ -298,8 +298,8 @@ This returns all the keys of the default database.
 To store a HashMap and set fields in it, you need to set a key to hold the HashMap. If the key already exists with some fields, the fields are overwritten with the new values. Creates a new HashMap if the key doesn't exist.
 
 To set HashMap field values, use command:
-```bash
-$ kvdb-cli hashmap set [key] [field value ...] -d db-name
+```sh
+kvdb-cli hashmap set [key] [field value ...] -d db-name
 ```
 - [key] is the name of the key.
 - [field] is the name of a field.
@@ -309,8 +309,8 @@ $ kvdb-cli hashmap set [key] [field value ...] -d db-name
 The command can be used to set multiple fields.
 
 For example:
-```bash
-$ kvdb-cli hashmap set key1 name "John" age "35"
+```sh
+kvdb-cli hashmap set key1 name "John" age "35"
 2
 ```
 This sets key "key1" to hold a HashMap with fields "name" and "age" set to their respective values. The returned integer is the number of fields that were added.
@@ -320,42 +320,42 @@ This sets key "key1" to hold a HashMap with fields "name" and "age" set to their
 To get a HashMap field value, you need to retrieve it with the key that is holding the HashMap.
 
 To get a HashMap field value, use command:
-```bash
-$ kvdb-cli hashmap get [key] [field] -d db-name
+```sh
+kvdb-cli hashmap get [key] [field] -d db-name
 ```
 - [key] is the name of the key holding the HashMap.
 - [field] is the field whose value should be returned.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli hashmap get key1 name
+```sh
+kvdb-cli hashmap get key1 name
 "John"
 ```
 This gets the value of field "name" in the HashMap that "key1" is holding.
 
 If the key or field doesn't exist, a special value (None) is returned:
-```bash
-$ kvdb-cli hashmap get key123 name
+```sh
+kvdb-cli hashmap get key123 name
 (None)
 ```
-```bash
-$ kvdb-cli hashmap get key1 field123
+```sh
+kvdb-cli hashmap get key1 field123
 (None)
 ```
 
 ## Get all HashMap fields and values
 
 To get all the fields and values of a HashMap, use command:
-```bash
-$ kvdb-cli hashmap getall [key] -d db-name
+```sh
+kvdb-cli hashmap getall [key] -d db-name
 ```
 - [key] is the name of the key holding the HashMap.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli hashmap getall key1
+```sh
+kvdb-cli hashmap getall key1
 1) "field1": "value1"
 2) "field2": "value2"
 3) "field3": "value3"
@@ -363,8 +363,8 @@ $ kvdb-cli hashmap getall key1
 This gets all the fields and values of the HashMap that "key1" is holding.
 
 If the key doesn't exist, a special value (None) is returned:
-```bash
-$ kvdb-cli hashmap getall key123
+```sh
+kvdb-cli hashmap getall key123
 (None)
 ```
 
@@ -373,8 +373,8 @@ If the HashMap doesn't contain any fields, nothing is printed.
 ## Remove fields from a HashMap
 
 To remove fields from a HashMap, use command:
-```bash
-$ kvdb-cli hashmap delete [key] [field ...] -d db-name
+```sh
+kvdb-cli hashmap delete [key] [field ...] -d db-name
 ```
 - [key] is the name of the key holding the HashMap.
 - [field] is a field to be removed.
@@ -383,42 +383,42 @@ $ kvdb-cli hashmap delete [key] [field ...] -d db-name
 The command can be used to remove multiple fields.
 
 For example:
-```bash
-$ kvdb-cli hashmap delete key1 field1
+```sh
+kvdb-cli hashmap delete key1 field1
 1
 ```
 This removes the field "field1" from the HashMap that "key1" is holding. The returned integer is the number of fields that were removed.
 
 If the key doesn't exist, a special value (None) is returned:
-```bash
-$ kvdb-cli hashmap delete key1234 field1
+```sh
+kvdb-cli hashmap delete key1234 field1
 (None)
 ```
 
 Fields that do not exist are ignored:
-```bash
-$ kvdb-cli hashmap delete key1 field12345
+```sh
+kvdb-cli hashmap delete key1 field12345
 0
 ```
 
 ## Get key type
 
 To get the data type of the value a key is holding, use command:
-```bash
-$ kvdb-cli keytype [key] -d db-name
+```sh
+kvdb-cli keytype [key] -d db-name
 ```
 - [key] is the name of the key.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
-```bash
-$ kvdb-cli keytype string-key
+```sh
+kvdb-cli keytype string-key
 "String"
 ```
 This gets the data type of the value that key 'string-key' is holding.
 
 If the key doesn't exist, a special value (None) is returned:
-```bash
-$ kvdb-cli keytype this-key-does-not-exist
+```sh
+kvdb-cli keytype this-key-does-not-exist
 (None)
 ```
