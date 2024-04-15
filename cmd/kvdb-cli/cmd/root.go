@@ -15,7 +15,7 @@ var (
 	rootCmd = &cobra.Command{
 		Use:     "kvdb-cli",
 		Short:   "CLI tool for kvdb key-value store",
-		Long:    "CLI tool for kvdb key-value store",
+		Long:    "CLI tool for kvdb key-value store. Use it to manage kvdb servers.",
 		Version: version.Version,
 	}
 )
