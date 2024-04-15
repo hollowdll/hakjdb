@@ -1,10 +1,10 @@
-# kvdb-cli get
+# kvdb-cli hashmap getall
 
 ```sh
-kvdb-cli get [key] [OPTIONS]
+kvdb-cli hashmap getall [key] [OPTIONS]
 ```
 
-Gets the value a String key is holding.
+Gets all the fields and values of the HashMap stored at a key.
 
 ## Arguments
 
@@ -17,7 +17,7 @@ Gets the value a String key is holding.
 
 ## Returns
 
-- The value the key is holding if the key exists.
+- All the fields and values of the HashMap.
 - `(None)` if the key doesn't exist.
 - Error message if not successful.
 
@@ -25,14 +25,18 @@ Gets the value a String key is holding.
 
 ```sh
 # use the default database that is configured in the config file
-kvdb-cli get key1
-"Hello world!"
+kvdb-cli hashmap getall key1
+1) "field1": "value1"
+2) "field2": "value2"
+3) "field3": "value3"
 
 # specify the database to use
-kvdb-cli get key1 -d default
-"Hello world!"
+kvdb-cli hashmap getall key1 -d default
+1) "field1": "value1"
+2) "field2": "value2"
+3) "field3": "value3"
 
 # key doesn't exist
-kvdb-cli get key1234
+kvdb-cli hashmap getall key1234
 (None)
 ```
