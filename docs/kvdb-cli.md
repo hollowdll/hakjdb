@@ -30,6 +30,25 @@ Here is a list of all environment variables:
 
 If the server is password protected, you can provide password with environment variable `KVDBCLI_PASSWORD`. kvdb-cli reads the value and sends it to the server in every request to perform authentication.
 
+# Commands
+
+- [kvdb-cli info](./kvdb-cli-commands/kvdb-cli-info.md)
+- [kvdb-cli logs](./kvdb-cli-commands/kvdb-cli-logs.md)
+- [kvdb-cli delete](./kvdb-cli-commands/kvdb-cli-delete.md)
+- [kvdb-cli deletekeys](./kvdb-cli-commands/kvdb-cli-deletekeys.md)
+- [kvdb-cli getkeys](./kvdb-cli-commands/kvdb-cli-getkeys.md)
+- [kvdb-cli keytype](./kvdb-cli-commands/kvdb-cli-keytype.md)
+- [kvdb-cli connect show](./kvdb-cli-commands/connect/kvdb-cli-connect-show.md)
+- [kvdb-cli connect set](./kvdb-cli-commands/connect/kvdb-cli-connect-set.md)
+- [kvdb-cli db create](./kvdb-cli-commands/db/kvdb-cli-db-create.md)
+- [kvdb-cli db delete](./kvdb-cli-commands/db/kvdb-cli-db-delete.md)
+- [kvdb-cli db ls](./kvdb-cli-commands/db/kvdb-cli-db-ls.md)
+- [kvdb-cli db info](./kvdb-cli-commands/db/kvdb-cli-db-info.md)
+- [kvdb-cli hashmap set](./kvdb-cli-commands/hashmap/kvdb-cli-hashmap-set.md)
+- [kvdb-cli hashmap get](./kvdb-cli-commands/hashmap/kvdb-cli-hashmap-get.md)
+- [kvdb-cli hashmap getall](./kvdb-cli-commands/hashmap/kvdb-cli-hashmap-getall.md)
+- [kvdb-cli hashmap delete](./kvdb-cli-commands/hashmap/kvdb-cli-hashmap-delete.md)
+
 # Usage
 
 ## How to use
@@ -43,6 +62,13 @@ or
 kvdb-cli --help
 ```
 Every command has its own help page.
+
+## Version
+
+Print the kvdb-cli version:
+```sh
+kvdb-cli --version
+```
 
 ## Connecting to a server
 
