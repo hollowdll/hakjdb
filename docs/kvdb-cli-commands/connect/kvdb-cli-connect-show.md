@@ -19,7 +19,7 @@ Shows the currently configured connection settings used to connect to a kvdb ser
 
 ```sh
 kvdb-cli connect show
-Host: localhost
-Port: 12345
-Database: default
+host: localhost
+port: 12345
+database: default
 ```

@@ -10,7 +10,7 @@ Changes the connection settings used to connect to a kvdb server.
 
 - `-d`, `--database` - The database that commands will use by default.
 - `-p`, `--port` - The port number of the server.
-- `-a` `--host` - The hostname or IP address of the server.
+- `-a` `--host` - The host or IP address of the server.
 - `-h`, `--help` - Show help page.
 
 ## Returns
@@ -21,7 +21,7 @@ Changes the connection settings used to connect to a kvdb server.
 ## Examples
 
 ```sh
-# change the address and port
+# change the host and port
 kvdb-cli connect set -a 127.0.0.1 -p 9000
 
 # change only the database

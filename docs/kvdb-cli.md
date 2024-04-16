@@ -81,9 +81,9 @@ kvdb-cli connect show
 
 It will show something like this:
 ```sh
-Host: localhost
-Port: 12345
-Database: default
+host: localhost
+port: 12345
+database: default
 ```
 
 To change the connection settings, use the following command with desired flags:
