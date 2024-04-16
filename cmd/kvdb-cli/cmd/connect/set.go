@@ -19,7 +19,7 @@ var (
 	cmdConnectSet = &cobra.Command{
 		Use:   "set",
 		Short: "Change connection settings",
-		Long:  "Change connection settings to a kvdb server",
+		Long:  "Changes the connection settings used to connect to a kvdb server.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setConnectionSettings()
 		},

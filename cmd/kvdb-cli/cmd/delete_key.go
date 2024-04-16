@@ -14,7 +14,7 @@ import (
 var cmdDeleteKey = &cobra.Command{
 	Use:   "delete [key]",
 	Short: "Delete a key and its value",
-	Long:  "Delete a key and the value it's holding",
+	Long:  "Deletes a key and the value it is holding.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteKey(args[0])

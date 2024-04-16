@@ -9,7 +9,7 @@ var (
 	CmdHashMap = &cobra.Command{
 		Use:   "hashmap",
 		Short: "Manage HashMap keys",
-		Long:  "Manage HashMap keys",
+		Long:  "Manages HashMap keys.",
 	}
 )
 

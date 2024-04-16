@@ -14,7 +14,7 @@ import (
 var cmdLogs = &cobra.Command{
 	Use:   "logs",
 	Short: "Get logs from the server",
-	Long:  "Get logs from the server if the server's log file is enabled",
+	Long:  "Gets logs from the server if the server's log file is enabled. Currently gets all the logs.",
 	Run: func(cmd *cobra.Command, args []string) {
 		getLogs()
 	},

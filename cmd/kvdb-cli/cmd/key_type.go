@@ -14,7 +14,7 @@ import (
 var cmdGetKeyType = &cobra.Command{
 	Use:   "keytype [key]",
 	Short: "Get the data type of a key",
-	Long:  "Get the data type of a key",
+	Long:  "Gets the data type of the value a key is holding.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getKeyType(args[0])

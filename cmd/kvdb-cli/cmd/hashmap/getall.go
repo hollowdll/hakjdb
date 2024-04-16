@@ -15,7 +15,7 @@ import (
 var cmdGetAllHashMapFieldsAndValues = &cobra.Command{
 	Use:   "getall [key]",
 	Short: "Get all the fields and values of a HashMap",
-	Long:  "Get all the fields and values of a HashMap using a key",
+	Long:  "Gets all the fields and values of the HashMap stored at a key.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getAllHashMapFieldsAndValues(args[0])

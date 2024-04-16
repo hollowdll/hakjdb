@@ -9,7 +9,7 @@ var (
 	CmdDb  = &cobra.Command{
 		Use:   "db",
 		Short: "Manage databases",
-		Long:  "Manage databases",
+		Long:  "Manages databases.",
 	}
 )
 

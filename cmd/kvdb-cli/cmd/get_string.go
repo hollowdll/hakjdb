@@ -14,7 +14,7 @@ import (
 var cmdGetString = &cobra.Command{
 	Use:   "get [key]",
 	Short: "Get a string value",
-	Long:  "Get a string value using a key",
+	Long:  "Gets the value a String key is holding.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getString(args[0])

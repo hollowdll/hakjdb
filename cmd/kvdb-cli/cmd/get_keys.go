@@ -15,7 +15,7 @@ import (
 var cmdGetKeys = &cobra.Command{
 	Use:   "getkeys",
 	Short: "Get all the keys of a database",
-	Long:  "Get all the keys of a database",
+	Long:  "Gets all the keys of a database.",
 	Run: func(cmd *cobra.Command, args []string) {
 		getKeys()
 	},

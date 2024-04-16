@@ -14,8 +14,9 @@ import (
 var cmdSetString = &cobra.Command{
 	Use:   "set [key] [value]",
 	Short: "Set a string value",
-	Long:  "Set a string value using a key",
-	Args:  cobra.MatchAll(cobra.ExactArgs(2)),
+	Long: "Sets a key to hold a String value. Creates the key if it doesn't exist. " +
+		"Overwrites the key if it is holding a value of another data type.",
+	Args: cobra.MatchAll(cobra.ExactArgs(2)),
 	Run: func(cmd *cobra.Command, args []string) {
 		setString(args[0], args[1])
 	},

@@ -14,8 +14,11 @@ import (
 var cmdSetHashMap = &cobra.Command{
 	Use:   "set [key] [field value ...]",
 	Short: "Set HashMap fields and values",
-	Long:  "Set HashMap fields and their corresponding values using a key",
-	Args:  cobra.MatchAll(cobra.MinimumNArgs(3)),
+	Long: "Sets the specified fields and their values in the HashMap stored at a key. " +
+		"If the specified fields exist, they will be overwritten with the new values. " +
+		"Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type. " +
+		"This command can set multiple fields.",
+	Args: cobra.MatchAll(cobra.MinimumNArgs(3)),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args)%2 == 0 {
 			cobra.CheckErr("invalid number of arguments")

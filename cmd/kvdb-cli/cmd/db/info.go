@@ -16,7 +16,7 @@ import (
 var cmdDbInfo = &cobra.Command{
 	Use:   "info",
 	Short: "Show information about a database",
-	Long:  "Show information about a database",
+	Long:  "Shows information about a database.",
 	Run: func(cmd *cobra.Command, args []string) {
 		showDbInfo()
 	},
