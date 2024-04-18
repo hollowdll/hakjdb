@@ -9,20 +9,17 @@ import (
 // DatabaseKey represents key-value pair key. Key is stored as string.
 type DatabaseKey string
 
-// DatabaseStringValue represents key-value pair string value. Value is stored as string.
-type DatabaseStringValue string
-
 // DatabaseData holds the data stored in a database.
 type databaseStoredData struct {
 	// stringData holds String keys.
-	stringData map[DatabaseKey]DatabaseStringValue
+	stringData map[DatabaseKey]string
 	// hashMapData holds HashMap keys.
 	hashMapData map[DatabaseKey]map[string]string
 }
 
 func newDatabaseStoredData() *databaseStoredData {
 	return &databaseStoredData{
-		stringData:  make(map[DatabaseKey]DatabaseStringValue),
+		stringData:  make(map[DatabaseKey]string),
 		hashMapData: make(map[DatabaseKey]map[string]string),
 	}
 }
@@ -132,7 +129,7 @@ func (db *Database) GetTypeOfKey(key DatabaseKey) (string, bool) {
 
 // GetString retrieves a string value using a key.
 // The returned bool is true if the key exists.
-func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
+func (db *Database) GetString(key DatabaseKey) (string, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
@@ -142,7 +139,7 @@ func (db *Database) GetString(key DatabaseKey) (DatabaseStringValue, bool) {
 
 // SetString sets a string value using a key, overwriting previous value.
 // Creates the key if it doesn't exist.
-func (db *Database) SetString(key DatabaseKey, value DatabaseStringValue) {
+func (db *Database) SetString(key DatabaseKey, value string) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 

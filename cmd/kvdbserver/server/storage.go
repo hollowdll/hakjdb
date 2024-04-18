@@ -65,7 +65,7 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserverpb.SetStringReque
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), kvdb.DatabaseStringValue(req.GetValue()))
+	s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), req.GetValue())
 
 	return &kvdbserverpb.SetStringResponse{}, nil
 }
@@ -93,7 +93,7 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserverpb.GetStringReque
 
 	value, ok := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
 
-	return &kvdbserverpb.GetStringResponse{Value: string(value), Ok: ok}, nil
+	return &kvdbserverpb.GetStringResponse{Value: value, Ok: ok}, nil
 }
 
 // DeleteKey is the implementation of RPC DeleteKey.

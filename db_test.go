@@ -168,7 +168,7 @@ func TestDatabaseGetString(t *testing.T) {
 		db := newDatabase("test")
 		value, found := db.GetString("key1")
 
-		expectedValue := DatabaseStringValue("")
+		expectedValue := ""
 		if value != expectedValue {
 			t.Errorf("expected value = %s; got = %s", expectedValue, value)
 		}
@@ -181,7 +181,7 @@ func TestDatabaseGetString(t *testing.T) {
 
 	t.Run("GetExistingKey", func(t *testing.T) {
 		db := newDatabase("test")
-		expectedValue := DatabaseStringValue("value1")
+		expectedValue := "value1"
 		key := DatabaseKey("key1")
 		db.SetString(key, expectedValue)
 		value, found := db.GetString(key)
