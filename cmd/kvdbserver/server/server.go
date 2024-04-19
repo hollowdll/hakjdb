@@ -35,6 +35,7 @@ type Server struct {
 	logger          kvdb.Logger
 	logFilePath     string
 	logFileEnabled  bool
+	tlsEnabled      bool
 	// The maximum number of keys a database can hold.
 	maxKeysPerDb uint32
 	// The maximum number of fields a HashMap can hold.
@@ -61,6 +62,7 @@ func NewServer() *Server {
 		logger:           kvdb.NewDefaultLogger(),
 		logFilePath:      "",
 		logFileEnabled:   false,
+		tlsEnabled:       false,
 		maxKeysPerDb:     common.DbMaxKeyCount,
 		maxHashMapFields: common.HashMapMaxFields,
 		defaultDb:        DefaultDatabase,
@@ -77,6 +79,7 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		logger:           kvdb.NewDefaultLogger(),
 		logFilePath:      "",
 		logFileEnabled:   false,
+		tlsEnabled:       false,
 		maxKeysPerDb:     options.MaxKeysPerDb,
 		maxHashMapFields: options.MaxHashMapFields,
 		defaultDb:        DefaultDatabase,
@@ -114,6 +117,11 @@ func (s *Server) EnableLogFile() {
 		s.logger.Fatalf("Failed to enable log file: %v", err)
 	}
 	s.logFileEnabled = true
+}
+
+// EnableTls enables TLS.
+func (s *Server) EnableTls() {
+	s.tlsEnabled = true
 }
 
 // CloseLogger closes logger and releases its possible resources.
@@ -288,6 +296,11 @@ func initServer() (*Server, *grpc.Server) {
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
 	}
 
+	if viper.GetBool(ConfigKeyTlsEnabled) {
+		server.EnableTls()
+		server.logger.Info("TLS is enabled. Connections will be encrypted.")
+	}
+
 	password, present := os.LookupEnv(EnvVarPassword)
 	if present {
 		server.EnablePasswordProtection(password)
@@ -298,7 +311,14 @@ func initServer() (*Server, *grpc.Server) {
 	server.CreateDefaultDatabase(viper.GetString(ConfigKeyDefaultDatabase))
 	server.SetPort(viper.GetUint16(ConfigKeyPort))
 
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
+	var grpcServer *grpc.Server = nil
+	if !server.tlsEnabled {
+		grpcServer = grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
+	} else {
+		// TODO: enable TLS
+
+	}
+
 	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)

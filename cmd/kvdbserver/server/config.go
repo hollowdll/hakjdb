@@ -23,6 +23,12 @@ const (
 	ConfigKeyDefaultDatabase string = "default_db"
 	// ConfigKeyLogFileEnabled is the configuration key for enabling log file.
 	ConfigKeyLogFileEnabled string = "logfile_enabled"
+	// ConfigKeyTlsEnabled is the configuration key for enabling TLS.
+	ConfigKeyTlsEnabled string = "tls_enabled"
+	// ConfigKeyTlsCertPath is the configuration key for TLS certificate file path.
+	ConfigKeyTlsCertPath string = "tls_cert_path"
+	// ConfigKeyTlsPrivKeyPath is the configuration key for TLS private key file path.
+	ConfigKeyTlsPrivKeyPath string = "tls_private_key_path"
 
 	// DefaultDatabase is the name of the default database.
 	DefaultDatabase string = "default"
@@ -52,6 +58,9 @@ func initConfig(s *Server) {
 	viper.SetDefault(ConfigKeyDebugEnabled, false)
 	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
 	viper.SetDefault(ConfigKeyLogFileEnabled, false)
+	viper.SetDefault(ConfigKeyTlsEnabled, false)
+	viper.SetDefault(ConfigKeyTlsCertPath, "")
+	viper.SetDefault(ConfigKeyTlsPrivKeyPath, "")
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
