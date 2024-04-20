@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"net"
 	"os"
@@ -19,6 +21,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
@@ -293,19 +296,18 @@ func initServer() (*Server, *grpc.Server) {
 
 	if viper.GetBool(ConfigKeyDebugEnabled) {
 		server.EnableDebugLogs()
-		server.logger.Info("Debug mode is enabled. Debug messages will be logged.")
+		server.logger.Info("Debug mode is enabled. Debug messages will be logged")
 	}
 
 	if viper.GetBool(ConfigKeyTlsEnabled) {
 		server.EnableTls()
-		server.logger.Info("TLS is enabled. Connections will be encrypted.")
 	}
 
 	password, present := os.LookupEnv(EnvVarPassword)
 	if present {
 		server.EnablePasswordProtection(password)
 	} else {
-		server.logger.Warningf("Password protection is disabled.")
+		server.logger.Warning("Password protection is disabled")
 	}
 
 	server.CreateDefaultDatabase(viper.GetString(ConfigKeyDefaultDatabase))
@@ -314,9 +316,30 @@ func initServer() (*Server, *grpc.Server) {
 	var grpcServer *grpc.Server = nil
 	if !server.tlsEnabled {
 		grpcServer = grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
+		server.logger.Warning("TLS is disabled. Connections will not be encrypted")
 	} else {
-		// TODO: enable TLS
+		server.logger.Info("Attempting to enable TLS ...")
+		certBytes, err := os.ReadFile(viper.GetString(ConfigKeyTlsCertPath))
+		if err != nil {
+			server.logger.Fatalf("Failed to read TLS certificate: %v", err)
+		}
+		keyBytes, err := os.ReadFile(viper.GetString(ConfigKeyTlsPrivKeyPath))
+		if err != nil {
+			server.logger.Fatalf("Failed to read TLS private key: %v", err)
+		}
 
+		certPool := x509.NewCertPool()
+		if !certPool.AppendCertsFromPEM(certBytes) {
+			server.logger.Fatal("Failed to parse TLS certificate")
+		}
+		cert, err := tls.X509KeyPair(certBytes, keyBytes)
+		if err != nil {
+			server.logger.Fatalf("Failed to parse TLS public/private key pair: %v", err)
+		}
+
+		creds := credentials.NewServerTLSFromCert(&cert)
+		grpcServer = grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(server.authInterceptor))
+		server.logger.Info("TLS is enabled. Connections will be encrypted")
 	}
 
 	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
