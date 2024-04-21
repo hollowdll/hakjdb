@@ -21,7 +21,7 @@ Changes the connection settings used to connect to a kvdb server.
 ## Examples
 
 ```sh
-# change the host and port
+# change the address and port
 kvdb-cli connect set -a 127.0.0.1 -p 9000
 
 # change only the database

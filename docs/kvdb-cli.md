@@ -12,6 +12,8 @@ Here is a list of all configurations with their default values:
 default_db: default
 host: localhost
 port: 12345
+tls_cert_path: ""
+tls_enabled: false
 ```
 
 Meaning of fields:
@@ -19,6 +21,8 @@ Meaning of fields:
 - `default_db`: Default database to use. Commands use this database by default.
 - `host`: Server's address to connect to. Can be hostname or IP address.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
+- `tls_cert_path`: The path to the TLS certificate file. The certificate has to be the server's certificate.
+- `tls_enabled`: Use TLS when connecting to a kvdb server. Needed if TLS is enabled on the server. Can be true or false.
 
 # Environment variables
 
@@ -29,6 +33,18 @@ Here is a list of all environment variables:
 # Password
 
 If the server is password protected, you can provide password with environment variable `KVDBCLI_PASSWORD`. kvdb-cli reads the value and sends it to the server in every request to perform authentication.
+
+# TLS
+
+If TLS is enabled on the server, you must enable TLS connection. In addition, you must configure the path to the certificate file.
+
+This can be done by modifying the configuration file:
+```yaml
+tls_cert_path: path/to/your/certificate
+tls_enabled: true
+```
+
+Directory `tls/test-cert/` contains a certificate for testing purposes. Use it if the server is configured to use it. Otherwise use your own certificate.
 
 # Commands
 
@@ -112,27 +128,25 @@ kvdb-cli info
 
 Output is something like this:
 ```sh
-kvdb_version: 0.1.0
-go_version: go1.21.6
+kvdb-cli info
+kvdb_version: 0.10.0
+go_version: go1.22.0
 db_count: 1
-total_data_size: 0B
+total_data_size: 0 B
 os: Linux 5.10.102.1-microsoft-standard-WSL2 x86_64
 arch: amd64
 process_id: 1
 uptime_seconds: 54
 tcp_port: 12345
+default_db: default
+memory_alloc: 0.8 MB
+memory_total_alloc: 0.8 MB
+memory_sys: 7.0 MB
+tls_enabled: no
+password_enabled: no
+logfile_enabled: no
+debug_enabled: yes
 ```
-Meaning of the fields:
-
-- `kvdb_version`: Version of kvdb
-- `go_version`: Version of go used to compile the server
-- `db_count`: Number of databases
-- `total_data_size`: Total amount of stored data in bytes
-- `os`: Server operating system
-- `arch`: Architecture which can be 32 or 64 bits
-- `process_id`: PID of the server process
-- `uptime_seconds`: Server process uptime in seconds
-- `tcp_port`: Server TCP/IP port
 
 ## Logs
 
@@ -209,13 +223,6 @@ updated_at: 2024-01-23T19:31:13Z00:00
 key_count: 0
 data_size: 0B
 ```
-Meaning of the fields:
-
-- `name`: Name of the database
-- `created_at`: UTC timestamp specifying when the database was created
-- `updated_at`: UTC timestamp specifying when the database was last updated
-- `key_count`: Number of keys stored in the database
-- `data_size`: Size of the stored data in bytes
 
 ## Set string
 

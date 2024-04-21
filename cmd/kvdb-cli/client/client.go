@@ -1,6 +1,7 @@
 package client
 
 import (
+	"crypto/x509"
 	"fmt"
 	"os"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
@@ -31,8 +33,25 @@ var (
 
 // InitClient initializes the client and connections.
 func InitClient() {
+	var dialOption grpc.DialOption = nil
+	if viper.GetBool(config.ConfigKeyTlsEnabled) {
+		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCertPath))
+		if err != nil {
+			cobra.CheckErr(fmt.Sprintf("failed to read TLS certificate: %v", err))
+		}
+		certPool := x509.NewCertPool()
+		if !certPool.AppendCertsFromPEM(certBytes) {
+			cobra.CheckErr("failed to parse TLS certificate")
+		}
+
+		creds := credentials.NewClientTLSFromCert(certPool, "")
+		dialOption = grpc.WithTransportCredentials(creds)
+	} else {
+		dialOption = grpc.WithTransportCredentials(insecure.NewCredentials())
+	}
+
 	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
-	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(address, dialOption)
 	if err != nil {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}

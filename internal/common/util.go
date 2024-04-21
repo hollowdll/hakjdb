@@ -9,3 +9,7 @@ func StringInSlice(target string, slice []string) bool {
 	}
 	return false
 }
+
+func BytesToMegabytes(bytes uint64) float64 {
+	return float64(bytes) / 1024 / 1024
+}
