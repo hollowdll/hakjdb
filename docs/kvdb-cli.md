@@ -128,15 +128,24 @@ kvdb-cli info
 
 Output is something like this:
 ```sh
-kvdb_version: 0.1.0
-go_version: go1.21.6
+kvdb-cli info
+kvdb_version: 0.10.0
+go_version: go1.22.0
 db_count: 1
-total_data_size: 0B
+total_data_size: 0 B
 os: Linux 5.10.102.1-microsoft-standard-WSL2 x86_64
 arch: amd64
 process_id: 1
 uptime_seconds: 54
 tcp_port: 12345
+default_db: default
+memory_alloc: 0.8 MB
+memory_total_alloc: 0.8 MB
+memory_sys: 7.0 MB
+tls_enabled: no
+password_enabled: no
+logfile_enabled: no
+debug_enabled: yes
 ```
 
 ## Logs
