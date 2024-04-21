@@ -32,18 +32,24 @@ debug_enabled: false
 default_db: default
 logfile_enabled: false
 port: 12345
+tls_cert_path: ""
+tls_enabled: false
+tls_private_key_path: ""
 ```
 
 Meaning of fields:
 
 - `debug_enabled`: Determines if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
 - `default_db`: The name of the default database that is created at server startup.
-- `logfile_enabled`: Determines if log file is enabled. If enabled, logs will be written to the log file. Can be true or false.
+- `logfile_enabled`: Determines if the log file is enabled. If enabled, logs will be written to the log file. Can be true or false.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
+- `tls_cert_path`: The path to the TLS certificate file.
+- `tls_enabled`: Determines if TLS is enabled. If enabled, connections will be encrypted. Can be true or false.
+- `tls_private_key_path`: The path to the TLS private key.
 
 # Environment variables
 
-It is also possible to change configurations with environment variables. Environment variables override configurations in the configuration file but the values are not saved. They are only read by the server process.
+It is also possible to change configurations with environment variables. Environment variables override configurations in the configuration file.
 
 Here is a list of all environment variables:
 
@@ -52,6 +58,9 @@ Here is a list of all environment variables:
 - `KVDB_DEBUG_ENABLED`: Determines if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
 - `KVDB_DEFAULT_DB`: The name of the default database that is created at server startup.
 - `KVDB_LOGFILE_ENABLED`: Determines if log file is enabled. If enabled, logs will be written to the log file. Can be true or false.
+- `KVDB_TLS_ENABLED`: Determines if TLS is enabled. If enabled, connections will be encrypted. Can be true or false.
+- `KVDB_TLS_CERT_PATH`: The path to the TLS certificate file.
+- `KVDB_TLS_PRIVATE_KEY_PATH`: The path to the TLS private key.
 
 # Data directory
 

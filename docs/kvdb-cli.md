@@ -12,6 +12,8 @@ Here is a list of all configurations with their default values:
 default_db: default
 host: localhost
 port: 12345
+tls_cert_path: ../../tls/test-cert/kvdbserver.crt
+tls_enabled: true
 ```
 
 Meaning of fields:
@@ -19,6 +21,8 @@ Meaning of fields:
 - `default_db`: Default database to use. Commands use this database by default.
 - `host`: Server's address to connect to. Can be hostname or IP address.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
+- `tls_cert_path`: The path to the TLS certificate file. The certificate has to be the server's certificate.
+- `tls_enabled`: Use TLS when connecting to a kvdb server. Needed if TLS is enabled on the server. Can be true or false.
 
 # Environment variables
 
