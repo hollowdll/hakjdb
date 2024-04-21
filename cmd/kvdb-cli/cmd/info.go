@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
@@ -31,13 +32,16 @@ func showServerInfo() {
 	info.WriteString(fmt.Sprintf("kvdb_version: %s\n", res.Data.KvdbVersion))
 	info.WriteString(fmt.Sprintf("go_version: %s\n", res.Data.GoVersion))
 	info.WriteString(fmt.Sprintf("db_count: %d\n", res.Data.DbCount))
-	info.WriteString(fmt.Sprintf("total_data_size: %dB\n", res.Data.TotalDataSize))
+	info.WriteString(fmt.Sprintf("total_data_size: %d B\n", res.Data.TotalDataSize))
 	info.WriteString(fmt.Sprintf("os: %s\n", res.Data.Os))
 	info.WriteString(fmt.Sprintf("arch: %s\n", res.Data.Arch))
 	info.WriteString(fmt.Sprintf("process_id: %d\n", res.Data.ProcessId))
 	info.WriteString(fmt.Sprintf("uptime_seconds: %d\n", res.Data.UptimeSeconds))
 	info.WriteString(fmt.Sprintf("tcp_port: %d\n", res.Data.TcpPort))
 	info.WriteString(fmt.Sprintf("default_db: %s\n", res.Data.DefaultDb))
+	info.WriteString(fmt.Sprintf("memory_alloc: %.1f MB\n", common.BytesToMegabytes(res.Data.MemoryAlloc)))
+	info.WriteString(fmt.Sprintf("memory_total_alloc: %.1f MB\n", common.BytesToMegabytes(res.Data.MemoryTotalAlloc)))
+	info.WriteString(fmt.Sprintf("memory_sys: %.1f MB\n", common.BytesToMegabytes(res.Data.MemorySys)))
 
 	if res.Data.TlsEnabled {
 		info.WriteString("tls_enabled: yes\n")

@@ -241,22 +241,27 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
 
 	info := &kvdbserverpb.ServerInfo{
-		KvdbVersion:     version.Version,
-		GoVersion:       runtime.Version(),
-		DbCount:         uint32(len(s.databases)),
-		TotalDataSize:   s.getTotalDataSize(),
-		Os:              osInfo,
-		Arch:            runtime.GOARCH,
-		ProcessId:       uint32(os.Getpid()),
-		UptimeSeconds:   uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:         uint32(s.portInUse),
-		TlsEnabled:      s.tlsEnabled,
-		PasswordEnabled: s.passwordEnabled,
-		LogfileEnabled:  s.logFileEnabled,
-		DebugEnabled:    s.debugEnabled,
-		DefaultDb:       s.defaultDb,
+		KvdbVersion:      version.Version,
+		GoVersion:        runtime.Version(),
+		DbCount:          uint32(len(s.databases)),
+		TotalDataSize:    s.getTotalDataSize(),
+		Os:               osInfo,
+		Arch:             runtime.GOARCH,
+		ProcessId:        uint32(os.Getpid()),
+		UptimeSeconds:    uint64(time.Since(s.startTime).Seconds()),
+		TcpPort:          uint32(s.portInUse),
+		TlsEnabled:       s.tlsEnabled,
+		PasswordEnabled:  s.passwordEnabled,
+		LogfileEnabled:   s.logFileEnabled,
+		DebugEnabled:     s.debugEnabled,
+		DefaultDb:        s.defaultDb,
+		MemoryAlloc:      m.Alloc,
+		MemoryTotalAlloc: m.TotalAlloc,
+		MemorySys:        m.Sys,
 	}
 
 	return &kvdbserverpb.GetServerInfoResponse{Data: info}, nil
