@@ -94,9 +94,30 @@ The name of the log file is `kvdb.log`. If log file is enabled, the file is crea
 
 # Security
 
+## Password protection
+
 The server can be password protected to prevent unauthorized use. When password protection is enabled, all clients must authenticate using password. By default, password protection is disabled.
 
 Password protection can be enabled by setting password with environment variable `KVDB_PASSWORD`. The password is hashed using bcrypt before storing it in memory. The maximum password size is 72 bytes.
+
+## TLS
+
+Connections can be encrypted with TLS/SSL. The server has native support for this.
+
+Directory `tls/test-cert/` contains a X.509 certificate and private key for testing purposes. It can be used to test TLS locally. Alternatively, use your own certificate.
+
+TLS can be enabled by modifying the configuration file or with environment variables.
+
+With config file:
+```yaml
+tls_cert_path: path/to/your/certificate
+tls_enabled: true
+tls_private_key_path: path/to/your/privatekey
+```
+
+Or with `KVDB_TLS_ENABLED`, `KVDB_TLS_CERT_PATH`, and `KVDB_TLS_PRIVATE_KEY_PATH` environment variables. Look at [Environment variables](#environment-variables) for possible values.
+
+When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and using the certificate that you configured.
 
 # Default database
 

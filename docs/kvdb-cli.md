@@ -34,6 +34,18 @@ Here is a list of all environment variables:
 
 If the server is password protected, you can provide password with environment variable `KVDBCLI_PASSWORD`. kvdb-cli reads the value and sends it to the server in every request to perform authentication.
 
+# TLS
+
+If TLS is enabled on the server, you must enable TLS connection. In addition, you must configure the path to the certificate file.
+
+This can be done by modifying the configuration file:
+```yaml
+tls_cert_path: path/to/your/certificate
+tls_enabled: true
+```
+
+Directory `tls/test-cert/` contains a certificate for testing purposes. Use it if the server is configured to use it. Otherwise use your own certificate.
+
 # Commands
 
 - [kvdb-cli info](./kvdb-cli-commands/kvdb-cli-info.md)
