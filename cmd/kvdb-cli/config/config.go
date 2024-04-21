@@ -19,7 +19,7 @@ const (
 	// ConfigKeyTlsEnabled is the configuration key for enabling TLS.
 	ConfigKeyTlsEnabled string = "tls_enabled"
 	// ConfigKeyTlsCertPath is the configuration key for TLS certificate path.
-	ConfigKeyTlsCertPath string = "tls_certificate_path"
+	ConfigKeyTlsCertPath string = "tls_cert_path"
 
 	// EnvPrefix is the prefix for environment variables.
 	EnvPrefix string = "KVDBCLI"
