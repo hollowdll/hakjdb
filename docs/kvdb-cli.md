@@ -12,8 +12,8 @@ Here is a list of all configurations with their default values:
 default_db: default
 host: localhost
 port: 12345
-tls_cert_path: ../../tls/test-cert/kvdbserver.crt
-tls_enabled: true
+tls_cert_path: ""
+tls_enabled: false
 ```
 
 Meaning of fields:
