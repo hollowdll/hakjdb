@@ -122,17 +122,6 @@ process_id: 1
 uptime_seconds: 54
 tcp_port: 12345
 ```
-Meaning of the fields:
-
-- `kvdb_version`: Version of kvdb
-- `go_version`: Version of go used to compile the server
-- `db_count`: Number of databases
-- `total_data_size`: Total amount of stored data in bytes
-- `os`: Server operating system
-- `arch`: Architecture which can be 32 or 64 bits
-- `process_id`: PID of the server process
-- `uptime_seconds`: Server process uptime in seconds
-- `tcp_port`: Server TCP/IP port
 
 ## Logs
 
@@ -209,13 +198,6 @@ updated_at: 2024-01-23T19:31:13Z00:00
 key_count: 0
 data_size: 0B
 ```
-Meaning of the fields:
-
-- `name`: Name of the database
-- `created_at`: UTC timestamp specifying when the database was created
-- `updated_at`: UTC timestamp specifying when the database was last updated
-- `key_count`: Number of keys stored in the database
-- `data_size`: Size of the stored data in bytes
 
 ## Set string
 
