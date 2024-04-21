@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
@@ -23,19 +24,44 @@ func showServerInfo() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	response, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserverpb.GetServerInfoRequest{})
+	res, err := client.GrpcServerClient.GetServerInfo(ctx, &kvdbserverpb.GetServerInfoRequest{})
 	client.CheckGrpcError(err)
 
-	var info string
-	info += fmt.Sprintf("kvdb_version: %s\n", response.Data.GetKvdbVersion())
-	info += fmt.Sprintf("go_version: %s\n", response.Data.GetGoVersion())
-	info += fmt.Sprintf("db_count: %d\n", response.Data.GetDbCount())
-	info += fmt.Sprintf("total_data_size: %dB\n", response.Data.GetTotalDataSize())
-	info += fmt.Sprintf("os: %s\n", response.Data.GetOs())
-	info += fmt.Sprintf("arch: %s\n", response.Data.GetArch())
-	info += fmt.Sprintf("process_id: %d\n", response.Data.GetProcessId())
-	info += fmt.Sprintf("uptime_seconds: %d\n", response.Data.GetUptimeSeconds())
-	info += fmt.Sprintf("tcp_port: %d", response.Data.GetTcpPort())
+	var info strings.Builder
+	info.WriteString(fmt.Sprintf("kvdb_version: %s\n", res.Data.KvdbVersion))
+	info.WriteString(fmt.Sprintf("go_version: %s\n", res.Data.GoVersion))
+	info.WriteString(fmt.Sprintf("db_count: %d\n", res.Data.DbCount))
+	info.WriteString(fmt.Sprintf("total_data_size: %dB\n", res.Data.TotalDataSize))
+	info.WriteString(fmt.Sprintf("os: %s\n", res.Data.Os))
+	info.WriteString(fmt.Sprintf("arch: %s\n", res.Data.Arch))
+	info.WriteString(fmt.Sprintf("process_id: %d\n", res.Data.ProcessId))
+	info.WriteString(fmt.Sprintf("uptime_seconds: %d\n", res.Data.UptimeSeconds))
+	info.WriteString(fmt.Sprintf("tcp_port: %d\n", res.Data.TcpPort))
+	info.WriteString(fmt.Sprintf("default_db: %s\n", res.Data.DefaultDb))
 
-	fmt.Println(info)
+	if res.Data.TlsEnabled {
+		info.WriteString("tls_enabled: yes\n")
+	} else {
+		info.WriteString("tls_enabled: no\n")
+	}
+
+	if res.Data.PasswordEnabled {
+		info.WriteString("password_enabled: yes\n")
+	} else {
+		info.WriteString("password_enabled: no\n")
+	}
+
+	if res.Data.LogfileEnabled {
+		info.WriteString("logfile_enabled: yes\n")
+	} else {
+		info.WriteString("logfile_enabled: no\n")
+	}
+
+	if res.Data.DebugEnabled {
+		info.WriteString("debug_enabled: yes")
+	} else {
+		info.WriteString("debug_enabled: no")
+	}
+
+	fmt.Println(info.String())
 }

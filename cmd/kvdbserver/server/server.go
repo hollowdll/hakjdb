@@ -39,6 +39,7 @@ type Server struct {
 	logFilePath     string
 	logFileEnabled  bool
 	tlsEnabled      bool
+	debugEnabled    bool
 	// The maximum number of keys a database can hold.
 	maxKeysPerDb uint32
 	// The maximum number of fields a HashMap can hold.
@@ -66,6 +67,7 @@ func NewServer() *Server {
 		logFilePath:      "",
 		logFileEnabled:   false,
 		tlsEnabled:       false,
+		debugEnabled:     false,
 		maxKeysPerDb:     common.DbMaxKeyCount,
 		maxHashMapFields: common.HashMapMaxFields,
 		defaultDb:        DefaultDatabase,
@@ -83,6 +85,7 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		logFilePath:      "",
 		logFileEnabled:   false,
 		tlsEnabled:       false,
+		debugEnabled:     false,
 		maxKeysPerDb:     options.MaxKeysPerDb,
 		maxHashMapFields: options.MaxHashMapFields,
 		defaultDb:        DefaultDatabase,
@@ -103,9 +106,10 @@ func (s *Server) DisableLogger() {
 	s.logger.Disable()
 }
 
-// EnableDebugLogs enables server debug logs.
-func (s *Server) EnableDebugLogs() {
+// EnableDebugMode enables debug mode.
+func (s *Server) EnableDebugMode() {
 	s.logger.EnableDebug()
+	s.debugEnabled = true
 }
 
 // SetLogFilePath sets the file path to the log file.
@@ -239,15 +243,20 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 	}
 
 	info := &kvdbserverpb.ServerInfo{
-		KvdbVersion:   version.Version,
-		GoVersion:     runtime.Version(),
-		DbCount:       uint32(len(s.databases)),
-		TotalDataSize: s.getTotalDataSize(),
-		Os:            osInfo,
-		Arch:          runtime.GOARCH,
-		ProcessId:     uint32(os.Getpid()),
-		UptimeSeconds: uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:       uint32(s.portInUse),
+		KvdbVersion:     version.Version,
+		GoVersion:       runtime.Version(),
+		DbCount:         uint32(len(s.databases)),
+		TotalDataSize:   s.getTotalDataSize(),
+		Os:              osInfo,
+		Arch:            runtime.GOARCH,
+		ProcessId:       uint32(os.Getpid()),
+		UptimeSeconds:   uint64(time.Since(s.startTime).Seconds()),
+		TcpPort:         uint32(s.portInUse),
+		TlsEnabled:      s.tlsEnabled,
+		PasswordEnabled: s.passwordEnabled,
+		LogfileEnabled:  s.logFileEnabled,
+		DebugEnabled:    s.debugEnabled,
+		DefaultDb:       s.defaultDb,
 	}
 
 	return &kvdbserverpb.GetServerInfoResponse{Data: info}, nil
@@ -295,7 +304,7 @@ func initServer() (*Server, *grpc.Server) {
 	}
 
 	if viper.GetBool(ConfigKeyDebugEnabled) {
-		server.EnableDebugLogs()
+		server.EnableDebugMode()
 		server.logger.Info("Debug mode is enabled. Debug messages will be logged")
 	}
 

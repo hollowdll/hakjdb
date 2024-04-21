@@ -11,7 +11,7 @@ message GetServerInfoResponse {
     ServerInfo data = 1;
 }
 
-// ServerInfo represents information about the server. Will have more fields in future versions.
+// ServerInfo represents information about the server.
 message ServerInfo {
     // Version of kvdb.
     string kvdb_version = 1;
@@ -31,6 +31,16 @@ message ServerInfo {
     uint64 uptime_seconds = 8;
     // Server TCP/IP port.
     uint32 tcp_port = 9;
+    // True if TLS is enabled.
+    bool tls_enabled = 10;
+    // True if password protection is enabled.
+    bool password_enabled = 11;
+    // True if the log file is enabled.
+    bool logfile_enabled = 12;
+    // True if debug mode is enabled.
+    bool debug_enabled = 13;
+    // The default database that the server uses.
+    string default_db = 14;
 }
 
 // This will have fields in the future to do filtering.
@@ -42,7 +52,7 @@ message GetLogsRequest {
 message GetLogsResponse {
     // List of returned logs.
     repeated string logs = 1;
-    // True if log file is enabled. Otherwise false.
+    // True if the log file is enabled. Otherwise false.
     bool logfile_enabled = 2;
 }
 
