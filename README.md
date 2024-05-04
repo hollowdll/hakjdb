@@ -53,29 +53,29 @@ If you just want to compile the binaries then installing only Go is enough.
 After you have successfully installed go, clone this repository.
 
 Cloning with git:
-```bash
+```sh
 git clone https://github.com/hollowdll/kvdb.git
 ```
 
 Note: You can also download the source code for a specific release [here](https://github.com/hollowdll/kvdb/releases).
 
 Change directory to the project root:
-```bash
+```sh
 cd kvdb
 ```
 
 Get the dependencies:
-```bash
+```sh
 go mod tidy
 ```
 
 Build the server:
-```bash
+```sh
 go build -o ./bin/kvdbserver/ ./cmd/kvdbserver/
 ```
 
 Build the CLI:
-```bash
+```sh
 go build -o ./bin/kvdb-cli/ ./cmd/kvdb-cli/
 ```
 
@@ -92,26 +92,26 @@ Images are available in Docker Hub with multiple tags. Links below.
 
 ## Pull the server image
 
-```bash
+```sh
 docker pull hakj/kvdb
 ```
 
 ## Build the server image
 
 Make sure to be in the project root
-```bash
+```sh
 cd kvdb
 ```
 Latest tag
-```bash
+```sh
 docker build -f "./Dockerfile.bookworm" -t kvdb:latest .
 ```
 Debian based image
-```bash
+```sh
 docker build -f "./Dockerfile.bookworm" -t kvdb:bookworm .
 ```
 Alpine Linux based image
-```bash
+```sh
 docker build -f "./Dockerfile.alpine" -t kvdb:alpine .
 ```
 
@@ -120,7 +120,7 @@ These commands build the image only for a single architecture. If you want to bu
 ## Start a container
 
 Example of starting a container
-```bash
+```sh
 docker run -p 12345:12345 --rm -it kvdb
 ```
 This binds the host's port `12345` to the container's port `12345` so you can access the server outside the container.
@@ -128,26 +128,33 @@ This binds the host's port `12345` to the container's port `12345` so you can ac
 # Running tests
 
 Change directory to the project root:
-```bash
+```sh
 cd kvdb
 ```
 
 Run all tests:
-```bash
+```sh
 go test ./...
 ```
 
 Run only integration tests:
-```bash
+```sh
 go test ./tests/integration
+```
+
+Show verbose test result output:
+```sh
+go test -v ./...
 ```
 
 ## Integration test environment variables
 
 Integration test environment is configurable. Below is a list of environment variables that can be used when running integration tests.
 
-- `KVDB_PORT`: Test server TCP/IP port. Default port is 12345.
-- `KVDB_HOST`: Test server address. The test client will try to connect to this. Default address is localhost.
+- `KVDB_TEST_PORT`: Test server TCP/IP port. Default is 12350.
+- `KVDB_TLS_TEST_PORT`: TLS test server TCP/IP port. Default is 12351.
+
+Running the integration tests starts test servers both with and without TLS. The servers are stopped after the tests have finished. If the default ports are not available, you can change the ports with the environment variables above.
 
 # License
 
