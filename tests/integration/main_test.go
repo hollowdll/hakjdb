@@ -18,8 +18,13 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const ctxTimeout = time.Second * 5
-const defaultTlsPort = 12346
+const (
+	ctxTimeout       = time.Second * 5
+	defaultPort      = 12350
+	defaultTlsPort   = 12351
+	portConfigKey    = "test_port"
+	tlsPortConfigKey = "tls_test_port"
+)
 
 func TestMain(m *testing.M) {
 	viper.SetEnvPrefix(kvdbs.EnvPrefix)
@@ -41,15 +46,15 @@ func setupServer() *grpc.Server {
 	server.DisableLogger()
 	server.CreateDefaultDatabase("default")
 
-	viper.SetDefault("port", common.ServerDefaultPort)
-	server.SetPort(viper.GetUint16("port"))
+	viper.SetDefault(portConfigKey, defaultPort)
+	server.SetPort(viper.GetUint16(portConfigKey))
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.AuthInterceptor))
 	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16("port")))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(portConfigKey)))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
@@ -70,8 +75,8 @@ func setupTlsServer() *grpc.Server {
 	server.DisableLogger()
 	server.CreateDefaultDatabase("default")
 
-	viper.SetDefault("tls_port", defaultTlsPort)
-	server.SetPort(viper.GetUint16("tls_port"))
+	viper.SetDefault(tlsPortConfigKey, defaultTlsPort)
+	server.SetPort(viper.GetUint16(tlsPortConfigKey))
 
 	certBytes, err := os.ReadFile("../../tls/test-cert/kvdbserver.crt")
 	if err != nil {
@@ -98,7 +103,7 @@ func setupTlsServer() *grpc.Server {
 	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16("tls_port")))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(tlsPortConfigKey)))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
@@ -115,11 +120,11 @@ func setupTlsServer() *grpc.Server {
 }
 
 func getServerAddress() string {
-	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16("port"))
+	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16(portConfigKey))
 }
 
 func getTlsServerAddress() string {
-	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16("tls_port"))
+	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16(tlsPortConfigKey))
 }
 
 func insecureConnection() (*grpc.ClientConn, error) {
