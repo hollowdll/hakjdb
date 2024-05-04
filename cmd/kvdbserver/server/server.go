@@ -244,24 +244,36 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
+	var totalKeys uint64
+	for _, db := range s.databases {
+		totalKeys += uint64(db.GetKeyCount())
+	}
+
 	info := &kvdbserverpb.ServerInfo{
-		KvdbVersion:      version.Version,
-		GoVersion:        runtime.Version(),
-		DbCount:          uint32(len(s.databases)),
-		TotalDataSize:    s.getTotalDataSize(),
-		Os:               osInfo,
-		Arch:             runtime.GOARCH,
-		ProcessId:        uint32(os.Getpid()),
-		UptimeSeconds:    uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:          uint32(s.portInUse),
-		TlsEnabled:       s.tlsEnabled,
-		PasswordEnabled:  s.passwordEnabled,
-		LogfileEnabled:   s.logFileEnabled,
-		DebugEnabled:     s.debugEnabled,
-		DefaultDb:        s.defaultDb,
-		MemoryAlloc:      m.Alloc,
-		MemoryTotalAlloc: m.TotalAlloc,
-		MemorySys:        m.Sys,
+		GeneralInfo: &kvdbserverpb.GeneralInfo{
+			KvdbVersion:     version.Version,
+			GoVersion:       runtime.Version(),
+			DbCount:         uint32(len(s.databases)),
+			Os:              osInfo,
+			Arch:            runtime.GOARCH,
+			ProcessId:       uint32(os.Getpid()),
+			UptimeSeconds:   uint64(time.Since(s.startTime).Seconds()),
+			TcpPort:         uint32(s.portInUse),
+			TlsEnabled:      s.tlsEnabled,
+			PasswordEnabled: s.passwordEnabled,
+			LogfileEnabled:  s.logFileEnabled,
+			DebugEnabled:    s.debugEnabled,
+			DefaultDb:       s.defaultDb,
+		},
+		MemoryInfo: &kvdbserverpb.MemoryInfo{
+			MemoryAlloc:      m.Alloc,
+			MemoryTotalAlloc: m.TotalAlloc,
+			MemorySys:        m.Sys,
+		},
+		StorageInfo: &kvdbserverpb.StorageInfo{
+			TotalDataSize: s.getTotalDataSize(),
+			TotalKeys:     totalKeys,
+		},
 	}
 
 	return &kvdbserverpb.GetServerInfoResponse{Data: info}, nil

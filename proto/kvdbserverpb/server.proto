@@ -4,6 +4,70 @@ option go_package = "proto/kvdbserverpb";
 
 package kvdbserverapi;
 
+// MemoryInfo represents information about memory consumption.
+message MemoryInfo {
+    // Allocated memory.
+    uint64 memory_alloc = 1;
+    // Total allocated memory.
+    uint64 memory_total_alloc = 2;
+    // Memory obtained from OS.
+    uint64 memory_sys = 3;
+}
+
+// StorageInfo represents information about data storage.
+message StorageInfo {
+    // Total amount of stored data in bytes.
+    uint64 total_data_size = 1;
+    // Total number of keys stored on the server.
+    uint64 total_keys = 2;
+}
+
+// ClientInfo represents information about client connections.
+// CURRENTLY NOT USED. WILL BE USED IN THE FUTURE.
+message ClientInfo {
+    // Number of client connections currently connected to the server.
+    uint32 client_connections = 1;
+    // Maximum number of client connections allowed.
+    uint32 max_client_connections = 2;
+}
+
+// GeneralInfo represents general information about the server.
+message GeneralInfo {
+    // Version of kvdb.
+    string kvdb_version = 1;
+    // Version of go used to compile the server.
+    string go_version = 2;
+    // Number of databases.
+    uint32 db_count = 3;
+    // Server operating system.
+    string os = 4;
+    // Architecture which can be 32 or 64 bits.
+    string arch = 5;
+    // PID of the server process.
+    uint32 process_id = 6;
+    // Server process uptime in seconds.
+    uint64 uptime_seconds = 7;
+    // Server TCP/IP port.
+    uint32 tcp_port = 8;
+    // True if TLS is enabled.
+    bool tls_enabled = 9;
+    // True if password protection is enabled.
+    bool password_enabled = 10;
+    // True if the log file is enabled.
+    bool logfile_enabled = 11;
+    // True if debug mode is enabled.
+    bool debug_enabled = 12;
+    // The default database that the server is using.
+    string default_db = 13;
+}
+
+// ServerInfo represents information about the server.
+message ServerInfo {
+    GeneralInfo general_info = 1;
+    MemoryInfo memory_info = 2;
+    StorageInfo storage_info = 3;
+}
+
 message GetServerInfoRequest {}
 
 message GetServerInfoResponse {
@@ -11,46 +75,6 @@ message GetServerInfoResponse {
     ServerInfo data = 1;
 }
 
-// ServerInfo represents information about the server.
-message ServerInfo {
-    // Version of kvdb.
-    string kvdb_version = 1;
-    // Version of go used to compile the server.
-    string go_version = 2;
-    // Number of databases.
-    uint32 db_count = 3;
-    // Total amount of stored data in bytes.
-    uint64 total_data_size = 4;
-    // Server operating system.
-    string os = 5;
-    // Architecture which can be 32 or 64 bits.
-    string arch = 6;
-    // PID of the server process.
-    uint32 process_id = 7;
-    // Server process uptime in seconds.
-    uint64 uptime_seconds = 8;
-    // Server TCP/IP port.
-    uint32 tcp_port = 9;
-    // True if TLS is enabled.
-    bool tls_enabled = 10;
-    // True if password protection is enabled.
-    bool password_enabled = 11;
-    // True if the log file is enabled.
-    bool logfile_enabled = 12;
-    // True if debug mode is enabled.
-    bool debug_enabled = 13;
-    // The default database that the server uses.
-    string default_db = 14;
-    // Allocated memory.
-    uint64 memory_alloc = 15;
-    // Total allocated memory.
-    uint64 memory_total_alloc = 16;
-    // Memory obtained from OS.
-    uint64 memory_sys = 17;
-}
-
-// This will have fields in the future to do filtering.
-// For example to return only the latest 10 logs.
 message GetLogsRequest {
     
 }
