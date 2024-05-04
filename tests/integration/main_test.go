@@ -22,10 +22,16 @@ const ctxTimeout = time.Second * 5
 const defaultTlsPort = 12346
 
 func TestMain(m *testing.M) {
+	viper.SetEnvPrefix(kvdbs.EnvPrefix)
+	viper.AutomaticEnv()
+
+	fmt.Fprintln(os.Stderr, "setting up test server ...")
 	server := setupServer()
+	fmt.Fprintln(os.Stderr, "setting up TLS test server ...")
 	tlsServer := setupTlsServer()
 	defer server.Stop()
 	defer tlsServer.Stop()
+
 	code := m.Run()
 	os.Exit(code)
 }
@@ -36,10 +42,6 @@ func setupServer() *grpc.Server {
 	server.CreateDefaultDatabase("default")
 
 	viper.SetDefault("port", common.ServerDefaultPort)
-	viper.SetDefault("host", common.ServerDefaultHost)
-	viper.SetEnvPrefix(kvdbs.EnvPrefix)
-	viper.AutomaticEnv()
-
 	server.SetPort(viper.GetUint16("port"))
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.AuthInterceptor))
@@ -51,6 +53,7 @@ func setupServer() *grpc.Server {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
+	fmt.Fprintf(os.Stderr, "test server listening at %v\n", listener.Addr())
 
 	// Run in goroutine so execution won't be blocked.
 	go func() {
@@ -68,10 +71,6 @@ func setupTlsServer() *grpc.Server {
 	server.CreateDefaultDatabase("default")
 
 	viper.SetDefault("tls_port", defaultTlsPort)
-	viper.SetDefault("host", common.ServerDefaultHost)
-	viper.SetEnvPrefix(kvdbs.EnvPrefix)
-	viper.AutomaticEnv()
-
 	server.SetPort(viper.GetUint16("tls_port"))
 
 	certBytes, err := os.ReadFile("../../tls/test-cert/kvdbserver.crt")
@@ -103,6 +102,7 @@ func setupTlsServer() *grpc.Server {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
+	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", listener.Addr())
 
 	// Run in goroutine so execution won't be blocked.
 	go func() {
@@ -115,11 +115,11 @@ func setupTlsServer() *grpc.Server {
 }
 
 func getServerAddress() string {
-	return fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
+	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16("port"))
 }
 
 func getTlsServerAddress() string {
-	return fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("tls_port"))
+	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16("tls_port"))
 }
 
 func insecureConnection() (*grpc.ClientConn, error) {
