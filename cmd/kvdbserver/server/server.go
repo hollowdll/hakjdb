@@ -329,7 +329,7 @@ func initServer() (*Server, *grpc.Server) {
 
 	var grpcServer *grpc.Server = nil
 	if !server.tlsEnabled {
-		grpcServer = grpc.NewServer(grpc.UnaryInterceptor(server.authInterceptor))
+		grpcServer = grpc.NewServer(grpc.UnaryInterceptor(server.AuthInterceptor))
 		server.logger.Warning("TLS is disabled. Connections will not be encrypted")
 	} else {
 		server.logger.Info("Attempting to enable TLS ...")
@@ -352,7 +352,7 @@ func initServer() (*Server, *grpc.Server) {
 		}
 
 		creds := credentials.NewServerTLSFromCert(&cert)
-		grpcServer = grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(server.authInterceptor))
+		grpcServer = grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(server.AuthInterceptor))
 		server.logger.Info("TLS is enabled. Connections will be encrypted")
 	}
 

@@ -43,8 +43,8 @@ func (cs *InMemoryCredentialStore) IsCorrectServerPassword(password []byte) erro
 	return bcrypt.CompareHashAndPassword(cs.serverPasswordHash, password)
 }
 
-// authInterceptor is unary interceptor to handle authorization for RPC calls.
-func (s *Server) authInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+// AuthInterceptor is unary interceptor to handle authorization for RPC calls.
+func (s *Server) AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
 		s.mutex.RLock()
 		s.logger.Errorf("Failed to authorize request: %v", err)
