@@ -41,22 +41,27 @@ func (l *ClientConnListener) Accept() (net.Conn, error) {
 	}
 
 	l.mu.Lock()
-	if l.clientConnections < l.maxClientConnections {
-		l.clientConnections++
-		l.logger.Debugf("Client connected, total clients: %d\n", l.clientConnections)
-	} else {
-		return nil, kvdberrors.ErrMaxClientConnectionsReached
-	}
-	l.mu.Unlock()
+	l.clientConnections++
+	l.logger.Debugf("Client connected, total clients: %d\n", l.clientConnections)
 
-	return &clientConn{Conn: conn, release: func() {
+	clientConn := &clientConn{Conn: conn, release: func() {
 		l.mu.Lock()
 		if l.clientConnections > 0 {
 			l.clientConnections--
 		}
 		l.logger.Debugf("Client disconnected, total clients: %d\n", l.clientConnections)
 		l.mu.Unlock()
-	}}, nil
+	}}
+
+	if l.clientConnections > l.maxClientConnections {
+		l.logger.Errorf("Incoming connection denied: %s", kvdberrors.ErrMaxClientConnectionsReached.Error())
+		l.mu.Unlock()
+		clientConn.Close()
+	} else {
+		l.mu.Unlock()
+	}
+
+	return clientConn, nil
 }
 
 type clientConn struct {
@@ -461,6 +466,6 @@ func StartServer() {
 	server.ClientConnListener = connListener
 
 	if err := grpcServer.Serve(connListener); err != nil {
-		server.logger.Fatalf("Failed to serve gRPC: %v", err)
+		server.logger.Errorf("Failed to accept incoming connection: %v", err)
 	}
 }
