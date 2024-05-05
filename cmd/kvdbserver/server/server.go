@@ -47,55 +47,65 @@ type Server struct {
 	// The name of the default database that is created at server startup.
 	defaultDb string
 	// The TCP/IP port the server is using.
-	portInUse uint16
-	mutex     sync.RWMutex
+	portInUse            uint16
+	clientConnections    uint32
+	maxClientConnections uint32
+	mutex                sync.RWMutex
 }
 
 // ServerOptions contains options that can be passed to the server when creating it.
 type ServerOptions struct {
-	MaxKeysPerDb     uint32
-	MaxHashMapFields uint32
+	MaxKeysPerDb         uint32
+	MaxHashMapFields     uint32
+	MaxClientConnections uint32
 }
 
 func NewServer() *Server {
 	return &Server{
-		startTime:        time.Now(),
-		databases:        make(map[string]*kvdb.Database),
-		CredentialStore:  *NewInMemoryCredentialStore(),
-		passwordEnabled:  false,
-		logger:           kvdb.NewDefaultLogger(),
-		logFilePath:      "",
-		logFileEnabled:   false,
-		tlsEnabled:       false,
-		debugEnabled:     false,
-		maxKeysPerDb:     common.DbMaxKeyCount,
-		maxHashMapFields: common.HashMapMaxFields,
-		defaultDb:        DefaultDatabase,
-		portInUse:        common.ServerDefaultPort,
+		startTime:            time.Now(),
+		databases:            make(map[string]*kvdb.Database),
+		CredentialStore:      *NewInMemoryCredentialStore(),
+		passwordEnabled:      false,
+		logger:               kvdb.NewDefaultLogger(),
+		logFilePath:          "",
+		logFileEnabled:       false,
+		tlsEnabled:           false,
+		debugEnabled:         false,
+		maxKeysPerDb:         common.DbMaxKeyCount,
+		maxHashMapFields:     common.HashMapMaxFields,
+		defaultDb:            DefaultDatabase,
+		portInUse:            common.ServerDefaultPort,
+		clientConnections:    0,
+		maxClientConnections: common.MaxClientConnections,
 	}
 }
 
 func NewServerWithOptions(options *ServerOptions) *Server {
 	newServer := &Server{
-		startTime:        time.Now(),
-		databases:        make(map[string]*kvdb.Database),
-		CredentialStore:  *NewInMemoryCredentialStore(),
-		passwordEnabled:  false,
-		logger:           kvdb.NewDefaultLogger(),
-		logFilePath:      "",
-		logFileEnabled:   false,
-		tlsEnabled:       false,
-		debugEnabled:     false,
-		maxKeysPerDb:     options.MaxKeysPerDb,
-		maxHashMapFields: options.MaxHashMapFields,
-		defaultDb:        DefaultDatabase,
-		portInUse:        common.ServerDefaultPort,
+		startTime:            time.Now(),
+		databases:            make(map[string]*kvdb.Database),
+		CredentialStore:      *NewInMemoryCredentialStore(),
+		passwordEnabled:      false,
+		logger:               kvdb.NewDefaultLogger(),
+		logFilePath:          "",
+		logFileEnabled:       false,
+		tlsEnabled:           false,
+		debugEnabled:         false,
+		maxKeysPerDb:         options.MaxKeysPerDb,
+		maxHashMapFields:     options.MaxHashMapFields,
+		defaultDb:            DefaultDatabase,
+		portInUse:            common.ServerDefaultPort,
+		clientConnections:    0,
+		maxClientConnections: options.MaxClientConnections,
 	}
 	if newServer.maxKeysPerDb == 0 {
 		newServer.maxKeysPerDb = common.DbMaxKeyCount
 	}
 	if newServer.maxHashMapFields == 0 {
 		newServer.maxHashMapFields = common.HashMapMaxFields
+	}
+	if newServer.maxClientConnections == 0 {
+		newServer.maxClientConnections = common.MaxClientConnections
 	}
 
 	return newServer
