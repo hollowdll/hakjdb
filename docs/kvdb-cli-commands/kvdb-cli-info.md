@@ -37,6 +37,10 @@ debug_enabled: yes
 total_data_size: 36 B
 total_keys: 1
 
+** Clients **
+client_connections: 1
+max_client_connections: 1000
+
 ** Memory **
 memory_alloc: 2.1 MB
 memory_total_alloc: 2.1 MB
@@ -63,6 +67,10 @@ General information about the server
 Information about data storage
 - `total_data_size`: Total amount of stored data in bytes
 - `total_keys`: Total number of keys stored on the server
+
+Information about client connections
+- `client_connections`: Number of active client connections
+- `max_client_connections`: Maximum number of active client connections allowed.
 
 Information about memory consumption
 - `memory_alloc`: Allocated memory in megabytes
