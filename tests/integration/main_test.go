@@ -59,6 +59,8 @@ func setupServer() *grpc.Server {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
 	fmt.Fprintf(os.Stderr, "test server listening at %v\n", listener.Addr())
+	connListener := kvdbs.NewClientConnListener(server, common.DefaultMaxClientConnections)
+	server.ClientConnListener = connListener
 
 	// Run in goroutine so execution won't be blocked.
 	go func() {
@@ -108,6 +110,8 @@ func setupTlsServer() *grpc.Server {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
 	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", listener.Addr())
+	connListener := kvdbs.NewClientConnListener(server, common.DefaultMaxClientConnections)
+	server.ClientConnListener = connListener
 
 	// Run in goroutine so execution won't be blocked.
 	go func() {

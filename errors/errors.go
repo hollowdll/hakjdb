@@ -52,4 +52,8 @@ var (
 	// ErrMaxHashMapFieldsReached is returned when trying to insert fields into a HashMap
 	// that has reached the maximum field limit.
 	ErrMaxHashMapFieldsReached = errors.New("max HashMap field limit reached")
+
+	// ErrMaxClientConnectionsReached is returned when a new client tries to connect to the server
+	// but the maximum number of client connections is reached.
+	ErrMaxClientConnectionsReached = errors.New("max client connections reached")
 )

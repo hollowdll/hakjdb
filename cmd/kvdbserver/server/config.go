@@ -29,6 +29,8 @@ const (
 	ConfigKeyTlsCertPath string = "tls_cert_path"
 	// ConfigKeyTlsPrivKeyPath is the configuration key for TLS private key file path.
 	ConfigKeyTlsPrivKeyPath string = "tls_private_key_path"
+	// ConfigKeyMaxClientConnections is the configuration key for maximum client connections.
+	ConfigKeyMaxClientConnections string = "max_client_connections"
 
 	// DefaultDatabase is the name of the default database.
 	DefaultDatabase string = "default"
@@ -61,6 +63,7 @@ func initConfig(s *Server) {
 	viper.SetDefault(ConfigKeyTlsEnabled, false)
 	viper.SetDefault(ConfigKeyTlsCertPath, "")
 	viper.SetDefault(ConfigKeyTlsPrivKeyPath, "")
+	viper.SetDefault(ConfigKeyMaxClientConnections, common.DefaultMaxClientConnections)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()

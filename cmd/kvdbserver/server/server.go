@@ -26,6 +26,75 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// ClientConnListener is a client connection listener
+// that accepts new connections and tracks active connections.
+type ClientConnListener struct {
+	net.Listener
+	logger               kvdb.Logger
+	clientConnections    uint32
+	maxClientConnections uint32
+	mu                   sync.RWMutex
+}
+
+func NewClientConnListener(server *Server, maxConnections uint32) *ClientConnListener {
+	return &ClientConnListener{
+		logger:               server.logger,
+		clientConnections:    0,
+		maxClientConnections: maxConnections,
+	}
+}
+
+func (l *ClientConnListener) Accept() (net.Conn, error) {
+	conn, err := l.Listener.Accept()
+	if err != nil {
+		return nil, err
+	}
+
+	l.mu.Lock()
+	l.clientConnections++
+	l.logger.Debugf("Client connected, total clients: %d\n", l.clientConnections)
+
+	clientConn := &clientConn{Conn: conn, release: func() {
+		l.mu.Lock()
+		if l.clientConnections > 0 {
+			l.clientConnections--
+		}
+		l.logger.Debugf("Client disconnected, total clients: %d\n", l.clientConnections)
+		l.mu.Unlock()
+	}}
+
+	if l.clientConnections > l.maxClientConnections {
+		l.logger.Errorf("Incoming connection denied: %s", kvdberrors.ErrMaxClientConnectionsReached.Error())
+		l.mu.Unlock()
+		clientConn.Close()
+	} else {
+		l.mu.Unlock()
+	}
+
+	return clientConn, nil
+}
+
+type clientConn struct {
+	net.Conn
+	release func()
+	closed  bool
+	mu      sync.Mutex
+}
+
+func (c *clientConn) Close() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.closed {
+		return nil
+	}
+
+	c.closed = true
+	err := c.Conn.Close()
+	c.release()
+	return err
+}
+
 type Server struct {
 	kvdbserverpb.UnimplementedDatabaseServiceServer
 	kvdbserverpb.UnimplementedServerServiceServer
@@ -48,30 +117,33 @@ type Server struct {
 	defaultDb string
 	// The TCP/IP port the server is using.
 	portInUse uint16
-	mutex     sync.RWMutex
+	*ClientConnListener
+	mutex sync.RWMutex
 }
 
 // ServerOptions contains options that can be passed to the server when creating it.
 type ServerOptions struct {
-	MaxKeysPerDb     uint32
-	MaxHashMapFields uint32
+	MaxKeysPerDb         uint32
+	MaxHashMapFields     uint32
+	MaxClientConnections uint32
 }
 
 func NewServer() *Server {
 	return &Server{
-		startTime:        time.Now(),
-		databases:        make(map[string]*kvdb.Database),
-		CredentialStore:  *NewInMemoryCredentialStore(),
-		passwordEnabled:  false,
-		logger:           kvdb.NewDefaultLogger(),
-		logFilePath:      "",
-		logFileEnabled:   false,
-		tlsEnabled:       false,
-		debugEnabled:     false,
-		maxKeysPerDb:     common.DbMaxKeyCount,
-		maxHashMapFields: common.HashMapMaxFields,
-		defaultDb:        DefaultDatabase,
-		portInUse:        common.ServerDefaultPort,
+		startTime:          time.Now(),
+		databases:          make(map[string]*kvdb.Database),
+		CredentialStore:    *NewInMemoryCredentialStore(),
+		passwordEnabled:    false,
+		logger:             kvdb.NewDefaultLogger(),
+		logFilePath:        "",
+		logFileEnabled:     false,
+		tlsEnabled:         false,
+		debugEnabled:       false,
+		maxKeysPerDb:       common.DbMaxKeyCount,
+		maxHashMapFields:   common.HashMapMaxFields,
+		defaultDb:          DefaultDatabase,
+		portInUse:          common.ServerDefaultPort,
+		ClientConnListener: nil,
 	}
 }
 
@@ -90,12 +162,19 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		maxHashMapFields: options.MaxHashMapFields,
 		defaultDb:        DefaultDatabase,
 		portInUse:        common.ServerDefaultPort,
+		ClientConnListener: &ClientConnListener{
+			Listener:             nil,
+			maxClientConnections: options.MaxClientConnections,
+		},
 	}
-	if newServer.maxKeysPerDb == 0 {
+	if options.MaxKeysPerDb == 0 {
 		newServer.maxKeysPerDb = common.DbMaxKeyCount
 	}
-	if newServer.maxHashMapFields == 0 {
+	if options.MaxHashMapFields == 0 {
 		newServer.maxHashMapFields = common.HashMapMaxFields
+	}
+	if options.MaxClientConnections == 0 {
+		newServer.ClientConnListener.maxClientConnections = common.DefaultMaxClientConnections
 	}
 
 	return newServer
@@ -226,6 +305,10 @@ func getOsInfo() (string, error) {
 func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerInfoRequest) (res *kvdbserverpb.GetServerInfoResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
+	if s.ClientConnListener != nil {
+		s.ClientConnListener.mu.RLock()
+		defer s.ClientConnListener.mu.RUnlock()
+	}
 
 	logPrefix := "GetServerInfo"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
@@ -273,6 +356,10 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 		StorageInfo: &kvdbserverpb.StorageInfo{
 			TotalDataSize: s.getTotalDataSize(),
 			TotalKeys:     totalKeys,
+		},
+		ClientInfo: &kvdbserverpb.ClientInfo{
+			ClientConnections:    s.ClientConnListener.clientConnections,
+			MaxClientConnections: s.ClientConnListener.maxClientConnections,
 		},
 	}
 
@@ -385,8 +472,14 @@ func StartServer() {
 		server.logger.Fatalf("Failed to listen: %v", err)
 	}
 	server.logger.Infof("Server listening at %v", listener.Addr())
+	connListener := &ClientConnListener{
+		Listener:             listener,
+		logger:               server.logger,
+		maxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
+	}
+	server.ClientConnListener = connListener
 
-	if err := grpcServer.Serve(listener); err != nil {
-		server.logger.Fatalf("Failed to serve gRPC: %v", err)
+	if err := grpcServer.Serve(connListener); err != nil {
+		server.logger.Errorf("Failed to accept incoming connection: %v", err)
 	}
 }

@@ -143,6 +143,10 @@ password_enabled: no
 logfile_enabled: yes
 debug_enabled: yes
 
+** Clients **
+client_connections: 1
+max_client_connections: 1000
+
 ** Data storage **
 total_data_size: 36 B
 total_keys: 1
