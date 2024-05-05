@@ -68,6 +68,10 @@ func showServerInfo() {
 	info.WriteString(fmt.Sprintf("total_data_size: %d B\n", res.Data.StorageInfo.TotalDataSize))
 	info.WriteString(fmt.Sprintf("total_keys: %d\n", res.Data.StorageInfo.TotalKeys))
 
+	info.WriteString("\n** Clients **\n")
+	info.WriteString(fmt.Sprintf("client_connections: %d\n", res.Data.ClientInfo.ClientConnections))
+	info.WriteString(fmt.Sprintf("max_client_connections: %d\n", res.Data.ClientInfo.MaxClientConnections))
+
 	info.WriteString("\n** Memory **\n")
 	info.WriteString(fmt.Sprintf("memory_alloc: %.1f MB\n", common.BytesToMegabytes(res.Data.MemoryInfo.MemoryAlloc)))
 	info.WriteString(fmt.Sprintf("memory_total_alloc: %.1f MB\n", common.BytesToMegabytes(res.Data.MemoryInfo.MemoryTotalAlloc)))
