@@ -31,6 +31,7 @@ Here is a list of all configurations with their default values:
 debug_enabled: false
 default_db: default
 logfile_enabled: false
+max_client_connections: 1000
 port: 12345
 tls_cert_path: ""
 tls_enabled: false
@@ -42,6 +43,7 @@ Meaning of fields:
 - `debug_enabled`: Determines if debug mode is enabled. If enabled, debug messages are logged. Can be true or false.
 - `default_db`: The name of the default database that is created at server startup.
 - `logfile_enabled`: Determines if the log file is enabled. If enabled, logs will be written to the log file. Can be true or false.
+- `max_client_connections`: The maximum number of active client connections allowed.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
 - `tls_cert_path`: The path to the TLS certificate file.
 - `tls_enabled`: Determines if TLS is enabled. If enabled, connections will be encrypted. Can be true or false.
@@ -61,6 +63,7 @@ Here is a list of all environment variables:
 - `KVDB_TLS_ENABLED`: Determines if TLS is enabled. If enabled, connections will be encrypted. Can be true or false.
 - `KVDB_TLS_CERT_PATH`: The path to the TLS certificate file.
 - `KVDB_TLS_PRIVATE_KEY_PATH`: The path to the TLS private key.
+- `KVDB_MAX_CLIENT_CONNECTIONS`: The maximum number of active client connections allowed.
 
 # Data directory
 
@@ -122,3 +125,7 @@ When TLS is enabled, all non-TLS connections will be denied. Make sure that the 
 # Default database
 
 When the server starts, it creates an empty default database 'default'. The name of the default database can be changed in the configuration file or with environment variable `KVDB_DEFAULT_DB`.
+
+# Connections
+
+The maximum number of active client connections can be limited. Client connections are gRPC clients that are connected to the server. By default, the server allows 1000 active connections. This can be changed in the configuration file or with environment variable `KVDB_MAX_CLIENT_CONNECTIONS`.
