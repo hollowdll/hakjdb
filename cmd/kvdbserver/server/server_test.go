@@ -15,11 +15,13 @@ import (
 
 func TestGetServerInfo(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewServer()
+		s.DisableLogger()
+		connListener := server.NewClientConnListener(s, 1000)
+		s.ClientConnListener = connListener
 
 		req := &kvdbserverpb.GetServerInfoRequest{}
-		res, err := server.GetServerInfo(context.Background(), req)
+		res, err := s.GetServerInfo(context.Background(), req)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
 		assert.NotNil(t, res, "expected response to be non-nil")
 	})

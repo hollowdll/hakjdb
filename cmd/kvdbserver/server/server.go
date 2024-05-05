@@ -26,12 +26,22 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// ClientConnListener is a client connection listener
+// that accepts new connections and tracks active connections.
 type ClientConnListener struct {
 	net.Listener
 	logger               kvdb.Logger
 	clientConnections    uint32
 	maxClientConnections uint32
-	mu                   sync.Mutex
+	mu                   sync.RWMutex
+}
+
+func NewClientConnListener(server *Server, maxConnections uint32) *ClientConnListener {
+	return &ClientConnListener{
+		logger:               server.logger,
+		clientConnections:    0,
+		maxClientConnections: maxConnections,
+	}
 }
 
 func (l *ClientConnListener) Accept() (net.Conn, error) {
@@ -295,6 +305,10 @@ func getOsInfo() (string, error) {
 func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerInfoRequest) (res *kvdbserverpb.GetServerInfoResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
+	if s.ClientConnListener != nil {
+		s.ClientConnListener.mu.RLock()
+		defer s.ClientConnListener.mu.RUnlock()
+	}
 
 	logPrefix := "GetServerInfo"
 	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
