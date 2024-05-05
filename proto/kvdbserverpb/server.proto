@@ -25,7 +25,7 @@ message StorageInfo {
 // ClientInfo represents information about client connections.
 // CURRENTLY NOT USED. WILL BE USED IN THE FUTURE.
 message ClientInfo {
-    // Number of client connections currently connected to the server.
+    // Number of active client connections.
     uint32 client_connections = 1;
     // Maximum number of client connections allowed.
     uint32 max_client_connections = 2;
