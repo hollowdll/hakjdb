@@ -23,7 +23,6 @@ message StorageInfo {
 }
 
 // ClientInfo represents information about client connections.
-// CURRENTLY NOT USED. WILL BE USED IN THE FUTURE.
 message ClientInfo {
     // Number of active client connections.
     uint32 client_connections = 1;
@@ -66,6 +65,7 @@ message ServerInfo {
     GeneralInfo general_info = 1;
     MemoryInfo memory_info = 2;
     StorageInfo storage_info = 3;
+    ClientInfo client_info = 4;
 }
 
 message GetServerInfoRequest {}

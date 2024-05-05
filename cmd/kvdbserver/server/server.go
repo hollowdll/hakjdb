@@ -28,9 +28,10 @@ import (
 
 type ClientConnListener struct {
 	net.Listener
+	logger               kvdb.Logger
 	clientConnections    uint32
 	maxClientConnections uint32
-	mu                   sync.RWMutex
+	mu                   sync.Mutex
 }
 
 func (l *ClientConnListener) Accept() (net.Conn, error) {
@@ -42,7 +43,7 @@ func (l *ClientConnListener) Accept() (net.Conn, error) {
 	l.mu.Lock()
 	if l.clientConnections < l.maxClientConnections {
 		l.clientConnections++
-		fmt.Printf("Client connected, total clients: %d\n", l.clientConnections)
+		l.logger.Debugf("Client connected, total clients: %d\n", l.clientConnections)
 	} else {
 		return nil, kvdberrors.ErrMaxClientConnectionsReached
 	}
@@ -53,7 +54,7 @@ func (l *ClientConnListener) Accept() (net.Conn, error) {
 		if l.clientConnections > 0 {
 			l.clientConnections--
 		}
-		fmt.Printf("Client disconnected, total clients: %d\n", l.clientConnections)
+		l.logger.Debugf("Client disconnected, total clients: %d\n", l.clientConnections)
 		l.mu.Unlock()
 	}}, nil
 }
@@ -62,7 +63,7 @@ type clientConn struct {
 	net.Conn
 	release func()
 	closed  bool
-	mu      sync.RWMutex
+	mu      sync.Mutex
 }
 
 func (c *clientConn) Close() error {
@@ -337,6 +338,10 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 			TotalDataSize: s.getTotalDataSize(),
 			TotalKeys:     totalKeys,
 		},
+		ClientInfo: &kvdbserverpb.ClientInfo{
+			ClientConnections:    s.ClientConnListener.clientConnections,
+			MaxClientConnections: s.ClientConnListener.maxClientConnections,
+		},
 	}
 
 	return &kvdbserverpb.GetServerInfoResponse{Data: info}, nil
@@ -450,6 +455,7 @@ func StartServer() {
 	server.logger.Infof("Server listening at %v", listener.Addr())
 	connListener := &ClientConnListener{
 		Listener:             listener,
+		logger:               server.logger,
 		maxClientConnections: common.MaxClientConnections,
 	}
 	server.ClientConnListener = connListener
