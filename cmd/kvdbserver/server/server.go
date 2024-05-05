@@ -149,7 +149,7 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		portInUse:        common.ServerDefaultPort,
 		ClientConnListener: &ClientConnListener{
 			Listener:             nil,
-			maxClientConnections: common.MaxClientConnections,
+			maxClientConnections: options.MaxClientConnections,
 		},
 	}
 	if options.MaxKeysPerDb == 0 {
@@ -159,7 +159,7 @@ func NewServerWithOptions(options *ServerOptions) *Server {
 		newServer.maxHashMapFields = common.HashMapMaxFields
 	}
 	if options.MaxClientConnections == 0 {
-		newServer.ClientConnListener.maxClientConnections = common.MaxClientConnections
+		newServer.ClientConnListener.maxClientConnections = common.DefaultMaxClientConnections
 	}
 
 	return newServer
@@ -456,7 +456,7 @@ func StartServer() {
 	connListener := &ClientConnListener{
 		Listener:             listener,
 		logger:               server.logger,
-		maxClientConnections: common.MaxClientConnections,
+		maxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
 	}
 	server.ClientConnListener = connListener
 

@@ -11,6 +11,6 @@ const (
 	DbMaxKeyCount uint32 = math.MaxUint32
 	// HashMapMaxFields is the maximum number of fields a HashMap can hold.
 	HashMapMaxFields uint32 = math.MaxUint32
-	// MaxClientConnections is the maximum number of client connections.
-	MaxClientConnections uint32 = 1000
+	// DefaultMaxClientConnections is the maximum number of client connections.
+	DefaultMaxClientConnections uint32 = 1000
 )
