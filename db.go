@@ -156,7 +156,7 @@ func (db *Database) SetString(key DatabaseKey, value string) {
 
 // DeleteKey deletes the specified keys and the values they are holding.
 // Returns the number of keys that were deleted.
-func (db *Database) DeleteKey(keys []DatabaseKey) uint32 {
+func (db *Database) DeleteKeys(keys []DatabaseKey) uint32 {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -167,6 +167,7 @@ func (db *Database) DeleteKey(keys []DatabaseKey) uint32 {
 			delete(db.storedData.stringData, key)
 			keysDeleted++
 			db.keyCount--
+			continue
 		}
 		_, ok = db.storedData.hashMapData[key]
 		if ok {
