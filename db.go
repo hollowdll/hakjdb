@@ -156,22 +156,22 @@ func (db *Database) SetString(key DatabaseKey, value string) {
 
 // DeleteKey deletes the specified keys and the values they are holding.
 // Returns the number of keys that were deleted.
-func (db *Database) DeleteKeys(keys []DatabaseKey) uint32 {
+func (db *Database) DeleteKeys(keys []string) uint32 {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
 	var keysDeleted uint32 = 0
 	for _, key := range keys {
-		_, ok := db.storedData.stringData[key]
+		_, ok := db.storedData.stringData[DatabaseKey(key)]
 		if ok {
-			delete(db.storedData.stringData, key)
+			delete(db.storedData.stringData, DatabaseKey(key))
 			keysDeleted++
 			db.keyCount--
 			continue
 		}
-		_, ok = db.storedData.hashMapData[key]
+		_, ok = db.storedData.hashMapData[DatabaseKey(key)]
 		if ok {
-			delete(db.storedData.hashMapData, key)
+			delete(db.storedData.hashMapData, DatabaseKey(key))
 			keysDeleted++
 			db.keyCount--
 		}
