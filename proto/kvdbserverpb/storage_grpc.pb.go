@@ -29,7 +29,7 @@ type StorageServiceClient interface {
 	SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error)
 	// GetString returns the value a String key is holding.
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
-	// DeleteKey deletes a key and its value.
+	// DeleteKey deletes the specified keys and the values they are holding.
 	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
 	// DeleteAllKeys deletes all the keys of a database.
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
@@ -156,7 +156,7 @@ type StorageServiceServer interface {
 	SetString(context.Context, *SetStringRequest) (*SetStringResponse, error)
 	// GetString returns the value a String key is holding.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
-	// DeleteKey deletes a key and its value.
+	// DeleteKey deletes the specified keys and the values they are holding.
 	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
 	// DeleteAllKeys deletes all the keys of a database.
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
