@@ -339,7 +339,7 @@ func TestDeleteKey(t *testing.T) {
 		req := &kvdbserverpb.DeleteKeyRequest{Keys: []string{"key1"}}
 		res, err := server.DeleteKey(ctxMd, req)
 		require.Error(t, err, "expected error")
-		require.Nil(t, res, "expected response to be nil")
+		require.Nil(t, res)
 
 		st, ok := status.FromError(err)
 		require.NotNil(t, st)
@@ -355,7 +355,7 @@ func TestDeleteKey(t *testing.T) {
 
 		reqCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
 		_, err := server.CreateDatabase(context.Background(), reqCreate)
-		require.NoErrorf(t, err, "expected no error; error = %s", err)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
 
 		req := &kvdbserverpb.DeleteKeyRequest{Keys: []string{"key1"}}
 		res, err := server.DeleteKey(ctxMd, req)
@@ -377,14 +377,14 @@ func TestDeleteKey(t *testing.T) {
 
 		reqSet := &kvdbserverpb.SetStringRequest{Key: "key1", Value: "v"}
 		_, err = server.SetString(ctxMd, reqSet)
-		require.NoErrorf(t, err, "expected no error; error = %s", err)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
 
 		reqGet := &kvdbserverpb.DeleteKeyRequest{Keys: []string{"key1", "key2", "key3"}}
 		res, err := server.DeleteKey(ctxMd, reqGet)
 		var expected uint32 = 1
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
-		assert.Equalf(t, expected, res.KeysDeleted, "expected keys deleted = %v; got = %v", expected, res.KeysDeleted)
+		assert.Equalf(t, expected, res.KeysDeleted, "expected keys deleted = %d; got = %d", expected, res.KeysDeleted)
 	})
 }
 
