@@ -4,7 +4,7 @@
 kvdb-cli hashmap delete [key] [field ...] [OPTIONS]
 ```
 
-Removes the specified fields from the HashMap stored at a key.
+Removes the specified fields from the HashMap stored at a key. Ignores fields that do not exist.
 
 This command can remove multiple fields.
 

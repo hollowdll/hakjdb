@@ -30,6 +30,7 @@ type StorageServiceClient interface {
 	// GetString returns the value a String key is holding.
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
 	// DeleteKey deletes the specified keys and the values they are holding.
+	// Ignores keys that do not exist.
 	DeleteKey(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*DeleteKeyResponse, error)
 	// DeleteAllKeys deletes all the keys of a database.
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
@@ -42,6 +43,7 @@ type StorageServiceClient interface {
 	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
 	GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error)
 	// DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
+	// Ignores fields that do not exist.
 	DeleteHashMapFields(ctx context.Context, in *DeleteHashMapFieldsRequest, opts ...grpc.CallOption) (*DeleteHashMapFieldsResponse, error)
 	// GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
 	GetAllHashMapFieldsAndValues(ctx context.Context, in *GetAllHashMapFieldsAndValuesRequest, opts ...grpc.CallOption) (*GetAllHashMapFieldsAndValuesResponse, error)
@@ -157,6 +159,7 @@ type StorageServiceServer interface {
 	// GetString returns the value a String key is holding.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
 	// DeleteKey deletes the specified keys and the values they are holding.
+	// Ignores keys that do not exist.
 	DeleteKey(context.Context, *DeleteKeyRequest) (*DeleteKeyResponse, error)
 	// DeleteAllKeys deletes all the keys of a database.
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
@@ -169,6 +172,7 @@ type StorageServiceServer interface {
 	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
 	GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error)
 	// DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
+	// Ignores fields that do not exist.
 	DeleteHashMapFields(context.Context, *DeleteHashMapFieldsRequest) (*DeleteHashMapFieldsResponse, error)
 	// GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.
 	GetAllHashMapFieldsAndValues(context.Context, *GetAllHashMapFieldsAndValuesRequest) (*GetAllHashMapFieldsAndValuesResponse, error)

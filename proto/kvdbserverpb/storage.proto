@@ -127,6 +127,7 @@ service StorageService {
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
 
     // DeleteKey deletes the specified keys and the values they are holding.
+    // Ignores keys that do not exist.
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
 
     // DeleteAllKeys deletes all the keys of a database.
@@ -144,6 +145,7 @@ service StorageService {
     rpc GetHashMapFieldValue(GetHashMapFieldValueRequest) returns (GetHashMapFieldValueResponse) {}
 
     // DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
+    // Ignores fields that do not exist.
     rpc DeleteHashMapFields(DeleteHashMapFieldsRequest) returns (DeleteHashMapFieldsResponse) {}
 
     // GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.

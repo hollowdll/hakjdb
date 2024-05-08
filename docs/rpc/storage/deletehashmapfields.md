@@ -1,6 +1,6 @@
 # DeleteHashMapFields
 
-DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
+DeleteHashMapFields removes the specified fields from the HashMap stored at a key. Ignores fields that do not exist.
 
 ## Request
 
