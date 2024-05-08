@@ -12,12 +12,12 @@ import (
 )
 
 var cmdDeleteKey = &cobra.Command{
-	Use:   "delete [key]",
-	Short: "Delete a key and its value",
-	Long:  "Deletes a key and the value it is holding.",
-	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+	Use:   "delete [key ...]",
+	Short: "Delete keys and their values",
+	Long:  "Deletes the specified keys and the values they are holding.",
+	Args:  cobra.MatchAll(cobra.MinimumNArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteKey(args[0])
+		deleteKey(args[0:])
 	},
 }
 
@@ -25,7 +25,7 @@ func init() {
 	cmdDeleteKey.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
-func deleteKey(key string) {
+func deleteKey(keys []string) {
 	md := client.GetBaseGrpcMetadata()
 	if len(dbName) > 0 {
 		md.Set(common.GrpcMetadataKeyDbName, dbName)
@@ -34,12 +34,8 @@ func deleteKey(key string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	response, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserverpb.DeleteKeyRequest{Key: key})
+	res, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserverpb.DeleteKeyRequest{Keys: keys})
 	client.CheckGrpcError(err)
 
-	if response.Ok {
-		fmt.Println("true")
-	} else {
-		fmt.Println("false")
-	}
+	fmt.Printf("%d\n", res.KeysDeleted)
 }
