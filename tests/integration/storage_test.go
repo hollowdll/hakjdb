@@ -63,41 +63,45 @@ func TestSetGetDeleteString(t *testing.T) {
 	ctx, cancel := context.WithTimeout(ctxMd, ctxTimeout)
 	defer cancel()
 
-	req1 := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
-	res1, err := databaseClient.CreateDatabase(ctx, req1)
+	reqCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
+	resCreate, err := databaseClient.CreateDatabase(ctx, reqCreate)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
-	require.NotNil(t, res1)
+	require.NotNil(t, resCreate)
 
-	req2 := &kvdbserverpb.SetStringRequest{Key: key, Value: value}
-	res2, err := storageClient.SetString(ctx, req2)
+	reqSet := &kvdbserverpb.SetStringRequest{Key: key, Value: value}
+	resSet, err := storageClient.SetString(ctx, reqSet)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
-	require.NotNil(t, res2)
+	require.NotNil(t, resSet)
 
-	req3 := &kvdbserverpb.GetStringRequest{Key: key}
-	res3, err := storageClient.GetString(ctx, req3)
+	expectedOk := true
+	expectedValue := "value1"
+	reqGet := &kvdbserverpb.GetStringRequest{Key: key}
+	resGet, err := storageClient.GetString(ctx, reqGet)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
-	require.NotNil(t, res3)
-	assert.Equal(t, value, res3.Value, "expected value = %s; got = %s", value, res3.Value)
-	assert.Equal(t, true, res3.Ok, "expected ok = %v; got = %v", true, res3.Ok)
+	require.NotNil(t, resGet)
+	assert.Equal(t, expectedValue, resGet.Value, "expected value = %s; got = %s", expectedValue, resGet.Value)
+	assert.Equal(t, expectedOk, resGet.Ok, "expected ok = %v; got = %v", expectedOk, resGet.Ok)
 
-	req4 := &kvdbserverpb.DeleteKeyRequest{Key: key}
-	res4, err := storageClient.DeleteKey(ctx, req4)
+	var expectedKeysDeleted uint32 = 1
+	reqDel := &kvdbserverpb.DeleteKeyRequest{Keys: []string{key}}
+	resDel, err := storageClient.DeleteKey(ctx, reqDel)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
-	require.NotNil(t, res4)
-	assert.Equal(t, true, res4.Ok, "expected ok = %v; got = %v", true, res4.Ok)
+	require.NotNil(t, resDel)
+	assert.Equal(t, expectedKeysDeleted, resDel.KeysDeleted, "expected keys deleted = %d; got = %d", expectedKeysDeleted, resDel.KeysDeleted)
 
-	req5 := &kvdbserverpb.GetStringRequest{Key: key}
-	res5, err := storageClient.GetString(ctx, req5)
+	expectedOk = false
+	expectedValue = ""
+	resGet, err = storageClient.GetString(ctx, reqGet)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
-	require.NotNil(t, res5)
-	assert.Equal(t, "", res5.Value, "expected empty string; got = %s", value, res5.Value)
-	assert.Equal(t, false, res5.Ok, "expected ok = %v; got = %v", false, res5.Ok)
+	require.NotNil(t, resGet)
+	assert.Equal(t, expectedValue, resGet.Value, "expected empty string; got = %s", expectedValue, resGet.Value)
+	assert.Equal(t, expectedOk, resGet.Ok, "expected ok = %v; got = %v", expectedOk, resGet.Ok)
 
-	req6 := &kvdbserverpb.DeleteKeyRequest{Key: key}
-	res6, err := storageClient.DeleteKey(ctx, req6)
+	expectedKeysDeleted = 0
+	resDel, err = storageClient.DeleteKey(ctx, reqDel)
 	require.NoErrorf(t, err, "expected no error; error = %v", err)
-	require.NotNil(t, res6)
-	assert.Equal(t, false, res6.Ok, "expected ok = %v; got = %v", false, res6.Ok)
+	require.NotNil(t, resDel)
+	assert.Equal(t, expectedKeysDeleted, resDel.KeysDeleted, "expected keys deleted = %d; got = %d", expectedKeysDeleted, resDel.KeysDeleted)
 }
 
 func TestDeleteAllKeys(t *testing.T) {

@@ -38,13 +38,13 @@ message GetStringResponse {
 }
 
 message DeleteKeyRequest {
-    // The key to delete.
-    string key = 1;
+    // The keys to delete.
+    repeated string keys = 1;
 }
 
 message DeleteKeyResponse {
-    // True if the key was deleted. False if it doesn't exist.
-    bool ok = 1;
+    // The number of keys that were deleted.
+    uint32 keys_deleted = 1;
 }
 
 message DeleteAllKeysRequest {}
@@ -126,7 +126,8 @@ service StorageService {
     // GetString returns the value a String key is holding.
     rpc GetString(GetStringRequest) returns (GetStringResponse) {}
 
-    // DeleteKey deletes a key and its value.
+    // DeleteKey deletes the specified keys and the values they are holding.
+    // Ignores keys that do not exist.
     rpc DeleteKey(DeleteKeyRequest) returns (DeleteKeyResponse) {}
 
     // DeleteAllKeys deletes all the keys of a database.
@@ -144,6 +145,7 @@ service StorageService {
     rpc GetHashMapFieldValue(GetHashMapFieldValueRequest) returns (GetHashMapFieldValueResponse) {}
 
     // DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
+    // Ignores fields that do not exist.
     rpc DeleteHashMapFields(DeleteHashMapFieldsRequest) returns (DeleteHashMapFieldsResponse) {}
 
     // GetAllHashMapFieldsAndValues returns all the fields and values of the HashMap stored at a key.

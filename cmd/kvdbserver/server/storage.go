@@ -117,12 +117,9 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserverpb.DeleteKeyReque
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	ok := s.databases[dbName].DeleteKey(kvdb.DatabaseKey(req.GetKey()))
-	if !ok {
-		return &kvdbserverpb.DeleteKeyResponse{Ok: false}, nil
-	}
+	keysDeleted := s.databases[dbName].DeleteKeys(req.Keys)
 
-	return &kvdbserverpb.DeleteKeyResponse{Ok: true}, nil
+	return &kvdbserverpb.DeleteKeyResponse{KeysDeleted: keysDeleted}, nil
 }
 
 // DeleteAllKeys is the implementation of RPC DeleteAllKeys.

@@ -1,14 +1,16 @@
 # kvdb-cli delete
 
 ```sh
-kvdb-cli delete [key] [OPTIONS]
+kvdb-cli delete [key ...] [OPTIONS]
 ```
 
-Deletes a key and the value it is holding.
+Deletes the specified keys and the values they are holding. Ignores keys that do not exist.
+
+This command can delete multiple keys.
 
 ## Arguments
 
-- `key` - The name of the key.
+- `key` - Key to delete.
 
 ## Options
 
@@ -17,8 +19,7 @@ Deletes a key and the value it is holding.
 
 ## Returns
 
-- `true` if the key exists and was deleted.
-- `false` if the key doesn't exist.
+- The number of keys that were deleted.
 - Error message if not successful.
 
 ## Examples
@@ -26,13 +27,17 @@ Deletes a key and the value it is holding.
 ```sh
 # use the default database that is configured in the config file
 kvdb-cli delete key1
-true
+1
 
 # specify the database to use
 kvdb-cli delete key2 -d default
-true
+1
 
 # the key doesn't exist anymore
 kvdb-cli delete key1
-false
+0
+
+# delete multiple keys
+kvdb-cli delete key3 key4 key5
+3
 ```

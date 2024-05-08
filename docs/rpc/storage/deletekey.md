@@ -1,6 +1,6 @@
 # DeleteKey
 
-DeleteKey deletes a key and its value.
+DeleteKey deletes the specified keys and the values they are holding. Ignores keys that do not exist.
 
 ## Request
 

@@ -275,28 +275,26 @@ kvdb-cli get message123 -d db0
 (None)
 ```
 
-## Delete key
+## Delete keys
 
-Deleting a key removes the key and the value it's holding. Does nothing if the key does not exist.
-
-To delete a key, use command:
+To delete keys, use command:
 ```sh
-kvdb-cli delete [key] -d db-name
+kvdb-cli delete [key ...] -d db-name
 ```
-- [key] is the name of the key to delete.
+- [key] is the key to delete.
 - Option -d specifies the name of the database. If not specified, the default database is used.
 
 For example:
 ```sh
 kvdb-cli delete message -d db0
-true
+1
 ```
-This deletes key "message" in database db0. If the key exists and was deleted, this returns true.
+This deletes key "message" in database db0. The number of keys that were deleted is returned.
 
-If the key does not exist, this returns false:
+The key doesn't exist anymore so 0 keys were deleted:
 ```sh
 kvdb-cli delete message -d db0
-false
+0
 ```
 
 ## Delete all keys

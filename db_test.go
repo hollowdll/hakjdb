@@ -110,8 +110,15 @@ func TestDatabaseSetString(t *testing.T) {
 func TestDatabaseDeleteKey(t *testing.T) {
 	t.Run("DeleteNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")
-		result := db.DeleteKey("key1")
-		expectedResult := false
+		result := db.DeleteKeys([]string{"key1"})
+		var expectedResult uint32 = 0
+
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+
+		result = db.DeleteKeys([]string{"key2", "key3"})
+		expectedResult = 0
 
 		if result != expectedResult {
 			t.Errorf("expected result = %v; got = %v", expectedResult, result)
@@ -122,25 +129,76 @@ func TestDatabaseDeleteKey(t *testing.T) {
 		db := newDatabase("test")
 		db.SetString("key1", "value1")
 
-		result := db.DeleteKey("key1")
-		expectedResult := true
+		result := db.DeleteKeys([]string{"key1"})
+		var expectedResult uint32 = 1
 		if result != expectedResult {
 			t.Errorf("expected result = %v; got = %v", expectedResult, result)
 		}
 
-		result = db.DeleteKey("key1")
-		expectedResult = false
+		result = db.DeleteKeys([]string{"key1"})
+		expectedResult = 0
 		if result != expectedResult {
 			t.Errorf("expected result = %v; got = %v", expectedResult, result)
 		}
 	})
 
-	t.Run("DatabaseIsNotUpdatedIfKeyNonExistent", func(t *testing.T) {
+	t.Run("DeleteMultipleKeys", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetString("key1", "val1")
+		db.SetString("key2", "val2")
+		db.SetString("key3", "val3")
+
+		result := db.DeleteKeys([]string{"key1", "key2", "key3"})
+		var expectedResult uint32 = 3
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+
+		result = db.DeleteKeys([]string{"key2", "key3"})
+		expectedResult = 0
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+	})
+
+	t.Run("DeleteMultipleKeysButNotAll", func(t *testing.T) {
+		db := newDatabase("test")
+		db.SetString("key1", "val1")
+		db.SetString("key2", "val2")
+		db.SetString("key3", "val3")
+		db.SetString("key4", "val4")
+
+		result := db.DeleteKeys([]string{"key3", "key4"})
+		var expectedResult uint32 = 2
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+
+		result = db.DeleteKeys([]string{"key2"})
+		expectedResult = 1
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+
+		result = db.DeleteKeys([]string{"key2", "key3", "key4"})
+		expectedResult = 0
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+
+		result = db.DeleteKeys([]string{"key1", "key2", "key3", "key4"})
+		expectedResult = 1
+		if result != expectedResult {
+			t.Errorf("expected result = %v; got = %v", expectedResult, result)
+		}
+	})
+
+	t.Run("DatabaseIsNotUpdatedIfKeyNotExists", func(t *testing.T) {
 		db := newDatabase("test")
 		originalTime := db.UpdatedAt
 
 		time.Sleep(10 * time.Millisecond)
-		db.DeleteKey("key1")
+		db.DeleteKeys([]string{"key1"})
 
 		updatedTime := db.UpdatedAt
 		if !updatedTime.Equal(originalTime) {
@@ -154,7 +212,7 @@ func TestDatabaseDeleteKey(t *testing.T) {
 
 		originalTime := db.UpdatedAt
 		time.Sleep(10 * time.Millisecond)
-		db.DeleteKey("key1")
+		db.DeleteKeys([]string{"key1"})
 
 		updatedTime := db.UpdatedAt
 		if !updatedTime.After(originalTime) {
@@ -216,7 +274,7 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 		t.Fatalf("key count should be 2 but got %d", count)
 	}
 
-	db.DeleteKey("key1")
+	db.DeleteKeys([]string{"key1"})
 	count = db.GetKeyCount()
 	if count != 1 {
 		t.Fatalf("key count should be 1 but got %d", count)

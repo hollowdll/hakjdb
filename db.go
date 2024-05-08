@@ -154,30 +154,34 @@ func (db *Database) SetString(key DatabaseKey, value string) {
 	db.update()
 }
 
-// DeleteKey deletes a key and the value it is holding.
-// Returns true if the key exists and it was deleted.
-// Returns false if the key doesn't exist.
-func (db *Database) DeleteKey(key DatabaseKey) bool {
+// DeleteKey deletes the specified keys and the values they are holding.
+// Returns the number of keys that were deleted.
+func (db *Database) DeleteKeys(keys []string) uint32 {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
-	if !db.keyExists(key) {
-		return false
+	var keysDeleted uint32 = 0
+	for _, key := range keys {
+		_, ok := db.storedData.stringData[DatabaseKey(key)]
+		if ok {
+			delete(db.storedData.stringData, DatabaseKey(key))
+			keysDeleted++
+			db.keyCount--
+			continue
+		}
+		_, ok = db.storedData.hashMapData[DatabaseKey(key)]
+		if ok {
+			delete(db.storedData.hashMapData, DatabaseKey(key))
+			keysDeleted++
+			db.keyCount--
+		}
 	}
 
-	_, exists := db.storedData.stringData[key]
-	if exists {
-		delete(db.storedData.stringData, key)
-		db.keyCount--
+	if keysDeleted > 0 {
+		db.update()
 	}
-	_, exists = db.storedData.hashMapData[key]
-	if exists {
-		delete(db.storedData.hashMapData, key)
-		db.keyCount--
-	}
-	db.update()
 
-	return true
+	return keysDeleted
 }
 
 // DeleteAllKeys deletes all the keys.
