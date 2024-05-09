@@ -36,8 +36,9 @@ type ClientConnListener struct {
 	mu                   sync.RWMutex
 }
 
-func NewClientConnListener(server *Server, maxConnections uint32) *ClientConnListener {
+func NewClientConnListener(listener net.Listener, server *Server, maxConnections uint32) *ClientConnListener {
 	return &ClientConnListener{
+		Listener:             listener,
 		logger:               server.logger,
 		clientConnections:    0,
 		maxClientConnections: maxConnections,
@@ -472,11 +473,8 @@ func StartServer() {
 		server.logger.Fatalf("Failed to listen: %v", err)
 	}
 	server.logger.Infof("Server listening at %v", listener.Addr())
-	connListener := &ClientConnListener{
-		Listener:             listener,
-		logger:               server.logger,
-		maxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
-	}
+
+	connListener := NewClientConnListener(listener, server, viper.GetUint32(ConfigKeyMaxClientConnections))
 	server.ClientConnListener = connListener
 
 	if err := grpcServer.Serve(connListener); err != nil {

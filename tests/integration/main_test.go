@@ -59,12 +59,12 @@ func setupServer() *grpc.Server {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
 	fmt.Fprintf(os.Stderr, "test server listening at %v\n", listener.Addr())
-	connListener := kvdbs.NewClientConnListener(server, common.DefaultMaxClientConnections)
+	connListener := kvdbs.NewClientConnListener(listener, server, common.DefaultMaxClientConnections)
 	server.ClientConnListener = connListener
 
 	// Run in goroutine so execution won't be blocked.
 	go func() {
-		if err := grpcServer.Serve(listener); err != nil {
+		if err := grpcServer.Serve(connListener); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
 		}
 	}()
@@ -110,12 +110,12 @@ func setupTlsServer() *grpc.Server {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
 	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", listener.Addr())
-	connListener := kvdbs.NewClientConnListener(server, common.DefaultMaxClientConnections)
+	connListener := kvdbs.NewClientConnListener(listener, server, common.DefaultMaxClientConnections)
 	server.ClientConnListener = connListener
 
 	// Run in goroutine so execution won't be blocked.
 	go func() {
-		if err := grpcServer.Serve(listener); err != nil {
+		if err := grpcServer.Serve(connListener); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
 		}
 	}()

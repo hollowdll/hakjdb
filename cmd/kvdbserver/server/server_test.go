@@ -17,7 +17,7 @@ func TestGetServerInfo(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		s := server.NewServer()
 		s.DisableLogger()
-		connListener := server.NewClientConnListener(s, 1000)
+		connListener := server.NewClientConnListener(nil, s, 1000)
 		s.ClientConnListener = connListener
 
 		req := &kvdbserverpb.GetServerInfoRequest{}
