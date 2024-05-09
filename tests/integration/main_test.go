@@ -58,11 +58,10 @@ func setupServer() *grpc.Server {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
-	fmt.Fprintf(os.Stderr, "test server listening at %v\n", listener.Addr())
 	connListener := kvdbs.NewClientConnListener(listener, server, common.DefaultMaxClientConnections)
 	server.ClientConnListener = connListener
+	fmt.Fprintf(os.Stderr, "test server listening at %v\n", listener.Addr())
 
-	// Run in goroutine so execution won't be blocked.
 	go func() {
 		if err := grpcServer.Serve(connListener); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
@@ -109,11 +108,10 @@ func setupTlsServer() *grpc.Server {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
-	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", listener.Addr())
 	connListener := kvdbs.NewClientConnListener(listener, server, common.DefaultMaxClientConnections)
 	server.ClientConnListener = connListener
+	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", listener.Addr())
 
-	// Run in goroutine so execution won't be blocked.
 	go func() {
 		if err := grpcServer.Serve(connListener); err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
@@ -121,6 +119,35 @@ func setupTlsServer() *grpc.Server {
 	}()
 
 	return grpcServer
+}
+
+func startMaxClientConnectionsTestServer(maxConnections uint32) (*grpc.Server, int) {
+	server := kvdbs.NewServer()
+	server.DisableLogger()
+	server.CreateDefaultDatabase("default")
+
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.AuthInterceptor))
+	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
+	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
+
+	listener, err := net.Listen("tcp", ":0")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	server.SetPort(uint16(port))
+	connListener := kvdbs.NewClientConnListener(listener, server, maxConnections)
+	server.ClientConnListener = connListener
+	fmt.Fprintf(os.Stderr, "Max client connections test server listening at %v\n", listener.Addr())
+
+	go func() {
+		if err := grpcServer.Serve(connListener); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
+		}
+	}()
+
+	return grpcServer, port
 }
 
 func getServerAddress() string {
