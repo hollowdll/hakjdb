@@ -147,14 +147,16 @@ Show verbose test result output:
 go test -v ./...
 ```
 
-## Integration test environment variables
+## Integration tests
 
-Integration test environment is configurable. Below is a list of environment variables that can be used when running integration tests.
+Running the integration tests starts test servers both with and without TLS. The servers are stopped after the tests have finished. 
 
-- `KVDB_TEST_PORT`: Test server TCP/IP port. Default is 12350.
-- `KVDB_TLS_TEST_PORT`: TLS test server TCP/IP port. Default is 12351.
+The operating system assigns random TCP ports for the test servers. You can output the assigned ports to the console by running the integration tests with `-v` flag.
 
-Running the integration tests starts test servers both with and without TLS. The servers are stopped after the tests have finished. If the default ports are not available, you can change the ports with the environment variables above.
+For example:
+```sh
+go test -v ./tests/integration
+```
 
 # License
 
