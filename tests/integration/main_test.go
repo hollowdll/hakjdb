@@ -10,57 +10,50 @@ import (
 	"time"
 
 	kvdbs "github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const (
-	ctxTimeout       = time.Second * 5
-	defaultPort      = 12350
-	defaultTlsPort   = 12351
-	portConfigKey    = "test_port"
-	tlsPortConfigKey = "tls_test_port"
+const ctxTimeout = time.Second * 5
+
+var (
+	testServerPort    = 0
+	tlsTestServerPort = 0
 )
 
 func TestMain(m *testing.M) {
-	viper.SetEnvPrefix(kvdbs.EnvPrefix)
-	viper.AutomaticEnv()
-
-	fmt.Fprintln(os.Stderr, "setting up test server ...")
-	server := setupServer()
-	fmt.Fprintln(os.Stderr, "setting up TLS test server ...")
-	tlsServer := setupTlsServer()
+	server, port := startTestServer(1000)
 	defer server.Stop()
+	testServerPort = port
+	tlsServer, port := startTlsTestServer(1000)
 	defer tlsServer.Stop()
+	tlsTestServerPort = port
 
 	code := m.Run()
 	os.Exit(code)
 }
 
-func setupServer() *grpc.Server {
+func startTestServer(maxConnections uint32) (*grpc.Server, int) {
 	server := kvdbs.NewServer()
 	server.DisableLogger()
 	server.CreateDefaultDatabase("default")
-
-	viper.SetDefault(portConfigKey, defaultPort)
-	server.SetPort(viper.GetUint16(portConfigKey))
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.AuthInterceptor))
 	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(portConfigKey)))
+	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
-	connListener := kvdbs.NewClientConnListener(listener, server, common.DefaultMaxClientConnections)
+	port := listener.Addr().(*net.TCPAddr).Port
+	server.SetPort(uint16(port))
+	connListener := kvdbs.NewClientConnListener(listener, server, maxConnections)
 	server.ClientConnListener = connListener
-	fmt.Fprintf(os.Stderr, "test server listening at %v\n", listener.Addr())
+	fmt.Fprintf(os.Stderr, "startTestServer listening at %v\n", listener.Addr())
 
 	go func() {
 		if err := grpcServer.Serve(connListener); err != nil {
@@ -68,16 +61,13 @@ func setupServer() *grpc.Server {
 		}
 	}()
 
-	return grpcServer
+	return grpcServer, port
 }
 
-func setupTlsServer() *grpc.Server {
+func startTlsTestServer(maxConnections uint32) (*grpc.Server, int) {
 	server := kvdbs.NewServer()
 	server.DisableLogger()
 	server.CreateDefaultDatabase("default")
-
-	viper.SetDefault(tlsPortConfigKey, defaultTlsPort)
-	server.SetPort(viper.GetUint16(tlsPortConfigKey))
 
 	certBytes, err := os.ReadFile("../../tls/test-cert/kvdbserver.crt")
 	if err != nil {
@@ -104,33 +94,6 @@ func setupTlsServer() *grpc.Server {
 	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
 	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", viper.GetUint16(tlsPortConfigKey)))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
-	}
-	connListener := kvdbs.NewClientConnListener(listener, server, common.DefaultMaxClientConnections)
-	server.ClientConnListener = connListener
-	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", listener.Addr())
-
-	go func() {
-		if err := grpcServer.Serve(connListener); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
-		}
-	}()
-
-	return grpcServer
-}
-
-func startMaxClientConnectionsTestServer(maxConnections uint32) (*grpc.Server, int) {
-	server := kvdbs.NewServer()
-	server.DisableLogger()
-	server.CreateDefaultDatabase("default")
-
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.AuthInterceptor))
-	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
-	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
-	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
-
 	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
@@ -139,7 +102,7 @@ func startMaxClientConnectionsTestServer(maxConnections uint32) (*grpc.Server, i
 	server.SetPort(uint16(port))
 	connListener := kvdbs.NewClientConnListener(listener, server, maxConnections)
 	server.ClientConnListener = connListener
-	fmt.Fprintf(os.Stderr, "Max client connections test server listening at %v\n", listener.Addr())
+	fmt.Fprintf(os.Stderr, "startTlsTestServer listening at %v\n", listener.Addr())
 
 	go func() {
 		if err := grpcServer.Serve(connListener); err != nil {
@@ -151,11 +114,11 @@ func startMaxClientConnectionsTestServer(maxConnections uint32) (*grpc.Server, i
 }
 
 func getServerAddress() string {
-	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16(portConfigKey))
+	return fmt.Sprintf("localhost:%d", testServerPort)
 }
 
 func getTlsServerAddress() string {
-	return fmt.Sprintf("%s:%d", common.ServerDefaultHost, viper.GetUint16(tlsPortConfigKey))
+	return fmt.Sprintf("localhost:%d", tlsTestServerPort)
 }
 
 func insecureConnection() (*grpc.ClientConn, error) {

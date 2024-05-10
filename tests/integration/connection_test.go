@@ -13,7 +13,7 @@ import (
 
 func TestMaxClientConnections(t *testing.T) {
 	var maxConnections uint32 = 5
-	server, port := startMaxClientConnectionsTestServer(maxConnections)
+	server, port := startTestServer(maxConnections)
 	defer server.Stop()
 	address := fmt.Sprintf("localhost:%d", port)
 	connections := make([]*grpc.ClientConn, maxConnections+5)
