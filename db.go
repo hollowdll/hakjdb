@@ -6,21 +6,18 @@ import (
 	"time"
 )
 
-// DatabaseKey represents key-value pair key. Key is stored as string.
-type DatabaseKey string
-
-// DatabaseData holds the data stored in a database.
+// databaseStoredData holds the data stored in a database.
 type databaseStoredData struct {
 	// stringData holds String keys.
-	stringData map[DatabaseKey]string
+	stringData map[string]string
 	// hashMapData holds HashMap keys.
-	hashMapData map[DatabaseKey]map[string]string
+	hashMapData map[string]map[string]string
 }
 
 func newDatabaseStoredData() *databaseStoredData {
 	return &databaseStoredData{
-		stringData:  make(map[DatabaseKey]string),
-		hashMapData: make(map[DatabaseKey]map[string]string),
+		stringData:  make(map[string]string),
+		hashMapData: make(map[string]map[string]string),
 	}
 }
 
@@ -61,7 +58,7 @@ func (db *Database) update() {
 }
 
 // keyExists returns true if the key exists in the database.
-func (db *Database) keyExists(key DatabaseKey) bool {
+func (db *Database) keyExists(key string) bool {
 	_, exists := db.storedData.stringData[key]
 	if exists {
 		return true
@@ -114,7 +111,7 @@ func CreateDatabase(name string) *Database {
 
 // GetTypeOfKey returns the data type of the key if it exists.
 // The returned bool is true if the key exists and false if it doesn't.
-func (db *Database) GetTypeOfKey(key DatabaseKey) (string, bool) {
+func (db *Database) GetTypeOfKey(key string) (string, bool) {
 	_, exists := db.storedData.stringData[key]
 	if exists {
 		return "String", true
@@ -129,7 +126,7 @@ func (db *Database) GetTypeOfKey(key DatabaseKey) (string, bool) {
 
 // GetString retrieves a string value using a key.
 // The returned bool is true if the key exists.
-func (db *Database) GetString(key DatabaseKey) (string, bool) {
+func (db *Database) GetString(key string) (string, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
@@ -139,7 +136,7 @@ func (db *Database) GetString(key DatabaseKey) (string, bool) {
 
 // SetString sets a string value using a key, overwriting previous value.
 // Creates the key if it doesn't exist.
-func (db *Database) SetString(key DatabaseKey, value string) {
+func (db *Database) SetString(key string, value string) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -154,7 +151,7 @@ func (db *Database) SetString(key DatabaseKey, value string) {
 	db.update()
 }
 
-// DeleteKey deletes the specified keys and the values they are holding.
+// DeleteKeys deletes the specified keys and the values they are holding.
 // Returns the number of keys that were deleted.
 func (db *Database) DeleteKeys(keys []string) uint32 {
 	db.mutex.Lock()
@@ -162,16 +159,16 @@ func (db *Database) DeleteKeys(keys []string) uint32 {
 
 	var keysDeleted uint32 = 0
 	for _, key := range keys {
-		_, ok := db.storedData.stringData[DatabaseKey(key)]
+		_, ok := db.storedData.stringData[string(key)]
 		if ok {
-			delete(db.storedData.stringData, DatabaseKey(key))
+			delete(db.storedData.stringData, string(key))
 			keysDeleted++
 			db.keyCount--
 			continue
 		}
-		_, ok = db.storedData.hashMapData[DatabaseKey(key)]
+		_, ok = db.storedData.hashMapData[string(key)]
 		if ok {
-			delete(db.storedData.hashMapData, DatabaseKey(key))
+			delete(db.storedData.hashMapData, string(key))
 			keysDeleted++
 			db.keyCount--
 		}
@@ -217,7 +214,7 @@ func (db *Database) GetKeys() []string {
 
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Creates the key if it doesn't exist. Returns the number of added fields.
-func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string, maxFieldLimit uint32) uint32 {
+func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLimit uint32) uint32 {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -253,7 +250,7 @@ func (db *Database) SetHashMap(key DatabaseKey, fields map[string]string, maxFie
 // GetHashMapFieldValue returns a single HashMap field value using a key.
 // The returned bool is true if the field exists in the HashMap,
 // or false if the key or field doesn't exist.
-func (db *Database) GetHashMapFieldValue(key DatabaseKey, field string) (string, bool) {
+func (db *Database) GetHashMapFieldValue(key string, field string) (string, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
@@ -268,7 +265,7 @@ func (db *Database) GetHashMapFieldValue(key DatabaseKey, field string) (string,
 
 // DeleteHashMapFields removes fields from a HashMap using a key.
 // Returns the number of removed fields. The returned bool is true if the key exists and holds a HashMap.
-func (db *Database) DeleteHashMapFields(key DatabaseKey, fields []string) (uint32, bool) {
+func (db *Database) DeleteHashMapFields(key string, fields []string) (uint32, bool) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -299,7 +296,7 @@ func (db *Database) DeleteHashMapFields(key DatabaseKey, fields []string) (uint3
 // GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap.
 // The returned map is empty if the key doesn't exist.
 // The returned bool is true if the key exists and holds a HashMap.
-func (db *Database) GetAllHashMapFieldsAndValues(key DatabaseKey) (map[string]string, bool) {
+func (db *Database) GetAllHashMapFieldsAndValues(key string) (map[string]string, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
@@ -312,7 +309,7 @@ func (db *Database) GetAllHashMapFieldsAndValues(key DatabaseKey) (map[string]st
 }
 
 // GetHashMapFieldCount returns the number of fields in a HashMap.
-func (db *Database) GetHashMapFieldCount(key DatabaseKey) uint32 {
+func (db *Database) GetHashMapFieldCount(key string) uint32 {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
