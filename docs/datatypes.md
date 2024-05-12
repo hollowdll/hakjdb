@@ -4,7 +4,7 @@
 
 String stores sequences of bytes encoded in UTF-8. This means that each character is represented by one or more bytes.
 
-It can be used to store text.
+It can be used to store text. For example, a JSON string.
 
 ## HashMap
 
