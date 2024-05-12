@@ -3,7 +3,7 @@ kvdb is an in-memory key-value store written in the Go programming language.
 
 It uses a simple client-server model and is designed to be easy to use. It can be used as a database, session storage, or cache. It may not be suitable for complex needs.
 
-Data is stored at keys of different types. You can store data ranging from basic string values to large objects.
+Data is stored at keys of different types. Each data type allows you to store different kind of data such as string values or objects.
 
 Instances are easily configurable with environment variables and a simple YAML file.
 
