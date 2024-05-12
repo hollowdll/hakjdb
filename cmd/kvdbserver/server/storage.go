@@ -31,7 +31,7 @@ func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserverpb.GetTypeOfKe
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	keyType, ok := s.databases[dbName].GetTypeOfKey(kvdb.DatabaseKey(req.Key))
+	keyType, ok := s.databases[dbName].GetTypeOfKey(req.Key)
 
 	return &kvdbserverpb.GetTypeOfKeyResponse{KeyType: keyType, Ok: ok}, nil
 }
@@ -57,7 +57,7 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserverpb.SetStringReque
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	if err := kvdb.ValidateDatabaseKey(kvdb.DatabaseKey(req.GetKey())); err != nil {
+	if err := kvdb.ValidateDatabaseKey(req.Key); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -65,7 +65,7 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserverpb.SetStringReque
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	s.databases[dbName].SetString(kvdb.DatabaseKey(req.GetKey()), req.GetValue())
+	s.databases[dbName].SetString(req.Key, req.GetValue())
 
 	return &kvdbserverpb.SetStringResponse{}, nil
 }
@@ -91,7 +91,7 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserverpb.GetStringReque
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	value, ok := s.databases[dbName].GetString(kvdb.DatabaseKey(req.GetKey()))
+	value, ok := s.databases[dbName].GetString(req.Key)
 
 	return &kvdbserverpb.GetStringResponse{Value: value, Ok: ok}, nil
 }
@@ -193,7 +193,7 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserverpb.SetHashMapReq
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	if err := kvdb.ValidateDatabaseKey(kvdb.DatabaseKey(req.GetKey())); err != nil {
+	if err := kvdb.ValidateDatabaseKey(req.Key); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -201,7 +201,7 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserverpb.SetHashMapReq
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	fieldsAdded := s.databases[dbName].SetHashMap(kvdb.DatabaseKey(req.Key), req.Fields, s.maxHashMapFields)
+	fieldsAdded := s.databases[dbName].SetHashMap(req.Key, req.Fields, s.maxHashMapFields)
 
 	return &kvdbserverpb.SetHashMapResponse{FieldsAdded: fieldsAdded}, nil
 }
@@ -227,7 +227,7 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserverpb.Get
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	value, ok := s.databases[dbName].GetHashMapFieldValue(kvdb.DatabaseKey(req.Key), req.Field)
+	value, ok := s.databases[dbName].GetHashMapFieldValue(req.Key, req.Field)
 
 	return &kvdbserverpb.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
 }
@@ -253,7 +253,7 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserverpb.Dele
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	fieldsRemoved, ok := s.databases[dbName].DeleteHashMapFields(kvdb.DatabaseKey(req.Key), req.Fields)
+	fieldsRemoved, ok := s.databases[dbName].DeleteHashMapFields(req.Key, req.Fields)
 
 	return &kvdbserverpb.DeleteHashMapFieldsResponse{FieldsRemoved: fieldsRemoved, Ok: ok}, nil
 }
@@ -279,7 +279,7 @@ func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserv
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(kvdb.DatabaseKey(req.Key))
+	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(req.Key)
 
 	return &kvdbserverpb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }

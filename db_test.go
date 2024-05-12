@@ -240,7 +240,7 @@ func TestDatabaseGetString(t *testing.T) {
 	t.Run("GetExistingKey", func(t *testing.T) {
 		db := newDatabase("test")
 		expectedValue := "value1"
-		key := DatabaseKey("key1")
+		key := "key1"
 		db.SetString(key, expectedValue)
 		value, found := db.GetString(key)
 
@@ -294,7 +294,7 @@ func TestDeleteAllKeys(t *testing.T) {
 
 	t.Run("MultipleKeys", func(t *testing.T) {
 		db := newDatabase("test")
-		keys := []DatabaseKey{"key1", "key2", "key3"}
+		keys := []string{"key1", "key2", "key3"}
 		for _, key := range keys {
 			db.SetString(key, "value")
 		}
@@ -327,7 +327,7 @@ func TestGetKeys(t *testing.T) {
 		db := newDatabase("test")
 		keys := []string{"key1", "key2", "key3"}
 		for _, key := range keys {
-			db.SetString(DatabaseKey(key), "value")
+			db.SetString(key, "value")
 		}
 
 		actualKeys := db.GetKeys()
@@ -447,7 +447,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 
 	t.Run("GetNonExistentField", func(t *testing.T) {
 		db := newDatabase("test")
-		key := DatabaseKey("key1")
+		key := "key1"
 		db.SetHashMap(key, fields, common.HashMapMaxFields)
 		value, ok := db.GetHashMapFieldValue(key, "field12345")
 
@@ -464,7 +464,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 
 	t.Run("GetExistingKeyAndField", func(t *testing.T) {
 		db := newDatabase("test")
-		key := DatabaseKey("key1")
+		key := "key1"
 		db.SetHashMap(key, fields, common.HashMapMaxFields)
 		value, ok := db.GetHashMapFieldValue(key, "field2")
 
@@ -577,7 +577,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 
 	t.Run("GetExistingKey", func(t *testing.T) {
 		db := newDatabase("test")
-		key := DatabaseKey("key1")
+		key := "key1"
 		db.SetHashMap(key, fields, common.HashMapMaxFields)
 		result, ok := db.GetAllHashMapFieldsAndValues(key)
 

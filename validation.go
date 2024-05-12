@@ -50,7 +50,7 @@ func ValidateDatabaseName(name string) error {
 
 // ValidateDatabaseKey validates database key.
 // Returns error if validation error is matched.
-func ValidateDatabaseKey(key DatabaseKey) error {
+func ValidateDatabaseKey(key string) error {
 	if isBlank(string(key)) {
 		return kvdberrors.ErrDatabaseKeyRequired
 	}

@@ -62,7 +62,7 @@ func TestValidateDatabaseName(t *testing.T) {
 func TestValidateDatabaseKey(t *testing.T) {
 	maxKeySize := 1024
 	type TestCase struct {
-		key   DatabaseKey
+		key   string
 		valid bool
 	}
 	cases := []TestCase{
@@ -87,11 +87,11 @@ func TestValidateDatabaseKey(t *testing.T) {
 			valid: true,
 		},
 		{
-			key:   DatabaseKey(strings.Repeat("a", maxKeySize)),
+			key:   strings.Repeat("a", maxKeySize),
 			valid: true,
 		},
 		{
-			key:   DatabaseKey(strings.Repeat("a", maxKeySize+1)),
+			key:   strings.Repeat("a", maxKeySize+1),
 			valid: false,
 		},
 	}
