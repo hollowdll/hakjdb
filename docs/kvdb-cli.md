@@ -54,6 +54,8 @@ Directory `tls/test-cert/` contains a certificate for testing purposes. Use it i
 - [kvdb-cli deletekeys](./kvdb-cli-commands/kvdb-cli-deletekeys.md)
 - [kvdb-cli getkeys](./kvdb-cli-commands/kvdb-cli-getkeys.md)
 - [kvdb-cli keytype](./kvdb-cli-commands/kvdb-cli-keytype.md)
+- [kvdb-cli set](./kvdb-cli-commands/kvdb-cli-set.md)
+- [kvdb-cli get](./kvdb-cli-commands/kvdb-cli-get.md)
 - [kvdb-cli connect show](./kvdb-cli-commands/connect/kvdb-cli-connect-show.md)
 - [kvdb-cli connect set](./kvdb-cli-commands/connect/kvdb-cli-connect-set.md)
 - [kvdb-cli db create](./kvdb-cli-commands/db/kvdb-cli-db-create.md)
