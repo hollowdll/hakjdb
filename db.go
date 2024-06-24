@@ -1,6 +1,7 @@
 package kvdb
 
 import (
+	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"reflect"
 	"sync"
 	"time"
@@ -247,20 +248,29 @@ func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLim
 	return fieldsAdded
 }
 
-// GetHashMapFieldValue returns a single HashMap field value using a key.
-// The returned bool is true if the field exists in the HashMap,
-// or false if the key or field doesn't exist.
-func (db *Database) GetHashMapFieldValue(key string, field string) (string, bool) {
+// GetHashMapFieldValue returns HashMap field values using a key.
+// The returned bool is true if the key exists,
+// or false if the key doesn't exist.
+func (db *Database) GetHashMapFieldValue(key string, fields []string) (map[string]*kvdbserverpb.HashMapFieldValue, bool) {
 	db.mutex.RLock()
 	defer db.mutex.RUnlock()
 
-	keyValue, exists := db.storedData.hashMapData[key]
-	if !exists {
-		return "", false
+	fieldValueMap := make(map[string]*kvdbserverpb.HashMapFieldValue)
+	keyValue, keyExists := db.storedData.hashMapData[key]
+	if !keyExists {
+		return fieldValueMap, false
 	}
 
-	fieldValue, exists := keyValue[field]
-	return fieldValue, exists
+	for _, field := range fields {
+		value, ok := keyValue[field]
+		fieldValue := &kvdbserverpb.HashMapFieldValue{
+			Value: value,
+			Ok:    ok,
+		}
+		fieldValueMap[field] = fieldValue
+	}
+
+	return fieldValueMap, keyExists
 }
 
 // DeleteHashMapFields removes fields from a HashMap using a key.

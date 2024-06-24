@@ -227,9 +227,9 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserverpb.Get
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	value, ok := s.databases[dbName].GetHashMapFieldValue(req.Key, req.Field)
+	value, ok := s.databases[dbName].GetHashMapFieldValue(req.Key, req.Fields)
 
-	return &kvdbserverpb.GetHashMapFieldValueResponse{Value: value, Ok: ok}, nil
+	return &kvdbserverpb.GetHashMapFieldValueResponse{FieldValueMap: value, Ok: ok}, nil
 }
 
 // DeleteHashMapFields is the implementation of RPC DeleteHashMapFields.
