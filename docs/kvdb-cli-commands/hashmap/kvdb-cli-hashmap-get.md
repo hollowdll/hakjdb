@@ -1,10 +1,12 @@
 # kvdb-cli hashmap get
 
 ```sh
-kvdb-cli hashmap get [key] [field] [OPTIONS]
+kvdb-cli hashmap get [key] [field ...] [OPTIONS]
 ```
 
-Gets the value of a field in the HashMap stored at a key.
+Gets the values of the specified fields in the HashMap stored at a key.
+
+This command can return multiple values.
 
 ## Arguments
 
@@ -18,7 +20,7 @@ Gets the value of a field in the HashMap stored at a key.
 
 ## Returns
 
-- The value of the field.
+- The values of the specified fields.
 - `(None)` if the key or field doesn't exist.
 - Error message if not successful.
 
@@ -27,11 +29,17 @@ Gets the value of a field in the HashMap stored at a key.
 ```sh
 # use the default database that is configured in the config file
 kvdb-cli hashmap get key1 field1
-"value1"
+1) "field1": "value1"
 
 # specify the database to use
 kvdb-cli hashmap get key1 field1 -d default
-"value1"
+1) "field1": "value1"
+
+# return multiple values
+kvdb-cli hashmap get key1 field1 field2 field3
+1) "field1": "value1"
+2) "field2": "value2"
+3) "field3": "value3"
 
 # key doesn't exist
 kvdb-cli hashmap get key1234 field1
@@ -39,5 +47,5 @@ kvdb-cli hashmap get key1234 field1
 
 # field doesn't exist
 kvdb-cli hashmap get key1 field123
-(None)
+1) "field123": (None)
 ```

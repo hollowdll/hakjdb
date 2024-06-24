@@ -148,7 +148,7 @@ service StorageService {
     // Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
     rpc SetHashMap(SetHashMapRequest) returns (SetHashMapResponse) {}
 
-    // GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
+    // GetHashMapFieldValue returns the values of the specified fields in the HashMap stored at a key.
     rpc GetHashMapFieldValue(GetHashMapFieldValueRequest) returns (GetHashMapFieldValueResponse) {}
 
     // DeleteHashMapFields removes the specified fields from the HashMap stored at a key.

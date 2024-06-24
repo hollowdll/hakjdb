@@ -357,13 +357,13 @@ kvdb-cli hashmap set key1 name "John" age "35"
 ```
 This sets key "key1" to hold a HashMap with fields "name" and "age" set to their respective values. The returned integer is the number of fields that were added.
 
-## Get HashMap field value
+## Get HashMap field values
 
-To get a HashMap field value, you need to retrieve it with the key that is holding the HashMap.
+To get HashMap field values, you need to retrieve them with the key that is holding the HashMap.
 
-To get a HashMap field value, use command:
+To get HashMap field values, use command:
 ```sh
-kvdb-cli hashmap get [key] [field] -d db-name
+kvdb-cli hashmap get [key] [field ...] -d db-name
 ```
 - [key] is the name of the key holding the HashMap.
 - [field] is the field whose value should be returned.
@@ -372,18 +372,22 @@ kvdb-cli hashmap get [key] [field] -d db-name
 For example:
 ```sh
 kvdb-cli hashmap get key1 name
-"John"
+1) "name": "John"
 ```
 This gets the value of field "name" in the HashMap that "key1" is holding.
 
-If the key or field doesn't exist, a special value (None) is returned:
+If the key or field doesn't exist, a special value (None) is returned.
+
+Key doesn't exist:
 ```sh
 kvdb-cli hashmap get key123 name
 (None)
 ```
+
+Field doesn't exist:
 ```sh
 kvdb-cli hashmap get key1 field123
-(None)
+1) "field123": (None)
 ```
 
 ## Get all HashMap fields and values
