@@ -166,25 +166,24 @@ func TestSetGetDeleteHashMap(t *testing.T) {
 	reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
 	storageClient.SetHashMap(ctx, reqSet)
 
-	expectedValue := "value2"
+	expectedFieldValueMap := make(map[string]*kvdbserverpb.HashMapFieldValue)
+	expectedFieldValueMap["field2"] = &kvdbserverpb.HashMapFieldValue{Value: "value2", Ok: true}
 	expectedOk := true
-	reqGet := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+	reqGet := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field2"}}
 	res, _ := storageClient.GetHashMapFieldValue(ctx, reqGet)
 	require.NotNil(t, res)
-	assert.Equal(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
+	assert.Equal(t, expectedFieldValueMap["field2"].Value, res.FieldValueMap["field2"].Value, "expected value = %s; got = %s", expectedFieldValueMap["field2"].Value, res.FieldValueMap["field2"].Value)
 	assert.Equal(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
 
-	reqDelete := &kvdbserverpb.DeleteHashMapFieldsRequest{Key: "key1", Fields: []string{"field2"}}
-	storageClient.DeleteHashMapFields(ctx, reqDelete)
+	reqDel := &kvdbserverpb.DeleteKeyRequest{Keys: []string{"key1"}}
+	_, err = storageClient.DeleteKey(ctx, reqDel)
 
-	expectedValue = ""
 	expectedOk = false
 	res, _ = storageClient.GetHashMapFieldValue(ctx, reqGet)
 	require.NotNil(t, res)
-	assert.Equal(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
 	assert.Equal(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
 
-	expectedKeys := uint32(1)
+	expectedKeys := uint32(0)
 	reqInfo := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
 	resInfo, _ := databaseClient.GetDatabaseInfo(ctx, reqInfo)
 	require.NotNil(t, resInfo)
