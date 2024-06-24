@@ -727,7 +727,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.DisableLogger()
 		server.CreateDefaultDatabase("default")
 
-		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field2"}}
 		res, err := server.GetHashMapFieldValue(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -740,7 +740,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("wrong-key", dbName))
 
-		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field2"}}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
@@ -752,7 +752,7 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		dbName := "db0"
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field2"}}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
@@ -777,12 +777,35 @@ func TestGetHashMapFieldValue(t *testing.T) {
 
 		expectedValue := "value2"
 		expectedOk := true
-		reqGet := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field2"}
+		expectedKeyFound := true
+		reqGet := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field2"}}
 		res, err := server.GetHashMapFieldValue(ctx, reqGet)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
-		assert.Equalf(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
-		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+		assert.Equalf(t, expectedValue, res.FieldValueMap["field2"].Value, "expected value = %s; got = %s", expectedValue, res.FieldValueMap["field2"].Value)
+		assert.Equalf(t, expectedOk, res.FieldValueMap["field2"].Ok, "expected ok = %v; got = %v", expectedOk, res.FieldValueMap["field2"].Ok)
+		assert.Equalf(t, expectedKeyFound, res.Ok, "expected ok = %v; got = %v", expectedKeyFound, res.Ok)
+	})
+
+	t.Run("MultipleFieldsFound", func(t *testing.T) {
+		server := server.NewServer()
+		server.DisableLogger()
+		dbName := "default"
+		server.CreateDefaultDatabase(dbName)
+		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
+
+		reqSet := &kvdbserverpb.SetHashMapRequest{Key: "key1", Fields: fields}
+		server.SetHashMap(ctx, reqSet)
+
+		reqGet := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field1", "field2", "field3"}}
+		res, err := server.GetHashMapFieldValue(ctx, reqGet)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, res)
+
+		for field, expectedValue := range fields {
+			assert.Equalf(t, expectedValue, res.FieldValueMap[field].Value, "expected value = %s; got = %s", expectedValue, res.FieldValueMap[field].Value)
+			assert.Equalf(t, true, res.FieldValueMap[field].Ok, "expected ok = %v; got = %v", true, res.FieldValueMap[field].Ok)
+		}
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
@@ -792,13 +815,11 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		server.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
-		expectedValue := ""
 		expectedOk := false
-		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key2", Field: "field2"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key2", Fields: []string{"field3"}}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
-		assert.Equalf(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
 		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
 	})
 
@@ -814,12 +835,12 @@ func TestGetHashMapFieldValue(t *testing.T) {
 
 		expectedValue := ""
 		expectedOk := false
-		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Field: "field123"}
+		req := &kvdbserverpb.GetHashMapFieldValueRequest{Key: "key1", Fields: []string{"field123"}}
 		res, err := server.GetHashMapFieldValue(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
-		assert.Equalf(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
-		assert.Equalf(t, expectedOk, res.Ok, "expected ok = %v; got = %v", expectedOk, res.Ok)
+		assert.Equalf(t, expectedValue, res.FieldValueMap["field123"].Value, "expected value = %s; got = %s", expectedValue, res.FieldValueMap["field123"].Value)
+		assert.Equalf(t, expectedOk, res.FieldValueMap["field123"].Ok, "expected ok = %v; got = %v", expectedOk, res.FieldValueMap["field123"].Ok)
 	})
 }
 

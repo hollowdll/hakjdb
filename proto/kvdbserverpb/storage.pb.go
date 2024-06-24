@@ -809,7 +809,7 @@ type GetHashMapFieldValueResponse struct {
 
 	// The returned values and their fields.
 	FieldValueMap map[string]*HashMapFieldValue `protobuf:"bytes,1,rep,name=field_value_map,json=fieldValueMap,proto3" json:"field_value_map,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	// True if the field exists. False if the key or field doesn't exist.
+	// True if the key exists. False if it doesn't exist.
 	Ok bool `protobuf:"varint,2,opt,name=ok,proto3" json:"ok,omitempty"`
 }
 

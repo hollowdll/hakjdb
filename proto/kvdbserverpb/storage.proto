@@ -87,7 +87,7 @@ message HashMapFieldValue {
 message GetHashMapFieldValueResponse {
     // The returned values and their fields.
     map<string, HashMapFieldValue> field_value_map = 1;
-    // True if the field exists. False if the key or field doesn't exist.
+    // True if the key exists. False if it doesn't exist.
     bool ok = 2;
 }
 
