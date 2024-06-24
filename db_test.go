@@ -432,11 +432,11 @@ func TestGetHashMapFieldValue(t *testing.T) {
 
 	t.Run("GetNonExistentKey", func(t *testing.T) {
 		db := newDatabase("test")
-		value, ok := db.GetHashMapFieldValue("key1", "field1")
+		value, ok := db.GetHashMapFieldValue("key1", []string{"field2"})
 
-		expectedValue := ""
-		if value != expectedValue {
-			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		expectedFields := 0
+		if len(value) != expectedFields {
+			t.Errorf("expected fields = %d; got = %d", expectedFields, len(value))
 		}
 
 		expectedOk := false
@@ -449,28 +449,32 @@ func TestGetHashMapFieldValue(t *testing.T) {
 		db := newDatabase("test")
 		key := "key1"
 		db.SetHashMap(key, fields, common.HashMapMaxFields)
-		value, ok := db.GetHashMapFieldValue(key, "field12345")
+		value, _ := db.GetHashMapFieldValue(key, []string{"field1234"})
 
 		expectedValue := ""
-		if value != expectedValue {
-			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		if value["field1234"].Value != expectedValue {
+			t.Errorf("expected value = %s; got = %s", expectedValue, value["field1234"].Value)
 		}
 
 		expectedOk := false
-		if ok != expectedOk {
-			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		if value["field1234"].Ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, value["field1234"].Ok)
 		}
 	})
 
-	t.Run("GetExistingKeyAndField", func(t *testing.T) {
+	t.Run("GetExistingKeyAndFields", func(t *testing.T) {
 		db := newDatabase("test")
 		key := "key1"
 		db.SetHashMap(key, fields, common.HashMapMaxFields)
-		value, ok := db.GetHashMapFieldValue(key, "field2")
+		value, ok := db.GetHashMapFieldValue(key, []string{"field1", "field2", "field3"})
 
-		expectedValue := "value2"
-		if value != expectedValue {
-			t.Errorf("expected value = %s; got = %s", expectedValue, value)
+		for field, expectedValue := range fields {
+			if value[field].Value != expectedValue {
+				t.Errorf("expected value = %s; got = %s", expectedValue, value[field].Value)
+			}
+			if !value[field].Ok {
+				t.Errorf("expected ok = %v; got = %v", true, value[field].Ok)
+			}
 		}
 
 		expectedOk := true
