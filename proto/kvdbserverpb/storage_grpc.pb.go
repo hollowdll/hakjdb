@@ -40,7 +40,7 @@ type StorageServiceClient interface {
 	// If the specified fields exist, they will be overwritten with the new values.
 	// Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
 	SetHashMap(ctx context.Context, in *SetHashMapRequest, opts ...grpc.CallOption) (*SetHashMapResponse, error)
-	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
+	// GetHashMapFieldValue returns the values of the specified fields in the HashMap stored at a key.
 	GetHashMapFieldValue(ctx context.Context, in *GetHashMapFieldValueRequest, opts ...grpc.CallOption) (*GetHashMapFieldValueResponse, error)
 	// DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
 	// Ignores fields that do not exist.
@@ -169,7 +169,7 @@ type StorageServiceServer interface {
 	// If the specified fields exist, they will be overwritten with the new values.
 	// Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type.
 	SetHashMap(context.Context, *SetHashMapRequest) (*SetHashMapResponse, error)
-	// GetHashMapFieldValue returns the value of a field in the HashMap stored at a key.
+	// GetHashMapFieldValue returns the values of the specified fields in the HashMap stored at a key.
 	GetHashMapFieldValue(context.Context, *GetHashMapFieldValueRequest) (*GetHashMapFieldValueResponse, error)
 	// DeleteHashMapFields removes the specified fields from the HashMap stored at a key.
 	// Ignores fields that do not exist.
