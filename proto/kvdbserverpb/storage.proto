@@ -73,13 +73,20 @@ message SetHashMapResponse {
 message GetHashMapFieldValueRequest {
     // The key to use.
     string key = 1;
-    // The field whose value should be returned.
-    string field = 2;
+    // The fields whose values should be returned.
+    repeated string fields = 2;
+}
+
+message HashMapFieldValue {
+    // The value of a HashMap field.
+    string value = 1;
+    // True if the field exists. False if it doesn't exist.
+    bool ok = 2;
 }
 
 message GetHashMapFieldValueResponse {
-    // The returned value.
-    string value = 1;
+    // The returned values and their fields.
+    map<string, HashMapFieldValue> field_value_map = 1;
     // True if the field exists. False if the key or field doesn't exist.
     bool ok = 2;
 }
