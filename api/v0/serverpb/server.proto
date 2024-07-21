@@ -1,5 +1,5 @@
-// kvdbserver gRPC API
 // This package contains server-related Protobuf definitions
+// for the kvdbserver gRPC API.
 
 syntax = "proto3";
 package api.v0.serverpb;
