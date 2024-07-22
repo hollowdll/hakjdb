@@ -1,0 +1,70 @@
+// This package contains Protobuf definitions related to data storage
+// for the kvdbserver gRPC API.
+// API version: 0.1.0
+
+syntax = "proto3";
+package api.v0.storagepb;
+
+option go_package = "api/v0/storagepb";
+
+message GetAllKeysRequest {}
+
+message GetAllKeysResponse {
+  // List of returned keys.
+  repeated string keys = 1;
+}
+
+message GetKeyTypeRequest {
+  // The key whose data type should be returned.
+  string key = 1;
+}
+
+message GetKeyTypeResponse {
+  // The data type of the key.
+  string key_type = 1;
+  // True if the key exists. False if it doesn't exist.
+  bool ok = 2;
+}
+
+message DeleteKeysRequest {
+  // The keys to delete.
+  repeated string keys = 1;
+}
+
+message DeleteKeysResponse {
+  // The number of keys that were deleted.
+  uint32 keys_deleted_count = 1;
+}
+
+message DeleteAllKeysRequest {}
+
+message DeleteAllKeysResponse {}
+
+// GeneralKeyService provides RPCs related to general key management.
+//
+// Common gRPC metadata keys for this service's RPCs:
+// - password: The server password. Used for authentication if the server is password protected.
+// - database: The database to use. If omitted, the default database is used.
+service GeneralKeyService {
+  // GetAllKeys returns all the keys.
+  // Uses the database sent in gRPC metadata or the default database if omitted.
+  rpc GetAllKeys(GetAllKeysRequest) returns (GetAllKeysResponse) {}
+
+  // NOT YET IMPLEMENTED!
+  // GetAllKeysOfType returns all the keys of the specified data type.
+  // Uses the database sent in gRPC metadata or the default database if omitted.
+  // rpc GetAllKeysOfType(GetAllKeysOfTypeRequest) returns (GetAllKeysOfTypeResponse) {}
+
+  // GetKeyType returns the data type of the value a key is holding.
+  // Uses the database sent in gRPC metadata or the default database if omitted.
+  rpc GetKeyType(GetKeyTypeRequest) returns (GetKeyTypeResponse) {}
+
+  // DeleteKeys deletes the specified keys and the values they are holding.
+  // Ignores keys that do not exist.
+  // Uses the database sent in gRPC metadata or the default database if omitted.
+  rpc DeleteKeys(DeleteKeysRequest) returns (DeleteKeysResponse) {}
+
+  // DeleteAllKeys deletes all the keys.
+  // Uses the database sent in gRPC metadata or the default database if omitted.
+  rpc DeleteAllKeys(DeleteAllKeysRequest) returns (DeleteAllKeysResponse) {}
+}

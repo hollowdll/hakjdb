@@ -1,0 +1,79 @@
+// This package contains database-related Protobuf definitions
+// for the kvdbserver gRPC API.
+// API version: 0.1.0
+
+syntax = "proto3";
+package api.v0.dbpb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "api/v0/dbpb";
+
+message CreateDatabaseRequest {
+  // Name of the database to create.
+  string db_name = 1;
+}
+
+message CreateDatabaseResponse {
+  // Name of the created database.
+  string db_name = 1;
+}
+
+message GetAllDatabasesRequest {}
+
+message GetAllDatabasesResponse {
+  // List of returned database names.
+  repeated string db_names = 1;
+}
+
+message GetDatabaseInfoRequest {
+  // Name of the database.
+  string db_name = 1;
+}
+
+message GetDatabaseInfoResponse {
+  // Information about the database.
+  DatabaseInfo data = 1;
+}
+
+message DeleteDatabaseRequest {
+  // Name of the database.
+  string db_name = 1;
+}
+
+message DeleteDatabaseResponse {
+  // Name of the deleted database.
+  string db_name = 1;
+}
+
+// DatabaseInfo represents information about a database.
+message DatabaseInfo {
+  // Name of the database.
+  string name = 1;
+  // UTC timestamp when the database was created.
+  google.protobuf.Timestamp created_at = 2;
+  // UTC timestamp when the database was updated.
+  google.protobuf.Timestamp updated_at = 3;
+  // Size of the data in bytes.
+  uint64 data_size = 4;
+  // Number of keys in the database.
+  uint32 key_count = 5;
+}
+
+// DatabaseService provides database-related RPCs.
+//
+// Common gRPC metadata keys for this service's RPCs:
+// - password: The server password. Used for authentication if the server is password protected.
+service DatabaseService {
+  // CreateDatabase creates a new database.
+  rpc CreateDatabase(CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
+
+  // GetAllDatabases returns the names of all the databases that exist on the server.
+  rpc GetAllDatabases(GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
+
+  // GetDatabaseInfo returns information about a database.
+  rpc GetDatabaseInfo(GetDatabaseInfoRequest) returns (GetDatabaseInfoResponse) {}
+
+  // DeleteDatabase deletes a database.
+  rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {}
+}
