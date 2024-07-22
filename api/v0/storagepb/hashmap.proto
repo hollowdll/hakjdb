@@ -16,7 +16,7 @@ message SetHashMapRequest {
 
 message SetHashMapResponse {
   // The number of fields that were added.
-  uint32 fields_added = 1;
+  uint32 fields_added_count = 1;
 }
 
 message GetHashMapFieldValueRequest {
@@ -49,7 +49,7 @@ message DeleteHashMapFieldsRequest {
 
 message DeleteHashMapFieldsResponse {
   // The number of fields that were removed.
-  uint32 fields_removed = 1;
+  uint32 fields_removed_count = 1;
   // True if the key exists. False if it doesn't exist.
   bool ok = 2;
 }

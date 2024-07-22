@@ -33,7 +33,7 @@ message DeleteKeysRequest {
 
 message DeleteKeysResponse {
   // The number of keys that were deleted.
-  uint32 keys_deleted = 1;
+  uint32 keys_deleted_count = 1;
 }
 
 message DeleteAllKeysRequest {}
