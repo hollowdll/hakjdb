@@ -1,12 +1,12 @@
 // This package contains database-related Protobuf definitions
 // for the kvdbserver gRPC API.
+// API version: 0.1.0
 
 syntax = "proto3";
 package api.v0.dbpb;
 
 import "google/protobuf/timestamp.proto";
 
-option api_version = "0.1.0";
 option go_package = "api/v0/dbpb";
 
 message CreateDatabaseRequest {

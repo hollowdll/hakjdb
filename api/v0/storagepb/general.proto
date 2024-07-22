@@ -1,10 +1,10 @@
 // This package contains Protobuf definitions related to data storage
 // for the kvdbserver gRPC API.
+// API version: 0.1.0
 
 syntax = "proto3";
 package api.v0.storagepb;
 
-option api_version = "0.1.0";
 option go_package = "api/v0/storagepb";
 
 message GetAllKeysRequest {}
