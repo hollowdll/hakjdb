@@ -321,7 +321,7 @@ func (s *Server) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoR
 		defer s.ClientConnListener.mu.RUnlock()
 	}
 
-	s.logger.Debugf("%s/%s: (attempt) %v", serverServiceName, getServerInfoRPCName, req)
+	s.logger.Debugf("%s/%s: (call) %v", serverServiceName, getServerInfoRPCName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s/%s: operation failed: %v", serverServiceName, getServerInfoRPCName, err)
@@ -387,7 +387,7 @@ func (s *Server) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (res
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	s.logger.Debugf("%s/%s: (attempt) %v", serverServiceName, getLogsRPCName, req)
+	s.logger.Debugf("%s/%s: (call) %v", serverServiceName, getLogsRPCName, req)
 	defer func() {
 		if err != nil {
 			s.logger.Errorf("%s/%s: operation failed: %v", serverServiceName, getLogsRPCName, err)
