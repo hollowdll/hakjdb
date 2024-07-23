@@ -14,9 +14,11 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -24,6 +26,12 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	serverServiceName    string = "ServerService"
+	getServerInfoRPCName string = "GetServerInfo"
+	getLogsRPCName       string = "GetLogs"
 )
 
 // ClientConnListener is a client connection listener
@@ -97,9 +105,11 @@ func (c *clientConn) Close() error {
 }
 
 type Server struct {
-	kvdbserverpb.UnimplementedDatabaseServiceServer
-	kvdbserverpb.UnimplementedServerServiceServer
-	kvdbserverpb.UnimplementedStorageServiceServer
+	serverpb.UnimplementedServerServiceServer
+	dbpb.UnimplementedDatabaseServiceServer
+	storagepb.UnimplementedGeneralKeyServiceServer
+	storagepb.UnimplementedStringKeyServiceServer
+	storagepb.UnimplementedHashMapKeyServiceServer
 	startTime       time.Time
 	databases       map[string]*kvdb.Database
 	CredentialStore InMemoryCredentialStore
@@ -303,7 +313,7 @@ func getOsInfo() (string, error) {
 }
 
 // GetServerInfo is the implementation of RPC GetServerInfo.
-func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerInfoRequest) (res *kvdbserverpb.GetServerInfoResponse, err error) {
+func (s *Server) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (res *serverpb.GetServerInfoResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 	if s.ClientConnListener != nil {
@@ -311,13 +321,12 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 		defer s.ClientConnListener.mu.RUnlock()
 	}
 
-	logPrefix := "GetServerInfo"
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s/%s: (attempt) %v", serverServiceName, getServerInfoRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s/%s: operation failed: %v", serverServiceName, getServerInfoRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s/%s: (success) %v", serverServiceName, getServerInfoRPCName, req)
 		}
 	}()
 
@@ -333,66 +342,71 @@ func (s *Server) GetServerInfo(ctx context.Context, req *kvdbserverpb.GetServerI
 		totalKeys += uint64(db.GetKeyCount())
 	}
 
-	info := &kvdbserverpb.ServerInfo{
-		GeneralInfo: &kvdbserverpb.GeneralInfo{
-			KvdbVersion:     version.Version,
-			GoVersion:       runtime.Version(),
-			DbCount:         uint32(len(s.databases)),
-			Os:              osInfo,
-			Arch:            runtime.GOARCH,
-			ProcessId:       uint32(os.Getpid()),
-			UptimeSeconds:   uint64(time.Since(s.startTime).Seconds()),
-			TcpPort:         uint32(s.portInUse),
-			TlsEnabled:      s.tlsEnabled,
-			PasswordEnabled: s.passwordEnabled,
-			LogfileEnabled:  s.logFileEnabled,
-			DebugEnabled:    s.debugEnabled,
-			DefaultDb:       s.defaultDb,
-		},
-		MemoryInfo: &kvdbserverpb.MemoryInfo{
-			MemoryAlloc:      m.Alloc,
-			MemoryTotalAlloc: m.TotalAlloc,
-			MemorySys:        m.Sys,
-		},
-		StorageInfo: &kvdbserverpb.StorageInfo{
-			TotalDataSize: s.getTotalDataSize(),
-			TotalKeys:     totalKeys,
-		},
-		ClientInfo: &kvdbserverpb.ClientInfo{
-			ClientConnections:    s.ClientConnListener.clientConnections,
-			MaxClientConnections: s.ClientConnListener.maxClientConnections,
-		},
+	generalInfo := &serverpb.GeneralInfo{
+		KvdbVersion:     version.Version,
+		GoVersion:       runtime.Version(),
+		Os:              osInfo,
+		Arch:            runtime.GOARCH,
+		ProcessId:       uint32(os.Getpid()),
+		UptimeSeconds:   uint64(time.Since(s.startTime).Seconds()),
+		TcpPort:         uint32(s.portInUse),
+		TlsEnabled:      s.tlsEnabled,
+		PasswordEnabled: s.passwordEnabled,
+		LogfileEnabled:  s.logFileEnabled,
+		DebugEnabled:    s.debugEnabled,
+	}
+	memoryInfo := &serverpb.MemoryInfo{
+		MemoryAlloc:      m.Alloc,
+		MemoryTotalAlloc: m.TotalAlloc,
+		MemorySys:        m.Sys,
+	}
+	storageInfo := &serverpb.StorageInfo{
+		TotalDataSize: s.getTotalDataSize(),
+		TotalKeys:     totalKeys,
+	}
+	clientInfo := &serverpb.ClientInfo{
+		ClientConnections:    s.ClientConnListener.clientConnections,
+		MaxClientConnections: s.ClientConnListener.maxClientConnections,
+	}
+	dbInfo := &serverpb.DatabaseInfo{
+		DbCount:   uint32(len(s.databases)),
+		DefaultDb: s.defaultDb,
 	}
 
-	return &kvdbserverpb.GetServerInfoResponse{Data: info}, nil
+	return &serverpb.GetServerInfoResponse{
+		GeneralInfo: generalInfo,
+		MemoryInfo:  memoryInfo,
+		StorageInfo: storageInfo,
+		ClientInfo:  clientInfo,
+		DbInfo:      dbInfo,
+	}, nil
 }
 
 // GetLogs is the implementation of RPC GetLogs.
-func (s *Server) GetLogs(ctx context.Context, req *kvdbserverpb.GetLogsRequest) (res *kvdbserverpb.GetLogsResponse, err error) {
+func (s *Server) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (res *serverpb.GetLogsResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "GetLogs"
-	s.logger.Debugf("%s: (attempt) %v", logPrefix, req)
+	s.logger.Debugf("%s/%s: (attempt) %v", serverServiceName, getLogsRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s/%s: operation failed: %v", serverServiceName, getLogsRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) %v", logPrefix, req)
+			s.logger.Debugf("%s/%s: (success) %v", serverServiceName, getLogsRPCName, req)
 		}
 	}()
 
 	if !s.logFileEnabled {
 		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
 	}
-	s.logger.Debugf("%s: log file is enabled", logPrefix)
+	s.logger.Debugf("%s/%s: log file is enabled", serverServiceName, getLogsRPCName)
 
 	lines, err := common.ReadFileLines(s.logFilePath)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &kvdbserverpb.GetLogsResponse{Logs: lines, LogfileEnabled: true}, nil
+	return &serverpb.GetLogsResponse{Logs: lines}, nil
 }
 
 // initServer initializes the server.
@@ -456,9 +470,11 @@ func initServer() (*Server, *grpc.Server) {
 		server.logger.Info("TLS is enabled. Connections will be encrypted")
 	}
 
-	kvdbserverpb.RegisterDatabaseServiceServer(grpcServer, server)
-	kvdbserverpb.RegisterServerServiceServer(grpcServer, server)
-	kvdbserverpb.RegisterStorageServiceServer(grpcServer, server)
+	serverpb.RegisterServerServiceServer(grpcServer, server)
+	dbpb.RegisterDatabaseServiceServer(grpcServer, server)
+	storagepb.RegisterGeneralKeyServiceServer(grpcServer, server)
+	storagepb.RegisterStringKeyServiceServer(grpcServer, server)
+	storagepb.RegisterHashMapKeyServiceServer(grpcServer, server)
 
 	return server, grpcServer
 }
