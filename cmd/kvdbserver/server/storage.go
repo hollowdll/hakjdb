@@ -4,26 +4,37 @@ import (
 	"context"
 
 	kvdb "github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-// GetTypeOfKey is the implementation of RPC GetTypeOfKey.
-func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserverpb.GetTypeOfKeyRequest) (res *kvdbserverpb.GetTypeOfKeyResponse, err error) {
+const (
+	getKeyTypeRPCName                   string = "GetKeyType"
+	getAllKeysRPCName                   string = "GetAllKeys"
+	deleteKeysRPCName                   string = "DeleteKeys"
+	deleteAllKeysRPCName                string = "DeleteAllKeys"
+	setStringRPCName                    string = "SetString"
+	getStringRPCName                    string = "GetString"
+	setHashMapRPCName                   string = "SetHashMap"
+	getHashMapFieldValuesRPCName        string = "GetHashMapFieldValues"
+	getAllHashMapFieldsAndValuesRPCName string = "GetAllHashMapFieldsAndValues"
+	deleteHashMapFieldsRPCName          string = "DeleteHashMapFields"
+)
+
+// GetKeyType is the implementation of RPC GetKeyType.
+func (s *Server) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (res *storagepb.GetKeyTypeResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "GetTypeOfKey"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", getKeyTypeRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", getKeyTypeRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", getKeyTypeRPCName, dbName, req)
 		}
 	}()
 
@@ -31,25 +42,23 @@ func (s *Server) GetTypeOfKey(ctx context.Context, req *kvdbserverpb.GetTypeOfKe
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	keyType, ok := s.databases[dbName].GetTypeOfKey(req.Key)
+	keyType, ok := s.databases[dbName].GetKeyType(req.Key)
 
-	return &kvdbserverpb.GetTypeOfKeyResponse{KeyType: keyType, Ok: ok}, nil
+	return &storagepb.GetKeyTypeResponse{KeyType: keyType, Ok: ok}, nil
 }
 
 // SetString is the implementation of RPC SetString.
-func (s *Server) SetString(ctx context.Context, req *kvdbserverpb.SetStringRequest) (res *kvdbserverpb.SetStringResponse, err error) {
+func (s *Server) SetString(ctx context.Context, req *storagepb.SetStringRequest) (res *storagepb.SetStringResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "SetString"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", setStringRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", setStringRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", setStringRPCName, dbName, req)
 		}
 	}()
 
@@ -67,23 +76,21 @@ func (s *Server) SetString(ctx context.Context, req *kvdbserverpb.SetStringReque
 
 	s.databases[dbName].SetString(req.Key, req.GetValue())
 
-	return &kvdbserverpb.SetStringResponse{}, nil
+	return &storagepb.SetStringResponse{}, nil
 }
 
 // GetString is the implementation of RPC GetString.
-func (s *Server) GetString(ctx context.Context, req *kvdbserverpb.GetStringRequest) (res *kvdbserverpb.GetStringResponse, err error) {
+func (s *Server) GetString(ctx context.Context, req *storagepb.GetStringRequest) (res *storagepb.GetStringResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "GetString"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", getStringRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", getStringRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", getStringRPCName, dbName, req)
 		}
 	}()
 
@@ -93,23 +100,21 @@ func (s *Server) GetString(ctx context.Context, req *kvdbserverpb.GetStringReque
 
 	value, ok := s.databases[dbName].GetString(req.Key)
 
-	return &kvdbserverpb.GetStringResponse{Value: value, Ok: ok}, nil
+	return &storagepb.GetStringResponse{Value: value, Ok: ok}, nil
 }
 
-// DeleteKey is the implementation of RPC DeleteKey.
-func (s *Server) DeleteKey(ctx context.Context, req *kvdbserverpb.DeleteKeyRequest) (res *kvdbserverpb.DeleteKeyResponse, err error) {
+// DeleteKeys is the implementation of RPC DeleteKeys.
+func (s *Server) DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (res *storagepb.DeleteKeysResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "DeleteKey"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", deleteKeysRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", deleteKeysRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", deleteKeysRPCName, dbName, req)
 		}
 	}()
 
@@ -117,25 +122,23 @@ func (s *Server) DeleteKey(ctx context.Context, req *kvdbserverpb.DeleteKeyReque
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	keysDeleted := s.databases[dbName].DeleteKeys(req.Keys)
+	keysDeletedCount := s.databases[dbName].DeleteKeys(req.Keys)
 
-	return &kvdbserverpb.DeleteKeyResponse{KeysDeleted: keysDeleted}, nil
+	return &storagepb.DeleteKeysResponse{KeysDeletedCount: keysDeletedCount}, nil
 }
 
 // DeleteAllKeys is the implementation of RPC DeleteAllKeys.
-func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserverpb.DeleteAllKeysRequest) (res *kvdbserverpb.DeleteAllKeysResponse, err error) {
+func (s *Server) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAllKeysRequest) (res *storagepb.DeleteAllKeysResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "DeleteAllKeys"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", deleteAllKeysRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", deleteAllKeysRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", deleteAllKeysRPCName, dbName, req)
 		}
 	}()
 
@@ -145,23 +148,21 @@ func (s *Server) DeleteAllKeys(ctx context.Context, req *kvdbserverpb.DeleteAllK
 
 	s.databases[dbName].DeleteAllKeys()
 
-	return &kvdbserverpb.DeleteAllKeysResponse{}, nil
+	return &storagepb.DeleteAllKeysResponse{}, nil
 }
 
-// GetKeys is the implementation of RPC GetKeys.
-func (s *Server) GetKeys(ctx context.Context, req *kvdbserverpb.GetKeysRequest) (res *kvdbserverpb.GetKeysResponse, err error) {
+// GetAllKeys is the implementation of RPC GetAllKeys.
+func (s *Server) GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (res *storagepb.GetAllKeysResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "GetKeys"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", getAllKeysRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", getAllKeysRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", getAllKeysRPCName, dbName, req)
 		}
 	}()
 
@@ -169,23 +170,21 @@ func (s *Server) GetKeys(ctx context.Context, req *kvdbserverpb.GetKeysRequest) 
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	return &kvdbserverpb.GetKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
+	return &storagepb.GetAllKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
 }
 
 // SetHashMap is the implementation of RPC SetHashMap.
-func (s *Server) SetHashMap(ctx context.Context, req *kvdbserverpb.SetHashMapRequest) (res *kvdbserverpb.SetHashMapResponse, err error) {
+func (s *Server) SetHashMap(ctx context.Context, req *storagepb.SetHashMapRequest) (res *storagepb.SetHashMapResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "SetHashMap"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", setHashMapRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", setHashMapRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", setHashMapRPCName, dbName, req)
 		}
 	}()
 
@@ -201,25 +200,23 @@ func (s *Server) SetHashMap(ctx context.Context, req *kvdbserverpb.SetHashMapReq
 		return nil, status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error())
 	}
 
-	fieldsAdded := s.databases[dbName].SetHashMap(req.Key, req.Fields, s.maxHashMapFields)
+	fieldsAddedCount := s.databases[dbName].SetHashMap(req.Key, req.FieldValueMap, s.maxHashMapFields)
 
-	return &kvdbserverpb.SetHashMapResponse{FieldsAdded: fieldsAdded}, nil
+	return &storagepb.SetHashMapResponse{FieldsAddedCount: fieldsAddedCount}, nil
 }
 
-// GetHashMapFieldValue is the implementation of RPC GetHashMapFieldValue.
-func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserverpb.GetHashMapFieldValueRequest) (res *kvdbserverpb.GetHashMapFieldValueResponse, err error) {
+// GetHashMapFieldValues is the implementation of RPC GetHashMapFieldValues.
+func (s *Server) GetHashMapFieldValues(ctx context.Context, req *storagepb.GetHashMapFieldValueRequest) (res *storagepb.GetHashMapFieldValueResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "GetHashMapFieldValue"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", getHashMapFieldValuesRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", getHashMapFieldValuesRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", getHashMapFieldValuesRPCName, dbName, req)
 		}
 	}()
 
@@ -227,25 +224,31 @@ func (s *Server) GetHashMapFieldValue(ctx context.Context, req *kvdbserverpb.Get
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	value, ok := s.databases[dbName].GetHashMapFieldValue(req.Key, req.Fields)
+	result, ok := s.databases[dbName].GetHashMapFieldValues(req.Key, req.Fields)
 
-	return &kvdbserverpb.GetHashMapFieldValueResponse{FieldValueMap: value, Ok: ok}, nil
+	var fieldValueMap = make(map[string]*storagepb.HashMapFieldValue)
+	for field, value := range result {
+		fieldValueMap[field] = &storagepb.HashMapFieldValue{
+			Value: value.Value,
+			Ok:    value.Ok,
+		}
+	}
+
+	return &storagepb.GetHashMapFieldValueResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }
 
 // DeleteHashMapFields is the implementation of RPC DeleteHashMapFields.
-func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserverpb.DeleteHashMapFieldsRequest) (res *kvdbserverpb.DeleteHashMapFieldsResponse, err error) {
+func (s *Server) DeleteHashMapFields(ctx context.Context, req *storagepb.DeleteHashMapFieldsRequest) (res *storagepb.DeleteHashMapFieldsResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "DeleteHashMapFields"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", deleteHashMapFieldsRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", deleteHashMapFieldsRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", deleteHashMapFieldsRPCName, dbName, req)
 		}
 	}()
 
@@ -253,25 +256,23 @@ func (s *Server) DeleteHashMapFields(ctx context.Context, req *kvdbserverpb.Dele
 		return nil, status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error())
 	}
 
-	fieldsRemoved, ok := s.databases[dbName].DeleteHashMapFields(req.Key, req.Fields)
+	fieldsRemovedCount, ok := s.databases[dbName].DeleteHashMapFields(req.Key, req.Fields)
 
-	return &kvdbserverpb.DeleteHashMapFieldsResponse{FieldsRemoved: fieldsRemoved, Ok: ok}, nil
+	return &storagepb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
 }
 
 // GetAllHashMapFieldsAndValues is the implementation of RPC GetAllHashMapFieldsAndValues.
-func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserverpb.GetAllHashMapFieldsAndValuesRequest) (res *kvdbserverpb.GetAllHashMapFieldsAndValuesResponse, err error) {
+func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *storagepb.GetAllHashMapFieldsAndValuesRequest) (res *storagepb.GetAllHashMapFieldsAndValuesResponse, err error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	logPrefix := "GetAllHashMapFieldsAndValues"
 	dbName := s.getDatabaseNameFromContext(ctx)
-
-	s.logger.Debugf("%s: (attempt) db = %s %v", logPrefix, dbName, req)
+	s.logger.Debugf("%s: (call) db = %s %v", getAllHashMapFieldsAndValuesRPCName, dbName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s: operation failed: %v", logPrefix, err)
+			s.logger.Errorf("%s: operation failed: %v", getAllHashMapFieldsAndValuesRPCName, err)
 		} else {
-			s.logger.Debugf("%s: (success) db = %s %v", logPrefix, dbName, req)
+			s.logger.Debugf("%s: (success) db = %s %v", getAllHashMapFieldsAndValuesRPCName, dbName, req)
 		}
 	}()
 
@@ -281,5 +282,5 @@ func (s *Server) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvdbserv
 
 	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(req.Key)
 
-	return &kvdbserverpb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+	return &storagepb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }

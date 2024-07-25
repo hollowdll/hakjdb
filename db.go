@@ -1,7 +1,6 @@
 package kvdb
 
 import (
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"reflect"
 	"sync"
 	"time"
@@ -34,7 +33,7 @@ type Database struct {
 	storedData databaseStoredData
 	// The current number of keys in this database.
 	keyCount uint32
-	mutex    sync.RWMutex
+	mu       sync.RWMutex
 }
 
 // Creates a new instance of Database.
@@ -70,16 +69,16 @@ func (db *Database) keyExists(key string) bool {
 
 // GetKeyCount returns the number of keys in the database.
 func (db *Database) GetKeyCount() uint32 {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	return db.keyCount
 }
 
 // GetStoredSizeBytes returns the size of stored data in bytes.
 func (db *Database) GetStoredSizeBytes() uint64 {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 	var size uint64
 
 	for key, value := range db.storedData.stringData {
@@ -110,9 +109,9 @@ func CreateDatabase(name string) *Database {
 	return newDatabase(name)
 }
 
-// GetTypeOfKey returns the data type of the key if it exists.
+// GetKeyType returns the data type of the key if it exists.
 // The returned bool is true if the key exists and false if it doesn't.
-func (db *Database) GetTypeOfKey(key string) (string, bool) {
+func (db *Database) GetKeyType(key string) (string, bool) {
 	_, exists := db.storedData.stringData[key]
 	if exists {
 		return "String", true
@@ -128,8 +127,8 @@ func (db *Database) GetTypeOfKey(key string) (string, bool) {
 // GetString retrieves a string value using a key.
 // The returned bool is true if the key exists.
 func (db *Database) GetString(key string) (string, bool) {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	value, exists := db.storedData.stringData[key]
 	return value, exists
@@ -138,8 +137,8 @@ func (db *Database) GetString(key string) (string, bool) {
 // SetString sets a string value using a key, overwriting previous value.
 // Creates the key if it doesn't exist.
 func (db *Database) SetString(key string, value string) {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
 	if !db.keyExists(key) {
 		db.keyCount++
@@ -155,8 +154,8 @@ func (db *Database) SetString(key string, value string) {
 // DeleteKeys deletes the specified keys and the values they are holding.
 // Returns the number of keys that were deleted.
 func (db *Database) DeleteKeys(keys []string) uint32 {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
 	var keysDeleted uint32 = 0
 	for _, key := range keys {
@@ -184,8 +183,8 @@ func (db *Database) DeleteKeys(keys []string) uint32 {
 
 // DeleteAllKeys deletes all the keys.
 func (db *Database) DeleteAllKeys() {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 	for key := range db.storedData.stringData {
 		delete(db.storedData.stringData, key)
 	}
@@ -199,8 +198,8 @@ func (db *Database) DeleteAllKeys() {
 
 // GetKeys returns all the keys.
 func (db *Database) GetKeys() []string {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	var keys []string
 	for key := range db.storedData.stringData {
@@ -216,8 +215,8 @@ func (db *Database) GetKeys() []string {
 // SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
 // Creates the key if it doesn't exist. Returns the number of added fields.
 func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLimit uint32) uint32 {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
 	if !db.keyExists(key) {
 		db.keyCount++
@@ -248,14 +247,14 @@ func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLim
 	return fieldsAdded
 }
 
-// GetHashMapFieldValue returns HashMap field values using a key.
+// GetHashMapFieldValues returns HashMap field values using a key.
 // The returned bool is true if the key exists,
 // or false if the key doesn't exist.
-func (db *Database) GetHashMapFieldValue(key string, fields []string) (map[string]*kvdbserverpb.HashMapFieldValue, bool) {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValue, bool) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
-	fieldValueMap := make(map[string]*kvdbserverpb.HashMapFieldValue)
+	fieldValueMap := make(map[string]*HashMapFieldValue)
 	keyValue, keyExists := db.storedData.hashMapData[key]
 	if !keyExists {
 		return fieldValueMap, false
@@ -263,7 +262,7 @@ func (db *Database) GetHashMapFieldValue(key string, fields []string) (map[strin
 
 	for _, field := range fields {
 		value, ok := keyValue[field]
-		fieldValue := &kvdbserverpb.HashMapFieldValue{
+		fieldValue := &HashMapFieldValue{
 			Value: value,
 			Ok:    ok,
 		}
@@ -276,8 +275,8 @@ func (db *Database) GetHashMapFieldValue(key string, fields []string) (map[strin
 // DeleteHashMapFields removes fields from a HashMap using a key.
 // Returns the number of removed fields. The returned bool is true if the key exists and holds a HashMap.
 func (db *Database) DeleteHashMapFields(key string, fields []string) (uint32, bool) {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
 	keyValue, keyExists := db.storedData.hashMapData[key]
 	if !keyExists {
@@ -307,8 +306,8 @@ func (db *Database) DeleteHashMapFields(key string, fields []string) (uint32, bo
 // The returned map is empty if the key doesn't exist.
 // The returned bool is true if the key exists and holds a HashMap.
 func (db *Database) GetAllHashMapFieldsAndValues(key string) (map[string]string, bool) {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	value, exists := db.storedData.hashMapData[key]
 	if !exists {
@@ -320,8 +319,8 @@ func (db *Database) GetAllHashMapFieldsAndValues(key string) (map[string]string,
 
 // GetHashMapFieldCount returns the number of fields in a HashMap.
 func (db *Database) GetHashMapFieldCount(key string) uint32 {
-	db.mutex.RLock()
-	defer db.mutex.RUnlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	return uint32(len(db.storedData.hashMapData[key]))
 }
