@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	dbServiceName          string = "DatabaseService"
 	createDatabaseRPCName  string = "CreateDatabase"
 	getAllDatabasesRPCName string = "GetAllDatabases"
 	getDatabaseInfoRPCName string = "GetDatabaseInfo"
@@ -30,10 +29,10 @@ func (s *Server) CreateDatabase(ctx context.Context, req *dbpb.CreateDatabaseReq
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	s.logger.Debugf("%s/%s: (call) %v", dbServiceName, createDatabaseRPCName, req)
+	s.logger.Debugf("%s: (call) %v", createDatabaseRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s/%s: operation failed: %v", dbServiceName, createDatabaseRPCName, err)
+			s.logger.Errorf("%s: operation failed: %v", createDatabaseRPCName, err)
 		} else {
 			s.logger.Infof("Created database '%s'", req.DbName)
 		}
@@ -58,12 +57,12 @@ func (s *Server) GetAllDatabases(ctx context.Context, req *dbpb.GetAllDatabasesR
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	s.logger.Debugf("%s/%s: (call) %v", dbServiceName, getAllDatabasesRPCName, req)
+	s.logger.Debugf("%s: (call) %v", getAllDatabasesRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s/%s: operation failed: %v", dbServiceName, getAllDatabasesRPCName, err)
+			s.logger.Errorf("%s: operation failed: %v", getAllDatabasesRPCName, err)
 		} else {
-			s.logger.Debugf("%s/%s: (success) %v", dbServiceName, getAllDatabasesRPCName, req)
+			s.logger.Debugf("%s: (success) %v", getAllDatabasesRPCName, req)
 		}
 	}()
 
@@ -80,12 +79,12 @@ func (s *Server) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseInfoR
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	s.logger.Debugf("%s/%s: (call) %v", dbServiceName, getDatabaseInfoRPCName, req)
+	s.logger.Debugf("%s: (call) %v", getDatabaseInfoRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s/%s: operation failed: %v", dbServiceName, getDatabaseInfoRPCName, err)
+			s.logger.Errorf("%s: operation failed: %v", getDatabaseInfoRPCName, err)
 		} else {
-			s.logger.Debugf("%s/%s: (success) %v", dbServiceName, getDatabaseInfoRPCName, req)
+			s.logger.Debugf("%s: (success) %v", getDatabaseInfoRPCName, req)
 		}
 	}()
 
@@ -110,10 +109,10 @@ func (s *Server) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDatabaseReq
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	s.logger.Debugf("%s/%s: (call) %v", dbServiceName, deleteDatabaseRPCName, req)
+	s.logger.Debugf("%s: (call) %v", deleteDatabaseRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s/%s: operation failed: %v", dbServiceName, deleteDatabaseRPCName, err)
+			s.logger.Errorf("%s: operation failed: %v", deleteDatabaseRPCName, err)
 		} else {
 			s.logger.Infof("Deleted database '%s'", req.DbName)
 		}

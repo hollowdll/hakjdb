@@ -29,7 +29,6 @@ import (
 )
 
 const (
-	serverServiceName    string = "ServerService"
 	getServerInfoRPCName string = "GetServerInfo"
 	getLogsRPCName       string = "GetLogs"
 )
@@ -321,12 +320,12 @@ func (s *Server) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoR
 		defer s.ClientConnListener.mu.RUnlock()
 	}
 
-	s.logger.Debugf("%s/%s: (call) %v", serverServiceName, getServerInfoRPCName, req)
+	s.logger.Debugf("%s: (call) %v", getServerInfoRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s/%s: operation failed: %v", serverServiceName, getServerInfoRPCName, err)
+			s.logger.Errorf("%s: operation failed: %v", getServerInfoRPCName, err)
 		} else {
-			s.logger.Debugf("%s/%s: (success) %v", serverServiceName, getServerInfoRPCName, req)
+			s.logger.Debugf("%s: (success) %v", getServerInfoRPCName, req)
 		}
 	}()
 
@@ -387,19 +386,19 @@ func (s *Server) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (res
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	s.logger.Debugf("%s/%s: (call) %v", serverServiceName, getLogsRPCName, req)
+	s.logger.Debugf("%s: (call) %v", getLogsRPCName, req)
 	defer func() {
 		if err != nil {
-			s.logger.Errorf("%s/%s: operation failed: %v", serverServiceName, getLogsRPCName, err)
+			s.logger.Errorf("%s: operation failed: %v", getLogsRPCName, err)
 		} else {
-			s.logger.Debugf("%s/%s: (success) %v", serverServiceName, getLogsRPCName, req)
+			s.logger.Debugf("%s: (success) %v", getLogsRPCName, req)
 		}
 	}()
 
 	if !s.logFileEnabled {
 		return nil, status.Errorf(codes.FailedPrecondition, "%s: enable server log file to get logs", kvdberrors.ErrLogFileNotEnabled.Error())
 	}
-	s.logger.Debugf("%s/%s: log file is enabled", serverServiceName, getLogsRPCName)
+	s.logger.Debugf("%s: log file is enabled", getLogsRPCName)
 
 	lines, err := common.ReadFileLines(s.logFilePath)
 	if err != nil {
