@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
 
 var cmdGetString = &cobra.Command{
 	Use:   "get [key]",
-	Short: "Get a string value",
+	Short: "Get a String value",
 	Long:  "Gets the value a String key is holding.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -34,7 +34,7 @@ func getString(key string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	response, err := client.GrpcStorageClient.GetString(ctx, &kvdbserverpb.GetStringRequest{Key: key})
+	response, err := client.GrpcStringKeyClient.GetString(ctx, &storagepb.GetStringRequest{Key: key})
 	client.CheckGrpcError(err)
 
 	if response.Ok {

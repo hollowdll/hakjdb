@@ -4,29 +4,32 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
 
-var cmdDeleteKey = &cobra.Command{
+var cmdDeleteKeys = &cobra.Command{
 	Use:   "delete [key ...]",
-	Short: "Delete specified keys",
-	Long: "Deletes the specified keys and the values they are holding. " +
-		"Ignores keys that do not exist. This command can delete multiple keys.",
+	Short: "Delete keys",
+	Long: `
+Deletes the specified keys and the values they are holding.
+Ignores keys that do not exist.
+This command can delete multiple keys.
+`,
 	Args: cobra.MatchAll(cobra.MinimumNArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteKey(args[0:])
+		deleteKeys(args[0:])
 	},
 }
 
 func init() {
-	cmdDeleteKey.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdDeleteKeys.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
-func deleteKey(keys []string) {
+func deleteKeys(keys []string) {
 	md := client.GetBaseGrpcMetadata()
 	if len(dbName) > 0 {
 		md.Set(common.GrpcMetadataKeyDbName, dbName)
@@ -35,8 +38,8 @@ func deleteKey(keys []string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcStorageClient.DeleteKey(ctx, &kvdbserverpb.DeleteKeyRequest{Keys: keys})
+	res, err := client.GrpcGeneralKeyClient.DeleteKeys(ctx, &storagepb.DeleteKeysRequest{Keys: keys})
 	client.CheckGrpcError(err)
 
-	fmt.Printf("%d\n", res.KeysDeleted)
+	fmt.Printf("%d\n", res.KeysDeletedCount)
 }
