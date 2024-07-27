@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -25,7 +25,7 @@ func getLogs() {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcServerClient.GetLogs(ctx, &kvdbserverpb.GetLogsRequest{})
+	res, err := client.GrpcServerClient.GetLogs(ctx, &serverpb.GetLogsRequest{})
 	client.CheckGrpcError(err)
 
 	if len(res.Logs) > 0 {

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc/metadata"
@@ -33,7 +33,7 @@ func showDbInfo() {
 	if len(dbName) < 1 {
 		dbName = viper.GetString(config.ConfigKeyDatabase)
 	}
-	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName})
+	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &dbpb.GetDatabaseInfoRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
 	var info string

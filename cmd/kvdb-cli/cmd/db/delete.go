@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc/metadata"
@@ -37,7 +37,7 @@ func deleteDatabase() {
 		dbName = viper.GetString(config.ConfigKeyDatabase)
 	}
 
-	res, err := client.GrpcDatabaseClient.DeleteDatabase(ctx, &kvdbserverpb.DeleteDatabaseRequest{DbName: dbName})
+	res, err := client.GrpcDatabaseClient.DeleteDatabase(ctx, &dbpb.DeleteDatabaseRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
 	fmt.Println(res.DbName)

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -28,7 +28,7 @@ func createDatabase() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	res, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &kvdbserverpb.CreateDatabaseRequest{DbName: dbName})
+	res, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &dbpb.CreateDatabaseRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
 	fmt.Println(res.DbName)

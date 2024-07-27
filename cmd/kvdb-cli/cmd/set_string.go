@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -14,8 +14,11 @@ import (
 var cmdSetString = &cobra.Command{
 	Use:   "set [key] [value]",
 	Short: "Set a string value",
-	Long: "Sets a key to hold a String value. Creates the key if it doesn't exist. " +
-		"Overwrites the key if it is holding a value of another data type.",
+	Long: `
+Sets a key to hold a String value.
+Creates the key if it doesn't exist.
+Overwrites the key if it is holding a value of another data type.
+`,
 	Args: cobra.MatchAll(cobra.ExactArgs(2)),
 	Run: func(cmd *cobra.Command, args []string) {
 		setString(args[0], args[1])
@@ -35,7 +38,7 @@ func setString(key string, value string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	_, err := client.GrpcStorageClient.SetString(ctx, &kvdbserverpb.SetStringRequest{Key: key, Value: value})
+	_, err := client.GrpcStringKeyClient.SetString(ctx, &storagepb.SetStringRequest{Key: key, Value: value})
 	client.CheckGrpcError(err)
 
 	fmt.Println("OK")

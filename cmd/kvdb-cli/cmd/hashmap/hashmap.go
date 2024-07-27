@@ -9,13 +9,13 @@ var (
 	CmdHashMap = &cobra.Command{
 		Use:   "hashmap",
 		Short: "Manage HashMap keys",
-		Long:  "Manages HashMap keys.",
+		Long:  "Manage HashMap keys.",
 	}
 )
 
 func init() {
 	CmdHashMap.AddCommand(cmdSetHashMap)
-	CmdHashMap.AddCommand(cmdGetHashMapFieldValue)
+	CmdHashMap.AddCommand(cmdGetHashMapFieldValues)
 	CmdHashMap.AddCommand(cmdDeleteHashMapFields)
 	CmdHashMap.AddCommand(cmdGetAllHashMapFieldsAndValues)
 }
