@@ -2,19 +2,39 @@ package common
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 )
 
-// GetExecParentDirPath gets path to the executable's parent directory.
-func GetExecParentDirPath() (string, error) {
+// GetExecPath returns the absolute path of the executable.
+func GetExecPath() (string, error) {
 	execPath, err := os.Executable()
+	if err != nil {
+		return "", fmt.Errorf("failed to get executable path: %v", err)
+	}
+
+	execPath, err = filepath.EvalSymlinks(execPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to evaluate symlinks while getting executable path: %v", err)
+	}
+
+	execPath, err = filepath.Abs(execPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to get executable's absolute path: %v", err)
+	}
+
+	return execPath, nil
+}
+
+// GetExecParentDirPath returns the absolute path of the executable's parent directory.
+func GetExecParentDirPath() (string, error) {
+	execPath, err := GetExecPath()
 	if err != nil {
 		return "", err
 	}
-	path := filepath.Dir(execPath)
 
-	return path, nil
+	return filepath.Dir(execPath), nil
 }
 
 // GetDirPath gets path to a directory and returns it.
