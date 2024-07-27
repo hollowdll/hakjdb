@@ -6,9 +6,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -25,10 +27,12 @@ const (
 )
 
 var (
-	GrpcDatabaseClient   kvdbserverpb.DatabaseServiceClient
-	GrpcStorageClient    kvdbserverpb.StorageServiceClient
-	GrpcServerClient     kvdbserverpb.ServerServiceClient
-	grpcClientConnection *grpc.ClientConn
+	GrpcServerClient     serverpb.ServerServiceClient
+	GrpcDatabaseClient   dbpb.DatabaseServiceClient
+	GrpcGeneralKeyClient storagepb.GeneralKeyServiceClient
+	GrpcStringKeyClient  storagepb.StringKeyServiceClient
+	GrpcHashMapKeyClient storagepb.HashMapKeyServiceClient
+	grpcClientConn       *grpc.ClientConn
 )
 
 // InitClient initializes the client and connections.
@@ -56,16 +60,20 @@ func InitClient() {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}
 
-	GrpcDatabaseClient = kvdbserverpb.NewDatabaseServiceClient(conn)
-	GrpcStorageClient = kvdbserverpb.NewStorageServiceClient(conn)
-	GrpcServerClient = kvdbserverpb.NewServerServiceClient(conn)
-	grpcClientConnection = conn
+	GrpcServerClient = serverpb.NewServerServiceClient(conn)
+	GrpcDatabaseClient = dbpb.NewDatabaseServiceClient(conn)
+	GrpcGeneralKeyClient = storagepb.NewGeneralKeyServiceClient(conn)
+	GrpcStringKeyClient = storagepb.NewStringKeyServiceClient(conn)
+	GrpcHashMapKeyClient = storagepb.NewHashMapKeyServiceClient(conn)
+	grpcClientConn = conn
 }
 
 // CloseConnections closes all connections to the server.
 func CloseConnections() {
-	if grpcClientConnection != nil {
-		grpcClientConnection.Close()
+	if grpcClientConn != nil {
+		if err := grpcClientConn.Close(); err != nil {
+			cobra.CheckErr(fmt.Sprintf("failed to close connections: %v", err))
+		}
 	}
 }
 
