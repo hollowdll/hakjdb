@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -35,7 +35,7 @@ func getAllHashMapFieldsAndValues(key string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcStorageClient.GetAllHashMapFieldsAndValues(ctx, &kvdbserverpb.GetAllHashMapFieldsAndValuesRequest{Key: key})
+	res, err := client.GrpcHashMapKeyClient.GetAllHashMapFieldsAndValues(ctx, &storagepb.GetAllHashMapFieldsAndValuesRequest{Key: key})
 	client.CheckGrpcError(err)
 
 	if res.Ok {

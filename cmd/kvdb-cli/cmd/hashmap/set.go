@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -14,10 +14,13 @@ import (
 var cmdSetHashMap = &cobra.Command{
 	Use:   "set [key] [field value ...]",
 	Short: "Set HashMap fields and values",
-	Long: "Sets the specified fields and their values in the HashMap stored at a key. " +
-		"If the specified fields exist, they will be overwritten with the new values. " +
-		"Creates the key if it doesn't exist. Overwrites the key if it is holding a value of another data type. " +
-		"This command can set multiple fields.",
+	Long: `
+Sets the specified fields and their values in the HashMap stored at a key.
+If the specified fields exist, they will be overwritten with the new values.
+Creates the key if it doesn't exist.
+Overwrites the key if it is holding a value of another data type.
+This command can set multiple fields.
+`,
 	Args: cobra.MatchAll(cobra.MinimumNArgs(3)),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args)%2 == 0 {
@@ -46,8 +49,8 @@ func setHashMap(key string, fields map[string]string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcStorageClient.SetHashMap(ctx, &kvdbserverpb.SetHashMapRequest{Key: key, Fields: fields})
+	res, err := client.GrpcHashMapKeyClient.SetHashMap(ctx, &storagepb.SetHashMapRequest{Key: key, FieldValueMap: fields})
 	client.CheckGrpcError(err)
 
-	fmt.Printf("%d\n", res.FieldsAdded)
+	fmt.Printf("%d\n", res.FieldsAddedCount)
 }
