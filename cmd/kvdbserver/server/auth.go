@@ -14,13 +14,19 @@ import (
 
 // InMemoryCredentialStore stores server credentials like passwords in memory.
 type InMemoryCredentialStore struct {
+	passwordEnabled    bool
 	serverPasswordHash []byte
 }
 
 func NewInMemoryCredentialStore() *InMemoryCredentialStore {
 	return &InMemoryCredentialStore{
+		passwordEnabled:    false,
 		serverPasswordHash: nil,
 	}
+}
+
+func (cs *InMemoryCredentialStore) IsPasswordEnabled() bool {
+	return cs.passwordEnabled
 }
 
 // SetServerPassword sets a new password for the server.
@@ -32,6 +38,7 @@ func (cs *InMemoryCredentialStore) SetServerPassword(password []byte) error {
 	if err != nil {
 		return err
 	}
+	cs.passwordEnabled = true
 	cs.serverPasswordHash = hashedPassword
 
 	return nil
@@ -61,7 +68,7 @@ func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	if s.passwordEnabled {
+	if s.CredentialStore.IsPasswordEnabled() {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error())
