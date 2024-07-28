@@ -49,6 +49,12 @@ var (
 	// ErrLogFileNotEnabled is returned when trying to access logs but log file is not enabled.
 	ErrLogFileNotEnabled = errors.New("log file is not enabled")
 
+	// ErrReadLogFile is returned when reading from the log file fails.
+	ErrReadLogFile = errors.New("cannot read log file")
+
+	// ErrGetOSInfo is returned when getting information about the OS fails.
+	ErrGetOSInfo = errors.New("cannot get information about OS")
+
 	// ErrMaxHashMapFieldsReached is returned when trying to insert fields into a HashMap
 	// that has reached the maximum field limit.
 	ErrMaxHashMapFieldsReached = errors.New("max HashMap field limit reached")

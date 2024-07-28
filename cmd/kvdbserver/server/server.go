@@ -110,6 +110,7 @@ type KvdbServer struct {
 	databases       map[string]*kvdb.Database
 	credentialStore auth.CredentialStore
 	logger          kvdb.Logger
+	loggerMu        sync.RWMutex
 	Cfg             config.ServerConfig
 	*ClientConnListener
 	mu sync.RWMutex
@@ -124,6 +125,23 @@ func NewKvdbServer(cfg config.ServerConfig) *KvdbServer {
 		Cfg:                cfg,
 		ClientConnListener: nil,
 	}
+}
+
+func (s *KvdbServer) Logger() kvdb.Logger {
+	s.loggerMu.RLock()
+	l := s.logger
+	s.loggerMu.RUnlock()
+	return l
+}
+
+// getTotalDataSize returns the total amount of stored data on this server in bytes.
+func (s *KvdbServer) getTotalDataSize() uint64 {
+	var sum uint64
+	for _, db := range s.databases {
+		sum += db.GetStoredSizeBytes()
+	}
+
+	return sum
 }
 
 type Server struct {
@@ -308,30 +326,6 @@ func (s *Server) getDatabaseNameFromContext(ctx context.Context) string {
 	}
 
 	return dbName[0]
-}
-
-// getOsInfo returns information about the server's operating system.
-func getOsInfo() (string, error) {
-	osInfo := runtime.GOOS
-
-	switch osInfo {
-	case "linux":
-		cmd := exec.Command("uname", "-r", "-m")
-		output, err := cmd.Output()
-		if err != nil {
-			return "", err
-		}
-		return "Linux " + strings.TrimSpace(string(output)), nil
-	case "windows":
-		cmd := exec.Command("cmd", "/c", "ver")
-		output, err := cmd.Output()
-		if err != nil {
-			return "", err
-		}
-		return strings.TrimSpace(string(output)), nil
-	default:
-		return osInfo, nil
-	}
 }
 
 // GetServerInfo is the implementation of RPC GetServerInfo.

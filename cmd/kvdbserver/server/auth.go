@@ -80,6 +80,15 @@ func (s *Server) AuthorizeIncomingRpcCall(ctx context.Context) error {
 		}
 		password := passwordValues[0]
 
+		// clear password
+		defer func() {
+			for i, _ := range passwordValues {
+				passwordValues[i] = ""
+			}
+			password = ""
+			md.Set(common.GrpcMetadataKeyPassword, "")
+		}()
+
 		err := s.CredentialStore.IsCorrectServerPassword([]byte(password))
 		if err != nil {
 			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
