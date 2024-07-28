@@ -43,13 +43,17 @@ const (
 
 // ServerConfig holds the server's configuration.
 type ServerConfig struct {
-	LogFileEnabled       bool
-	TLSEnabled           bool
-	DebugEnabled         bool
-	DefaultDB            string
-	LogFilePath          string
-	MaxKeysPerDB         uint32
-	MaxHashMapFields     uint32
+	LogFileEnabled bool
+	TLSEnabled     bool
+	DebugEnabled   bool
+	// The name of the default database that is created at server startup.
+	DefaultDB   string
+	LogFilePath string
+	// The maximum number of keys a database can hold.
+	MaxKeysPerDB uint32
+	// The maximum number of fields a HashMap can hold.
+	MaxHashMapFields uint32
+	// The TCP/IP port the server listens at.
 	PortInUse            uint16
 	MaxClientConnections uint32
 	TLSCertPath          string

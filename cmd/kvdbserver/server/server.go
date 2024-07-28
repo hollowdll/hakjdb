@@ -17,6 +17,8 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -101,6 +103,27 @@ func (c *clientConn) Close() error {
 	err := c.Conn.Close()
 	c.release()
 	return err
+}
+
+type KvdbServer struct {
+	startTime       time.Time
+	databases       map[string]*kvdb.Database
+	credentialStore auth.CredentialStore
+	logger          kvdb.Logger
+	Cfg             config.ServerConfig
+	*ClientConnListener
+	mu sync.RWMutex
+}
+
+func NewKvdbServer(cfg config.ServerConfig) *KvdbServer {
+	return &KvdbServer{
+		startTime:          time.Now(),
+		databases:          make(map[string]*kvdb.Database),
+		credentialStore:    auth.NewInMemoryCredentialStore(),
+		logger:             kvdb.NewDefaultLogger(),
+		Cfg:                cfg,
+		ClientConnListener: nil,
+	}
 }
 
 type Server struct {
