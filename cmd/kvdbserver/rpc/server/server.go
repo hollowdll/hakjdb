@@ -16,17 +16,17 @@ const (
 )
 
 type ServerServiceServer struct {
-	ks *server.KvdbServer
+	ss server.ServerService
 	serverpb.UnimplementedServerServiceServer
 }
 
 func NewServerServiceServer(s *server.KvdbServer) serverpb.ServerServiceServer {
-	return &ServerServiceServer{ks: s}
+	return &ServerServiceServer{ss: s}
 }
 
 // GetServerInfo is the implementation of RPC GetServerInfo.
 func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (res *serverpb.GetServerInfoResponse, err error) {
-	logger := s.ks.Logger()
+	logger := s.ss.Logger()
 	logger.Debugf("%s: (call) %v", getServerInfoRPCName, req)
 	defer func() {
 		if err != nil {
@@ -36,7 +36,7 @@ func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.G
 		}
 	}()
 
-	res, err = s.ks.GetServerInfo(ctx, req)
+	res, err = s.ss.GetServerInfo(ctx, req)
 	if err != nil {
 		switch err {
 		case kvdberrors.ErrGetOSInfo:
@@ -51,7 +51,7 @@ func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.G
 
 // GetLogs is the implementation of RPC GetLogs.
 func (s *ServerServiceServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (res *serverpb.GetLogsResponse, err error) {
-	logger := s.ks.Logger()
+	logger := s.ss.Logger()
 	logger.Debugf("%s: (call) %v", getLogsRPCName, req)
 	defer func() {
 		if err != nil {
@@ -61,7 +61,7 @@ func (s *ServerServiceServer) GetLogs(ctx context.Context, req *serverpb.GetLogs
 		}
 	}()
 
-	res, err = s.ks.GetLogs(ctx, req)
+	res, err = s.ss.GetLogs(ctx, req)
 	if err != nil {
 		switch err {
 		case kvdberrors.ErrLogFileNotEnabled:

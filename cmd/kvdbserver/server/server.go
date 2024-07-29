@@ -144,6 +144,12 @@ func (s *KvdbServer) getTotalDataSize() uint64 {
 	return sum
 }
 
+// databaseExists returns true if a database exists on the server
+func (s *KvdbServer) databaseExists(name string) bool {
+	_, exists := s.databases[name]
+	return exists
+}
+
 type Server struct {
 	serverpb.UnimplementedServerServiceServer
 	dbpb.UnimplementedDatabaseServiceServer
