@@ -6,6 +6,17 @@ import (
 	"time"
 )
 
+const (
+	StringKeyTypeName  DBKeyType = "String"
+	HashMapKeyTypeName DBKeyType = "HashMap"
+)
+
+type DBKeyType string
+
+func (t DBKeyType) String() string {
+	return string(t)
+}
+
 // databaseStoredData holds the data stored in a database.
 type databaseStoredData struct {
 	// stringData holds String keys.
@@ -111,14 +122,14 @@ func CreateDatabase(name string) *Database {
 
 // GetKeyType returns the data type of the key if it exists.
 // The returned bool is true if the key exists and false if it doesn't.
-func (db *Database) GetKeyType(key string) (string, bool) {
+func (db *Database) GetKeyType(key string) (DBKeyType, bool) {
 	_, exists := db.storedData.stringData[key]
 	if exists {
-		return "String", true
+		return StringKeyTypeName, true
 	}
 	_, exists = db.storedData.hashMapData[key]
 	if exists {
-		return "HashMap", true
+		return HashMapKeyTypeName, true
 	}
 
 	return "", false

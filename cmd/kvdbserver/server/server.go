@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"os/exec"
 	"runtime"
-	"strings"
 	"sync"
 	"time"
 
@@ -144,10 +142,25 @@ func (s *KvdbServer) getTotalDataSize() uint64 {
 	return sum
 }
 
-// databaseExists returns true if a database exists on the server
-func (s *KvdbServer) databaseExists(name string) bool {
+// databaseExists returns true if a database with the given name exists on the server.
+func (s *KvdbServer) dbExists(name string) bool {
 	_, exists := s.databases[name]
 	return exists
+}
+
+// getDatabaseNameFromContext gets the database name from the incoming context gRPC metadata.
+func (s *KvdbServer) getDBNameFromContext(ctx context.Context) string {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return s.Cfg.DefaultDB
+	}
+
+	dbName := md.Get(common.GrpcMetadataKeyDbName)
+	if len(dbName) < 1 {
+		return s.Cfg.DefaultDB
+	}
+
+	return dbName[0]
 }
 
 type Server struct {

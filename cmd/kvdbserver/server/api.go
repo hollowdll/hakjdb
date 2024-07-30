@@ -9,6 +9,7 @@ import (
 	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -30,6 +31,11 @@ type DBService interface {
 }
 
 type GeneralKeyService interface {
+	Logger() kvdb.Logger
+	GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (*storagepb.GetAllKeysResponse, error)
+	GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (*storagepb.GetKeyTypeResponse, error)
+	DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (*storagepb.DeleteKeysResponse, error)
+	DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAllKeysRequest) (*storagepb.DeleteAllKeysResponse, error)
 }
 
 type StringKeyService interface {
@@ -122,7 +128,7 @@ func (s *KvdbServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDatabas
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if s.databaseExists(req.DbName) {
+	if s.dbExists(req.DbName) {
 		return nil, kvdberrors.ErrDatabaseExists
 	}
 
@@ -140,7 +146,7 @@ func (s *KvdbServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDatabas
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if !s.databaseExists(req.DbName) {
+	if !s.dbExists(req.DbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
@@ -165,7 +171,7 @@ func (s *KvdbServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseI
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	if !s.databaseExists(req.DbName) {
+	if !s.dbExists(req.DbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
@@ -179,4 +185,30 @@ func (s *KvdbServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseI
 	}
 
 	return &dbpb.GetDatabaseInfoResponse{Data: data}, nil
+}
+
+func (s *KvdbServer) GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (*storagepb.GetAllKeysResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.getDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	return &storagepb.GetAllKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
+}
+
+func (s *KvdbServer) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (*storagepb.GetKeyTypeResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.getDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	keyType, ok := s.databases[dbName].GetKeyType(req.Key)
+
+	return &storagepb.GetKeyTypeResponse{KeyType: keyType.String(), Ok: ok}, nil
 }
