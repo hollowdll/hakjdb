@@ -212,3 +212,31 @@ func (s *KvdbServer) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRe
 
 	return &storagepb.GetKeyTypeResponse{KeyType: keyType.String(), Ok: ok}, nil
 }
+
+func (s *KvdbServer) DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (*storagepb.DeleteKeysResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.getDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	keysDeletedCount := s.databases[dbName].DeleteKeys(req.Keys)
+
+	return &storagepb.DeleteKeysResponse{KeysDeletedCount: keysDeletedCount}, nil
+}
+
+func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAllKeysRequest) (*storagepb.DeleteAllKeysResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.getDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	s.databases[dbName].DeleteAllKeys()
+
+	return &storagepb.DeleteAllKeysResponse{}, nil
+}
