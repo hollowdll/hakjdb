@@ -163,6 +163,11 @@ func (s *KvdbServer) GetDBNameFromContext(ctx context.Context) string {
 	return dbName[0]
 }
 
+// DbMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
+func (s *KvdbServer) DBMaxKeysReached(db *kvdb.Database) bool {
+	return db.GetKeyCount() >= s.Cfg.MaxKeysPerDB
+}
+
 type Server struct {
 	serverpb.UnimplementedServerServiceServer
 	dbpb.UnimplementedDatabaseServiceServer

@@ -40,6 +40,10 @@ type GeneralKeyService interface {
 }
 
 type StringKeyService interface {
+	Logger() kvdb.Logger
+	GetDBNameFromContext(ctx context.Context) string
+	SetString(ctx context.Context, req *storagepb.SetStringRequest) (*storagepb.SetStringResponse, error)
+	GetString(ctx context.Context, req *storagepb.GetStringRequest) (*storagepb.GetStringResponse, error)
 }
 
 type HashMapKeyService interface {
@@ -192,7 +196,7 @@ func (s *KvdbServer) GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRe
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	dbName := s.getDBNameFromContext(ctx)
+	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
@@ -204,7 +208,7 @@ func (s *KvdbServer) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRe
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	dbName := s.getDBNameFromContext(ctx)
+	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
@@ -218,7 +222,7 @@ func (s *KvdbServer) DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRe
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	dbName := s.getDBNameFromContext(ctx)
+	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
@@ -232,7 +236,7 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAll
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	dbName := s.getDBNameFromContext(ctx)
+	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
@@ -240,4 +244,40 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAll
 	s.databases[dbName].DeleteAllKeys()
 
 	return &storagepb.DeleteAllKeysResponse{}, nil
+}
+
+func (s *KvdbServer) SetString(ctx context.Context, req *storagepb.SetStringRequest) (*storagepb.SetStringResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.GetDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	if err := kvdb.ValidateDatabaseKey(req.Key); err != nil {
+		return nil, err
+	}
+
+	if s.DBMaxKeysReached(s.databases[dbName]) {
+		return nil, kvdberrors.ErrMaxKeysReached
+	}
+
+	s.databases[dbName].SetString(req.Key, req.Value)
+
+	return &storagepb.SetStringResponse{}, nil
+}
+
+func (s *KvdbServer) GetString(ctx context.Context, req *storagepb.GetStringRequest) (*storagepb.GetStringResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.GetDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	value, ok := s.databases[dbName].GetString(req.Key)
+
+	return &storagepb.GetStringResponse{Value: value, Ok: ok}, nil
 }
