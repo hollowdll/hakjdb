@@ -149,7 +149,7 @@ func (s *KvdbServer) dbExists(name string) bool {
 }
 
 // getDatabaseNameFromContext gets the database name from the incoming context gRPC metadata.
-func (s *KvdbServer) getDBNameFromContext(ctx context.Context) string {
+func (s *KvdbServer) GetDBNameFromContext(ctx context.Context) string {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return s.Cfg.DefaultDB

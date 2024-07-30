@@ -32,6 +32,7 @@ type DBService interface {
 
 type GeneralKeyService interface {
 	Logger() kvdb.Logger
+	GetDBNameFromContext(ctx context.Context) string
 	GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (*storagepb.GetAllKeysResponse, error)
 	GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (*storagepb.GetKeyTypeResponse, error)
 	DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (*storagepb.DeleteKeysResponse, error)
