@@ -28,6 +28,8 @@ var (
 
 	// ErrDatabaseKeyInvalid is returned when inserting a key with a name that contains
 	// invalid characters.
+	//
+	// DEPRECATED.
 	ErrDatabaseKeyInvalid = errors.New("key contains invalid characters")
 
 	// ErrMaxKeysReached is returned when trying to insert keys into a database
@@ -36,10 +38,14 @@ var (
 
 	// ErrMissingMetadata is returned when gRPC requires metadata
 	// but it is missing.
+	//
+	// DEPRECATED.
 	ErrMissingMetadata = errors.New("missing metadata")
 
 	// ErrMissingKeyInMetadata is returned when a required key is missing
 	// in gRPC metadata.
+	//
+	// DEPRECATED.
 	ErrMissingKeyInMetadata = errors.New("missing key in metadata")
 
 	// ErrInvalidCredentials is returned in authorization process
@@ -57,6 +63,8 @@ var (
 
 	// ErrMaxHashMapFieldsReached is returned when trying to insert fields into a HashMap
 	// that has reached the maximum field limit.
+	//
+	// DEPRECATED.
 	ErrMaxHashMapFieldsReached = errors.New("max HashMap field limit reached")
 
 	// ErrMaxClientConnectionsReached is returned when a new client tries to connect to the server
