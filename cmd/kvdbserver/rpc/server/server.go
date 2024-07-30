@@ -4,10 +4,8 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
@@ -38,12 +36,7 @@ func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.G
 
 	res, err = s.ss.GetServerInfo(ctx, req)
 	if err != nil {
-		switch err {
-		case kvdberrors.ErrGetOSInfo:
-			return nil, status.Error(codes.Internal, err.Error())
-		default:
-			return nil, status.Error(codes.Unknown, err.Error())
-		}
+		return nil, rpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -63,14 +56,7 @@ func (s *ServerServiceServer) GetLogs(ctx context.Context, req *serverpb.GetLogs
 
 	res, err = s.ss.GetLogs(ctx, req)
 	if err != nil {
-		switch err {
-		case kvdberrors.ErrLogFileNotEnabled:
-			return nil, status.Error(codes.FailedPrecondition, err.Error())
-		case kvdberrors.ErrReadLogFile:
-			return nil, status.Error(codes.Internal, err.Error())
-		default:
-			return nil, status.Error(codes.Unknown, err.Error())
-		}
+		return nil, rpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil

@@ -4,10 +4,8 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
@@ -40,16 +38,7 @@ func (s *DBServiceServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDa
 
 	res, err = s.dbs.CreateDatabase(ctx, req)
 	if err != nil {
-		var code codes.Code
-		switch err {
-		case kvdberrors.ErrDatabaseExists:
-			code = codes.AlreadyExists
-		case kvdberrors.ErrDatabaseNameRequired, kvdberrors.ErrDatabaseNameTooLong, kvdberrors.ErrDatabaseNameInvalid:
-			code = codes.InvalidArgument
-		default:
-			code = codes.Unknown
-		}
-		return nil, status.Error(code, err.Error())
+		return nil, rpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -69,14 +58,7 @@ func (s *DBServiceServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDa
 
 	res, err = s.dbs.DeleteDatabase(ctx, req)
 	if err != nil {
-		var code codes.Code
-		switch err {
-		case kvdberrors.ErrDatabaseNotFound:
-			code = codes.NotFound
-		default:
-			code = codes.Unknown
-		}
-		return nil, status.Error(code, err.Error())
+		return nil, rpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -96,7 +78,7 @@ func (s *DBServiceServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllD
 
 	res, err = s.dbs.GetAllDatabases(ctx, req)
 	if err != nil {
-		return nil, status.Error(codes.Unknown, err.Error())
+		return nil, rpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -116,14 +98,7 @@ func (s *DBServiceServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetData
 
 	res, err = s.dbs.GetDatabaseInfo(ctx, req)
 	if err != nil {
-		var code codes.Code
-		switch err {
-		case kvdberrors.ErrDatabaseNotFound:
-			code = codes.NotFound
-		default:
-			code = codes.Unknown
-		}
-		return nil, status.Error(code, err.Error())
+		return nil, rpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
