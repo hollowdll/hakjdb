@@ -60,8 +60,8 @@ type ServerConfig struct {
 	TLSPrivKeyPath       string
 }
 
-// initConfig initializes server configurations.
-func LoadConfig(lg kvdb.Logger) *ServerConfig {
+// LoadConfig loads server configurations.
+func LoadConfig(lg kvdb.Logger) ServerConfig {
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
 		lg.Fatalf("Failed to get the executable's parent directory: %v", err)
@@ -91,7 +91,7 @@ func LoadConfig(lg kvdb.Logger) *ServerConfig {
 		lg.Fatalf("Failed to read configuration file: %v", err)
 	}
 
-	return &ServerConfig{
+	return ServerConfig{
 		LogFileEnabled:       viper.GetBool(ConfigKeyLogFileEnabled),
 		TLSEnabled:           viper.GetBool(ConfigKeyTLSEnabled),
 		DebugEnabled:         viper.GetBool(ConfigKeyDebugEnabled),
