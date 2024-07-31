@@ -47,6 +47,12 @@ type StringKeyService interface {
 }
 
 type HashMapKeyService interface {
+	Logger() kvdb.Logger
+	GetDBNameFromContext(ctx context.Context) string
+	SetHashMap(ctx context.Context, req *storagepb.SetHashMapRequest) (*storagepb.SetHashMapResponse, error)
+	GetHashMapFieldValues(ctx context.Context, req *storagepb.GetHashMapFieldValueRequest) (*storagepb.GetHashMapFieldValueResponse, error)
+	GetAllHashMapFieldsAndValues(ctx context.Context, req *storagepb.GetAllHashMapFieldsAndValuesRequest) (*storagepb.GetAllHashMapFieldsAndValuesResponse, error)
+	DeleteHashMapFields(ctx context.Context, req *storagepb.DeleteHashMapFieldsRequest) (*storagepb.DeleteHashMapFieldsResponse, error)
 }
 
 func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
@@ -280,4 +286,76 @@ func (s *KvdbServer) GetString(ctx context.Context, req *storagepb.GetStringRequ
 	value, ok := s.databases[dbName].GetString(req.Key)
 
 	return &storagepb.GetStringResponse{Value: value, Ok: ok}, nil
+}
+
+func (s *KvdbServer) SetHashMap(ctx context.Context, req *storagepb.SetHashMapRequest) (*storagepb.SetHashMapResponse, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.GetDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	if err := kvdb.ValidateDatabaseKey(req.Key); err != nil {
+		return nil, err
+	}
+
+	if s.DBMaxKeysReached(s.databases[dbName]) {
+		return nil, kvdberrors.ErrMaxKeysReached
+	}
+
+	fieldsAddedCount := s.databases[dbName].SetHashMap(req.Key, req.FieldValueMap, s.Cfg.MaxHashMapFields)
+
+	return &storagepb.SetHashMapResponse{FieldsAddedCount: fieldsAddedCount}, nil
+}
+
+func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *storagepb.GetHashMapFieldValueRequest) (res *storagepb.GetHashMapFieldValueResponse, err error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.GetDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	result, ok := s.databases[dbName].GetHashMapFieldValues(req.Key, req.Fields)
+
+	var fieldValueMap = make(map[string]*storagepb.HashMapFieldValue)
+	for field, value := range result {
+		fieldValueMap[field] = &storagepb.HashMapFieldValue{
+			Value: value.Value,
+			Ok:    value.Ok,
+		}
+	}
+
+	return &storagepb.GetHashMapFieldValueResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+}
+
+func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *storagepb.GetAllHashMapFieldsAndValuesRequest) (res *storagepb.GetAllHashMapFieldsAndValuesResponse, err error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.GetDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(req.Key)
+
+	return &storagepb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+}
+
+func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *storagepb.DeleteHashMapFieldsRequest) (res *storagepb.DeleteHashMapFieldsResponse, err error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	dbName := s.GetDBNameFromContext(ctx)
+	if !s.dbExists(dbName) {
+		return nil, kvdberrors.ErrDatabaseNotFound
+	}
+
+	fieldsRemovedCount, ok := s.databases[dbName].DeleteHashMapFields(req.Key, req.Fields)
+
+	return &storagepb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
 }
