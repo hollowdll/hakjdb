@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
+	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
@@ -38,12 +38,12 @@ func (s *DBServiceServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDa
 	}()
 
 	if err = validation.ValidateDBName(req.DbName); err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	res, err = s.dbs.CreateDatabase(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -63,7 +63,7 @@ func (s *DBServiceServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDa
 
 	res, err = s.dbs.DeleteDatabase(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -83,7 +83,7 @@ func (s *DBServiceServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllD
 
 	res, err = s.dbs.GetAllDatabases(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -103,7 +103,7 @@ func (s *DBServiceServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetData
 
 	res, err = s.dbs.GetDatabaseInfo(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil

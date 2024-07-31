@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/storagepb"
-	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
+	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
@@ -37,12 +37,12 @@ func (s *StringKeyServiceServer) SetString(ctx context.Context, req *storagepb.S
 	}()
 
 	if err = validation.ValidateDBKey(req.Key); err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	res, err = s.sks.SetString(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -63,7 +63,7 @@ func (s *StringKeyServiceServer) GetString(ctx context.Context, req *storagepb.G
 
 	res, err = s.sks.GetString(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil

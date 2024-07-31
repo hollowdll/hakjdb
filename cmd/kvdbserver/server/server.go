@@ -11,26 +11,12 @@ import (
 	"time"
 
 	kvdb "github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/db"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/server"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/storage"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/version"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
-)
-
-const (
-	getServerInfoRPCName string = "GetServerInfo"
-	getLogsRPCName       string = "GetLogs"
 )
 
 // ClientConnListener is a client connection listener
@@ -215,13 +201,13 @@ func (s *KvdbServer) DBMaxKeysReached(db *kvdb.Database) bool {
 	return db.GetKeyCount() >= s.Cfg.MaxKeysPerDB
 }
 
-// initServer initializes the server.
-func initServer(s *KvdbServer) {
-	s.logger.ClearFlags()
+// Init initializes the server.
+func (s *KvdbServer) Init() {
+	s.logger.Infof("Initializing server ...")
 
 	if s.Cfg.LogFileEnabled {
 		s.EnableLogFile()
-		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", server.logFilePath)
+		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", s.Cfg.LogFilePath)
 	}
 
 	if s.Cfg.DebugEnabled {
@@ -239,49 +225,7 @@ func initServer(s *KvdbServer) {
 	s.CreateDefaultDatabase(s.Cfg.DefaultDB)
 }
 
-// StartServer starts the server.
-func StartServer() {
-	logger := kvdb.NewDefaultLogger()
-	defer logger.CloseLogFile()
-	logger.Infof("Starting kvdb v%s server ...", version.Version)
-	logger.Infof("Loading configurations ...")
-	cfg := config.LoadConfig(logger)
-	s := NewKvdbServer(cfg, logger)
-	logger.Infof("Initializing server ...")
-	initServer(s)
-	logger.Infof("Setting up gRPC server ...")
-	grpcServer := s.setupGrpcServer()
-	logger.Infof("Setting up listener ...")
-	s.setupListener()
-	s.serveGrpcServer(grpcServer)
-}
-
-func (s *KvdbServer) setupGrpcServer() *grpc.Server {
-	logger := s.Logger()
-	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(s.AuthInterceptor),
-	}
-
-	if !s.Cfg.TLSEnabled {
-		logger.Warning("TLS is disabled. Connections will not be encrypted")
-	} else {
-		logger.Info("Attempting to enable TLS ...")
-		cert := s.getTLSCert()
-		opts = append(opts, grpc.Creds(credentials.NewServerTLSFromCert(&cert)))
-		logger.Info("TLS is enabled. Connections will be encrypted")
-	}
-
-	grpcServer := grpc.NewServer(opts...)
-	serverpb.RegisterServerServiceServer(grpcServer, server.NewServerServiceServer(s))
-	dbpb.RegisterDatabaseServiceServer(grpcServer, db.NewDBServiceServer(s))
-	storagepb.RegisterGeneralKeyServiceServer(grpcServer, storage.NewGeneralKeyServiceServer(s))
-	storagepb.RegisterStringKeyServiceServer(grpcServer, storage.NewStringKeyServiceServer(s))
-	storagepb.RegisterHashMapKeyServiceServer(grpcServer, storage.NewHashMapKeyServiceServer(s))
-
-	return grpcServer
-}
-
-func (s *KvdbServer) getTLSCert() tls.Certificate {
+func (s *KvdbServer) GetTLSCert() tls.Certificate {
 	logger := s.Logger()
 	certBytes, err := os.ReadFile(s.Cfg.TLSCertPath)
 	if err != nil {
@@ -304,8 +248,9 @@ func (s *KvdbServer) getTLSCert() tls.Certificate {
 	return cert
 }
 
-func (s *KvdbServer) setupListener() {
+func (s *KvdbServer) SetupListener() {
 	logger := s.Logger()
+	logger.Infof("Setting up listener ...")
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.Cfg.PortInUse))
 	if err != nil {
 		logger.Fatalf("Failed to listen: %v", err)
@@ -314,11 +259,4 @@ func (s *KvdbServer) setupListener() {
 
 	connListener := NewClientConnListener(lis, s, s.Cfg.MaxClientConnections)
 	s.ClientConnListener = connListener
-}
-
-func (s *KvdbServer) serveGrpcServer(grpcServer *grpc.Server) {
-	logger := s.Logger()
-	if err := grpcServer.Serve(s.ClientConnListener); err != nil {
-		logger.Errorf("Failed to accept incoming connection: %v", err)
-	}
 }

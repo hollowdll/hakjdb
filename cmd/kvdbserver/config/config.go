@@ -62,6 +62,7 @@ type ServerConfig struct {
 
 // LoadConfig loads server configurations.
 func LoadConfig(lg kvdb.Logger) ServerConfig {
+	lg.Infof("Loading configurations ...")
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
 		lg.Fatalf("Failed to get the executable's parent directory: %v", err)

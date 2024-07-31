@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/storagepb"
-	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
+	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
@@ -39,12 +39,12 @@ func (s *HashMapKeyServiceServer) SetHashMap(ctx context.Context, req *storagepb
 	}()
 
 	if err = validation.ValidateDBKey(req.Key); err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	res, err = s.hks.SetHashMap(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -65,7 +65,7 @@ func (s *HashMapKeyServiceServer) GetHashMapFieldValues(ctx context.Context, req
 
 	res, err = s.hks.GetHashMapFieldValues(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -86,7 +86,7 @@ func (s *HashMapKeyServiceServer) GetAllHashMapFieldsAndValues(ctx context.Conte
 
 	res, err = s.hks.GetAllHashMapFieldsAndValues(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -107,7 +107,7 @@ func (s *HashMapKeyServiceServer) DeleteHashMapFields(ctx context.Context, req *
 
 	res, err = s.hks.DeleteHashMapFields(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil

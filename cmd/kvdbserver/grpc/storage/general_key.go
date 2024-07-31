@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/storagepb"
-	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
+	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 )
 
@@ -39,7 +39,7 @@ func (s *GeneralKeyServiceServer) GetAllKeys(ctx context.Context, req *storagepb
 
 	res, err = s.gks.GetAllKeys(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -60,7 +60,7 @@ func (s *GeneralKeyServiceServer) GetKeyType(ctx context.Context, req *storagepb
 
 	res, err = s.gks.GetKeyType(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -81,7 +81,7 @@ func (s *GeneralKeyServiceServer) DeleteKeys(ctx context.Context, req *storagepb
 
 	res, err = s.gks.DeleteKeys(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -102,7 +102,7 @@ func (s *GeneralKeyServiceServer) DeleteAllKeys(ctx context.Context, req *storag
 
 	res, err = s.gks.DeleteAllKeys(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil

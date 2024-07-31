@@ -48,13 +48,15 @@ type DefaultLogger struct {
 }
 
 func NewDefaultLogger() *DefaultLogger {
-	return &DefaultLogger{
+	lg := &DefaultLogger{
 		Logger:         log.New(os.Stderr, "", 0),
 		FileLogger:     log.New(io.Discard, "", 0),
 		logFile:        nil,
 		debug:          false,
 		logFileEnabled: false,
 	}
+	lg.ClearFlags()
+	return lg
 }
 
 func (l *DefaultLogger) EnableDebug() {

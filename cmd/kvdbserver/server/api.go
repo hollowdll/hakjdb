@@ -100,7 +100,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 		TotalKeys:     totalKeys,
 	}
 	clientInfo := &serverpb.ClientInfo{
-		ClientConnections:    s.ClientConnListener.clientConnections,
+		ClientConnections:    s.ClientConnListener.clientConnectionsCount,
 		MaxClientConnections: s.ClientConnListener.maxClientConnections,
 	}
 	dbInfo := &serverpb.DatabaseInfo{

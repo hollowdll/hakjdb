@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
+	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 )
 
@@ -36,7 +36,7 @@ func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.G
 
 	res, err = s.ss.GetServerInfo(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
@@ -56,7 +56,7 @@ func (s *ServerServiceServer) GetLogs(ctx context.Context, req *serverpb.GetLogs
 
 	res, err = s.ss.GetLogs(ctx, req)
 	if err != nil {
-		return nil, rpcerrors.ToGrpcError(err)
+		return nil, grpcerrors.ToGrpcError(err)
 	}
 
 	return res, nil
