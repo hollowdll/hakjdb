@@ -6,6 +6,7 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
 
 const (
@@ -35,6 +36,10 @@ func (s *DBServiceServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDa
 			logger.Infof("Created database '%s'", req.DbName)
 		}
 	}()
+
+	if err = validation.ValidateDBName(req.DbName); err != nil {
+		return nil, rpcerrors.ToGrpcError(err)
+	}
 
 	res, err = s.dbs.CreateDatabase(ctx, req)
 	if err != nil {

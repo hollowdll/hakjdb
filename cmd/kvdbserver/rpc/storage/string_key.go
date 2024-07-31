@@ -6,6 +6,7 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
 
 const (
@@ -34,6 +35,10 @@ func (s *StringKeyServiceServer) SetString(ctx context.Context, req *storagepb.S
 			logger.Debugf("%s: (success) db = %s %v", setStringRPCName, dbName, req)
 		}
 	}()
+
+	if err = validation.ValidateDBKey(req.Key); err != nil {
+		return nil, rpcerrors.ToGrpcError(err)
+	}
 
 	res, err = s.sks.SetString(ctx, req)
 	if err != nil {

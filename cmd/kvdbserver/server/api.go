@@ -143,10 +143,6 @@ func (s *KvdbServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDatabas
 		return nil, kvdberrors.ErrDatabaseExists
 	}
 
-	if err := kvdb.ValidateDatabaseName(req.DbName); err != nil {
-		return nil, err
-	}
-
 	db := kvdb.CreateDatabase(req.DbName)
 	s.databases[db.Name] = db
 
@@ -261,10 +257,6 @@ func (s *KvdbServer) SetString(ctx context.Context, req *storagepb.SetStringRequ
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	if err := kvdb.ValidateDatabaseKey(req.Key); err != nil {
-		return nil, err
-	}
-
 	if s.DBMaxKeysReached(s.databases[dbName]) {
 		return nil, kvdberrors.ErrMaxKeysReached
 	}
@@ -295,10 +287,6 @@ func (s *KvdbServer) SetHashMap(ctx context.Context, req *storagepb.SetHashMapRe
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
-	}
-
-	if err := kvdb.ValidateDatabaseKey(req.Key); err != nil {
-		return nil, err
 	}
 
 	if s.DBMaxKeysReached(s.databases[dbName]) {

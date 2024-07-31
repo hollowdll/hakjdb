@@ -6,6 +6,7 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	rpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/rpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
 
 const (
@@ -36,6 +37,10 @@ func (s *HashMapKeyServiceServer) SetHashMap(ctx context.Context, req *storagepb
 			logger.Debugf("%s: (success) db = %s %v", setHashMapRPCName, dbName, req)
 		}
 	}()
+
+	if err = validation.ValidateDBKey(req.Key); err != nil {
+		return nil, rpcerrors.ToGrpcError(err)
+	}
 
 	res, err = s.hks.SetHashMap(ctx, req)
 	if err != nil {
