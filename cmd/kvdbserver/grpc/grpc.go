@@ -2,11 +2,11 @@ package grpc
 
 import (
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	dbrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/db"
+	kvrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/kv"
 	serverrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/server"
-	storagerpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/storage"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -30,10 +30,10 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 
 	grpcServer := grpc.NewServer(opts...)
 	serverpb.RegisterServerServiceServer(grpcServer, serverrpc.NewServerServiceServer(s))
-	dbpb.RegisterDatabaseServiceServer(grpcServer, dbrpc.NewDBServiceServer(s))
-	storagepb.RegisterGeneralKeyServiceServer(grpcServer, storagerpc.NewGeneralKeyServiceServer(s))
-	storagepb.RegisterStringKeyServiceServer(grpcServer, storagerpc.NewStringKeyServiceServer(s))
-	storagepb.RegisterHashMapKeyServiceServer(grpcServer, storagerpc.NewHashMapKeyServiceServer(s))
+	dbpb.RegisterDBServiceServer(grpcServer, dbrpc.NewDBServiceServer(s))
+	kvpb.RegisterGeneralKVServiceServer(grpcServer, kvrpc.NewGeneralKVServiceServer(s))
+	kvpb.RegisterStringKVServiceServer(grpcServer, kvrpc.NewStringKVServiceServer(s))
+	kvpb.RegisterHashMapKVServiceServer(grpcServer, kvrpc.NewHashMapKVServiceServer(s))
 
 	return grpcServer
 }

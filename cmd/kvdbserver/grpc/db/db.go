@@ -17,17 +17,17 @@ const (
 )
 
 type DBServiceServer struct {
-	dbs server.DBService
-	dbpb.UnimplementedDatabaseServiceServer
+	srv server.DBService
+	dbpb.UnimplementedDBServiceServer
 }
 
-func NewDBServiceServer(s *server.KvdbServer) dbpb.DatabaseServiceServer {
-	return &DBServiceServer{dbs: s}
+func NewDBServiceServer(s *server.KvdbServer) dbpb.DBServiceServer {
+	return &DBServiceServer{srv: s}
 }
 
-// CreateDatabase is the implementation of RPC CreateDatabase.
-func (s *DBServiceServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDatabaseRequest) (res *dbpb.CreateDatabaseResponse, err error) {
-	logger := s.dbs.Logger()
+// CreateDB is the implementation of RPC CreateDB.
+func (s *DBServiceServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (res *dbpb.CreateDBResponse, err error) {
+	logger := s.srv.Logger()
 	logger.Debugf("%s: (call) %v", createDatabaseRPCName, req)
 	defer func() {
 		if err != nil {
@@ -41,7 +41,7 @@ func (s *DBServiceServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDa
 		return nil, grpcerrors.ToGrpcError(err)
 	}
 
-	res, err = s.dbs.CreateDatabase(ctx, req)
+	res, err = s.srv.CreateDB(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -49,9 +49,9 @@ func (s *DBServiceServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDa
 	return res, nil
 }
 
-// DeleteDatabase is the implementation of RPC DeleteDatabase.
-func (s *DBServiceServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDatabaseRequest) (res *dbpb.DeleteDatabaseResponse, err error) {
-	logger := s.dbs.Logger()
+// DeleteDB is the implementation of RPC DeleteDB.
+func (s *DBServiceServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (res *dbpb.DeleteDBResponse, err error) {
+	logger := s.srv.Logger()
 	logger.Debugf("%s: (call) %v", deleteDatabaseRPCName, req)
 	defer func() {
 		if err != nil {
@@ -61,7 +61,7 @@ func (s *DBServiceServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDa
 		}
 	}()
 
-	res, err = s.dbs.DeleteDatabase(ctx, req)
+	res, err = s.srv.DeleteDB(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -69,9 +69,9 @@ func (s *DBServiceServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDa
 	return res, nil
 }
 
-// GetAllDatabases is the implementation of RPC GetAllDatabases.
-func (s *DBServiceServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllDatabasesRequest) (res *dbpb.GetAllDatabasesResponse, err error) {
-	logger := s.dbs.Logger()
+// GetAllDBs is the implementation of RPC GetAllDBs.
+func (s *DBServiceServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) (res *dbpb.GetAllDBsResponse, err error) {
+	logger := s.srv.Logger()
 	logger.Debugf("%s: (call) %v", getAllDatabasesRPCName, req)
 	defer func() {
 		if err != nil {
@@ -81,7 +81,7 @@ func (s *DBServiceServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllD
 		}
 	}()
 
-	res, err = s.dbs.GetAllDatabases(ctx, req)
+	res, err = s.srv.GetAllDBs(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -89,9 +89,9 @@ func (s *DBServiceServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllD
 	return res, nil
 }
 
-// GetDatabaseInfo is the implementation of RPC GetDatabaseInfo.
-func (s *DBServiceServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseInfoRequest) (res *dbpb.GetDatabaseInfoResponse, err error) {
-	logger := s.dbs.Logger()
+// GetDBInfo is the implementation of RPC GetDBInfo.
+func (s *DBServiceServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (res *dbpb.GetDBInfoResponse, err error) {
+	logger := s.srv.Logger()
 	logger.Debugf("%s: (call) %v", getDatabaseInfoRPCName, req)
 	defer func() {
 		if err != nil {
@@ -101,7 +101,7 @@ func (s *DBServiceServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetData
 		}
 	}()
 
-	res, err = s.dbs.GetDatabaseInfo(ctx, req)
+	res, err = s.srv.GetDBInfo(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}

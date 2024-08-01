@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
@@ -14,19 +14,19 @@ const (
 	getStringRPCName string = "GetString"
 )
 
-type StringKeyServiceServer struct {
-	sks server.StringKeyService
-	storagepb.UnimplementedStringKeyServiceServer
+type StringKVServiceServer struct {
+	srv server.StringKVService
+	kvpb.UnimplementedStringKVServiceServer
 }
 
-func NewStringKeyServiceServer(s *server.KvdbServer) storagepb.StringKeyServiceServer {
-	return &StringKeyServiceServer{sks: s}
+func NewStringKVServiceServer(s *server.KvdbServer) kvpb.StringKVServiceServer {
+	return &StringKVServiceServer{srv: s}
 }
 
 // SetString is the implementation of RPC SetString.
-func (s *StringKeyServiceServer) SetString(ctx context.Context, req *storagepb.SetStringRequest) (res *storagepb.SetStringResponse, err error) {
-	logger := s.sks.Logger()
-	dbName := s.sks.GetDBNameFromContext(ctx)
+func (s *StringKVServiceServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) (res *kvpb.SetStringResponse, err error) {
+	logger := s.srv.Logger()
+	dbName := s.srv.GetDBNameFromContext(ctx)
 	logger.Debugf("%s: (call) db = %s %v", setStringRPCName, dbName, req)
 	defer func() {
 		if err != nil {
@@ -40,7 +40,7 @@ func (s *StringKeyServiceServer) SetString(ctx context.Context, req *storagepb.S
 		return nil, grpcerrors.ToGrpcError(err)
 	}
 
-	res, err = s.sks.SetString(ctx, req)
+	res, err = s.srv.SetString(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -49,9 +49,9 @@ func (s *StringKeyServiceServer) SetString(ctx context.Context, req *storagepb.S
 }
 
 // GetString is the implementation of RPC GetString.
-func (s *StringKeyServiceServer) GetString(ctx context.Context, req *storagepb.GetStringRequest) (res *storagepb.GetStringResponse, err error) {
-	logger := s.sks.Logger()
-	dbName := s.sks.GetDBNameFromContext(ctx)
+func (s *StringKVServiceServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) (res *kvpb.GetStringResponse, err error) {
+	logger := s.srv.Logger()
+	dbName := s.srv.GetDBNameFromContext(ctx)
 	logger.Debugf("%s: (call) db = %s %v", getStringRPCName, dbName, req)
 	defer func() {
 		if err != nil {
@@ -61,7 +61,7 @@ func (s *StringKeyServiceServer) GetString(ctx context.Context, req *storagepb.G
 		}
 	}()
 
-	res, err = s.sks.GetString(ctx, req)
+	res, err = s.srv.GetString(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}

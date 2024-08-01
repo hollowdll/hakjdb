@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 )
@@ -15,19 +15,19 @@ const (
 	deleteAllKeysRPCName string = "DeleteAllKeys"
 )
 
-type GeneralKeyServiceServer struct {
-	gks server.GeneralKeyService
-	storagepb.UnimplementedGeneralKeyServiceServer
+type GeneralKVServiceServer struct {
+	srv server.GeneralKVService
+	kvpb.UnimplementedGeneralKVServiceServer
 }
 
-func NewGeneralKeyServiceServer(s *server.KvdbServer) storagepb.GeneralKeyServiceServer {
-	return &GeneralKeyServiceServer{gks: s}
+func NewGeneralKVServiceServer(s *server.KvdbServer) kvpb.GeneralKVServiceServer {
+	return &GeneralKVServiceServer{srv: s}
 }
 
 // GetAllKeys is the implementation of RPC GetAllKeys.
-func (s *GeneralKeyServiceServer) GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (res *storagepb.GetAllKeysResponse, err error) {
-	logger := s.gks.Logger()
-	dbName := s.gks.GetDBNameFromContext(ctx)
+func (s *GeneralKVServiceServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest) (res *kvpb.GetAllKeysResponse, err error) {
+	logger := s.srv.Logger()
+	dbName := s.srv.GetDBNameFromContext(ctx)
 	logger.Debugf("%s: (call) db = %s %v", getAllKeysRPCName, dbName, req)
 	defer func() {
 		if err != nil {
@@ -37,7 +37,7 @@ func (s *GeneralKeyServiceServer) GetAllKeys(ctx context.Context, req *storagepb
 		}
 	}()
 
-	res, err = s.gks.GetAllKeys(ctx, req)
+	res, err = s.srv.GetAllKeys(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -46,9 +46,9 @@ func (s *GeneralKeyServiceServer) GetAllKeys(ctx context.Context, req *storagepb
 }
 
 // GetKeyType is the implementation of RPC GetKeyType.
-func (s *GeneralKeyServiceServer) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (res *storagepb.GetKeyTypeResponse, err error) {
-	logger := s.gks.Logger()
-	dbName := s.gks.GetDBNameFromContext(ctx)
+func (s *GeneralKVServiceServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest) (res *kvpb.GetKeyTypeResponse, err error) {
+	logger := s.srv.Logger()
+	dbName := s.srv.GetDBNameFromContext(ctx)
 	logger.Debugf("%s: (call) db = %s %v", getKeyTypeRPCName, dbName, req)
 	defer func() {
 		if err != nil {
@@ -58,7 +58,7 @@ func (s *GeneralKeyServiceServer) GetKeyType(ctx context.Context, req *storagepb
 		}
 	}()
 
-	res, err = s.gks.GetKeyType(ctx, req)
+	res, err = s.srv.GetKeyType(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -67,9 +67,9 @@ func (s *GeneralKeyServiceServer) GetKeyType(ctx context.Context, req *storagepb
 }
 
 // DeleteKeys is the implementation of RPC DeleteKeys.
-func (s *GeneralKeyServiceServer) DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (res *storagepb.DeleteKeysResponse, err error) {
-	logger := s.gks.Logger()
-	dbName := s.gks.GetDBNameFromContext(ctx)
+func (s *GeneralKVServiceServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest) (res *kvpb.DeleteKeysResponse, err error) {
+	logger := s.srv.Logger()
+	dbName := s.srv.GetDBNameFromContext(ctx)
 	logger.Debugf("%s: (call) db = %s %v", deleteKeysRPCName, dbName, req)
 	defer func() {
 		if err != nil {
@@ -79,7 +79,7 @@ func (s *GeneralKeyServiceServer) DeleteKeys(ctx context.Context, req *storagepb
 		}
 	}()
 
-	res, err = s.gks.DeleteKeys(ctx, req)
+	res, err = s.srv.DeleteKeys(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
@@ -88,9 +88,9 @@ func (s *GeneralKeyServiceServer) DeleteKeys(ctx context.Context, req *storagepb
 }
 
 // DeleteAllKeys is the implementation of RPC DeleteAllKeys.
-func (s *GeneralKeyServiceServer) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAllKeysRequest) (res *storagepb.DeleteAllKeysResponse, err error) {
-	logger := s.gks.Logger()
-	dbName := s.gks.GetDBNameFromContext(ctx)
+func (s *GeneralKVServiceServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysRequest) (res *kvpb.DeleteAllKeysResponse, err error) {
+	logger := s.srv.Logger()
+	dbName := s.srv.GetDBNameFromContext(ctx)
 	logger.Debugf("%s: (call) db = %s %v", deleteAllKeysRPCName, dbName, req)
 	defer func() {
 		if err != nil {
@@ -100,7 +100,7 @@ func (s *GeneralKeyServiceServer) DeleteAllKeys(ctx context.Context, req *storag
 		}
 	}()
 
-	res, err = s.gks.DeleteAllKeys(ctx, req)
+	res, err = s.srv.DeleteAllKeys(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}

@@ -8,8 +8,8 @@ import (
 
 	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -24,35 +24,35 @@ type ServerService interface {
 
 type DBService interface {
 	Logger() kvdb.Logger
-	CreateDatabase(ctx context.Context, req *dbpb.CreateDatabaseRequest) (*dbpb.CreateDatabaseResponse, error)
-	DeleteDatabase(ctx context.Context, req *dbpb.DeleteDatabaseRequest) (*dbpb.DeleteDatabaseResponse, error)
-	GetAllDatabases(ctx context.Context, req *dbpb.GetAllDatabasesRequest) (*dbpb.GetAllDatabasesResponse, error)
-	GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseInfoRequest) (*dbpb.GetDatabaseInfoResponse, error)
+	CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error)
+	DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error)
+	GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) (*dbpb.GetAllDBsResponse, error)
+	GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error)
 }
 
-type GeneralKeyService interface {
+type GeneralKVService interface {
 	Logger() kvdb.Logger
 	GetDBNameFromContext(ctx context.Context) string
-	GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (*storagepb.GetAllKeysResponse, error)
-	GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (*storagepb.GetKeyTypeResponse, error)
-	DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (*storagepb.DeleteKeysResponse, error)
-	DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAllKeysRequest) (*storagepb.DeleteAllKeysResponse, error)
+	GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest) (*kvpb.GetAllKeysResponse, error)
+	GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest) (*kvpb.GetKeyTypeResponse, error)
+	DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest) (*kvpb.DeleteKeysResponse, error)
+	DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysRequest) (*kvpb.DeleteAllKeysResponse, error)
 }
 
-type StringKeyService interface {
+type StringKVService interface {
 	Logger() kvdb.Logger
 	GetDBNameFromContext(ctx context.Context) string
-	SetString(ctx context.Context, req *storagepb.SetStringRequest) (*storagepb.SetStringResponse, error)
-	GetString(ctx context.Context, req *storagepb.GetStringRequest) (*storagepb.GetStringResponse, error)
+	SetString(ctx context.Context, req *kvpb.SetStringRequest) (*kvpb.SetStringResponse, error)
+	GetString(ctx context.Context, req *kvpb.GetStringRequest) (*kvpb.GetStringResponse, error)
 }
 
-type HashMapKeyService interface {
+type HashMapKVService interface {
 	Logger() kvdb.Logger
 	GetDBNameFromContext(ctx context.Context) string
-	SetHashMap(ctx context.Context, req *storagepb.SetHashMapRequest) (*storagepb.SetHashMapResponse, error)
-	GetHashMapFieldValues(ctx context.Context, req *storagepb.GetHashMapFieldValueRequest) (*storagepb.GetHashMapFieldValueResponse, error)
-	GetAllHashMapFieldsAndValues(ctx context.Context, req *storagepb.GetAllHashMapFieldsAndValuesRequest) (*storagepb.GetAllHashMapFieldsAndValuesResponse, error)
-	DeleteHashMapFields(ctx context.Context, req *storagepb.DeleteHashMapFieldsRequest) (*storagepb.DeleteHashMapFieldsResponse, error)
+	SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error)
+	GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHashMapFieldValuesRequest) (*kvpb.GetHashMapFieldValuesResponse, error)
+	GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb.GetAllHashMapFieldsAndValuesRequest) (*kvpb.GetAllHashMapFieldsAndValuesResponse, error)
+	DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHashMapFieldsRequest) (*kvpb.DeleteHashMapFieldsResponse, error)
 }
 
 func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
@@ -135,7 +135,7 @@ func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) 
 	return &serverpb.GetLogsResponse{Logs: logs}, nil
 }
 
-func (s *KvdbServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDatabaseRequest) (*dbpb.CreateDatabaseResponse, error) {
+func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -146,10 +146,10 @@ func (s *KvdbServer) CreateDatabase(ctx context.Context, req *dbpb.CreateDatabas
 	db := kvdb.CreateDatabase(req.DbName)
 	s.databases[db.Name] = db
 
-	return &dbpb.CreateDatabaseResponse{DbName: db.Name}, nil
+	return &dbpb.CreateDBResponse{DbName: db.Name}, nil
 }
 
-func (s *KvdbServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDatabaseRequest) (*dbpb.DeleteDatabaseResponse, error) {
+func (s *KvdbServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -159,10 +159,10 @@ func (s *KvdbServer) DeleteDatabase(ctx context.Context, req *dbpb.DeleteDatabas
 
 	delete(s.databases, req.DbName)
 
-	return &dbpb.DeleteDatabaseResponse{DbName: req.DbName}, nil
+	return &dbpb.DeleteDBResponse{DbName: req.DbName}, nil
 }
 
-func (s *KvdbServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllDatabasesRequest) (*dbpb.GetAllDatabasesResponse, error) {
+func (s *KvdbServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) (*dbpb.GetAllDBsResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -171,10 +171,10 @@ func (s *KvdbServer) GetAllDatabases(ctx context.Context, req *dbpb.GetAllDataba
 		names = append(names, key)
 	}
 
-	return &dbpb.GetAllDatabasesResponse{DbNames: names}, nil
+	return &dbpb.GetAllDBsResponse{DbNames: names}, nil
 }
 
-func (s *KvdbServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseInfoRequest) (*dbpb.GetDatabaseInfoResponse, error) {
+func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -183,7 +183,7 @@ func (s *KvdbServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseI
 	}
 
 	db := s.databases[req.DbName]
-	data := &dbpb.DatabaseInfo{
+	data := &dbpb.DBInfo{
 		Name:      db.Name,
 		CreatedAt: timestamppb.New(db.CreatedAt),
 		UpdatedAt: timestamppb.New(db.UpdatedAt),
@@ -191,10 +191,10 @@ func (s *KvdbServer) GetDatabaseInfo(ctx context.Context, req *dbpb.GetDatabaseI
 		DataSize:  db.GetStoredSizeBytes(),
 	}
 
-	return &dbpb.GetDatabaseInfoResponse{Data: data}, nil
+	return &dbpb.GetDBInfoResponse{Data: data}, nil
 }
 
-func (s *KvdbServer) GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRequest) (*storagepb.GetAllKeysResponse, error) {
+func (s *KvdbServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest) (*kvpb.GetAllKeysResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -203,10 +203,10 @@ func (s *KvdbServer) GetAllKeys(ctx context.Context, req *storagepb.GetAllKeysRe
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	return &storagepb.GetAllKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
+	return &kvpb.GetAllKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
 }
 
-func (s *KvdbServer) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRequest) (*storagepb.GetKeyTypeResponse, error) {
+func (s *KvdbServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest) (*kvpb.GetKeyTypeResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -217,10 +217,10 @@ func (s *KvdbServer) GetKeyType(ctx context.Context, req *storagepb.GetKeyTypeRe
 
 	keyType, ok := s.databases[dbName].GetKeyType(req.Key)
 
-	return &storagepb.GetKeyTypeResponse{KeyType: keyType.String(), Ok: ok}, nil
+	return &kvpb.GetKeyTypeResponse{KeyType: keyType.String(), Ok: ok}, nil
 }
 
-func (s *KvdbServer) DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRequest) (*storagepb.DeleteKeysResponse, error) {
+func (s *KvdbServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest) (*kvpb.DeleteKeysResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -231,10 +231,10 @@ func (s *KvdbServer) DeleteKeys(ctx context.Context, req *storagepb.DeleteKeysRe
 
 	keysDeletedCount := s.databases[dbName].DeleteKeys(req.Keys)
 
-	return &storagepb.DeleteKeysResponse{KeysDeletedCount: keysDeletedCount}, nil
+	return &kvpb.DeleteKeysResponse{KeysDeletedCount: keysDeletedCount}, nil
 }
 
-func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAllKeysRequest) (*storagepb.DeleteAllKeysResponse, error) {
+func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysRequest) (*kvpb.DeleteAllKeysResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -245,10 +245,10 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *storagepb.DeleteAll
 
 	s.databases[dbName].DeleteAllKeys()
 
-	return &storagepb.DeleteAllKeysResponse{}, nil
+	return &kvpb.DeleteAllKeysResponse{}, nil
 }
 
-func (s *KvdbServer) SetString(ctx context.Context, req *storagepb.SetStringRequest) (*storagepb.SetStringResponse, error) {
+func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) (*kvpb.SetStringResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -263,10 +263,10 @@ func (s *KvdbServer) SetString(ctx context.Context, req *storagepb.SetStringRequ
 
 	s.databases[dbName].SetString(req.Key, req.Value)
 
-	return &storagepb.SetStringResponse{}, nil
+	return &kvpb.SetStringResponse{}, nil
 }
 
-func (s *KvdbServer) GetString(ctx context.Context, req *storagepb.GetStringRequest) (*storagepb.GetStringResponse, error) {
+func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) (*kvpb.GetStringResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -277,10 +277,10 @@ func (s *KvdbServer) GetString(ctx context.Context, req *storagepb.GetStringRequ
 
 	value, ok := s.databases[dbName].GetString(req.Key)
 
-	return &storagepb.GetStringResponse{Value: value, Ok: ok}, nil
+	return &kvpb.GetStringResponse{Value: value, Ok: ok}, nil
 }
 
-func (s *KvdbServer) SetHashMap(ctx context.Context, req *storagepb.SetHashMapRequest) (*storagepb.SetHashMapResponse, error) {
+func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -295,10 +295,10 @@ func (s *KvdbServer) SetHashMap(ctx context.Context, req *storagepb.SetHashMapRe
 
 	fieldsAddedCount := s.databases[dbName].SetHashMap(req.Key, req.FieldValueMap, s.Cfg.MaxHashMapFields)
 
-	return &storagepb.SetHashMapResponse{FieldsAddedCount: fieldsAddedCount}, nil
+	return &kvpb.SetHashMapResponse{FieldsAddedCount: fieldsAddedCount}, nil
 }
 
-func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *storagepb.GetHashMapFieldValueRequest) (res *storagepb.GetHashMapFieldValueResponse, err error) {
+func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHashMapFieldValuesRequest) (res *kvpb.GetHashMapFieldValuesResponse, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -309,18 +309,18 @@ func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *storagepb.G
 
 	result, ok := s.databases[dbName].GetHashMapFieldValues(req.Key, req.Fields)
 
-	var fieldValueMap = make(map[string]*storagepb.HashMapFieldValue)
+	var fieldValueMap = make(map[string]*kvpb.HashMapFieldValue)
 	for field, value := range result {
-		fieldValueMap[field] = &storagepb.HashMapFieldValue{
+		fieldValueMap[field] = &kvpb.HashMapFieldValue{
 			Value: value.Value,
 			Ok:    value.Ok,
 		}
 	}
 
-	return &storagepb.GetHashMapFieldValueResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+	return &kvpb.GetHashMapFieldValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }
 
-func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *storagepb.GetAllHashMapFieldsAndValuesRequest) (res *storagepb.GetAllHashMapFieldsAndValuesResponse, err error) {
+func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb.GetAllHashMapFieldsAndValuesRequest) (res *kvpb.GetAllHashMapFieldsAndValuesResponse, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -331,10 +331,10 @@ func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *stor
 
 	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(req.Key)
 
-	return &storagepb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
+	return &kvpb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }
 
-func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *storagepb.DeleteHashMapFieldsRequest) (res *storagepb.DeleteHashMapFieldsResponse, err error) {
+func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHashMapFieldsRequest) (res *kvpb.DeleteHashMapFieldsResponse, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -345,5 +345,5 @@ func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *storagepb.Del
 
 	fieldsRemovedCount, ok := s.databases[dbName].DeleteHashMapFields(req.Key, req.Fields)
 
-	return &storagepb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
+	return &kvpb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
 }
