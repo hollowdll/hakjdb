@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/storagepb/general.proto
+// source: api/v0/kvpb/general_kv.proto
 
-package storagepb
+package kvpb
 
 import (
 	context "context"
@@ -18,10 +18,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GeneralKeyServiceClient is the client API for GeneralKeyService service.
+// GeneralKVServiceClient is the client API for GeneralKVService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GeneralKeyServiceClient interface {
+type GeneralKVServiceClient interface {
 	// GetAllKeys returns all the keys.
 	// Uses the database sent in gRPC metadata or the default database if omitted.
 	GetAllKeys(ctx context.Context, in *GetAllKeysRequest, opts ...grpc.CallOption) (*GetAllKeysResponse, error)
@@ -37,54 +37,54 @@ type GeneralKeyServiceClient interface {
 	DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error)
 }
 
-type generalKeyServiceClient struct {
+type generalKVServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGeneralKeyServiceClient(cc grpc.ClientConnInterface) GeneralKeyServiceClient {
-	return &generalKeyServiceClient{cc}
+func NewGeneralKVServiceClient(cc grpc.ClientConnInterface) GeneralKVServiceClient {
+	return &generalKVServiceClient{cc}
 }
 
-func (c *generalKeyServiceClient) GetAllKeys(ctx context.Context, in *GetAllKeysRequest, opts ...grpc.CallOption) (*GetAllKeysResponse, error) {
+func (c *generalKVServiceClient) GetAllKeys(ctx context.Context, in *GetAllKeysRequest, opts ...grpc.CallOption) (*GetAllKeysResponse, error) {
 	out := new(GetAllKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.storagepb.GeneralKeyService/GetAllKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/GetAllKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *generalKeyServiceClient) GetKeyType(ctx context.Context, in *GetKeyTypeRequest, opts ...grpc.CallOption) (*GetKeyTypeResponse, error) {
+func (c *generalKVServiceClient) GetKeyType(ctx context.Context, in *GetKeyTypeRequest, opts ...grpc.CallOption) (*GetKeyTypeResponse, error) {
 	out := new(GetKeyTypeResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.storagepb.GeneralKeyService/GetKeyType", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/GetKeyType", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *generalKeyServiceClient) DeleteKeys(ctx context.Context, in *DeleteKeysRequest, opts ...grpc.CallOption) (*DeleteKeysResponse, error) {
+func (c *generalKVServiceClient) DeleteKeys(ctx context.Context, in *DeleteKeysRequest, opts ...grpc.CallOption) (*DeleteKeysResponse, error) {
 	out := new(DeleteKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.storagepb.GeneralKeyService/DeleteKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/DeleteKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *generalKeyServiceClient) DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error) {
+func (c *generalKVServiceClient) DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error) {
 	out := new(DeleteAllKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.storagepb.GeneralKeyService/DeleteAllKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/DeleteAllKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GeneralKeyServiceServer is the server API for GeneralKeyService service.
-// All implementations must embed UnimplementedGeneralKeyServiceServer
+// GeneralKVServiceServer is the server API for GeneralKVService service.
+// All implementations must embed UnimplementedGeneralKVServiceServer
 // for forward compatibility
-type GeneralKeyServiceServer interface {
+type GeneralKVServiceServer interface {
 	// GetAllKeys returns all the keys.
 	// Uses the database sent in gRPC metadata or the default database if omitted.
 	GetAllKeys(context.Context, *GetAllKeysRequest) (*GetAllKeysResponse, error)
@@ -98,134 +98,134 @@ type GeneralKeyServiceServer interface {
 	// DeleteAllKeys deletes all the keys.
 	// Uses the database sent in gRPC metadata or the default database if omitted.
 	DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error)
-	mustEmbedUnimplementedGeneralKeyServiceServer()
+	mustEmbedUnimplementedGeneralKVServiceServer()
 }
 
-// UnimplementedGeneralKeyServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedGeneralKeyServiceServer struct {
+// UnimplementedGeneralKVServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedGeneralKVServiceServer struct {
 }
 
-func (UnimplementedGeneralKeyServiceServer) GetAllKeys(context.Context, *GetAllKeysRequest) (*GetAllKeysResponse, error) {
+func (UnimplementedGeneralKVServiceServer) GetAllKeys(context.Context, *GetAllKeysRequest) (*GetAllKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllKeys not implemented")
 }
-func (UnimplementedGeneralKeyServiceServer) GetKeyType(context.Context, *GetKeyTypeRequest) (*GetKeyTypeResponse, error) {
+func (UnimplementedGeneralKVServiceServer) GetKeyType(context.Context, *GetKeyTypeRequest) (*GetKeyTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetKeyType not implemented")
 }
-func (UnimplementedGeneralKeyServiceServer) DeleteKeys(context.Context, *DeleteKeysRequest) (*DeleteKeysResponse, error) {
+func (UnimplementedGeneralKVServiceServer) DeleteKeys(context.Context, *DeleteKeysRequest) (*DeleteKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteKeys not implemented")
 }
-func (UnimplementedGeneralKeyServiceServer) DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error) {
+func (UnimplementedGeneralKVServiceServer) DeleteAllKeys(context.Context, *DeleteAllKeysRequest) (*DeleteAllKeysResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAllKeys not implemented")
 }
-func (UnimplementedGeneralKeyServiceServer) mustEmbedUnimplementedGeneralKeyServiceServer() {}
+func (UnimplementedGeneralKVServiceServer) mustEmbedUnimplementedGeneralKVServiceServer() {}
 
-// UnsafeGeneralKeyServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GeneralKeyServiceServer will
+// UnsafeGeneralKVServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to GeneralKVServiceServer will
 // result in compilation errors.
-type UnsafeGeneralKeyServiceServer interface {
-	mustEmbedUnimplementedGeneralKeyServiceServer()
+type UnsafeGeneralKVServiceServer interface {
+	mustEmbedUnimplementedGeneralKVServiceServer()
 }
 
-func RegisterGeneralKeyServiceServer(s grpc.ServiceRegistrar, srv GeneralKeyServiceServer) {
-	s.RegisterService(&GeneralKeyService_ServiceDesc, srv)
+func RegisterGeneralKVServiceServer(s grpc.ServiceRegistrar, srv GeneralKVServiceServer) {
+	s.RegisterService(&GeneralKVService_ServiceDesc, srv)
 }
 
-func _GeneralKeyService_GetAllKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GeneralKVService_GetAllKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeneralKeyServiceServer).GetAllKeys(ctx, in)
+		return srv.(GeneralKVServiceServer).GetAllKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.storagepb.GeneralKeyService/GetAllKeys",
+		FullMethod: "/api.v0.kvpb.GeneralKVService/GetAllKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeneralKeyServiceServer).GetAllKeys(ctx, req.(*GetAllKeysRequest))
+		return srv.(GeneralKVServiceServer).GetAllKeys(ctx, req.(*GetAllKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeneralKeyService_GetKeyType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GeneralKVService_GetKeyType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetKeyTypeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeneralKeyServiceServer).GetKeyType(ctx, in)
+		return srv.(GeneralKVServiceServer).GetKeyType(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.storagepb.GeneralKeyService/GetKeyType",
+		FullMethod: "/api.v0.kvpb.GeneralKVService/GetKeyType",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeneralKeyServiceServer).GetKeyType(ctx, req.(*GetKeyTypeRequest))
+		return srv.(GeneralKVServiceServer).GetKeyType(ctx, req.(*GetKeyTypeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeneralKeyService_DeleteKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GeneralKVService_DeleteKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeneralKeyServiceServer).DeleteKeys(ctx, in)
+		return srv.(GeneralKVServiceServer).DeleteKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.storagepb.GeneralKeyService/DeleteKeys",
+		FullMethod: "/api.v0.kvpb.GeneralKVService/DeleteKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeneralKeyServiceServer).DeleteKeys(ctx, req.(*DeleteKeysRequest))
+		return srv.(GeneralKVServiceServer).DeleteKeys(ctx, req.(*DeleteKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeneralKeyService_DeleteAllKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GeneralKVService_DeleteAllKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteAllKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeneralKeyServiceServer).DeleteAllKeys(ctx, in)
+		return srv.(GeneralKVServiceServer).DeleteAllKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.storagepb.GeneralKeyService/DeleteAllKeys",
+		FullMethod: "/api.v0.kvpb.GeneralKVService/DeleteAllKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeneralKeyServiceServer).DeleteAllKeys(ctx, req.(*DeleteAllKeysRequest))
+		return srv.(GeneralKVServiceServer).DeleteAllKeys(ctx, req.(*DeleteAllKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// GeneralKeyService_ServiceDesc is the grpc.ServiceDesc for GeneralKeyService service.
+// GeneralKVService_ServiceDesc is the grpc.ServiceDesc for GeneralKVService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var GeneralKeyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.storagepb.GeneralKeyService",
-	HandlerType: (*GeneralKeyServiceServer)(nil),
+var GeneralKVService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.v0.kvpb.GeneralKVService",
+	HandlerType: (*GeneralKVServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetAllKeys",
-			Handler:    _GeneralKeyService_GetAllKeys_Handler,
+			Handler:    _GeneralKVService_GetAllKeys_Handler,
 		},
 		{
 			MethodName: "GetKeyType",
-			Handler:    _GeneralKeyService_GetKeyType_Handler,
+			Handler:    _GeneralKVService_GetKeyType_Handler,
 		},
 		{
 			MethodName: "DeleteKeys",
-			Handler:    _GeneralKeyService_DeleteKeys_Handler,
+			Handler:    _GeneralKVService_DeleteKeys_Handler,
 		},
 		{
 			MethodName: "DeleteAllKeys",
-			Handler:    _GeneralKeyService_DeleteAllKeys_Handler,
+			Handler:    _GeneralKVService_DeleteAllKeys_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/storagepb/general.proto",
+	Metadata: "api/v0/kvpb/general_kv.proto",
 }

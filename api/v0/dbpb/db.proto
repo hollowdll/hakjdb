@@ -34,7 +34,7 @@ message GetDBInfoRequest {
 
 message GetDBInfoResponse {
   // Information about the database.
-  DatabaseInfo data = 1;
+  DBInfo data = 1;
 }
 
 message DeleteDBRequest {

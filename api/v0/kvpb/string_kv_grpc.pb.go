@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/storagepb/string.proto
+// source: api/v0/kvpb/string_kv.proto
 
-package storagepb
+package kvpb
 
 import (
 	context "context"
@@ -18,10 +18,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// StringKeyServiceClient is the client API for StringKeyService service.
+// StringKVServiceClient is the client API for StringKVService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type StringKeyServiceClient interface {
+type StringKVServiceClient interface {
 	// SetString sets a key to hold a String value. Creates the key if it doesn't exist.
 	// Overwrites the key if it is holding a value of another data type.
 	// Uses the database sent in gRPC metadata or the default database if omitted.
@@ -31,36 +31,36 @@ type StringKeyServiceClient interface {
 	GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error)
 }
 
-type stringKeyServiceClient struct {
+type stringKVServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStringKeyServiceClient(cc grpc.ClientConnInterface) StringKeyServiceClient {
-	return &stringKeyServiceClient{cc}
+func NewStringKVServiceClient(cc grpc.ClientConnInterface) StringKVServiceClient {
+	return &stringKVServiceClient{cc}
 }
 
-func (c *stringKeyServiceClient) SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error) {
+func (c *stringKVServiceClient) SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error) {
 	out := new(SetStringResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.storagepb.StringKeyService/SetString", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v0.kvpb.StringKVService/SetString", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stringKeyServiceClient) GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error) {
+func (c *stringKVServiceClient) GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error) {
 	out := new(GetStringResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.storagepb.StringKeyService/GetString", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v0.kvpb.StringKVService/GetString", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// StringKeyServiceServer is the server API for StringKeyService service.
-// All implementations must embed UnimplementedStringKeyServiceServer
+// StringKVServiceServer is the server API for StringKVService service.
+// All implementations must embed UnimplementedStringKVServiceServer
 // for forward compatibility
-type StringKeyServiceServer interface {
+type StringKVServiceServer interface {
 	// SetString sets a key to hold a String value. Creates the key if it doesn't exist.
 	// Overwrites the key if it is holding a value of another data type.
 	// Uses the database sent in gRPC metadata or the default database if omitted.
@@ -68,84 +68,84 @@ type StringKeyServiceServer interface {
 	// GetString returns the value a String key is holding.
 	// Uses the database sent in gRPC metadata or the default database if omitted.
 	GetString(context.Context, *GetStringRequest) (*GetStringResponse, error)
-	mustEmbedUnimplementedStringKeyServiceServer()
+	mustEmbedUnimplementedStringKVServiceServer()
 }
 
-// UnimplementedStringKeyServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedStringKeyServiceServer struct {
+// UnimplementedStringKVServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedStringKVServiceServer struct {
 }
 
-func (UnimplementedStringKeyServiceServer) SetString(context.Context, *SetStringRequest) (*SetStringResponse, error) {
+func (UnimplementedStringKVServiceServer) SetString(context.Context, *SetStringRequest) (*SetStringResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetString not implemented")
 }
-func (UnimplementedStringKeyServiceServer) GetString(context.Context, *GetStringRequest) (*GetStringResponse, error) {
+func (UnimplementedStringKVServiceServer) GetString(context.Context, *GetStringRequest) (*GetStringResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetString not implemented")
 }
-func (UnimplementedStringKeyServiceServer) mustEmbedUnimplementedStringKeyServiceServer() {}
+func (UnimplementedStringKVServiceServer) mustEmbedUnimplementedStringKVServiceServer() {}
 
-// UnsafeStringKeyServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StringKeyServiceServer will
+// UnsafeStringKVServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StringKVServiceServer will
 // result in compilation errors.
-type UnsafeStringKeyServiceServer interface {
-	mustEmbedUnimplementedStringKeyServiceServer()
+type UnsafeStringKVServiceServer interface {
+	mustEmbedUnimplementedStringKVServiceServer()
 }
 
-func RegisterStringKeyServiceServer(s grpc.ServiceRegistrar, srv StringKeyServiceServer) {
-	s.RegisterService(&StringKeyService_ServiceDesc, srv)
+func RegisterStringKVServiceServer(s grpc.ServiceRegistrar, srv StringKVServiceServer) {
+	s.RegisterService(&StringKVService_ServiceDesc, srv)
 }
 
-func _StringKeyService_SetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StringKVService_SetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetStringRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StringKeyServiceServer).SetString(ctx, in)
+		return srv.(StringKVServiceServer).SetString(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.storagepb.StringKeyService/SetString",
+		FullMethod: "/api.v0.kvpb.StringKVService/SetString",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StringKeyServiceServer).SetString(ctx, req.(*SetStringRequest))
+		return srv.(StringKVServiceServer).SetString(ctx, req.(*SetStringRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StringKeyService_GetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StringKVService_GetString_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetStringRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StringKeyServiceServer).GetString(ctx, in)
+		return srv.(StringKVServiceServer).GetString(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.storagepb.StringKeyService/GetString",
+		FullMethod: "/api.v0.kvpb.StringKVService/GetString",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StringKeyServiceServer).GetString(ctx, req.(*GetStringRequest))
+		return srv.(StringKVServiceServer).GetString(ctx, req.(*GetStringRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// StringKeyService_ServiceDesc is the grpc.ServiceDesc for StringKeyService service.
+// StringKVService_ServiceDesc is the grpc.ServiceDesc for StringKVService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var StringKeyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.storagepb.StringKeyService",
-	HandlerType: (*StringKeyServiceServer)(nil),
+var StringKVService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.v0.kvpb.StringKVService",
+	HandlerType: (*StringKVServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SetString",
-			Handler:    _StringKeyService_SetString_Handler,
+			Handler:    _StringKVService_SetString_Handler,
 		},
 		{
 			MethodName: "GetString",
-			Handler:    _StringKeyService_GetString_Handler,
+			Handler:    _StringKVService_GetString_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/storagepb/string.proto",
+	Metadata: "api/v0/kvpb/string_kv.proto",
 }
