@@ -5,23 +5,10 @@ import (
 
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
-
-// AuthInterceptor is unary interceptor to handle authorization for RPC calls.
-func (s *KvdbServer) AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
-		logger := s.Logger()
-		logger.Errorf("Failed to authorize request: %v", err)
-
-		return nil, err
-	}
-
-	return handler(ctx, req)
-}
 
 // AuthorizeIncomingRpcCall checks that incoming RPC call provides valid credentials.
 func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
@@ -42,7 +29,7 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 
 		// clear password
 		defer func() {
-			for i, _ := range passwordValues {
+			for i := range passwordValues {
 				passwordValues[i] = ""
 			}
 			password = ""

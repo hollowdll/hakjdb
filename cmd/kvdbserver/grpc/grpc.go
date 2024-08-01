@@ -15,9 +15,12 @@ import (
 func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	logger := s.Logger()
 	logger.Infof("Setting up gRPC server ...")
-	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(s.AuthInterceptor),
+	var opts []grpc.ServerOption
+	chainUnaryInterceptors := []grpc.UnaryServerInterceptor{
+		newLogUnaryInterceptor(s),
+		newAuthUnaryInterceptor(s),
 	}
+	opts = append(opts, grpc.ChainUnaryInterceptor(chainUnaryInterceptors...))
 
 	if !s.Cfg.TLSEnabled {
 		logger.Warning("TLS is disabled. Connections will not be encrypted")
