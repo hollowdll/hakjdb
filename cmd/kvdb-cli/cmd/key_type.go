@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -34,7 +34,7 @@ func getKeyType(key string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	response, err := client.GrpcGeneralKeyClient.GetKeyType(ctx, &storagepb.GetKeyTypeRequest{Key: key})
+	response, err := client.GrpcGeneralKVClient.GetKeyType(ctx, &kvpb.GetKeyTypeRequest{Key: key})
 	client.CheckGrpcError(err)
 
 	if response.Ok {

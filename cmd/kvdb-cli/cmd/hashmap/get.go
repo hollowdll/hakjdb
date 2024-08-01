@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func getHashMapFieldValues(key string, fields []string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcHashMapKeyClient.GetHashMapFieldValues(ctx, &storagepb.GetHashMapFieldValueRequest{
+	res, err := client.GrpcHashMapKVClient.GetHashMapFieldValues(ctx, &kvpb.GetHashMapFieldValuesRequest{
 		Key:    key,
 		Fields: fields,
 	})

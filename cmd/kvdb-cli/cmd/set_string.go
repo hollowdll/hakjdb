@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func setString(key string, value string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	_, err := client.GrpcStringKeyClient.SetString(ctx, &storagepb.SetStringRequest{Key: key, Value: value})
+	_, err := client.GrpcStringKVClient.SetString(ctx, &kvpb.SetStringRequest{Key: key, Value: value})
 	client.CheckGrpcError(err)
 
 	fmt.Println("OK")

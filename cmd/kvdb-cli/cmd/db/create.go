@@ -28,7 +28,7 @@ func createDatabase() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	res, err := client.GrpcDatabaseClient.CreateDatabase(ctx, &dbpb.CreateDatabaseRequest{DbName: dbName})
+	res, err := client.GrpcDBClient.CreateDB(ctx, &dbpb.CreateDBRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
 	fmt.Println(res.DbName)

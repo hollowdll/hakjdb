@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -27,12 +27,12 @@ const (
 )
 
 var (
-	GrpcServerClient     serverpb.ServerServiceClient
-	GrpcDatabaseClient   dbpb.DatabaseServiceClient
-	GrpcGeneralKeyClient storagepb.GeneralKeyServiceClient
-	GrpcStringKeyClient  storagepb.StringKeyServiceClient
-	GrpcHashMapKeyClient storagepb.HashMapKeyServiceClient
-	grpcClientConn       *grpc.ClientConn
+	GrpcServerClient    serverpb.ServerServiceClient
+	GrpcDBClient        dbpb.DBServiceClient
+	GrpcGeneralKVClient kvpb.GeneralKVServiceClient
+	GrpcStringKVClient  kvpb.StringKVServiceClient
+	GrpcHashMapKVClient kvpb.HashMapKVServiceClient
+	grpcClientConn      *grpc.ClientConn
 )
 
 // InitClient initializes the client and connections.
@@ -61,10 +61,10 @@ func InitClient() {
 	}
 
 	GrpcServerClient = serverpb.NewServerServiceClient(conn)
-	GrpcDatabaseClient = dbpb.NewDatabaseServiceClient(conn)
-	GrpcGeneralKeyClient = storagepb.NewGeneralKeyServiceClient(conn)
-	GrpcStringKeyClient = storagepb.NewStringKeyServiceClient(conn)
-	GrpcHashMapKeyClient = storagepb.NewHashMapKeyServiceClient(conn)
+	GrpcDBClient = dbpb.NewDBServiceClient(conn)
+	GrpcGeneralKVClient = kvpb.NewGeneralKVServiceClient(conn)
+	GrpcStringKVClient = kvpb.NewStringKVServiceClient(conn)
+	GrpcHashMapKVClient = kvpb.NewHashMapKVServiceClient(conn)
 	grpcClientConn = conn
 }
 
