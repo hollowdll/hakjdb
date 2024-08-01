@@ -1,4 +1,4 @@
-package kvdb
+package validation
 
 import (
 	"regexp"
@@ -27,30 +27,30 @@ func isTooLong(input string, targetBytes int) bool {
 
 // databaseNameContainsValidCharacters checks if database name
 // contains valid characters by matching it against a regexp.
-func databaseNameContainsValidCharacters(name string) bool {
+func dbNameContainsValidCharacters(name string) bool {
 	pattern := regexp.MustCompile("^[A-Za-z0-9-_]+$")
 	return pattern.MatchString(name)
 }
 
-// ValidateDatabaseName validates database name.
+// ValidateDBName validates database name.
 // Returns error if validation error is matched.
-func ValidateDatabaseName(name string) error {
+func ValidateDBName(name string) error {
 	if isBlank(name) {
 		return kvdberrors.ErrDatabaseNameRequired
 	}
 	if isTooLong(name, DbNameMaxSize) {
 		return kvdberrors.ErrDatabaseNameTooLong
 	}
-	if !databaseNameContainsValidCharacters(name) {
+	if !dbNameContainsValidCharacters(name) {
 		return kvdberrors.ErrDatabaseNameInvalid
 	}
 
 	return nil
 }
 
-// ValidateDatabaseKey validates database key.
+// ValidateDBKey validates database key.
 // Returns error if validation error is matched.
-func ValidateDatabaseKey(key string) error {
+func ValidateDBKey(key string) error {
 	if isBlank(string(key)) {
 		return kvdberrors.ErrDatabaseKeyRequired
 	}

@@ -1,11 +1,12 @@
-// This package contains Protobuf definitions related to data storage
-// for the kvdbserver gRPC API.
+// kvdbserver gRPC API
 // API version: 0.1.0
+//
+// This package contains Protobuf definitions related to key-value storage.
 
 syntax = "proto3";
-package api.v0.storagepb;
+package api.v0.kvpb;
 
-option go_package = "api/v0/storagepb";
+option go_package = "api/v0/kvpb";
 
 message GetAllKeysRequest {}
 
@@ -40,12 +41,12 @@ message DeleteAllKeysRequest {}
 
 message DeleteAllKeysResponse {}
 
-// GeneralKeyService provides RPCs related to general key management.
+// GeneralKVService provides RPCs related to general key management.
 //
 // Common gRPC metadata keys for this service's RPCs:
 // - password: The server password. Used for authentication if the server is password protected.
 // - database: The database to use. If omitted, the default database is used.
-service GeneralKeyService {
+service GeneralKVService {
   // GetAllKeys returns all the keys.
   // Uses the database sent in gRPC metadata or the default database if omitted.
   rpc GetAllKeys(GetAllKeysRequest) returns (GetAllKeysResponse) {}

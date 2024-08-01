@@ -18,202 +18,202 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// DatabaseServiceClient is the client API for DatabaseService service.
+// DBServiceClient is the client API for DBService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DatabaseServiceClient interface {
-	// CreateDatabase creates a new database.
-	CreateDatabase(ctx context.Context, in *CreateDatabaseRequest, opts ...grpc.CallOption) (*CreateDatabaseResponse, error)
-	// GetAllDatabases returns the names of all the databases that exist on the server.
-	GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error)
-	// GetDatabaseInfo returns information about a database.
-	GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error)
-	// DeleteDatabase deletes a database.
-	DeleteDatabase(ctx context.Context, in *DeleteDatabaseRequest, opts ...grpc.CallOption) (*DeleteDatabaseResponse, error)
+type DBServiceClient interface {
+	// CreateDB creates a new database.
+	CreateDB(ctx context.Context, in *CreateDBRequest, opts ...grpc.CallOption) (*CreateDBResponse, error)
+	// GetAllDBs returns the names of all the databases that exist on the server.
+	GetAllDBs(ctx context.Context, in *GetAllDBsRequest, opts ...grpc.CallOption) (*GetAllDBsResponse, error)
+	// GetDBInfo returns information about a database.
+	GetDBInfo(ctx context.Context, in *GetDBInfoRequest, opts ...grpc.CallOption) (*GetDBInfoResponse, error)
+	// DeleteDB deletes a database.
+	DeleteDB(ctx context.Context, in *DeleteDBRequest, opts ...grpc.CallOption) (*DeleteDBResponse, error)
 }
 
-type databaseServiceClient struct {
+type dBServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDatabaseServiceClient(cc grpc.ClientConnInterface) DatabaseServiceClient {
-	return &databaseServiceClient{cc}
+func NewDBServiceClient(cc grpc.ClientConnInterface) DBServiceClient {
+	return &dBServiceClient{cc}
 }
 
-func (c *databaseServiceClient) CreateDatabase(ctx context.Context, in *CreateDatabaseRequest, opts ...grpc.CallOption) (*CreateDatabaseResponse, error) {
-	out := new(CreateDatabaseResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DatabaseService/CreateDatabase", in, out, opts...)
+func (c *dBServiceClient) CreateDB(ctx context.Context, in *CreateDBRequest, opts ...grpc.CallOption) (*CreateDBResponse, error) {
+	out := new(CreateDBResponse)
+	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/CreateDB", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *databaseServiceClient) GetAllDatabases(ctx context.Context, in *GetAllDatabasesRequest, opts ...grpc.CallOption) (*GetAllDatabasesResponse, error) {
-	out := new(GetAllDatabasesResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DatabaseService/GetAllDatabases", in, out, opts...)
+func (c *dBServiceClient) GetAllDBs(ctx context.Context, in *GetAllDBsRequest, opts ...grpc.CallOption) (*GetAllDBsResponse, error) {
+	out := new(GetAllDBsResponse)
+	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/GetAllDBs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *databaseServiceClient) GetDatabaseInfo(ctx context.Context, in *GetDatabaseInfoRequest, opts ...grpc.CallOption) (*GetDatabaseInfoResponse, error) {
-	out := new(GetDatabaseInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DatabaseService/GetDatabaseInfo", in, out, opts...)
+func (c *dBServiceClient) GetDBInfo(ctx context.Context, in *GetDBInfoRequest, opts ...grpc.CallOption) (*GetDBInfoResponse, error) {
+	out := new(GetDBInfoResponse)
+	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/GetDBInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *databaseServiceClient) DeleteDatabase(ctx context.Context, in *DeleteDatabaseRequest, opts ...grpc.CallOption) (*DeleteDatabaseResponse, error) {
-	out := new(DeleteDatabaseResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DatabaseService/DeleteDatabase", in, out, opts...)
+func (c *dBServiceClient) DeleteDB(ctx context.Context, in *DeleteDBRequest, opts ...grpc.CallOption) (*DeleteDBResponse, error) {
+	out := new(DeleteDBResponse)
+	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/DeleteDB", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DatabaseServiceServer is the server API for DatabaseService service.
-// All implementations must embed UnimplementedDatabaseServiceServer
+// DBServiceServer is the server API for DBService service.
+// All implementations must embed UnimplementedDBServiceServer
 // for forward compatibility
-type DatabaseServiceServer interface {
-	// CreateDatabase creates a new database.
-	CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error)
-	// GetAllDatabases returns the names of all the databases that exist on the server.
-	GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error)
-	// GetDatabaseInfo returns information about a database.
-	GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error)
-	// DeleteDatabase deletes a database.
-	DeleteDatabase(context.Context, *DeleteDatabaseRequest) (*DeleteDatabaseResponse, error)
-	mustEmbedUnimplementedDatabaseServiceServer()
+type DBServiceServer interface {
+	// CreateDB creates a new database.
+	CreateDB(context.Context, *CreateDBRequest) (*CreateDBResponse, error)
+	// GetAllDBs returns the names of all the databases that exist on the server.
+	GetAllDBs(context.Context, *GetAllDBsRequest) (*GetAllDBsResponse, error)
+	// GetDBInfo returns information about a database.
+	GetDBInfo(context.Context, *GetDBInfoRequest) (*GetDBInfoResponse, error)
+	// DeleteDB deletes a database.
+	DeleteDB(context.Context, *DeleteDBRequest) (*DeleteDBResponse, error)
+	mustEmbedUnimplementedDBServiceServer()
 }
 
-// UnimplementedDatabaseServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedDatabaseServiceServer struct {
+// UnimplementedDBServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedDBServiceServer struct {
 }
 
-func (UnimplementedDatabaseServiceServer) CreateDatabase(context.Context, *CreateDatabaseRequest) (*CreateDatabaseResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDatabase not implemented")
+func (UnimplementedDBServiceServer) CreateDB(context.Context, *CreateDBRequest) (*CreateDBResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDB not implemented")
 }
-func (UnimplementedDatabaseServiceServer) GetAllDatabases(context.Context, *GetAllDatabasesRequest) (*GetAllDatabasesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllDatabases not implemented")
+func (UnimplementedDBServiceServer) GetAllDBs(context.Context, *GetAllDBsRequest) (*GetAllDBsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllDBs not implemented")
 }
-func (UnimplementedDatabaseServiceServer) GetDatabaseInfo(context.Context, *GetDatabaseInfoRequest) (*GetDatabaseInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDatabaseInfo not implemented")
+func (UnimplementedDBServiceServer) GetDBInfo(context.Context, *GetDBInfoRequest) (*GetDBInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDBInfo not implemented")
 }
-func (UnimplementedDatabaseServiceServer) DeleteDatabase(context.Context, *DeleteDatabaseRequest) (*DeleteDatabaseResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteDatabase not implemented")
+func (UnimplementedDBServiceServer) DeleteDB(context.Context, *DeleteDBRequest) (*DeleteDBResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDB not implemented")
 }
-func (UnimplementedDatabaseServiceServer) mustEmbedUnimplementedDatabaseServiceServer() {}
+func (UnimplementedDBServiceServer) mustEmbedUnimplementedDBServiceServer() {}
 
-// UnsafeDatabaseServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DatabaseServiceServer will
+// UnsafeDBServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DBServiceServer will
 // result in compilation errors.
-type UnsafeDatabaseServiceServer interface {
-	mustEmbedUnimplementedDatabaseServiceServer()
+type UnsafeDBServiceServer interface {
+	mustEmbedUnimplementedDBServiceServer()
 }
 
-func RegisterDatabaseServiceServer(s grpc.ServiceRegistrar, srv DatabaseServiceServer) {
-	s.RegisterService(&DatabaseService_ServiceDesc, srv)
+func RegisterDBServiceServer(s grpc.ServiceRegistrar, srv DBServiceServer) {
+	s.RegisterService(&DBService_ServiceDesc, srv)
 }
 
-func _DatabaseService_CreateDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDatabaseRequest)
+func _DBService_CreateDB_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDBRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DatabaseServiceServer).CreateDatabase(ctx, in)
+		return srv.(DBServiceServer).CreateDB(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DatabaseService/CreateDatabase",
+		FullMethod: "/api.v0.dbpb.DBService/CreateDB",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).CreateDatabase(ctx, req.(*CreateDatabaseRequest))
+		return srv.(DBServiceServer).CreateDB(ctx, req.(*CreateDBRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_GetAllDatabases_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllDatabasesRequest)
+func _DBService_GetAllDBs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllDBsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetAllDatabases(ctx, in)
+		return srv.(DBServiceServer).GetAllDBs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DatabaseService/GetAllDatabases",
+		FullMethod: "/api.v0.dbpb.DBService/GetAllDBs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetAllDatabases(ctx, req.(*GetAllDatabasesRequest))
+		return srv.(DBServiceServer).GetAllDBs(ctx, req.(*GetAllDBsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_GetDatabaseInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDatabaseInfoRequest)
+func _DBService_GetDBInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDBInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DatabaseServiceServer).GetDatabaseInfo(ctx, in)
+		return srv.(DBServiceServer).GetDBInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DatabaseService/GetDatabaseInfo",
+		FullMethod: "/api.v0.dbpb.DBService/GetDBInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).GetDatabaseInfo(ctx, req.(*GetDatabaseInfoRequest))
+		return srv.(DBServiceServer).GetDBInfo(ctx, req.(*GetDBInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DatabaseService_DeleteDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteDatabaseRequest)
+func _DBService_DeleteDB_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDBRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DatabaseServiceServer).DeleteDatabase(ctx, in)
+		return srv.(DBServiceServer).DeleteDB(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DatabaseService/DeleteDatabase",
+		FullMethod: "/api.v0.dbpb.DBService/DeleteDB",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DatabaseServiceServer).DeleteDatabase(ctx, req.(*DeleteDatabaseRequest))
+		return srv.(DBServiceServer).DeleteDB(ctx, req.(*DeleteDBRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DatabaseService_ServiceDesc is the grpc.ServiceDesc for DatabaseService service.
+// DBService_ServiceDesc is the grpc.ServiceDesc for DBService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DatabaseService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.dbpb.DatabaseService",
-	HandlerType: (*DatabaseServiceServer)(nil),
+var DBService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.v0.dbpb.DBService",
+	HandlerType: (*DBServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateDatabase",
-			Handler:    _DatabaseService_CreateDatabase_Handler,
+			MethodName: "CreateDB",
+			Handler:    _DBService_CreateDB_Handler,
 		},
 		{
-			MethodName: "GetAllDatabases",
-			Handler:    _DatabaseService_GetAllDatabases_Handler,
+			MethodName: "GetAllDBs",
+			Handler:    _DBService_GetAllDBs_Handler,
 		},
 		{
-			MethodName: "GetDatabaseInfo",
-			Handler:    _DatabaseService_GetDatabaseInfo_Handler,
+			MethodName: "GetDBInfo",
+			Handler:    _DBService_GetDBInfo_Handler,
 		},
 		{
-			MethodName: "DeleteDatabase",
-			Handler:    _DatabaseService_DeleteDatabase_Handler,
+			MethodName: "DeleteDB",
+			Handler:    _DBService_DeleteDB_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

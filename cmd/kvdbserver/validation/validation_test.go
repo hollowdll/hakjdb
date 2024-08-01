@@ -1,12 +1,12 @@
-package kvdb
+package validation
 
 import (
 	"strings"
 	"testing"
 )
 
-func TestValidateDatabaseName(t *testing.T) {
-	maxDbNameSize := 64
+func TestValidateDBName(t *testing.T) {
+	maxDBNameSize := 64
 	type TestCase struct {
 		dbName string
 		valid  bool
@@ -41,16 +41,16 @@ func TestValidateDatabaseName(t *testing.T) {
 			valid:  true,
 		},
 		{
-			dbName: strings.Repeat("a", maxDbNameSize),
+			dbName: strings.Repeat("a", maxDBNameSize),
 			valid:  true,
 		},
 		{
-			dbName: strings.Repeat("a", maxDbNameSize+1),
+			dbName: strings.Repeat("a", maxDBNameSize+1),
 			valid:  false,
 		},
 	}
 	for _, test := range cases {
-		err := ValidateDatabaseName(test.dbName)
+		err := ValidateDBName(test.dbName)
 		if test.valid && err != nil {
 			t.Errorf("database name %s should be valid but is invalid", test.dbName)
 		} else if !test.valid && err == nil {
@@ -59,7 +59,7 @@ func TestValidateDatabaseName(t *testing.T) {
 	}
 }
 
-func TestValidateDatabaseKey(t *testing.T) {
+func TestValidateDBKey(t *testing.T) {
 	maxKeySize := 1024
 	type TestCase struct {
 		key   string
@@ -96,7 +96,7 @@ func TestValidateDatabaseKey(t *testing.T) {
 		},
 	}
 	for _, test := range cases {
-		err := ValidateDatabaseKey(test.key)
+		err := ValidateDBKey(test.key)
 		if test.valid && err != nil {
 			t.Errorf("key %s should be valid but is invalid", test.key)
 		} else if !test.valid && err == nil {
@@ -183,7 +183,7 @@ func TestIsTooLong(t *testing.T) {
 	}
 }
 
-func TestDatabaseNameContainsValidCharacters(t *testing.T) {
+func TestDBNameContainsValidCharacters(t *testing.T) {
 	cases := []string{
 		"ABC09",
 		"x_y-zfhL123",
@@ -191,7 +191,7 @@ func TestDatabaseNameContainsValidCharacters(t *testing.T) {
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_",
 	}
 	for _, tc := range cases {
-		if !databaseNameContainsValidCharacters(tc) {
+		if !dbNameContainsValidCharacters(tc) {
 			t.Errorf("database name '%s' contains invalid characters; got = %v; expected = %v", tc, false, true)
 		}
 	}

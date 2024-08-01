@@ -1,6 +1,7 @@
-// This package contains database-related Protobuf definitions
-// for the kvdbserver gRPC API.
+// kvdbserver gRPC API
 // API version: 0.1.0
+//
+// This package contains Protobuf definitions related to databases.
 
 syntax = "proto3";
 package api.v0.dbpb;
@@ -9,45 +10,45 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "api/v0/dbpb";
 
-message CreateDatabaseRequest {
+message CreateDBRequest {
   // Name of the database to create.
   string db_name = 1;
 }
 
-message CreateDatabaseResponse {
+message CreateDBResponse {
   // Name of the created database.
   string db_name = 1;
 }
 
-message GetAllDatabasesRequest {}
+message GetAllDBsRequest {}
 
-message GetAllDatabasesResponse {
+message GetAllDBsResponse {
   // List of returned database names.
   repeated string db_names = 1;
 }
 
-message GetDatabaseInfoRequest {
+message GetDBInfoRequest {
   // Name of the database.
   string db_name = 1;
 }
 
-message GetDatabaseInfoResponse {
+message GetDBInfoResponse {
   // Information about the database.
-  DatabaseInfo data = 1;
+  DBInfo data = 1;
 }
 
-message DeleteDatabaseRequest {
+message DeleteDBRequest {
   // Name of the database.
   string db_name = 1;
 }
 
-message DeleteDatabaseResponse {
+message DeleteDBResponse {
   // Name of the deleted database.
   string db_name = 1;
 }
 
-// DatabaseInfo represents information about a database.
-message DatabaseInfo {
+// DBInfo represents information about a database.
+message DBInfo {
   // Name of the database.
   string name = 1;
   // UTC timestamp when the database was created.
@@ -60,20 +61,20 @@ message DatabaseInfo {
   uint32 key_count = 5;
 }
 
-// DatabaseService provides database-related RPCs.
+// DBService provides database-related RPCs.
 //
 // Common gRPC metadata keys for this service's RPCs:
 // - password: The server password. Used for authentication if the server is password protected.
-service DatabaseService {
-  // CreateDatabase creates a new database.
-  rpc CreateDatabase(CreateDatabaseRequest) returns (CreateDatabaseResponse) {}
+service DBService {
+  // CreateDB creates a new database.
+  rpc CreateDB(CreateDBRequest) returns (CreateDBResponse) {}
 
-  // GetAllDatabases returns the names of all the databases that exist on the server.
-  rpc GetAllDatabases(GetAllDatabasesRequest) returns (GetAllDatabasesResponse) {}
+  // GetAllDBs returns the names of all the databases that exist on the server.
+  rpc GetAllDBs(GetAllDBsRequest) returns (GetAllDBsResponse) {}
 
-  // GetDatabaseInfo returns information about a database.
-  rpc GetDatabaseInfo(GetDatabaseInfoRequest) returns (GetDatabaseInfoResponse) {}
+  // GetDBInfo returns information about a database.
+  rpc GetDBInfo(GetDBInfoRequest) returns (GetDBInfoResponse) {}
 
-  // DeleteDatabase deletes a database.
-  rpc DeleteDatabase(DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {}
+  // DeleteDB deletes a database.
+  rpc DeleteDB(DeleteDBRequest) returns (DeleteDBResponse) {}
 }
