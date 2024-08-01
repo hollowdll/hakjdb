@@ -1,6 +1,7 @@
-// This package contains server-related Protobuf definitions
-// for the kvdbserver gRPC API.
+// kvdbserver gRPC API
 // API version: 0.1.0
+//
+// This package contains Protobuf definitions related to the server.
 
 syntax = "proto3";
 package api.v0.serverpb;
