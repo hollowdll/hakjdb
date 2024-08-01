@@ -24,7 +24,7 @@ func showDatabaseNames() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	response, err := client.GrpcDatabaseClient.GetAllDatabases(ctx, &dbpb.GetAllDatabasesRequest{})
+	response, err := client.GrpcDBClient.GetAllDBs(ctx, &dbpb.GetAllDBsRequest{})
 	client.CheckGrpcError(err)
 
 	if len(response.DbNames) > 0 {

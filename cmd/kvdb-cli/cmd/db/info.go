@@ -33,7 +33,7 @@ func showDbInfo() {
 	if len(dbName) < 1 {
 		dbName = viper.GetString(config.ConfigKeyDatabase)
 	}
-	response, err := client.GrpcDatabaseClient.GetDatabaseInfo(ctx, &dbpb.GetDatabaseInfoRequest{DbName: dbName})
+	response, err := client.GrpcDBClient.GetDBInfo(ctx, &dbpb.GetDBInfoRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
 	var info string

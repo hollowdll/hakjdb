@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -34,7 +34,7 @@ func getKeys() {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcGeneralKeyClient.GetAllKeys(ctx, &storagepb.GetAllKeysRequest{})
+	res, err := client.GrpcGeneralKVClient.GetAllKeys(ctx, &kvpb.GetAllKeysRequest{})
 	client.CheckGrpcError(err)
 
 	for i, key := range res.Keys {

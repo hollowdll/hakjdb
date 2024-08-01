@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func deleteHashMapFields(key string, fields []string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcHashMapKeyClient.DeleteHashMapFields(ctx, &storagepb.DeleteHashMapFieldsRequest{Key: key, Fields: fields})
+	res, err := client.GrpcHashMapKVClient.DeleteHashMapFields(ctx, &kvpb.DeleteHashMapFieldsRequest{Key: key, Fields: fields})
 	client.CheckGrpcError(err)
 
 	if res.Ok {

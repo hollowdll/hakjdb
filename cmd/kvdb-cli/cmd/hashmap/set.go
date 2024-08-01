@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hollowdll/kvdb/api/v0/storagepb"
+	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
@@ -49,7 +49,7 @@ func setHashMap(key string, fields map[string]string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcHashMapKeyClient.SetHashMap(ctx, &storagepb.SetHashMapRequest{Key: key, FieldValueMap: fields})
+	res, err := client.GrpcHashMapKVClient.SetHashMap(ctx, &kvpb.SetHashMapRequest{Key: key, FieldValueMap: fields})
 	client.CheckGrpcError(err)
 
 	fmt.Printf("%d\n", res.FieldsAddedCount)

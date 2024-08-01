@@ -37,7 +37,7 @@ func deleteDatabase() {
 		dbName = viper.GetString(config.ConfigKeyDatabase)
 	}
 
-	res, err := client.GrpcDatabaseClient.DeleteDatabase(ctx, &dbpb.DeleteDatabaseRequest{DbName: dbName})
+	res, err := client.GrpcDBClient.DeleteDB(ctx, &dbpb.DeleteDBRequest{DbName: dbName})
 	client.CheckGrpcError(err)
 
 	fmt.Println(res.DbName)
