@@ -6,69 +6,83 @@ import (
 	"time"
 )
 
-const (
-	StringKeyTypeName  DBKeyType = "String"
-	HashMapKeyTypeName DBKeyType = "HashMap"
-)
+// DBKey represents a database key.
+type DBKey string
 
-type DBKeyType string
+// HashMapFieldKey represents the key of a HashMap field.
+type HashMapFieldKey string
 
-func (t DBKeyType) String() string {
-	return string(t)
+// StringValue represents a String data type value.
+type StringValue []byte
+
+// HashMapValue represents a HashMap data type value.
+type HashMapValue map[HashMapFieldKey]HashMapField
+
+// StringKey is a database key that holds a String value.
+type StringKey struct {
+	value StringValue
 }
 
-// dbStoredData holds the data stored in a database.
-type dbStoredData struct {
+// HashMapKey is a database key that holds a HashMap value.
+type HashMapKey struct {
+	value HashMapValue
+}
+
+// HashMapField is a HashMap field that holds a String value.
+type HashMapField struct {
+	value StringValue
+}
+
+// dbStoredDataExperimental holds the data stored in a database.
+// THIS IS EXPERIMENTAL!
+type dbStoredDataExperimental struct {
 	// stringData holds String keys.
-	stringData map[string]string
+	stringData map[DBKey]StringKey
 	// hashMapData holds HashMap keys.
-	hashMapData map[string]map[string]string
+	hashMapData map[DBKey]HashMapKey
 }
 
-func newDBStoredData() *dbStoredData {
-	return &dbStoredData{
-		stringData:  make(map[string]string),
-		hashMapData: make(map[string]map[string]string),
+func newDBStoredDataExperimental() *dbStoredDataExperimental {
+	return &dbStoredDataExperimental{
+		stringData:  make(map[DBKey]StringKey),
+		hashMapData: make(map[DBKey]HashMapKey),
 	}
 }
 
-// Database is a namespace for storing key-value pairs.
-type Database struct {
+// DB is a database used as a namespace for storing key-value pairs.
+type DB struct {
 	// The name of the database.
 	Name string
-	// UTC timestamp describing when the database was created.
+	// The description of the database.
+	Description string
+	// Timestamp describing when the database was created.
 	CreatedAt time.Time
-	// UTC timestamp describing when the database was updated.
+	// Timestamp describing when the database was updated.
 	UpdatedAt time.Time
 	// The data stored in this database.
-	storedData dbStoredData
+	storedData dbStoredDataExperimental
 	// The current number of keys in this database.
 	keyCount uint32
 	mu       sync.RWMutex
 }
 
-// Creates a new instance of Database.
-func newDatabase(name string) *Database {
-	return &Database{
-		Name:       name,
-		CreatedAt:  time.Now().UTC(),
-		UpdatedAt:  time.Now().UTC(),
-		storedData: *newDBStoredData(),
-		keyCount:   0,
+func newDB(name string) *DB {
+	return &DB{
+		Name:        name,
+		Description: "",
+		CreatedAt:   time.Now().UTC(),
+		UpdatedAt:   time.Now().UTC(),
+		storedData:  *newDBStoredDataExperimental(),
+		keyCount:    0,
 	}
 }
 
-// GetName returns the name of the database.
-func (db *Database) GetName() string {
-	return db.Name
-}
-
-func (db *Database) update() {
+func (db *DB) update() {
 	db.UpdatedAt = time.Now().UTC()
 }
 
 // keyExists returns true if the key exists in the database.
-func (db *Database) keyExists(key string) bool {
+func (db *DB) keyExists(key DBKey) bool {
 	_, exists := db.storedData.stringData[key]
 	if exists {
 		return true
