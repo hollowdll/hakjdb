@@ -1,9 +1,11 @@
 package kvdb
 
 import (
+	"builtin"
 	"reflect"
 	"sync"
 	"time"
+	"unsafe"
 )
 
 // DBKey represents a database key.
@@ -92,50 +94,59 @@ func (db *DB) keyExists(key DBKey) bool {
 }
 
 // GetKeyCount returns the number of keys in the database.
-func (db *Database) GetKeyCount() uint32 {
+func (db *DB) GetKeyCount() uint32 {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
-
 	return db.keyCount
 }
 
 // GetStoredSizeBytes returns the size of stored data in bytes.
-func (db *Database) GetStoredSizeBytes() uint64 {
+func (db *DB) GetStoredSizeBytes() uint64 {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 	var size uint64
 
-	for key, value := range db.storedData.stringData {
-		size += uint64(reflect.TypeOf(key).Size())
-		size += uint64(len(key))
-		size += uint64(reflect.TypeOf(value).Size())
-		size += uint64(len(value))
+	for k, v := range db.storedData.stringData {
+		size += stringKeyEstimatedMemoryUsageBytes(k, v)
 	}
 
-	for key, value := range db.storedData.hashMapData {
-		size += uint64(reflect.TypeOf(key).Size())
-		size += uint64(len(key))
-		size += uint64(reflect.TypeOf(value).Size())
-		size += uint64(len(value))
-		for field, fieldValue := range value {
-			size += uint64(reflect.TypeOf(field).Size())
-			size += uint64(len(field))
-			size += uint64(reflect.TypeOf(fieldValue).Size())
-			size += uint64(len(fieldValue))
-		}
+	for k, v := range db.storedData.hashMapData {
+		size += hashMapKeyEstimatedMemoryUsageBytes(k, v)
 	}
 
 	return size
 }
 
+func storedTypeBytes(t any) uint64 {
+	return uint64(unsafe.Sizeof(t))
+}
+
+func stringKeyEstimatedMemoryUsageBytes(k DBKey, v StringKey) uint64 {
+	var size uint64
+	size += storedTypeBytes(k) + uint64(len(k))
+	size += storedTypeBytes(v) + uint64(len(v.value))
+	return size
+}
+
+func hashMapKeyEstimatedMemoryUsageBytes(k DBKey, v HashMapKey) uint64 {
+	var size uint64
+	size += storedTypeBytes(k) + uint64(len(k))
+	size += storedTypeBytes(v)
+	for field, fieldValue := range v.value {
+		size += storedTypeBytes(field) + uint64(len(field))
+		size += storedTypeBytes(fieldValue) + uint64(len(fieldValue.value))
+	}
+	return size
+}
+
 // CreateDatabase creates a new database with the given name.
-func CreateDatabase(name string) *Database {
-	return newDatabase(name)
+func CreateDB(name string) *DB {
+	return newDB(name)
 }
 
 // GetKeyType returns the data type of the key if it exists.
 // The returned bool is true if the key exists and false if it doesn't.
-func (db *Database) GetKeyType(key string) (DBKeyType, bool) {
+func (db *DB) GetKeyType(key DBKey) (DBKeyType, bool) {
 	_, exists := db.storedData.stringData[key]
 	if exists {
 		return StringKeyTypeName, true
@@ -148,14 +159,14 @@ func (db *Database) GetKeyType(key string) (DBKeyType, bool) {
 	return "", false
 }
 
-// GetString retrieves a string value using a key.
+// GetString retrieves a String key using a key.
 // The returned bool is true if the key exists.
-func (db *Database) GetString(key string) (string, bool) {
+func (db *DB) GetString(key DBKey) (StringKey, bool) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	value, exists := db.storedData.stringData[key]
-	return value, exists
+	value, ok := db.storedData.stringData[key]
+	return value, ok
 }
 
 // SetString sets a string value using a key, overwriting previous value.
