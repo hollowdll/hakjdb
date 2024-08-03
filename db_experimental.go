@@ -56,7 +56,7 @@ func newDBStoredDataExperimental() *dbStoredDataExperimental {
 // DBConfig contains fields to configure a database.
 type DBConfig struct {
 	// The maximum number of fields a HashMap key value can hold.
-	MaxHashMapFields int
+	MaxHashMapFields uint32
 }
 
 // DB is a database used as a namespace for storing key-value pairs.
@@ -316,7 +316,7 @@ func (db *DB) SetHashMap(key string, fields map[string][]byte) uint32 {
 		_, exists := db.storedData.hashMapData[DBKey(key)].value[field]
 		if !exists {
 			// ignore new fields if max limit is reached
-			if len(db.storedData.hashMapData[DBKey(key)].value) >= db.cfg.MaxHashMapFields {
+			if uint32(len(db.storedData.hashMapData[DBKey(key)].value)) >= db.cfg.MaxHashMapFields {
 				continue
 			}
 			fieldsAdded++
