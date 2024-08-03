@@ -17,16 +17,16 @@ func (t DBKeyType) String() string {
 	return string(t)
 }
 
-// databaseStoredData holds the data stored in a database.
-type databaseStoredData struct {
+// dbStoredData holds the data stored in a database.
+type dbStoredData struct {
 	// stringData holds String keys.
 	stringData map[string]string
 	// hashMapData holds HashMap keys.
 	hashMapData map[string]map[string]string
 }
 
-func newDatabaseStoredData() *databaseStoredData {
-	return &databaseStoredData{
+func newDBStoredData() *dbStoredData {
+	return &dbStoredData{
 		stringData:  make(map[string]string),
 		hashMapData: make(map[string]map[string]string),
 	}
@@ -41,7 +41,7 @@ type Database struct {
 	// UTC timestamp describing when the database was updated.
 	UpdatedAt time.Time
 	// The data stored in this database.
-	storedData databaseStoredData
+	storedData dbStoredData
 	// The current number of keys in this database.
 	keyCount uint32
 	mu       sync.RWMutex
@@ -53,7 +53,7 @@ func newDatabase(name string) *Database {
 		Name:       name,
 		CreatedAt:  time.Now().UTC(),
 		UpdatedAt:  time.Now().UTC(),
-		storedData: *newDatabaseStoredData(),
+		storedData: *newDBStoredData(),
 		keyCount:   0,
 	}
 }
@@ -63,7 +63,6 @@ func (db *Database) GetName() string {
 	return db.Name
 }
 
-// update updates the database changing some of its fields.
 func (db *Database) update() {
 	db.UpdatedAt = time.Now().UTC()
 }
@@ -115,7 +114,7 @@ func (db *Database) GetStoredSizeBytes() uint64 {
 	return size
 }
 
-// CreateDatabase creates a new database with a name.
+// CreateDatabase creates a new database with the given name.
 func CreateDatabase(name string) *Database {
 	return newDatabase(name)
 }
@@ -261,11 +260,11 @@ func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLim
 // GetHashMapFieldValues returns HashMap field values using a key.
 // The returned bool is true if the key exists,
 // or false if the key doesn't exist.
-func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValue, bool) {
+func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValueResult, bool) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	fieldValueMap := make(map[string]*HashMapFieldValue)
+	fieldValueMap := make(map[string]*HashMapFieldValueResult)
 	keyValue, keyExists := db.storedData.hashMapData[key]
 	if !keyExists {
 		return fieldValueMap, false
@@ -273,9 +272,9 @@ func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[stri
 
 	for _, field := range fields {
 		value, ok := keyValue[field]
-		fieldValue := &HashMapFieldValue{
-			Value: value,
-			Ok:    ok,
+		fieldValue := &HashMapFieldValueResult{
+			FieldValue: HashMapField{value: StringValue(value)},
+			Ok:         ok,
 		}
 		fieldValueMap[field] = fieldValue
 	}
