@@ -260,11 +260,11 @@ func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLim
 // GetHashMapFieldValues returns HashMap field values using a key.
 // The returned bool is true if the key exists,
 // or false if the key doesn't exist.
-func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValue, bool) {
+func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValueResult, bool) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	fieldValueMap := make(map[string]*HashMapFieldValue)
+	fieldValueMap := make(map[string]*HashMapFieldValueResult)
 	keyValue, keyExists := db.storedData.hashMapData[key]
 	if !keyExists {
 		return fieldValueMap, false
@@ -272,9 +272,9 @@ func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[stri
 
 	for _, field := range fields {
 		value, ok := keyValue[field]
-		fieldValue := &HashMapFieldValue{
-			Value: value,
-			Ok:    ok,
+		fieldValue := &HashMapFieldValueResult{
+			FieldValue: HashMapField{value: StringValue(value)},
+			Ok:         ok,
 		}
 		fieldValueMap[field] = fieldValue
 	}
