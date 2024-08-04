@@ -19,6 +19,9 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+// DBName represents a database name.
+type DBName string
+
 // ClientConnListener is a client connection listener
 // that accepts new connections and tracks active connections.
 type ClientConnListener struct {
@@ -92,11 +95,15 @@ func (c *clientConn) Close() error {
 
 type KvdbServer struct {
 	startTime       time.Time
-	databases       map[string]*kvdb.Database
+	dbs             map[DBName]*kvdb.DB
 	credentialStore auth.CredentialStore
 	logger          kvdb.Logger
 	loggerMu        sync.RWMutex
-	Cfg             config.ServerConfig
+
+	// Cfg is the configuration that the server is configured with.
+	// It is not intended to be changed after the server has been set up.
+	Cfg config.ServerConfig
+
 	*ClientConnListener
 	mu sync.RWMutex
 }
@@ -104,7 +111,7 @@ type KvdbServer struct {
 func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
 	return &KvdbServer{
 		startTime:          time.Now(),
-		databases:          make(map[string]*kvdb.Database),
+		dbs:                make(map[DBName]*kvdb.DB),
 		credentialStore:    auth.NewInMemoryCredentialStore(),
 		logger:             lg,
 		Cfg:                cfg,
@@ -119,11 +126,11 @@ func (s *KvdbServer) Logger() kvdb.Logger {
 	return l
 }
 
-// getTotalDataSize returns the total amount of stored data on this server in bytes.
-func (s *KvdbServer) getTotalDataSize() uint64 {
+// totalStoredDataSize returns the total amount of stored data on this server in bytes.
+func (s *KvdbServer) totalStoredDataSize() uint64 {
 	var sum uint64
-	for _, db := range s.databases {
-		sum += db.GetStoredSizeBytes()
+	for _, db := range s.dbs {
+		sum += db.GetEstimatedStorageSizeBytes()
 	}
 
 	return sum
@@ -131,7 +138,7 @@ func (s *KvdbServer) getTotalDataSize() uint64 {
 
 // dbExists returns true if a database with the given name exists on the server.
 func (s *KvdbServer) dbExists(name string) bool {
-	_, exists := s.databases[name]
+	_, exists := s.dbs[DBName(name)]
 	return exists
 }
 
@@ -191,9 +198,10 @@ func (s *KvdbServer) CreateDefaultDatabase(name string) {
 	if err := validation.ValidateDBName(name); err != nil {
 		s.logger.Fatalf("Failed to create default database: %v", err)
 	}
-	db := kvdb.CreateDatabase(name)
-	s.databases[db.Name] = db
-	s.logger.Infof("Created default database '%s'", db.Name)
+	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	db := kvdb.NewDB(name, "", dbConfig)
+	s.dbs[DBName(db.Name())] = db
+	s.logger.Infof("Created default database '%s'", db.Name())
 }
 
 // DBMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
