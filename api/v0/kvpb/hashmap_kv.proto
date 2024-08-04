@@ -12,7 +12,7 @@ message SetHashMapRequest {
   // The key to use.
   string key = 1;
   // The fields to be set and their corresponding values.
-  map<string, string> field_value_map = 2;
+  map<string, bytes> field_value_map = 2;
 }
 
 message SetHashMapResponse {
@@ -29,7 +29,7 @@ message GetHashMapFieldValuesRequest {
 
 message HashMapFieldValue {
   // The value of a HashMap field.
-  string value = 1;
+  bytes value = 1;
   // True if the field exists. False if it doesn't exist.
   bool ok = 2;
 }
@@ -48,7 +48,7 @@ message GetAllHashMapFieldsAndValuesRequest {
 
 message GetAllHashMapFieldsAndValuesResponse {
   // The returned fields and their corresponding values.
-  map<string, string> field_value_map = 1;
+  map<string, bytes> field_value_map = 1;
   // True if the key exists. False if it doesn't exist.
   bool ok = 2;
 }
