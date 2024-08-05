@@ -23,10 +23,16 @@ import (
 // that accepts new connections and tracks active connections.
 type ClientConnListener struct {
 	net.Listener
-	server                 *KvdbServer
+	server *KvdbServer
+
+	// clientConnectionsCount is the current number of client connections.
 	clientConnectionsCount uint32
-	maxClientConnections   uint32
-	mu                     sync.RWMutex
+	// maxClientConnections is the maximum number of concurrent client connections allowed.
+	maxClientConnections uint32
+	// totalClientConnections is the number of total client connections created.
+	totalClientConnections uint64
+
+	mu sync.RWMutex
 }
 
 func NewClientConnListener(lis net.Listener, s *KvdbServer, maxConnections uint32) *ClientConnListener {
@@ -35,6 +41,7 @@ func NewClientConnListener(lis net.Listener, s *KvdbServer, maxConnections uint3
 		server:                 s,
 		clientConnectionsCount: 0,
 		maxClientConnections:   maxConnections,
+		totalClientConnections: 0,
 	}
 }
 
@@ -44,17 +51,19 @@ func (l *ClientConnListener) Accept() (net.Conn, error) {
 		return nil, err
 	}
 
-	logger := l.server.Logger()
 	l.mu.Lock()
+	logger := l.server.Logger()
 	l.clientConnectionsCount++
-	logger.Debugf("Client connected, total clients: %d\n", l.clientConnectionsCount)
+	l.totalClientConnections++
+	id := l.totalClientConnections
+	logger.Debugf("Client ID %d connected, currently connected clients: %d\n", id, l.clientConnectionsCount)
 
-	clientConn := &clientConn{Conn: conn, release: func() {
+	clientConn := &clientConn{Conn: conn, id: id, release: func() {
 		l.mu.Lock()
 		if l.clientConnectionsCount > 0 {
 			l.clientConnectionsCount--
 		}
-		logger.Debugf("Client disconnected, total clients: %d\n", l.clientConnectionsCount)
+		logger.Debugf("Client ID %d disconnected, currently connected clients: %d\n", id, l.clientConnectionsCount)
 		l.mu.Unlock()
 	}}
 
@@ -73,6 +82,7 @@ type clientConn struct {
 	net.Conn
 	release func()
 	closed  bool
+	id      uint64
 	mu      sync.Mutex
 }
 
