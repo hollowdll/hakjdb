@@ -12,7 +12,7 @@ message SetStringRequest {
   // The key to use.
   string key = 1;
   // The value to store.
-  string value = 2;
+  bytes value = 2;
 }
 
 message SetStringResponse {}
@@ -24,7 +24,7 @@ message GetStringRequest {
 
 message GetStringResponse {
   // The returned value.
-  string value = 1;
+  bytes value = 1;
   // True if the key exists. False if it doesn't exist.
   bool ok = 2;
 }

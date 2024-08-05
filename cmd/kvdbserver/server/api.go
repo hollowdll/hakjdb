@@ -73,7 +73,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 	runtime.ReadMemStats(&m)
 
 	var totalKeys uint64
-	for _, db := range s.databases {
+	for _, db := range s.dbs {
 		totalKeys += uint64(db.GetKeyCount())
 	}
 
@@ -96,7 +96,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 		MemorySys:        m.Sys,
 	}
 	storageInfo := &serverpb.StorageInfo{
-		TotalDataSize: s.getTotalDataSize(),
+		TotalDataSize: s.totalStoredDataSize(),
 		TotalKeys:     totalKeys,
 	}
 	clientInfo := &serverpb.ClientInfo{
@@ -104,7 +104,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 		MaxClientConnections: s.ClientConnListener.maxClientConnections,
 	}
 	dbInfo := &serverpb.DatabaseInfo{
-		DbCount:   uint32(len(s.databases)),
+		DbCount:   uint32(len(s.dbs)),
 		DefaultDb: s.Cfg.DefaultDB,
 	}
 
@@ -143,10 +143,11 @@ func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*
 		return nil, kvdberrors.ErrDatabaseExists
 	}
 
-	db := kvdb.CreateDatabase(req.DbName)
-	s.databases[db.Name] = db
+	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	db := kvdb.NewDB(req.DbName, "", dbConfig)
+	s.dbs[db.Name()] = db
 
-	return &dbpb.CreateDBResponse{DbName: db.Name}, nil
+	return &dbpb.CreateDBResponse{DbName: db.Name()}, nil
 }
 
 func (s *KvdbServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error) {
@@ -157,7 +158,7 @@ func (s *KvdbServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	delete(s.databases, req.DbName)
+	delete(s.dbs, req.DbName)
 
 	return &dbpb.DeleteDBResponse{DbName: req.DbName}, nil
 }
@@ -166,12 +167,12 @@ func (s *KvdbServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) 
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	var names []string
-	for key := range s.databases {
-		names = append(names, key)
+	var dbNames []string
+	for dbName := range s.dbs {
+		dbNames = append(dbNames, dbName)
 	}
 
-	return &dbpb.GetAllDBsResponse{DbNames: names}, nil
+	return &dbpb.GetAllDBsResponse{DbNames: dbNames}, nil
 }
 
 func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error) {
@@ -182,13 +183,13 @@ func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) 
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	db := s.databases[req.DbName]
+	db := s.dbs[req.DbName]
 	data := &dbpb.DBInfo{
-		Name:      db.Name,
-		CreatedAt: timestamppb.New(db.CreatedAt),
-		UpdatedAt: timestamppb.New(db.UpdatedAt),
+		Name:      db.Name(),
+		CreatedAt: timestamppb.New(db.CreatedAt()),
+		UpdatedAt: timestamppb.New(db.UpdatedAt()),
 		KeyCount:  db.GetKeyCount(),
-		DataSize:  db.GetStoredSizeBytes(),
+		DataSize:  db.GetEstimatedStorageSizeBytes(),
 	}
 
 	return &dbpb.GetDBInfoResponse{Data: data}, nil
@@ -203,7 +204,7 @@ func (s *KvdbServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	return &kvpb.GetAllKeysResponse{Keys: s.databases[dbName].GetKeys()}, nil
+	return &kvpb.GetAllKeysResponse{Keys: s.dbs[dbName].GetAllKeys()}, nil
 }
 
 func (s *KvdbServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest) (*kvpb.GetKeyTypeResponse, error) {
@@ -215,7 +216,7 @@ func (s *KvdbServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	keyType, ok := s.databases[dbName].GetKeyType(req.Key)
+	keyType, ok := s.dbs[dbName].GetKeyType(req.Key)
 
 	return &kvpb.GetKeyTypeResponse{KeyType: keyType.String(), Ok: ok}, nil
 }
@@ -229,7 +230,7 @@ func (s *KvdbServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	keysDeletedCount := s.databases[dbName].DeleteKeys(req.Keys)
+	keysDeletedCount := s.dbs[dbName].DeleteKeys(req.Keys)
 
 	return &kvpb.DeleteKeysResponse{KeysDeletedCount: keysDeletedCount}, nil
 }
@@ -243,7 +244,7 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysR
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	s.databases[dbName].DeleteAllKeys()
+	s.dbs[dbName].DeleteAllKeys()
 
 	return &kvpb.DeleteAllKeysResponse{}, nil
 }
@@ -257,11 +258,11 @@ func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) 
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	if s.DBMaxKeysReached(s.databases[dbName]) {
+	if s.DBMaxKeysReached(s.dbs[dbName]) {
 		return nil, kvdberrors.ErrMaxKeysReached
 	}
 
-	s.databases[dbName].SetString(req.Key, req.Value)
+	s.dbs[dbName].SetString(req.Key, req.Value)
 
 	return &kvpb.SetStringResponse{}, nil
 }
@@ -275,9 +276,9 @@ func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) 
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	value, ok := s.databases[dbName].GetString(req.Key)
+	kv, ok := s.dbs[dbName].GetStringKey(req.Key)
 
-	return &kvpb.GetStringResponse{Value: value, Ok: ok}, nil
+	return &kvpb.GetStringResponse{Value: kv.Value, Ok: ok}, nil
 }
 
 func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error) {
@@ -289,11 +290,11 @@ func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	if s.DBMaxKeysReached(s.databases[dbName]) {
+	if s.DBMaxKeysReached(s.dbs[dbName]) {
 		return nil, kvdberrors.ErrMaxKeysReached
 	}
 
-	fieldsAddedCount := s.databases[dbName].SetHashMap(req.Key, req.FieldValueMap, s.Cfg.MaxHashMapFields)
+	fieldsAddedCount := s.dbs[dbName].SetHashMap(req.Key, req.FieldValueMap)
 
 	return &kvpb.SetHashMapResponse{FieldsAddedCount: fieldsAddedCount}, nil
 }
@@ -307,12 +308,12 @@ func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHas
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	result, ok := s.databases[dbName].GetHashMapFieldValues(req.Key, req.Fields)
+	result, ok := s.dbs[dbName].GetHashMapFieldValues(req.Key, req.Fields)
 
 	var fieldValueMap = make(map[string]*kvpb.HashMapFieldValue)
 	for field, value := range result {
 		fieldValueMap[field] = &kvpb.HashMapFieldValue{
-			Value: value.Value,
+			Value: value.FieldValue.Value,
 			Ok:    value.Ok,
 		}
 	}
@@ -329,7 +330,11 @@ func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	fieldValueMap, ok := s.databases[dbName].GetAllHashMapFieldsAndValues(req.Key)
+	kv, ok := s.dbs[dbName].GetHashMapKey(req.Key)
+	fieldValueMap := make(map[string][]byte)
+	for field, value := range kv.Value {
+		fieldValueMap[field] = value.Value
+	}
 
 	return &kvpb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }
@@ -343,7 +348,7 @@ func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHa
 		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
-	fieldsRemovedCount, ok := s.databases[dbName].DeleteHashMapFields(req.Key, req.Fields)
+	fieldsRemovedCount, ok := s.dbs[dbName].DeleteHashMapFields(req.Key, req.Fields)
 
 	return &kvpb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
 }
