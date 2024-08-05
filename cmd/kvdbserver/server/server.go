@@ -19,9 +19,6 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-// DBName represents a database name.
-type DBName string
-
 // ClientConnListener is a client connection listener
 // that accepts new connections and tracks active connections.
 type ClientConnListener struct {
@@ -94,8 +91,11 @@ func (c *clientConn) Close() error {
 }
 
 type KvdbServer struct {
-	startTime       time.Time
-	dbs             map[DBName]*kvdb.DB
+	startTime time.Time
+
+	// dbs holds the databases and their names that exist on the server.
+	dbs map[string]*kvdb.DB
+
 	credentialStore auth.CredentialStore
 	logger          kvdb.Logger
 	loggerMu        sync.RWMutex
@@ -111,7 +111,7 @@ type KvdbServer struct {
 func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
 	return &KvdbServer{
 		startTime:          time.Now(),
-		dbs:                make(map[DBName]*kvdb.DB),
+		dbs:                make(map[string]*kvdb.DB),
 		credentialStore:    auth.NewInMemoryCredentialStore(),
 		logger:             lg,
 		Cfg:                cfg,
@@ -138,7 +138,7 @@ func (s *KvdbServer) totalStoredDataSize() uint64 {
 
 // dbExists returns true if a database with the given name exists on the server.
 func (s *KvdbServer) dbExists(name string) bool {
-	_, exists := s.dbs[DBName(name)]
+	_, exists := s.dbs[name]
 	return exists
 }
 
@@ -200,12 +200,12 @@ func (s *KvdbServer) CreateDefaultDatabase(name string) {
 	}
 	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
 	db := kvdb.NewDB(name, "", dbConfig)
-	s.dbs[DBName(db.Name())] = db
+	s.dbs[db.Name()] = db
 	s.logger.Infof("Created default database '%s'", db.Name())
 }
 
 // DBMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
-func (s *KvdbServer) DBMaxKeysReached(db *kvdb.Database) bool {
+func (s *KvdbServer) DBMaxKeysReached(db *kvdb.DB) bool {
 	return db.GetKeyCount() >= s.Cfg.MaxKeysPerDB
 }
 

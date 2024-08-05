@@ -17,17 +17,17 @@ type HashMapValue map[string]HashMapField
 
 // StringKey is a database key that holds a String value.
 type StringKey struct {
-	value StringValue
+	Value StringValue
 }
 
 // HashMapKey is a database key that holds a HashMap value.
 type HashMapKey struct {
-	value HashMapValue
+	Value HashMapValue
 }
 
 // HashMapField is a HashMap field that holds a String value.
 type HashMapField struct {
-	value StringValue
+	Value StringValue
 }
 
 type HashMapFieldValueResult struct {
@@ -170,7 +170,7 @@ func storedTypeBytes(t any) uint64 {
 func stringKeyEstimatedMemoryUsageBytes(k DBKey, v StringKey) uint64 {
 	var size uint64
 	size += storedTypeBytes(k) + uint64(len(k))
-	size += storedTypeBytes(v) + uint64(len(v.value))
+	size += storedTypeBytes(v) + uint64(len(v.Value))
 	return size
 }
 
@@ -178,9 +178,9 @@ func hashMapKeyEstimatedMemoryUsageBytes(k DBKey, v HashMapKey) uint64 {
 	var size uint64
 	size += storedTypeBytes(k) + uint64(len(k))
 	size += storedTypeBytes(v)
-	for field, fieldValue := range v.value {
+	for field, fieldValue := range v.Value {
 		size += storedTypeBytes(field) + uint64(len(field))
-		size += storedTypeBytes(fieldValue) + uint64(len(fieldValue.value))
+		size += storedTypeBytes(fieldValue) + uint64(len(fieldValue.Value))
 	}
 	return size
 }
@@ -226,7 +226,7 @@ func (db *DB) SetString(key string, value []byte) {
 	// Overwrite other data types
 	delete(db.storedData.hashMapData, DBKey(key))
 
-	db.storedData.stringData[DBKey(key)] = StringKey{value: value}
+	db.storedData.stringData[DBKey(key)] = StringKey{Value: value}
 	db.update()
 }
 
@@ -307,21 +307,21 @@ func (db *DB) SetHashMap(key string, fields map[string][]byte) uint32 {
 	_, exists := db.storedData.hashMapData[DBKey(key)]
 	if !exists {
 		db.storedData.hashMapData[DBKey(key)] = HashMapKey{
-			value: HashMapValue(make(map[string]HashMapField)),
+			Value: HashMapValue(make(map[string]HashMapField)),
 		}
 	}
 
 	var fieldsAdded uint32 = 0
 	for field, fieldValue := range fields {
-		_, exists := db.storedData.hashMapData[DBKey(key)].value[field]
+		_, exists := db.storedData.hashMapData[DBKey(key)].Value[field]
 		if !exists {
 			// ignore new fields if max limit is reached
-			if uint32(len(db.storedData.hashMapData[DBKey(key)].value)) >= db.cfg.MaxHashMapFields {
+			if uint32(len(db.storedData.hashMapData[DBKey(key)].Value)) >= db.cfg.MaxHashMapFields {
 				continue
 			}
 			fieldsAdded++
 		}
-		db.storedData.hashMapData[DBKey(key)].value[field] = HashMapField{value: fieldValue}
+		db.storedData.hashMapData[DBKey(key)].Value[field] = HashMapField{Value: fieldValue}
 	}
 	db.update()
 
@@ -342,7 +342,7 @@ func (db *DB) GetHashMapFieldValues(key string, fields []string) (map[string]*Ha
 	}
 
 	for _, field := range fields {
-		value, ok := kv.value[field]
+		value, ok := kv.Value[field]
 		fieldValue := &HashMapFieldValueResult{
 			FieldValue: value,
 			Ok:         ok,
@@ -374,15 +374,15 @@ func (db *DB) DeleteHashMapFields(key string, fields []string) (uint32, bool) {
 	if !keyExists {
 		return 0, false
 	}
-	if len(kv.value) == 0 {
+	if len(kv.Value) == 0 {
 		return 0, true
 	}
 
 	var fieldsRemoved uint32 = 0
 	for _, field := range fields {
-		_, fieldExists := db.storedData.hashMapData[DBKey(key)].value[field]
+		_, fieldExists := db.storedData.hashMapData[DBKey(key)].Value[field]
 		if fieldExists {
-			delete(db.storedData.hashMapData[DBKey(key)].value, field)
+			delete(db.storedData.hashMapData[DBKey(key)].Value, field)
 			fieldsRemoved++
 		}
 	}
