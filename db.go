@@ -1,9 +1,9 @@
 package kvdb
 
 import (
-	"reflect"
 	"sync"
 	"time"
+	"unsafe"
 )
 
 const (
@@ -11,64 +11,137 @@ const (
 	HashMapKeyTypeName DBKeyType = "HashMap"
 )
 
+// DBKeyType represents the name of a database key data type.
 type DBKeyType string
 
 func (t DBKeyType) String() string {
 	return string(t)
 }
 
+// DBKey represents a database key.
+type DBKey string
+
+// StringValue represents a String data type value.
+type StringValue []byte
+
+// HashMapValue represents a HashMap data type value.
+type HashMapValue map[string]HashMapField
+
+// StringKey is a database key that holds a String value.
+type StringKey struct {
+	Value StringValue
+}
+
+// HashMapKey is a database key that holds a HashMap value.
+type HashMapKey struct {
+	Value HashMapValue
+}
+
+// HashMapField is a HashMap field that holds a String value.
+type HashMapField struct {
+	Value StringValue
+}
+
+type HashMapFieldValueResult struct {
+	// Value is the value the field is holding.
+	FieldValue HashMapField
+	// Ok is true if the field exists. Otherwise false.
+	Ok bool
+}
+
 // dbStoredData holds the data stored in a database.
 type dbStoredData struct {
 	// stringData holds String keys.
-	stringData map[string]string
+	stringData map[DBKey]StringKey
 	// hashMapData holds HashMap keys.
-	hashMapData map[string]map[string]string
+	hashMapData map[DBKey]HashMapKey
 }
 
 func newDBStoredData() *dbStoredData {
 	return &dbStoredData{
-		stringData:  make(map[string]string),
-		hashMapData: make(map[string]map[string]string),
+		stringData:  make(map[DBKey]StringKey),
+		hashMapData: make(map[DBKey]HashMapKey),
 	}
 }
 
-// Database is a namespace for storing key-value pairs.
-type Database struct {
+// DBConfig contains fields to configure a database.
+type DBConfig struct {
+	// The maximum number of fields a HashMap key value can hold.
+	MaxHashMapFields uint32
+}
+
+// DB is a database used as a namespace for storing key-value pairs.
+type DB struct {
 	// The name of the database.
-	Name string
-	// UTC timestamp describing when the database was created.
-	CreatedAt time.Time
-	// UTC timestamp describing when the database was updated.
-	UpdatedAt time.Time
+	name string
+	// The description of the database.
+	description string
+	// Timestamp describing when the database was created.
+	createdAt time.Time
+	// Timestamp describing when the database was updated.
+	updatedAt time.Time
 	// The data stored in this database.
 	storedData dbStoredData
 	// The current number of keys in this database.
 	keyCount uint32
+	cfg      DBConfig
 	mu       sync.RWMutex
 }
 
-// Creates a new instance of Database.
-func newDatabase(name string) *Database {
-	return &Database{
-		Name:       name,
-		CreatedAt:  time.Now().UTC(),
-		UpdatedAt:  time.Now().UTC(),
-		storedData: *newDBStoredData(),
-		keyCount:   0,
+func NewDB(name string, desc string, cfg DBConfig) *DB {
+	return &DB{
+		name:        name,
+		description: desc,
+		createdAt:   time.Now().UTC(),
+		updatedAt:   time.Now().UTC(),
+		storedData:  *newDBStoredData(),
+		keyCount:    0,
+		cfg:         cfg,
 	}
 }
 
-// GetName returns the name of the database.
-func (db *Database) GetName() string {
-	return db.Name
+func (db *DB) Name() string {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+	return db.name
 }
 
-func (db *Database) update() {
-	db.UpdatedAt = time.Now().UTC()
+func (db *DB) Description() string {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+	return db.description
+}
+
+func (db *DB) CreatedAt() time.Time {
+	return db.createdAt
+}
+
+func (db *DB) UpdatedAt() time.Time {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+	return db.updatedAt
+}
+
+func (db *DB) UpdateName(newName string) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	db.name = newName
+	db.update()
+}
+
+func (db *DB) UpdateDescription(newDescription string) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	db.description = newDescription
+	db.update()
+}
+
+func (db *DB) update() {
+	db.updatedAt = time.Now().UTC()
 }
 
 // keyExists returns true if the key exists in the database.
-func (db *Database) keyExists(key string) bool {
+func (db *DB) keyExists(key DBKey) bool {
 	_, exists := db.storedData.stringData[key]
 	if exists {
 		return true
@@ -78,55 +151,62 @@ func (db *Database) keyExists(key string) bool {
 }
 
 // GetKeyCount returns the number of keys in the database.
-func (db *Database) GetKeyCount() uint32 {
+func (db *DB) GetKeyCount() uint32 {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
-
 	return db.keyCount
 }
 
-// GetStoredSizeBytes returns the size of stored data in bytes.
-func (db *Database) GetStoredSizeBytes() uint64 {
+// GetEstimatedStorageSizeBytes returns the estimated size of stored data in bytes.
+func (db *DB) GetEstimatedStorageSizeBytes() uint64 {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 	var size uint64
 
-	for key, value := range db.storedData.stringData {
-		size += uint64(reflect.TypeOf(key).Size())
-		size += uint64(len(key))
-		size += uint64(reflect.TypeOf(value).Size())
-		size += uint64(len(value))
+	for k, v := range db.storedData.stringData {
+		size += stringKeyEstimatedMemoryUsageBytes(k, v)
 	}
 
-	for key, value := range db.storedData.hashMapData {
-		size += uint64(reflect.TypeOf(key).Size())
-		size += uint64(len(key))
-		size += uint64(reflect.TypeOf(value).Size())
-		size += uint64(len(value))
-		for field, fieldValue := range value {
-			size += uint64(reflect.TypeOf(field).Size())
-			size += uint64(len(field))
-			size += uint64(reflect.TypeOf(fieldValue).Size())
-			size += uint64(len(fieldValue))
-		}
+	for k, v := range db.storedData.hashMapData {
+		size += hashMapKeyEstimatedMemoryUsageBytes(k, v)
 	}
 
 	return size
 }
 
-// CreateDatabase creates a new database with the given name.
-func CreateDatabase(name string) *Database {
-	return newDatabase(name)
+func storedTypeBytes(t any) uint64 {
+	return uint64(unsafe.Sizeof(t))
+}
+
+func stringKeyEstimatedMemoryUsageBytes(k DBKey, v StringKey) uint64 {
+	var size uint64
+	size += storedTypeBytes(k) + uint64(len(k))
+	size += storedTypeBytes(v) + uint64(len(v.Value))
+	return size
+}
+
+func hashMapKeyEstimatedMemoryUsageBytes(k DBKey, v HashMapKey) uint64 {
+	var size uint64
+	size += storedTypeBytes(k) + uint64(len(k))
+	size += storedTypeBytes(v)
+	for field, fieldValue := range v.Value {
+		size += storedTypeBytes(field) + uint64(len(field))
+		size += storedTypeBytes(fieldValue) + uint64(len(fieldValue.Value))
+	}
+	return size
 }
 
 // GetKeyType returns the data type of the key if it exists.
 // The returned bool is true if the key exists and false if it doesn't.
-func (db *Database) GetKeyType(key string) (DBKeyType, bool) {
-	_, exists := db.storedData.stringData[key]
+func (db *DB) GetKeyType(key string) (DBKeyType, bool) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	_, exists := db.storedData.stringData[DBKey(key)]
 	if exists {
 		return StringKeyTypeName, true
 	}
-	_, exists = db.storedData.hashMapData[key]
+	_, exists = db.storedData.hashMapData[DBKey(key)]
 	if exists {
 		return HashMapKeyTypeName, true
 	}
@@ -134,51 +214,51 @@ func (db *Database) GetKeyType(key string) (DBKeyType, bool) {
 	return "", false
 }
 
-// GetString retrieves a string value using a key.
-// The returned bool is true if the key exists.
-func (db *Database) GetString(key string) (string, bool) {
+// GetStringKey retrieves a String key value.
+// The returned bool is true if the key exists and holds a String.
+func (db *DB) GetStringKey(key string) (StringKey, bool) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	value, exists := db.storedData.stringData[key]
-	return value, exists
+	kv, ok := db.storedData.stringData[DBKey(key)]
+	return kv, ok
 }
 
-// SetString sets a string value using a key, overwriting previous value.
+// SetString sets a String key value, overwriting previous key.
 // Creates the key if it doesn't exist.
-func (db *Database) SetString(key string, value string) {
+func (db *DB) SetString(key string, value []byte) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	if !db.keyExists(key) {
+	if !db.keyExists(DBKey(key)) {
 		db.keyCount++
 	}
 
 	// Overwrite other data types
-	delete(db.storedData.hashMapData, key)
+	delete(db.storedData.hashMapData, DBKey(key))
 
-	db.storedData.stringData[key] = value
+	db.storedData.stringData[DBKey(key)] = StringKey{Value: value}
 	db.update()
 }
 
-// DeleteKeys deletes the specified keys and the values they are holding.
+// DeleteKeys deletes the specified keys.
 // Returns the number of keys that were deleted.
-func (db *Database) DeleteKeys(keys []string) uint32 {
+func (db *DB) DeleteKeys(keys []string) uint32 {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
 	var keysDeleted uint32 = 0
 	for _, key := range keys {
-		_, ok := db.storedData.stringData[string(key)]
+		_, ok := db.storedData.stringData[DBKey(key)]
 		if ok {
-			delete(db.storedData.stringData, string(key))
+			delete(db.storedData.stringData, DBKey(key))
 			keysDeleted++
 			db.keyCount--
 			continue
 		}
-		_, ok = db.storedData.hashMapData[string(key)]
+		_, ok = db.storedData.hashMapData[DBKey(key)]
 		if ok {
-			delete(db.storedData.hashMapData, string(key))
+			delete(db.storedData.hashMapData, DBKey(key))
 			keysDeleted++
 			db.keyCount--
 		}
@@ -192,7 +272,7 @@ func (db *Database) DeleteKeys(keys []string) uint32 {
 }
 
 // DeleteAllKeys deletes all the keys.
-func (db *Database) DeleteAllKeys() {
+func (db *DB) DeleteAllKeys() {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 	for key := range db.storedData.stringData {
@@ -206,8 +286,8 @@ func (db *Database) DeleteAllKeys() {
 	db.update()
 }
 
-// GetKeys returns all the keys.
-func (db *Database) GetKeys() []string {
+// GetAllKeys returns all the keys.
+func (db *DB) GetAllKeys() []string {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
@@ -222,58 +302,60 @@ func (db *Database) GetKeys() []string {
 	return keys
 }
 
-// SetHashMap sets fields in a HashMap value using a key, overwriting previous fields.
+// SetHashMap sets the specified fields in a HashMap key value, overwriting previous fields.
 // Creates the key if it doesn't exist. Returns the number of added fields.
-func (db *Database) SetHashMap(key string, fields map[string]string, maxFieldLimit uint32) uint32 {
+func (db *DB) SetHashMap(key string, fields map[string][]byte) uint32 {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	if !db.keyExists(key) {
+	if !db.keyExists(DBKey(key)) {
 		db.keyCount++
 	}
 
 	// Overwrite other data types
-	delete(db.storedData.stringData, key)
+	delete(db.storedData.stringData, DBKey(key))
 
-	_, exists := db.storedData.hashMapData[key]
+	_, exists := db.storedData.hashMapData[DBKey(key)]
 	if !exists {
-		db.storedData.hashMapData[key] = make(map[string]string)
+		db.storedData.hashMapData[DBKey(key)] = HashMapKey{
+			Value: HashMapValue(make(map[string]HashMapField)),
+		}
 	}
 
 	var fieldsAdded uint32 = 0
 	for field, fieldValue := range fields {
-		_, exists := db.storedData.hashMapData[key][field]
+		_, exists := db.storedData.hashMapData[DBKey(key)].Value[field]
 		if !exists {
 			// ignore new fields if max limit is reached
-			if uint32(len(db.storedData.hashMapData[key])) >= maxFieldLimit {
+			if uint32(len(db.storedData.hashMapData[DBKey(key)].Value)) >= db.cfg.MaxHashMapFields {
 				continue
 			}
 			fieldsAdded++
 		}
-		db.storedData.hashMapData[key][field] = fieldValue
+		db.storedData.hashMapData[DBKey(key)].Value[field] = HashMapField{Value: fieldValue}
 	}
 	db.update()
 
 	return fieldsAdded
 }
 
-// GetHashMapFieldValues returns HashMap field values using a key.
+// GetHashMapFieldValues returns a HashMap key value's field values.
 // The returned bool is true if the key exists,
 // or false if the key doesn't exist.
-func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValueResult, bool) {
+func (db *DB) GetHashMapFieldValues(key string, fields []string) (map[string]*HashMapFieldValueResult, bool) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
 	fieldValueMap := make(map[string]*HashMapFieldValueResult)
-	keyValue, keyExists := db.storedData.hashMapData[key]
+	kv, keyExists := db.storedData.hashMapData[DBKey(key)]
 	if !keyExists {
 		return fieldValueMap, false
 	}
 
 	for _, field := range fields {
-		value, ok := keyValue[field]
+		value, ok := kv.Value[field]
 		fieldValue := &HashMapFieldValueResult{
-			FieldValue: HashMapField{value: StringValue(value)},
+			FieldValue: value,
 			Ok:         ok,
 		}
 		fieldValueMap[field] = fieldValue
@@ -282,25 +364,36 @@ func (db *Database) GetHashMapFieldValues(key string, fields []string) (map[stri
 	return fieldValueMap, keyExists
 }
 
-// DeleteHashMapFields removes fields from a HashMap using a key.
+// GetHashMapKey retrieves a HashMap key value.
+// The returned map is empty if the key doesn't exist.
+// The returned bool is true if the key exists and holds a HashMap.
+func (db *DB) GetHashMapKey(key string) (HashMapKey, bool) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	kv, ok := db.storedData.hashMapData[DBKey(key)]
+	return kv, ok
+}
+
+// DeleteHashMapFields removes the specified fields from a HashMap key value.
 // Returns the number of removed fields. The returned bool is true if the key exists and holds a HashMap.
-func (db *Database) DeleteHashMapFields(key string, fields []string) (uint32, bool) {
+func (db *DB) DeleteHashMapFields(key string, fields []string) (uint32, bool) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	keyValue, keyExists := db.storedData.hashMapData[key]
+	kv, keyExists := db.storedData.hashMapData[DBKey(key)]
 	if !keyExists {
 		return 0, false
 	}
-	if len(keyValue) == 0 {
+	if len(kv.Value) == 0 {
 		return 0, true
 	}
 
 	var fieldsRemoved uint32 = 0
 	for _, field := range fields {
-		_, fieldExists := db.storedData.hashMapData[key][field]
+		_, fieldExists := db.storedData.hashMapData[DBKey(key)].Value[field]
 		if fieldExists {
-			delete(db.storedData.hashMapData[key], field)
+			delete(db.storedData.hashMapData[DBKey(key)].Value, field)
 			fieldsRemoved++
 		}
 	}
@@ -312,25 +405,12 @@ func (db *Database) DeleteHashMapFields(key string, fields []string) (uint32, bo
 	return fieldsRemoved, true
 }
 
-// GetAllHashMapFieldsAndValues returns all the fields and values of a HashMap.
-// The returned map is empty if the key doesn't exist.
-// The returned bool is true if the key exists and holds a HashMap.
-func (db *Database) GetAllHashMapFieldsAndValues(key string) (map[string]string, bool) {
+/* DISABLED
+// GetHashMapFieldCount returns the number of fields in a HashMap key value.
+func (db *DB) GetHashMapFieldCount(key string) uint32 {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	value, exists := db.storedData.hashMapData[key]
-	if !exists {
-		return make(map[string]string), false
-	}
-
-	return value, true
+	return uint32(len(db.storedData.hashMapData[DBKey(key)].value))
 }
-
-// GetHashMapFieldCount returns the number of fields in a HashMap.
-func (db *Database) GetHashMapFieldCount(key string) uint32 {
-	db.mu.RLock()
-	defer db.mu.RUnlock()
-
-	return uint32(len(db.storedData.hashMapData[key]))
-}
+*/
