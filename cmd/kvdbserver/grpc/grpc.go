@@ -10,6 +10,7 @@ import (
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/reflection"
 )
 
 func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
@@ -37,6 +38,13 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	kvpb.RegisterGeneralKVServiceServer(grpcServer, kvrpc.NewGeneralKVServiceServer(s))
 	kvpb.RegisterStringKVServiceServer(grpcServer, kvrpc.NewStringKVServiceServer(s))
 	kvpb.RegisterHashMapKVServiceServer(grpcServer, kvrpc.NewHashMapKVServiceServer(s))
+
+	// enable gRPC server reflection in debug mode
+	if s.Cfg.DebugEnabled {
+		logger.Info("Debug mode detected: enabling gRPC server reflection ...")
+		reflection.Register(grpcServer)
+		logger.Info("gRPC server reflection enabled")
+	}
 
 	return grpcServer
 }

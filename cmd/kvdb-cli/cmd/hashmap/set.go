@@ -27,12 +27,12 @@ This command can set multiple fields.
 			cobra.CheckErr("invalid number of arguments")
 		}
 
-		fields := make(map[string]string)
+		fieldValueMap := make(map[string][]byte)
 		for i := 1; i < len(args); i += 2 {
-			fields[args[i]] = args[i+1]
+			fieldValueMap[args[i]] = []byte(args[i+1])
 		}
 
-		setHashMap(args[0], fields)
+		setHashMap(args[0], fieldValueMap)
 	},
 }
 
@@ -40,7 +40,7 @@ func init() {
 	cmdSetHashMap.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
 }
 
-func setHashMap(key string, fields map[string]string) {
+func setHashMap(key string, fieldValueMap map[string][]byte) {
 	md := client.GetBaseGrpcMetadata()
 	if len(dbName) > 0 {
 		md.Set(common.GrpcMetadataKeyDbName, dbName)
@@ -49,7 +49,7 @@ func setHashMap(key string, fields map[string]string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	res, err := client.GrpcHashMapKVClient.SetHashMap(ctx, &kvpb.SetHashMapRequest{Key: key, FieldValueMap: fields})
+	res, err := client.GrpcHashMapKVClient.SetHashMap(ctx, &kvpb.SetHashMapRequest{Key: key, FieldValueMap: fieldValueMap})
 	client.CheckGrpcError(err)
 
 	fmt.Printf("%d\n", res.FieldsAddedCount)

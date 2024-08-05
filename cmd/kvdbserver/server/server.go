@@ -220,7 +220,7 @@ func (s *KvdbServer) Init() {
 
 	if s.Cfg.DebugEnabled {
 		s.ActivateDebugMode()
-		s.logger.Info("Debug mode is enabled. Debug messages will be logged")
+		s.logger.Info("Debug mode is enabled")
 	}
 
 	password, ok := config.ShouldUsePassword()
