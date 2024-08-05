@@ -28,10 +28,8 @@ type Logger interface {
 	EnableDebug()
 	// EnableLogFile enables log file.
 	EnableLogFile(filePath string) error
-	// CloseLogFile closes the log file for I/O operations.
+	// CloseLogFile closes the log file if it is open.
 	CloseLogFile() error
-	// ClearFlags clears all default logger output flags.
-	ClearFlags()
 	// Disable disables all log outputs.
 	Disable()
 }
@@ -40,8 +38,8 @@ type Logger interface {
 // Log output defaults to standard error stream.
 // Debug logs are disabled by default. Call EnableDebug to enable them.
 type DefaultLogger struct {
-	Logger         *log.Logger
-	FileLogger     *log.Logger
+	logger         *log.Logger
+	fileLogger     *log.Logger
 	logFile        *os.File
 	debug          bool
 	logFileEnabled bool
@@ -49,13 +47,13 @@ type DefaultLogger struct {
 
 func NewDefaultLogger() *DefaultLogger {
 	lg := &DefaultLogger{
-		Logger:         log.New(os.Stderr, "", 0),
-		FileLogger:     log.New(io.Discard, "", 0),
+		logger:         log.New(os.Stderr, "", 0),
+		fileLogger:     log.New(io.Discard, "", 0),
 		logFile:        nil,
 		debug:          false,
 		logFileEnabled: false,
 	}
-	lg.ClearFlags()
+	lg.clearFlags()
 	return lg
 }
 
@@ -63,17 +61,21 @@ func (l *DefaultLogger) EnableDebug() {
 	l.debug = true
 }
 
-func (l *DefaultLogger) EnableLogFile(filePath string) error {
-	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+func (l *DefaultLogger) EnableLogFile(filepath string) error {
+	file, err := openLogFile(filepath)
 	if err != nil {
 		return err
 	}
 
-	l.FileLogger = log.New(file, "", 0)
+	l.fileLogger.SetOutput(file)
 	l.logFile = file
 	l.logFileEnabled = true
 
 	return nil
+}
+
+func openLogFile(filepath string) (*os.File, error) {
+	return os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 }
 
 func (l *DefaultLogger) CloseLogFile() error {
@@ -83,26 +85,25 @@ func (l *DefaultLogger) CloseLogFile() error {
 	return nil
 }
 
-func (l *DefaultLogger) ClearFlags() {
-	l.Logger.SetFlags(0)
+func (l *DefaultLogger) clearFlags() {
+	l.logger.SetFlags(0)
 }
 
 func (l *DefaultLogger) Disable() {
-	l.Logger.SetOutput(io.Discard)
-	l.FileLogger.SetOutput(io.Discard)
-	l.CloseLogFile()
+	l.logger.SetOutput(io.Discard)
+	l.fileLogger.SetOutput(io.Discard)
 }
 
 func (l *DefaultLogger) writeToFile(logMsg string) {
 	if l.logFileEnabled {
-		l.FileLogger.Print(logMsg)
+		l.fileLogger.Print(logMsg)
 	}
 }
 
 func (l *DefaultLogger) Debug(v ...any) {
 	if l.debug {
 		logMsg := fmt.Sprintf("%s [Debug] %s", timestampPrefix(), fmt.Sprint(v...))
-		l.Logger.Print(logMsg)
+		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
 	}
 }
@@ -110,56 +111,56 @@ func (l *DefaultLogger) Debug(v ...any) {
 func (l *DefaultLogger) Debugf(format string, v ...any) {
 	if l.debug {
 		logMsg := fmt.Sprintf("%s [Debug] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-		l.Logger.Print(logMsg)
+		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
 	}
 }
 
 func (l *DefaultLogger) Info(v ...any) {
 	logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.Logger.Print(logMsg)
+	l.logger.Print(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Infof(format string, v ...any) {
 	logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.Logger.Print(logMsg)
+	l.logger.Print(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Error(v ...any) {
 	logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.Logger.Print(logMsg)
+	l.logger.Print(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Errorf(format string, v ...any) {
 	logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.Logger.Print(logMsg)
+	l.logger.Print(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Warning(v ...any) {
 	logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.Logger.Print(logMsg)
+	l.logger.Print(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Warningf(format string, v ...any) {
 	logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.Logger.Print(logMsg)
+	l.logger.Print(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Fatal(v ...any) {
 	logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.Logger.Fatal(logMsg)
+	l.logger.Fatal(logMsg)
 	l.writeToFile(logMsg)
 }
 
 func (l *DefaultLogger) Fatalf(format string, v ...any) {
 	logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.Logger.Fatal(logMsg)
+	l.logger.Fatal(logMsg)
 	l.writeToFile(logMsg)
 }
 

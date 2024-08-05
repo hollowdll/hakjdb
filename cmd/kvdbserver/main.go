@@ -10,7 +10,11 @@ import (
 
 func start() {
 	logger := kvdb.NewDefaultLogger()
-	defer logger.CloseLogFile()
+	defer func() {
+		if err := logger.CloseLogFile(); err != nil {
+			logger.Errorf("Failed to close log file: %v", err)
+		}
+	}()
 	logger.Infof("Starting kvdb v%s server ...", version.Version)
 	cfg := config.LoadConfig(logger)
 	s := server.NewKvdbServer(cfg, logger)
