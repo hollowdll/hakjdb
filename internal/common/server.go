@@ -13,4 +13,7 @@ const (
 	HashMapMaxFields uint32 = math.MaxUint32
 	// DefaultMaxClientConnections is the maximum number of client connections.
 	DefaultMaxClientConnections uint32 = 1000
+
+	// ConfigKeyLogLevel is the configuration key for log level.
+	ConfigKeyLogLevel string = "log_level"
 )

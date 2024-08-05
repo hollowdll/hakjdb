@@ -13,6 +13,7 @@ import (
 	kvdb "github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/logging"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
@@ -107,7 +108,7 @@ type KvdbServer struct {
 	dbs map[string]*kvdb.DB
 
 	credentialStore auth.CredentialStore
-	logger          kvdb.Logger
+	logger          logging.Logger
 	loggerMu        sync.RWMutex
 
 	// Cfg is the configuration that the server is configured with.
@@ -118,7 +119,7 @@ type KvdbServer struct {
 	mu sync.RWMutex
 }
 
-func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
+func NewKvdbServer(cfg config.ServerConfig, lg logging.Logger) *KvdbServer {
 	return &KvdbServer{
 		startTime:          time.Now(),
 		dbs:                make(map[string]*kvdb.DB),
@@ -129,7 +130,7 @@ func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
 	}
 }
 
-func (s *KvdbServer) Logger() kvdb.Logger {
+func (s *KvdbServer) Logger() logging.Logger {
 	s.loggerMu.RLock()
 	l := s.logger
 	s.loggerMu.RUnlock()
@@ -170,11 +171,6 @@ func (s *KvdbServer) GetDBNameFromContext(ctx context.Context) string {
 // DisableLogger disables all log outputs from this server.
 func (s *KvdbServer) DisableLogger() {
 	s.logger.Disable()
-}
-
-// ActivateDebugMode activates debug mode.
-func (s *KvdbServer) ActivateDebugMode() {
-	s.logger.EnableDebug()
 }
 
 // EnableLogFile enables logger to write logs to the log file.
@@ -229,7 +225,6 @@ func (s *KvdbServer) Init() {
 	}
 
 	if s.Cfg.DebugEnabled {
-		s.ActivateDebugMode()
 		s.logger.Info("Debug mode is enabled")
 	}
 

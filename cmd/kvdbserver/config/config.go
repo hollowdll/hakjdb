@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/logging"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/viper"
 )
@@ -61,7 +61,7 @@ type ServerConfig struct {
 }
 
 // LoadConfig loads server configurations.
-func LoadConfig(lg kvdb.Logger) ServerConfig {
+func LoadConfig(lg logging.Logger) ServerConfig {
 	lg.Infof("Loading configurations ...")
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
@@ -84,13 +84,16 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 	viper.SetDefault(ConfigKeyTLSCertPath, "")
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, "")
 	viper.SetDefault(ConfigKeyMaxClientConnections, common.DefaultMaxClientConnections)
+	viper.SetDefault(common.ConfigKeyLogLevel, "info")
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
 	viper.SafeWriteConfig()
 	if err = viper.ReadInConfig(); err != nil {
-		lg.Fatalf("Failed to read configuration file: %v", err)
+		lg.Errorf("Failed to read configuration file: %v", err)
 	}
+	viper.WatchConfig()
+	lg.Infof("Using log level %s", viper.GetString(common.ConfigKeyLogLevel))
 
 	return ServerConfig{
 		LogFileEnabled:       viper.GetBool(ConfigKeyLogFileEnabled),

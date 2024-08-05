@@ -1,4 +1,4 @@
-package kvdb
+package logging
 
 import (
 	"fmt"
@@ -24,8 +24,8 @@ type Logger interface {
 	Fatal(v ...any)
 	Fatalf(format string, v ...any)
 
-	// EnableDebug enables debug logs.
-	EnableDebug()
+	// SetLogLevelReady sets if log level will be used.
+	SetLogLevelReady(ready bool)
 	// EnableLogFile enables log file.
 	EnableLogFile(filePath string) error
 	// CloseLogFile closes the log file if it is open.
@@ -41,7 +41,7 @@ type DefaultLogger struct {
 	logger         *log.Logger
 	fileLogger     *log.Logger
 	logFile        *os.File
-	debug          bool
+	logLevelReady  bool
 	logFileEnabled bool
 }
 
@@ -50,15 +50,15 @@ func NewDefaultLogger() *DefaultLogger {
 		logger:         log.New(os.Stderr, "", 0),
 		fileLogger:     log.New(io.Discard, "", 0),
 		logFile:        nil,
-		debug:          false,
+		logLevelReady:  false,
 		logFileEnabled: false,
 	}
 	lg.clearFlags()
 	return lg
 }
 
-func (l *DefaultLogger) EnableDebug() {
-	l.debug = true
+func (l *DefaultLogger) SetLogLevelReady(ready bool) {
+	l.logLevelReady = true
 }
 
 func (l *DefaultLogger) EnableLogFile(filepath string) error {
@@ -101,7 +101,7 @@ func (l *DefaultLogger) writeToFile(logMsg string) {
 }
 
 func (l *DefaultLogger) Debug(v ...any) {
-	if l.debug {
+	if getLogLevel(l.logLevelReady) <= LogLevelDebug {
 		logMsg := fmt.Sprintf("%s [Debug] %s", timestampPrefix(), fmt.Sprint(v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -109,7 +109,7 @@ func (l *DefaultLogger) Debug(v ...any) {
 }
 
 func (l *DefaultLogger) Debugf(format string, v ...any) {
-	if l.debug {
+	if getLogLevel(l.logLevelReady) <= LogLevelDebug {
 		logMsg := fmt.Sprintf("%s [Debug] %s", timestampPrefix(), fmt.Sprintf(format, v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -117,51 +117,67 @@ func (l *DefaultLogger) Debugf(format string, v ...any) {
 }
 
 func (l *DefaultLogger) Info(v ...any) {
-	logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.logger.Print(logMsg)
-	l.writeToFile(logMsg)
+	if getLogLevel(l.logLevelReady) <= LogLevelInfo {
+		logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprint(v...))
+		l.logger.Print(logMsg)
+		l.writeToFile(logMsg)
+	}
 }
 
 func (l *DefaultLogger) Infof(format string, v ...any) {
-	logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.logger.Print(logMsg)
-	l.writeToFile(logMsg)
-}
-
-func (l *DefaultLogger) Error(v ...any) {
-	logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.logger.Print(logMsg)
-	l.writeToFile(logMsg)
-}
-
-func (l *DefaultLogger) Errorf(format string, v ...any) {
-	logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.logger.Print(logMsg)
-	l.writeToFile(logMsg)
+	if getLogLevel(l.logLevelReady) <= LogLevelInfo {
+		logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+		l.logger.Print(logMsg)
+		l.writeToFile(logMsg)
+	}
 }
 
 func (l *DefaultLogger) Warning(v ...any) {
-	logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.logger.Print(logMsg)
-	l.writeToFile(logMsg)
+	if getLogLevel(l.logLevelReady) <= LogLevelWarning {
+		logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprint(v...))
+		l.logger.Print(logMsg)
+		l.writeToFile(logMsg)
+	}
 }
 
 func (l *DefaultLogger) Warningf(format string, v ...any) {
-	logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.logger.Print(logMsg)
-	l.writeToFile(logMsg)
+	if getLogLevel(l.logLevelReady) <= LogLevelWarning {
+		logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+		l.logger.Print(logMsg)
+		l.writeToFile(logMsg)
+	}
+}
+
+func (l *DefaultLogger) Error(v ...any) {
+	if getLogLevel(l.logLevelReady) <= LogLevelError {
+		logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprint(v...))
+		l.logger.Print(logMsg)
+		l.writeToFile(logMsg)
+	}
+}
+
+func (l *DefaultLogger) Errorf(format string, v ...any) {
+	if getLogLevel(l.logLevelReady) <= LogLevelError {
+		logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+		l.logger.Print(logMsg)
+		l.writeToFile(logMsg)
+	}
 }
 
 func (l *DefaultLogger) Fatal(v ...any) {
-	logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprint(v...))
-	l.logger.Fatal(logMsg)
-	l.writeToFile(logMsg)
+	if getLogLevel(l.logLevelReady) == LogLevelFatal {
+		logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprint(v...))
+		l.logger.Fatal(logMsg)
+		l.writeToFile(logMsg)
+	}
 }
 
 func (l *DefaultLogger) Fatalf(format string, v ...any) {
-	logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprintf(format, v...))
-	l.logger.Fatal(logMsg)
-	l.writeToFile(logMsg)
+	if getLogLevel(l.logLevelReady) == LogLevelFatal {
+		logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprintf(format, v...))
+		l.logger.Fatal(logMsg)
+		l.writeToFile(logMsg)
+	}
 }
 
 func timestampPrefix() string {
