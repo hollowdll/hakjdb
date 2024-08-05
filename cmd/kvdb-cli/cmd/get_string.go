@@ -38,7 +38,7 @@ func getString(key string) {
 	client.CheckGrpcError(err)
 
 	if response.Ok {
-		fmt.Printf("\"%s\"\n", response.GetValue())
+		fmt.Printf("\"%s\"\n", response.Value)
 	} else {
 		fmt.Println(client.ValueNone)
 	}

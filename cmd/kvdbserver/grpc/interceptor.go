@@ -25,12 +25,13 @@ func newLogUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		logger := s.Logger()
 		dbName := s.GetDBNameFromContext(ctx)
-		logger.Debugf("%s: (call) db=%s; req=%v", info.FullMethod, dbName, req)
+		logger.Debugf("(call) %s: db = %s; req = %v", info.FullMethod, dbName, req)
 		resp, err := handler(ctx, req)
 		if err != nil {
-			logger.Errorf("%s: (fail) %v", info.FullMethod, err)
+			logger.Errorf("(failed) %s: db = %s; req = %v; error = %v", info.FullMethod, dbName, req, err)
+		} else {
+			logger.Debugf("(success) %s: db = %s; req = %v; resp = %v", info.FullMethod, dbName, req, resp)
 		}
-		logger.Debugf("%s: (success) db=%s; req=%v; resp=%v", info.FullMethod, dbName, req, resp)
 		return resp, err
 	}
 }
