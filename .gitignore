@@ -29,3 +29,7 @@ dist/
 
 # Environment variables
 .env
+
+# Config files
+kvdbserver-config.yaml
+kvdb-cli-config.yaml

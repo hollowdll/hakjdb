@@ -55,7 +55,7 @@ func InitClient() {
 	}
 
 	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
-	conn, err := grpc.Dial(address, dialOption)
+	conn, err := grpc.NewClient(address, dialOption)
 	if err != nil {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}
