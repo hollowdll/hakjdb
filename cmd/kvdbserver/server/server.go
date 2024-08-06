@@ -10,10 +10,9 @@ import (
 	"sync"
 	"time"
 
-	kvdb "github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/logging"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
@@ -108,7 +107,7 @@ type KvdbServer struct {
 	dbs map[string]*kvdb.DB
 
 	credentialStore auth.CredentialStore
-	logger          logging.Logger
+	logger          kvdb.Logger
 	loggerMu        sync.RWMutex
 
 	// Cfg is the configuration that the server is configured with.
@@ -119,7 +118,7 @@ type KvdbServer struct {
 	mu sync.RWMutex
 }
 
-func NewKvdbServer(cfg config.ServerConfig, lg logging.Logger) *KvdbServer {
+func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
 	return &KvdbServer{
 		startTime:          time.Now(),
 		dbs:                make(map[string]*kvdb.DB),
@@ -130,7 +129,7 @@ func NewKvdbServer(cfg config.ServerConfig, lg logging.Logger) *KvdbServer {
 	}
 }
 
-func (s *KvdbServer) Logger() logging.Logger {
+func (s *KvdbServer) Logger() kvdb.Logger {
 	s.loggerMu.RLock()
 	l := s.logger
 	s.loggerMu.RUnlock()

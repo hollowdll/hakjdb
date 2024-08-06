@@ -47,11 +47,8 @@ type Logger interface {
 	// SetLogLevel sets the log level.
 	SetLogLevel(level LogLevel)
 
-	// GetLogLevelFromStr returns the log level that matches its string equivalent.
-	// If invalid log level string is passed, this function returns the default log level.
-	// The returned string is the log level's string equivalent in lowercase.
-	// The returned bool is true if the passed string is valid log level.
-	GetLogLevelFromStr(levelStr string) (LogLevel, string, bool)
+	// LogLevel returns the log level and its string equivalent.
+	LogLevel() (LogLevel, string)
 
 	// EnableLogFile enables log file.
 	EnableLogFile(filePath string) error
@@ -88,6 +85,23 @@ func NewDefaultLogger() *DefaultLogger {
 
 func (l *DefaultLogger) SetLogLevel(level LogLevel) {
 	l.logLevel = level
+}
+
+func (l *DefaultLogger) LogLevel() (LogLevel, string) {
+	switch l.logLevel {
+	case LogLevelDebug:
+		return LogLevelDebug, LogLevelDebugStr
+	case LogLevelInfo:
+		return LogLevelInfo, LogLevelInfoStr
+	case LogLevelWarning:
+		return LogLevelWarning, LogLevelWarningStr
+	case LogLevelError:
+		return LogLevelError, LogLevelErrorStr
+	case LogLevelFatal:
+		return LogLevelFatal, LogLevelFatalStr
+	default:
+		return DefaultLogLevel, DefaultLogLevelStr
+	}
 }
 
 func (l *DefaultLogger) EnableLogFile(filepath string) error {

@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/logging"
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/viper"
 )
@@ -33,6 +33,8 @@ const (
 	ConfigKeyTLSPrivKeyPath string = "tls_private_key_path"
 	// ConfigKeyMaxClientConnections is the configuration key for maximum client connections.
 	ConfigKeyMaxClientConnections string = "max_client_connections"
+	// ConfigKeyLogLevel is the configuration key for log level.
+	ConfigKeyLogLevel string = "log_level"
 
 	// DefaultDatabase is the name of the default database.
 	DefaultDatabase string = "default"
@@ -61,7 +63,7 @@ type ServerConfig struct {
 }
 
 // LoadConfig loads server configurations.
-func LoadConfig(lg logging.Logger) ServerConfig {
+func LoadConfig(lg kvdb.Logger) ServerConfig {
 	lg.Infof("Loading configurations ...")
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
@@ -84,7 +86,7 @@ func LoadConfig(lg logging.Logger) ServerConfig {
 	viper.SetDefault(ConfigKeyTLSCertPath, "")
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, "")
 	viper.SetDefault(ConfigKeyMaxClientConnections, common.DefaultMaxClientConnections)
-	viper.SetDefault(common.ConfigKeyLogLevel, "info")
+	viper.SetDefault(ConfigKeyLogLevel, kvdb.DefaultLogLevelStr)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
@@ -92,8 +94,13 @@ func LoadConfig(lg logging.Logger) ServerConfig {
 	if err = viper.ReadInConfig(); err != nil {
 		lg.Errorf("Failed to read configuration file: %v", err)
 	}
-	viper.WatchConfig()
-	lg.Infof("Using log level %s", viper.GetString(common.ConfigKeyLogLevel))
+
+	logLevel, logLevelStr, ok := kvdb.GetLogLevelFromStr(viper.GetString(ConfigKeyLogLevel))
+	if !ok {
+		lg.Warning("Invalid log level configured. Default log level will be used")
+	}
+	lg.Infof("Using log level %s", logLevelStr)
+	lg.SetLogLevel(logLevel)
 
 	return ServerConfig{
 		LogFileEnabled:       viper.GetBool(ConfigKeyLogFileEnabled),
