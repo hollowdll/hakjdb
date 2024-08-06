@@ -7,19 +7,6 @@ import (
 	"github.com/hollowdll/kvdb/internal/common"
 )
 
-func TestCreateDatabase(t *testing.T) {
-	db := CreateDatabase("test")
-	expectedDb := newDatabase("test")
-
-	if db == nil {
-		t.Fatal("expected db but got nil")
-	}
-
-	if db.GetName() != expectedDb.GetName() {
-		t.Fatalf("expected db with name %s but got %s", expectedDb.GetName(), db.GetName())
-	}
-}
-
 func TestGetTypeOfKey(t *testing.T) {
 	t.Run("KeyNotFound", func(t *testing.T) {
 		db := newDatabase("test")
@@ -603,35 +590,6 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 			if expectedValue != actualValue {
 				t.Errorf("expected field value = %s; got = %s", expectedValue, actualValue)
 			}
-		}
-	})
-}
-
-func TestGetHashMapFieldCount(t *testing.T) {
-	fields := make(map[string]string)
-	fields["field_a"] = "a"
-	fields["field_b"] = "b"
-	fields["field_c"] = "c"
-	fields["field_d"] = ""
-
-	t.Run("KeyNotFound", func(t *testing.T) {
-		db := newDatabase("test")
-		fieldCount := db.GetHashMapFieldCount("key1")
-
-		var expectedFieldCount uint32 = 0
-		if fieldCount != expectedFieldCount {
-			t.Errorf("expected field count = %d; got = %d", expectedFieldCount, fieldCount)
-		}
-	})
-
-	t.Run("KeyFound", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
-		fieldCount := db.GetHashMapFieldCount("key1")
-
-		var expectedFieldCount uint32 = 4
-		if fieldCount != expectedFieldCount {
-			t.Errorf("expected field count = %d; got = %d", expectedFieldCount, fieldCount)
 		}
 	})
 }

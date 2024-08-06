@@ -404,13 +404,3 @@ func (db *DB) DeleteHashMapFields(key string, fields []string) (uint32, bool) {
 
 	return fieldsRemoved, true
 }
-
-/* DISABLED
-// GetHashMapFieldCount returns the number of fields in a HashMap key value.
-func (db *DB) GetHashMapFieldCount(key string) uint32 {
-	db.mu.RLock()
-	defer db.mu.RUnlock()
-
-	return uint32(len(db.storedData.hashMapData[DBKey(key)].value))
-}
-*/
