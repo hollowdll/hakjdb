@@ -1,6 +1,6 @@
 # Databases
 
-Databases are like namespaces for grouping keys. They store the data in the server's memory. There is no limit to how many databases you can have.
+Databases are namespaces for grouping keys. They store the data in the server's memory. There is no limit to how many databases you can have.
 
 # Naming
 
@@ -14,4 +14,9 @@ The following list shows the allowed characters in a database name:
 
 # Keyspace
 
-In a database, each key is unique. That means you cannot have two keys with the same name in the same database. The maximum length of a key is 1024 bytes. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time. The maximum number of keys a database can have is 4,294,967,295 (2^32 - 1).
+In a database, each key is unique. That means you cannot have two keys with the same name in the same database. Key names are stored as sequences of bytes encoded in UTF-8. It is recommended to keep keys short to minimize memory usage. Long keys may also impact performance and response time.
+
+Limits:
+
+- The maximum length of a key is 1024 bytes
+- The maximum number of keys a database can have is 4,294,967,295 (2^32 - 1)
