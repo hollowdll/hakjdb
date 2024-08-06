@@ -4,7 +4,7 @@ kvdb-cli is a CLI (command line interface) program to interact with a kvdb serve
 
 # Configuration
 
-Configurations are stored in a configuration file and can be changed there. kvdb-cli creates this file with default configurations if it doesn't exist. The name of the configuration file is `.kvdb-cli.yaml`. Configurations are stored in YAML format.
+Configurations are stored in a configuration file and can be changed there. kvdb-cli creates this file with default configurations to the executable's directory if it doesn't exist. The name of the configuration file is `kvdb-cli-config.yaml`. Configurations are stored in YAML format.
 
 Here is a list of all configurations with their default values:
 
@@ -128,37 +128,6 @@ To show information about the server, use command:
 kvdb-cli info
 ```
 
-Output is something like this:
-```sh
-** General **
-kvdb_version: 0.11.0
-go_version: go1.22.0
-db_count: 1
-os: Linux 5.10.102.1-microsoft-standard-WSL2 x86_64
-arch: amd64
-process_id: 1
-uptime_seconds: 1012
-tcp_port: 12345
-default_db: default
-tls_enabled: no
-password_enabled: no
-logfile_enabled: yes
-debug_enabled: yes
-
-** Clients **
-client_connections: 1
-max_client_connections: 1000
-
-** Data storage **
-total_data_size: 36 B
-total_keys: 1
-
-** Memory **
-memory_alloc: 2.1 MB
-memory_total_alloc: 2.1 MB
-memory_sys: 7.0 MB
-```
-
 ## Logs
 
 Server logs can be fetched if the server's log file is enabled. If it is not enabled, this command will return an error. This command is intended for debugging purposes.
@@ -166,12 +135,6 @@ Server logs can be fetched if the server's log file is enabled. If it is not ena
 To get all logs, use command:
 ```sh
 kvdb-cli logs
-```
-
-Output is something like this:
-```sh
-2024-02-22T11:16:43.292+02:00 [Info] Some log
-2024-02-22T11:16:43.293+02:00 [Info] Another log
 ```
 
 ## Creating a database
@@ -212,9 +175,6 @@ If delete was successful, the command prints the name of the deleted database.
 To list all the databases on the server, use command:
 ```sh
 kvdb-cli db ls
-db0
-db1
-db2
 ```
 This lists the databases by their name.
 
@@ -225,15 +185,6 @@ To show information about a database, use command:
 kvdb-cli db info -n name-of-your-db
 ```
 - Option -n specifies the name of the database. If not specified, the default database is used.
-
-Output is something like this:
-```sh
-name: name-of-your-db
-created_at: 2024-01-23T19:31:13Z00:00
-updated_at: 2024-01-23T19:31:13Z00:00
-key_count: 0
-data_size: 0B
-```
 
 ## Set string
 
