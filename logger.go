@@ -1,12 +1,32 @@
-package logging
+package kvdb
 
 import (
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
+
+const (
+	LogLevelDebug   LogLevel = 0
+	LogLevelInfo    LogLevel = 1
+	LogLevelWarning LogLevel = 2
+	LogLevelError   LogLevel = 3
+	LogLevelFatal   LogLevel = 4
+
+	LogLevelDebugStr   string = "debug"
+	LogLevelInfoStr    string = "info"
+	LogLevelWarningStr string = "warning"
+	LogLevelErrorStr   string = "error"
+	LogLevelFatalStr   string = "fatal"
+
+	DefaultLogLevel    LogLevel = LogLevelInfo
+	DefaultLogLevelStr string   = LogLevelInfoStr
+)
+
+type LogLevel uint8
 
 type Logger interface {
 	Debug(v ...any)
@@ -24,12 +44,21 @@ type Logger interface {
 	Fatal(v ...any)
 	Fatalf(format string, v ...any)
 
-	// SetLogLevelReady sets if log level will be used.
-	SetLogLevelReady(ready bool)
+	// SetLogLevel sets the log level.
+	SetLogLevel(level LogLevel)
+
+	// GetLogLevelFromStr returns the log level that matches its string equivalent.
+	// If invalid log level string is passed, this function returns the default log level.
+	// The returned string is the log level's string equivalent in lowercase.
+	// The returned bool is true if the passed string is valid log level.
+	GetLogLevelFromStr(levelStr string) (LogLevel, string, bool)
+
 	// EnableLogFile enables log file.
 	EnableLogFile(filePath string) error
+
 	// CloseLogFile closes the log file if it is open.
 	CloseLogFile() error
+
 	// Disable disables all log outputs.
 	Disable()
 }
@@ -41,7 +70,7 @@ type DefaultLogger struct {
 	logger         *log.Logger
 	fileLogger     *log.Logger
 	logFile        *os.File
-	logLevelReady  bool
+	logLevel       LogLevel
 	logFileEnabled bool
 }
 
@@ -50,15 +79,15 @@ func NewDefaultLogger() *DefaultLogger {
 		logger:         log.New(os.Stderr, "", 0),
 		fileLogger:     log.New(io.Discard, "", 0),
 		logFile:        nil,
-		logLevelReady:  false,
+		logLevel:       LogLevelInfo,
 		logFileEnabled: false,
 	}
 	lg.clearFlags()
 	return lg
 }
 
-func (l *DefaultLogger) SetLogLevelReady(ready bool) {
-	l.logLevelReady = true
+func (l *DefaultLogger) SetLogLevel(level LogLevel) {
+	l.logLevel = level
 }
 
 func (l *DefaultLogger) EnableLogFile(filepath string) error {
@@ -101,7 +130,7 @@ func (l *DefaultLogger) writeToFile(logMsg string) {
 }
 
 func (l *DefaultLogger) Debug(v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelDebug {
+	if l.logLevel <= LogLevelDebug {
 		logMsg := fmt.Sprintf("%s [Debug] %s", timestampPrefix(), fmt.Sprint(v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -109,7 +138,7 @@ func (l *DefaultLogger) Debug(v ...any) {
 }
 
 func (l *DefaultLogger) Debugf(format string, v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelDebug {
+	if l.logLevel <= LogLevelDebug {
 		logMsg := fmt.Sprintf("%s [Debug] %s", timestampPrefix(), fmt.Sprintf(format, v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -117,7 +146,7 @@ func (l *DefaultLogger) Debugf(format string, v ...any) {
 }
 
 func (l *DefaultLogger) Info(v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelInfo {
+	if l.logLevel <= LogLevelInfo {
 		logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprint(v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -125,7 +154,7 @@ func (l *DefaultLogger) Info(v ...any) {
 }
 
 func (l *DefaultLogger) Infof(format string, v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelInfo {
+	if l.logLevel <= LogLevelInfo {
 		logMsg := fmt.Sprintf("%s [Info] %s", timestampPrefix(), fmt.Sprintf(format, v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -133,7 +162,7 @@ func (l *DefaultLogger) Infof(format string, v ...any) {
 }
 
 func (l *DefaultLogger) Warning(v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelWarning {
+	if l.logLevel <= LogLevelWarning {
 		logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprint(v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -141,7 +170,7 @@ func (l *DefaultLogger) Warning(v ...any) {
 }
 
 func (l *DefaultLogger) Warningf(format string, v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelWarning {
+	if l.logLevel <= LogLevelWarning {
 		logMsg := fmt.Sprintf("%s [Warning] %s", timestampPrefix(), fmt.Sprintf(format, v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -149,7 +178,7 @@ func (l *DefaultLogger) Warningf(format string, v ...any) {
 }
 
 func (l *DefaultLogger) Error(v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelError {
+	if l.logLevel <= LogLevelError {
 		logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprint(v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -157,7 +186,7 @@ func (l *DefaultLogger) Error(v ...any) {
 }
 
 func (l *DefaultLogger) Errorf(format string, v ...any) {
-	if getLogLevel(l.logLevelReady) <= LogLevelError {
+	if l.logLevel <= LogLevelError {
 		logMsg := fmt.Sprintf("%s [Error] %s", timestampPrefix(), fmt.Sprintf(format, v...))
 		l.logger.Print(logMsg)
 		l.writeToFile(logMsg)
@@ -165,7 +194,7 @@ func (l *DefaultLogger) Errorf(format string, v ...any) {
 }
 
 func (l *DefaultLogger) Fatal(v ...any) {
-	if getLogLevel(l.logLevelReady) == LogLevelFatal {
+	if l.logLevel == LogLevelFatal {
 		logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprint(v...))
 		l.logger.Fatal(logMsg)
 		l.writeToFile(logMsg)
@@ -173,7 +202,7 @@ func (l *DefaultLogger) Fatal(v ...any) {
 }
 
 func (l *DefaultLogger) Fatalf(format string, v ...any) {
-	if getLogLevel(l.logLevelReady) == LogLevelFatal {
+	if l.logLevel == LogLevelFatal {
 		logMsg := fmt.Sprintf("%s [Fatal] %s", timestampPrefix(), fmt.Sprintf(format, v...))
 		l.logger.Fatal(logMsg)
 		l.writeToFile(logMsg)
@@ -182,4 +211,26 @@ func (l *DefaultLogger) Fatalf(format string, v ...any) {
 
 func timestampPrefix() string {
 	return time.Now().Format("2006-01-02T15:04:05.999Z07:00")
+}
+
+// GetLogLevelFromStr returns the log level that matches its string equivalent.
+// If invalid log level string is passed, this function returns the default log level.
+// The returned string is the log level's string equivalent in lowercase.
+// The returned bool is true if the passed string is valid log level.
+func GetLogLevelFromStr(levelStr string) (LogLevel, string, bool) {
+	switch strings.ToLower(levelStr) {
+	case LogLevelDebugStr:
+		return LogLevelDebug, LogLevelDebugStr, true
+	case LogLevelInfoStr:
+		return LogLevelInfo, LogLevelInfoStr, true
+	case LogLevelWarningStr:
+		return LogLevelWarning, LogLevelWarningStr, true
+	case LogLevelErrorStr:
+		return LogLevelError, LogLevelErrorStr, true
+	case LogLevelFatalStr:
+		return LogLevelFatal, LogLevelFatalStr, true
+	default:
+		// return default log level if invalid
+		return DefaultLogLevel, DefaultLogLevelStr, false
+	}
 }
