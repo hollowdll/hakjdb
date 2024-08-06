@@ -1,6 +1,6 @@
 # API
 
-The kvdb API uses gRPC. You need a gRPC client to connect to the server. All requests to the server are made with Remote Procedure Calls.
+The kvdb server API is implemented with gRPC and defined with Protocol Buffers. HTTP/2 is needed in the connections. Requests are made with RPCs (Remote Procedure Calls). Connections require a gRPC client.
 
 The protobuf gRPC service definitions are in the `proto/kvdbserverpb/` directory. This directory contains all the .proto files needed for a gRPC client.
 
