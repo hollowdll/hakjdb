@@ -2,9 +2,9 @@
 
 The kvdb server API is implemented with gRPC and defined with Protocol Buffers. HTTP/2 is needed in the connections. Requests are made with RPCs (Remote Procedure Calls). Connections require a gRPC client.
 
-The protobuf gRPC service definitions are in the `proto/kvdbserverpb/` directory. This directory contains all the .proto files needed for a gRPC client.
+The protobuf gRPC service definitions are in the `api/` directory. It contains the currently maintained API version.
 
-[Link to the directory](../proto/kvdbserverpb/)
+[Link to the directory](../api/)
 
 # Authentication
 
@@ -12,54 +12,90 @@ If the server is password protected, the client needs to authenticate with passw
 
 The gRPC metadata key for password is `password`. The actual password to send is set as the value of the key.
 
-# gRPC services
+# API v0 gRPC services
 
 ## ServerService
 
-The server service `ServerService` is defined in the `server.proto` file. This service contains RPCs to work with operations related to the kvdb server.
+- Service name: `ServerService`
+- Package: `api.v0.serverpb`
+- Proto file: `server.proto`
 
-[Link to the protobuf definitions](../proto/kvdbserverpb/server.proto)
+[Link to the protobuf definitions](../api/v0/serverpb/server.proto)
+
+ServerService provides server-related RPCs.
 
 Common gRPC metadata for this service's RPCs:
-- `password`: The server password if the server is password protected.
+- `password`: The server password. Used for authentication if the server is password protected.
 
 RPCs:
 - [GetServerInfo](./rpc/server/getserverinfo.md)
 - [GetLogs](./rpc/server/getlogs.md)
 
-## DatabaseService
+## DBService
 
-The database service `DatabaseService` is defined in the `db.proto` file. This service contains RPCs to work with operations related to databases.
+- Service name: `DBService`
+- Package: `api.v0.dbpb`
+- Proto file: `db.proto`
 
-[Link to the protobuf definitions](../proto/kvdbserverpb/db.proto)
+[Link to the protobuf definitions](../api/v0/dbpb/db.proto)
+
+DBService provides database-related RPCs.
 
 Common gRPC metadata for this service's RPCs:
-- `password`: The server password if the server is password protected.
+- `password`: The server password. Used for authentication if the server is password protected.
 
 RPCs:
-- [CreateDatabase](./rpc/database/createdatabase.md)
-- [GetAllDatabases](./rpc/database/getalldatabases.md)
-- [GetDatabaseInfo](./rpc/database/getdatabaseinfo.md)
-- [DeleteDatabase](./rpc/database/deletedatabase.md)
+- [CreateDB](./rpc/database/createdatabase.md)
+- [GetAllDBs](./rpc/database/getalldatabases.md)
+- [GetDBInfo](./rpc/database/getdatabaseinfo.md)
+- [DeleteDB](./rpc/database/deletedatabase.md)
 
-## StorageService
+## GeneralKVService
 
-The storage service `StorageService` is defined in the `storage.proto` file. This service contains RPCs to work with operations related to data storage.
+- Service name: `GeneralKVService`
+- Package: `api.v0.kvpb`
+- Proto file: `general_kv.proto`
 
-[Link to the protobuf definitions](../proto/kvdbserverpb/storage.proto)
+[Link to the protobuf definitions](../api/v0/kvpb/general_kv.proto)
 
-Common gRPC metadata for this service's RPCs:
-- `password`: The server password if the server is password protected.
+GeneralKVService provides RPCs related to general key management.
+
+Common gRPC metadata keys for this service's RPCs:
+- `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
 
 RPCs:
-- [GetTypeOfKey](./rpc/storage/gettypeofkey.md)
-- [SetString](./rpc/storage/setstring.md)
-- [GetString](./rpc/storage/getstring.md)
-- [SetHashMap](./rpc/storage/sethashmap.md)
-- [GetHashMapFieldValue](./rpc/storage/gethashmapfieldvalue.md)
-- [GetAllHashMapFieldsAndValues](./rpc/storage/getallhashmapfieldsandvalues.md)
-- [DeleteHashMapFields](./rpc/storage/deletehashmapfields.md)
-- [DeleteKey](./rpc/storage/deletekey.md)
-- [DeleteAllKeys](./rpc/storage/deleteallkeys.md)
-- [GetKeys](./rpc/storage/getkeys.md)
+
+## StringKVService
+
+- Service name: `StringKVService`
+- Package: `api.v0.kvpb`
+- Proto file: `string_kv.proto`
+
+[Link to the protobuf definitions](../api/v0/kvpb/string_kv.proto)
+
+StringKVService provides RPCs related to String keys.
+
+Common gRPC metadata keys for this service's RPCs:
+- `password`: The server password. Used for authentication if the server is password protected.
+- `database`: The database to use. If omitted, the default database is used.
+
+RPCs:
+
+## HashMapKVService
+
+- Service name: `HashMapKVService`
+- Package: `api.v0.kvpb`
+- Proto file: `hashmap_kv.proto`
+
+[Link to the protobuf definitions](../api/v0/kvpb/hashmap_kv.proto)
+
+StringKVService provides RPCs related to HashMap keys.
+
+Common gRPC metadata keys for this service's RPCs:
+- `password`: The server password. Used for authentication if the server is password protected.
+- `database`: The database to use. If omitted, the default database is used.
+
+RPCs:
+
+
