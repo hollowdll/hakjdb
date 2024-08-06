@@ -2,9 +2,9 @@
 
 The kvdb server API is implemented with gRPC and defined with Protocol Buffers. HTTP/2 is needed in the connections. Requests are made with RPCs (Remote Procedure Calls). Connections require a gRPC client.
 
-The protobuf gRPC service definitions are in the `api/` directory. It contains the currently maintained API version.
+RPCs are grouped to gRPC services that provide related RPCs. The protobuf gRPC service definitions are in the `api/` directory. It contains the currently maintained API version. All services and RPCs are documented there in files that have `.proto` file extension.
 
-[Link to the directory](../api/)
+[Link to the API directory](../api/)
 
 # Authentication
 
@@ -27,10 +27,6 @@ ServerService provides server-related RPCs.
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password. Used for authentication if the server is password protected.
 
-RPCs:
-- [GetServerInfo](./rpc/server/getserverinfo.md)
-- [GetLogs](./rpc/server/getlogs.md)
-
 ## DBService
 
 - Service name: `DBService`
@@ -43,12 +39,6 @@ DBService provides database-related RPCs.
 
 Common gRPC metadata for this service's RPCs:
 - `password`: The server password. Used for authentication if the server is password protected.
-
-RPCs:
-- [CreateDB](./rpc/database/createdatabase.md)
-- [GetAllDBs](./rpc/database/getalldatabases.md)
-- [GetDBInfo](./rpc/database/getdatabaseinfo.md)
-- [DeleteDB](./rpc/database/deletedatabase.md)
 
 ## GeneralKVService
 
@@ -64,8 +54,6 @@ Common gRPC metadata keys for this service's RPCs:
 - `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
 
-RPCs:
-
 ## StringKVService
 
 - Service name: `StringKVService`
@@ -80,8 +68,6 @@ Common gRPC metadata keys for this service's RPCs:
 - `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
 
-RPCs:
-
 ## HashMapKVService
 
 - Service name: `HashMapKVService`
@@ -90,12 +76,9 @@ RPCs:
 
 [Link to the protobuf definitions](../api/v0/kvpb/hashmap_kv.proto)
 
-StringKVService provides RPCs related to HashMap keys.
+HashMapKVService provides RPCs related to HashMap keys.
 
 Common gRPC metadata keys for this service's RPCs:
 - `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
-
-RPCs:
-
 
