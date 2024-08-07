@@ -56,6 +56,7 @@ func TestGetLogs(t *testing.T) {
 		cfg.LogFileEnabled = true
 		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
 		s.EnableLogFile()
+		defer s.CloseLogger()
 		grpcSrv := NewServerServiceServer(s)
 
 		lines, err := common.ReadFileLines(logFilePath)
@@ -81,6 +82,7 @@ func TestGetLogs(t *testing.T) {
 		cfg.LogFileEnabled = true
 		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
 		s.EnableLogFile()
+		defer s.CloseLogger()
 		grpcSrv := NewServerServiceServer(s)
 
 		req := &serverpb.GetLogsRequest{}

@@ -1,201 +1,213 @@
-package server_test
+package db
 
 import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
+	"github.com/hollowdll/kvdb/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func TestCreateDatabase(t *testing.T) {
-	t.Run("DatabaseNonExistent", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+func TestCreateDB(t *testing.T) {
+	cfg := config.DefaultConfig()
+
+	t.Run("DatabaseNotExists", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		dbName := "test"
 
-		request := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
-		response, err := server.CreateDatabase(context.Background(), request)
+		req := &dbpb.CreateDBRequest{DbName: dbName}
+		resp, err := gs.CreateDB(context.Background(), req)
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
-		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, dbName, response.DbName, "expected DbName = %s; got = %s", dbName, response.DbName)
+		require.NotNil(t, resp)
+		assert.Equalf(t, dbName, resp.DbName, "expected DbName = %s; got = %s", dbName, resp.DbName)
 	})
 
 	t.Run("DatabaseAlreadyExists", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		dbName := "test"
 
-		request := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
-		_, err := server.CreateDatabase(context.Background(), request)
+		req := &dbpb.CreateDBRequest{DbName: dbName}
+		_, err := gs.CreateDB(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		response, err := server.CreateDatabase(context.Background(), request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
+		resp, err := gs.CreateDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
 
 		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
+		require.NotNil(t, st)
 		require.Equal(t, true, ok, "expected ok")
 		assert.Equal(t, codes.AlreadyExists, st.Code(), "expected status = %s; got = %s", codes.AlreadyExists, st.Code())
 	})
 
 	t.Run("InvalidDatabaseName", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		dbName := "   "
 
-		request := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
-		response, err := server.CreateDatabase(context.Background(), request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
+		req := &dbpb.CreateDBRequest{DbName: dbName}
+		resp, err := gs.CreateDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
 
 		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
+		require.NotNil(t, st)
 		require.Equal(t, true, ok, "expected ok")
 		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
 	})
 }
 
-func TestGetAllDatabases(t *testing.T) {
+func TestGetAllDBs(t *testing.T) {
+	cfg := config.DefaultConfig()
+
 	t.Run("NoDatabases", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		expected := 0
-		request := &kvdbserverpb.GetAllDatabasesRequest{}
-		response, err := server.GetAllDatabases(context.Background(), request)
+		req := &dbpb.GetAllDBsRequest{}
+		resp, err := gs.GetAllDBs(context.Background(), req)
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
-		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, expected, len(response.DbNames), "expected databases = %d; got = %d", expected, len(response.DbNames))
+		require.NotNil(t, resp)
+		assert.Equalf(t, expected, len(resp.DbNames), "expected databases = %d; got = %d", expected, len(resp.DbNames))
 	})
 
 	t.Run("MultipleDatabases", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 
 		dbs := []string{"db0", "db1", "db2"}
 		for _, db := range dbs {
-			request := &kvdbserverpb.CreateDatabaseRequest{DbName: db}
-			_, err := server.CreateDatabase(context.Background(), request)
+			req := &dbpb.CreateDBRequest{DbName: db}
+			_, err := gs.CreateDB(context.Background(), req)
 			require.NoErrorf(t, err, "expected no error; error = %s", err)
 		}
 
-		request := &kvdbserverpb.GetAllDatabasesRequest{}
-		response, err := server.GetAllDatabases(context.Background(), request)
+		req := &dbpb.GetAllDBsRequest{}
+		resp, err := gs.GetAllDBs(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
-		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, len(dbs), len(response.DbNames), "expected databases = %d; got = %d", len(dbs), len(response.DbNames))
+		require.NotNil(t, resp)
+		assert.Equalf(t, len(dbs), len(resp.DbNames), "expected databases = %d; got = %d", len(dbs), len(resp.DbNames))
 
-		for _, db := range response.DbNames {
-			assert.Equalf(t, true, common.StringInSlice(db, dbs), "expected database name %s to be in %v", db, dbs)
+		for _, db := range resp.DbNames {
+			assert.Equalf(t, true, common.StringInSlice(db, dbs), "expected db name %s to be in %v", db, dbs)
 		}
 	})
 }
 
-func TestGetDatabaseInfo(t *testing.T) {
+func TestGetDBInfo(t *testing.T) {
+	cfg := config.DefaultConfig()
+
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		dbName := "db0"
 
-		request := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
-		response, err := server.GetDatabaseInfo(context.Background(), request)
-		require.Error(t, err, "expected error")
-		require.Nil(t, response, "expected response to be nil")
+		req := &dbpb.GetDBInfoRequest{DbName: dbName}
+		resp, err := gs.GetDBInfo(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
 
 		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
+		require.NotNil(t, st)
 		require.Equal(t, true, ok, "expected ok")
 		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
 	})
 
 	t.Run("DatabaseExists", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		dbName := "db0"
 
-		requestCreate := &kvdbserverpb.CreateDatabaseRequest{DbName: dbName}
-		_, err := server.CreateDatabase(context.Background(), requestCreate)
+		reqCreate := &dbpb.CreateDBRequest{DbName: dbName}
+		_, err := gs.CreateDB(context.Background(), reqCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		requestGet := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
-		response, err := server.GetDatabaseInfo(context.Background(), requestGet)
+		reqGet := &dbpb.GetDBInfoRequest{DbName: dbName}
+		resp, err := gs.GetDBInfo(context.Background(), reqGet)
 		expectedKeyCount := uint32(0)
 		expectedDataSize := uint64(0)
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
-		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, dbName, response.Data.Name, "expected database name = %s; got = %s", dbName, response.Data.Name)
-		assert.Equalf(t, expectedKeyCount, response.Data.KeyCount, "expected keys = %d; got = %d", expectedKeyCount, response.Data.KeyCount)
-		assert.Equalf(t, expectedDataSize, response.Data.DataSize, "expected data size = %d; got = %d", expectedDataSize, response.Data.DataSize)
+		require.NotNil(t, resp)
+		assert.Equalf(t, dbName, resp.Data.Name, "expected db name = %s; got = %s", dbName, resp.Data.Name)
+		assert.Equalf(t, expectedKeyCount, resp.Data.KeyCount, "expected keys = %d; got = %d", expectedKeyCount, resp.Data.KeyCount)
+		assert.Equalf(t, expectedDataSize, resp.Data.DataSize, "expected data size = %d; got = %d", expectedDataSize, resp.Data.DataSize)
+	})
+}
+
+func TestDeleteDB(t *testing.T) {
+	cfg := config.DefaultConfig()
+
+	t.Run("DatabaseExists", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+
+		req := &dbpb.DeleteDBRequest{DbName: dbName}
+		resp, err := gs.DeleteDB(context.Background(), req)
+
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, resp)
+		assert.Equalf(t, dbName, resp.DbName, "expected db name = &s; got = %s", dbName, resp.DbName)
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+
+		req := &dbpb.DeleteDBRequest{DbName: dbName}
+		resp, err := gs.DeleteDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
 	})
 }
 
 func TestDefaultDatabase(t *testing.T) {
-	t.Run("GetDatabaseInfo", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "default"
-		server.CreateDefaultDatabase(dbName)
+	cfg := config.DefaultConfig()
 
-		request := &kvdbserverpb.GetDatabaseInfoRequest{DbName: dbName}
-		response, err := server.GetDatabaseInfo(context.Background(), request)
+	t.Run("GetDatabaseInfo", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+
+		req := &dbpb.GetDBInfoRequest{DbName: dbName}
+		resp, err := gs.GetDBInfo(context.Background(), req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
-		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, dbName, response.Data.Name, "expected database name = %s; got = %s", dbName, response.Data.Name)
+		require.NotNil(t, resp)
+		assert.Equalf(t, dbName, resp.Data.Name, "expected db name = %s; got = %s", dbName, resp.Data.Name)
 	})
 
 	t.Run("GetAllDatabases", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		gs := NewDBServiceServer(s)
 		dbName := "default"
-		server.CreateDefaultDatabase(dbName)
+		s.CreateDefaultDatabase(dbName)
 
-		request := &kvdbserverpb.GetAllDatabasesRequest{}
-		response, err := server.GetAllDatabases(context.Background(), request)
+		req := &dbpb.GetAllDBsRequest{}
+		resp, err := gs.GetAllDBs(context.Background(), req)
 		expectedDbCount := 1
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
-		require.NotNil(t, response, "expected response to be non-nil")
-		assert.Equalf(t, expectedDbCount, len(response.DbNames), "expected databases = %d; got = %d", expectedDbCount, len(response.DbNames))
-	})
-}
-
-func TestDeleteDatabase(t *testing.T) {
-	t.Run("DatabaseExists", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "default"
-		server.CreateDefaultDatabase(dbName)
-
-		req := &kvdbserverpb.DeleteDatabaseRequest{DbName: dbName}
-		res, err := server.DeleteDatabase(context.Background(), req)
-
-		require.NoErrorf(t, err, "expected no error; error = %v", err)
-		require.NotNil(t, res, "expected response to be non-nil")
-		assert.Equalf(t, dbName, res.DbName, "expected db name = &s; got = %s", dbName, res.DbName)
-	})
-
-	t.Run("DatabaseNotFound", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
-		dbName := "default"
-
-		req := &kvdbserverpb.DeleteDatabaseRequest{DbName: dbName}
-		res, err := server.DeleteDatabase(context.Background(), req)
-		require.Error(t, err, "expected error")
-		require.Nil(t, res, "expected response to be nil")
-
-		st, ok := status.FromError(err)
-		require.NotNil(t, st, "expected status to be non-nil")
-		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
+		require.NotNil(t, resp)
+		assert.Equalf(t, expectedDbCount, len(resp.DbNames), "expected databases = %d; got = %d", expectedDbCount, len(resp.DbNames))
 	})
 }
