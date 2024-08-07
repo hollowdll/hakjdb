@@ -1,11 +1,15 @@
-package server_test
+package server
 
 import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/kvdb/internal/testutil"
+
 	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -14,16 +18,20 @@ import (
 )
 
 func TestGetServerInfo(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		s := server.NewServer()
-		s.DisableLogger()
-		connListener := server.NewClientConnListener(nil, s, 1000)
-		s.ClientConnListener = connListener
+	cfg := config.ServerConfig{
+		DefaultDB:            "default",
+		MaxClientConnections: 1000,
+	}
 
-		req := &kvdbserverpb.GetServerInfoRequest{}
-		res, err := s.GetServerInfo(context.Background(), req)
+	t.Run("Success", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		connLis := server.NewClientConnListener(nil, s, cfg.MaxClientConnections)
+		s.ClientConnListener = connLis
+
+		req := &serverpb.GetServerInfoRequest{}
+		resp, err := s.GetServerInfo(context.Background(), req)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
-		assert.NotNil(t, res, "expected response to be non-nil")
+		assert.NotNil(t, resp)
 	})
 }
 
