@@ -61,22 +61,17 @@ type ServerConfig struct {
 
 	// The name of the default database that is created at server startup.
 	DefaultDB string
-
 	// File path to the log file if it is enabled.
 	// ONLY SERVER CAN CONFIGURE.
 	LogFilePath string
-
 	// The maximum number of keys a database can hold.
 	// ONLY SERVER CAN CONFIGURE.
 	MaxKeysPerDB uint32
-
 	// The maximum number of fields a HashMap can hold.
 	// ONLY SERVER CAN CONFIGURE.
 	MaxHashMapFields uint32
-
 	// The TCP/IP port the server listens at.
 	PortInUse uint16
-
 	// The maximum number of active client connections allowed.
 	MaxClientConnections uint32
 

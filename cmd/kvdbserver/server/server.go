@@ -167,13 +167,10 @@ func (s *KvdbServer) GetDBNameFromContext(ctx context.Context) string {
 	return dbName[0]
 }
 
-// DisableLogger disables all log outputs from this server.
-func (s *KvdbServer) DisableLogger() {
-	s.logger.Disable()
-}
-
 // EnableLogFile enables logger to write logs to the log file.
 func (s *KvdbServer) EnableLogFile() {
+	s.loggerMu.RLock()
+	defer s.loggerMu.RUnlock()
 	err := s.logger.EnableLogFile(s.Cfg.LogFilePath)
 	if err != nil {
 		s.logger.Fatalf("Failed to enable log file: %v", err)
