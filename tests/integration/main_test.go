@@ -26,16 +26,17 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	grpcServer := startTestServer()
+	grpcServer, port := startTestServer(defaultConfig())
+	testServerPort = port
 	defer grpcServer.Stop()
-	tlsGrpcServer := startTLSTestServer()
+	tlsGrpcServer, port := startTestServer(tlsConfig())
+	tlsTestServerPort = port
 	defer tlsGrpcServer.Stop()
 	code := m.Run()
 	os.Exit(code)
 }
 
-func startTestServer() *grpc.Server {
-	cfg := config.DefaultConfig()
+func startTestServer(cfg config.ServerConfig) (*grpc.Server, int) {
 	s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
 	s.CreateDefaultDatabase(cfg.DefaultDB)
 	gs := grpcserver.SetupGrpcServer(s)
@@ -44,7 +45,7 @@ func startTestServer() *grpc.Server {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
-	testServerPort = lis.Addr().(*net.TCPAddr).Port
+	port := lis.Addr().(*net.TCPAddr).Port
 	connLis := server.NewClientConnListener(lis, s, cfg.MaxClientConnections)
 	s.ClientConnListener = connLis
 	fmt.Fprintf(os.Stderr, "test server listening at %v\n", lis.Addr())
@@ -55,10 +56,14 @@ func startTestServer() *grpc.Server {
 		}
 	}()
 
-	return gs
+	return gs, port
 }
 
-func startTLSTestServer() *grpc.Server {
+func defaultConfig() config.ServerConfig {
+	return config.DefaultConfig()
+}
+
+func tlsConfig() config.ServerConfig {
 	tlsCertPath, err := filepath.Abs("../../tls/test-cert/kvdbserver.crt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to get TLS certificate path: %v\n", err)
@@ -71,26 +76,7 @@ func startTLSTestServer() *grpc.Server {
 	cfg.TLSEnabled = true
 	cfg.TLSCertPath = tlsCertPath
 	cfg.TLSPrivKeyPath = tlsPrivKeyPath
-	s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
-	s.CreateDefaultDatabase(cfg.DefaultDB)
-	gs := grpcserver.SetupGrpcServer(s)
-
-	lis, err := net.Listen("tcp", ":0")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
-	}
-	tlsTestServerPort = lis.Addr().(*net.TCPAddr).Port
-	connLis := server.NewClientConnListener(lis, s, cfg.MaxClientConnections)
-	s.ClientConnListener = connLis
-	fmt.Fprintf(os.Stderr, "TLS test server listening at %v\n", lis.Addr())
-
-	go func() {
-		if err := gs.Serve(connLis); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
-		}
-	}()
-
-	return gs
+	return cfg
 }
 
 func getServerAddress() string {
