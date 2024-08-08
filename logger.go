@@ -46,16 +46,12 @@ type Logger interface {
 
 	// SetLogLevel sets the log level.
 	SetLogLevel(level LogLevel)
-
 	// LogLevel returns the log level and its string equivalent.
 	LogLevel() (LogLevel, string)
-
 	// EnableLogFile enables log file.
 	EnableLogFile(filePath string) error
-
 	// CloseLogFile closes the log file if it is open.
 	CloseLogFile() error
-
 	// Disable disables all log outputs.
 	Disable()
 }

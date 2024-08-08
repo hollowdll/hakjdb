@@ -1,12 +1,15 @@
-package server_test
+package server
 
 import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
+	"github.com/hollowdll/kvdb/internal/testutil"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -14,28 +17,31 @@ import (
 )
 
 func TestGetServerInfo(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		s := server.NewServer()
-		s.DisableLogger()
-		connListener := server.NewClientConnListener(nil, s, 1000)
-		s.ClientConnListener = connListener
+	cfg := config.DefaultConfig()
 
-		req := &kvdbserverpb.GetServerInfoRequest{}
-		res, err := s.GetServerInfo(context.Background(), req)
+	t.Run("Success", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		connLis := server.NewClientConnListener(nil, s, cfg.MaxClientConnections)
+		s.ClientConnListener = connLis
+		grpcSrv := NewServerServiceServer(s)
+
+		req := &serverpb.GetServerInfoRequest{}
+		resp, err := grpcSrv.GetServerInfo(context.Background(), req)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
-		assert.NotNil(t, res, "expected response to be non-nil")
+		assert.NotNil(t, resp)
 	})
 }
 
 func TestGetLogs(t *testing.T) {
-	t.Run("LogFileNotEnabled", func(t *testing.T) {
-		server := server.NewServer()
-		server.DisableLogger()
+	cfg := config.DefaultConfig()
 
-		req := &kvdbserverpb.GetLogsRequest{}
-		res, err := server.GetLogs(context.Background(), req)
+	t.Run("LogFileNotEnabled", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		grpcSrv := NewServerServiceServer(s)
+		req := &serverpb.GetLogsRequest{}
+		resp, err := grpcSrv.GetLogs(context.Background(), req)
 		require.Error(t, err)
-		require.Nil(t, res)
+		require.Nil(t, resp)
 
 		st, ok := status.FromError(err)
 		require.NotNil(t, st)
@@ -45,22 +51,24 @@ func TestGetLogs(t *testing.T) {
 
 	t.Run("MultipleLogs", func(t *testing.T) {
 		logFilePath := "testdata/multiline_log.testlog"
-		server := server.NewServer()
-		server.SetLogFilePath(logFilePath)
-		server.EnableLogFile()
-		server.DisableLogger()
+		cfg := cfg
+		cfg.LogFilePath = logFilePath
+		cfg.LogFileEnabled = true
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s.EnableLogFile()
+		defer s.CloseLogger()
+		grpcSrv := NewServerServiceServer(s)
 
 		lines, err := common.ReadFileLines(logFilePath)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, lines)
 
-		req := &kvdbserverpb.GetLogsRequest{}
-		res, err := server.GetLogs(context.Background(), req)
+		req := &serverpb.GetLogsRequest{}
+		res, err := grpcSrv.GetLogs(context.Background(), req)
 		expectedLogs := 4
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 		require.Equal(t, expectedLogs, len(res.Logs), "expected logs = %d; got = %d", expectedLogs, len(res.Logs))
-		require.Equal(t, true, res.LogfileEnabled, "expected LogfileEnabled = %v; got = %v", true, res.LogfileEnabled)
 
 		for i, log := range res.Logs {
 			assert.Equal(t, lines[i], log, "expected log = %s; got = %s", lines[i], log)
@@ -69,17 +77,19 @@ func TestGetLogs(t *testing.T) {
 
 	t.Run("NoLogs", func(t *testing.T) {
 		logFilePath := "testdata/empty_log.testlog"
-		server := server.NewServer()
-		server.SetLogFilePath(logFilePath)
-		server.EnableLogFile()
-		server.DisableLogger()
+		cfg := cfg
+		cfg.LogFilePath = logFilePath
+		cfg.LogFileEnabled = true
+		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s.EnableLogFile()
+		defer s.CloseLogger()
+		grpcSrv := NewServerServiceServer(s)
 
-		req := &kvdbserverpb.GetLogsRequest{}
-		res, err := server.GetLogs(context.Background(), req)
+		req := &serverpb.GetLogsRequest{}
+		res, err := grpcSrv.GetLogs(context.Background(), req)
 		expectedLogs := 0
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 		require.Equal(t, expectedLogs, len(res.Logs), "expected logs = %d; got = %d", expectedLogs, len(res.Logs))
-		require.Equal(t, true, res.LogfileEnabled, "expected LogfileEnabled = %v; got = %v", true, res.LogfileEnabled)
 	})
 }

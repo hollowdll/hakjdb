@@ -36,11 +36,21 @@ const (
 	// ConfigKeyLogLevel is the configuration key for log level.
 	ConfigKeyLogLevel string = "log_level"
 
-	// DefaultDatabase is the name of the default database.
-	DefaultDatabase string = "default"
-
 	// EnvVarPassword is the environment variable for server password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
+
+	DefaultLogFileEnabled       bool   = false
+	DefaultTLSEnabled           bool   = false
+	DefaultDebugEnabled         bool   = false
+	DefaultDatabase             string = "default"
+	DefaultPort                 uint16 = common.ServerDefaultPort
+	DefaultLogFilePath          string = ""
+	DefaultMaxKeysPerDB         uint32 = common.DbMaxKeyCount
+	DefaultMaxHashMapFields     uint32 = common.HashMapMaxFields
+	DefaultMaxClientConnections uint32 = common.DefaultMaxClientConnections
+	DefaultTLSCertPath          string = ""
+	DefaultTLSPrivKeyPath       string = ""
+	DefaultLogLevel             string = kvdb.DefaultLogLevelStr
 )
 
 // ServerConfig holds the server's configuration.
@@ -48,18 +58,25 @@ type ServerConfig struct {
 	LogFileEnabled bool
 	TLSEnabled     bool
 	DebugEnabled   bool
+
 	// The name of the default database that is created at server startup.
-	DefaultDB   string
+	DefaultDB string
+	// File path to the log file if it is enabled.
+	// ONLY SERVER CAN CONFIGURE.
 	LogFilePath string
 	// The maximum number of keys a database can hold.
+	// ONLY SERVER CAN CONFIGURE.
 	MaxKeysPerDB uint32
 	// The maximum number of fields a HashMap can hold.
+	// ONLY SERVER CAN CONFIGURE.
 	MaxHashMapFields uint32
 	// The TCP/IP port the server listens at.
-	PortInUse            uint16
+	PortInUse uint16
+	// The maximum number of active client connections allowed.
 	MaxClientConnections uint32
-	TLSCertPath          string
-	TLSPrivKeyPath       string
+
+	TLSCertPath    string
+	TLSPrivKeyPath string
 }
 
 // LoadConfig loads server configurations.
@@ -78,15 +95,15 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 	viper.SetConfigType(configFileType)
 	viper.SetConfigName(configFileName)
 
-	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
-	viper.SetDefault(ConfigKeyDebugEnabled, false)
+	viper.SetDefault(ConfigKeyPort, DefaultPort)
+	viper.SetDefault(ConfigKeyDebugEnabled, DefaultDebugEnabled)
 	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
-	viper.SetDefault(ConfigKeyLogFileEnabled, false)
-	viper.SetDefault(ConfigKeyTLSEnabled, false)
-	viper.SetDefault(ConfigKeyTLSCertPath, "")
-	viper.SetDefault(ConfigKeyTLSPrivKeyPath, "")
-	viper.SetDefault(ConfigKeyMaxClientConnections, common.DefaultMaxClientConnections)
-	viper.SetDefault(ConfigKeyLogLevel, kvdb.DefaultLogLevelStr)
+	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
+	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
+	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
+	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
+	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
+	viper.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
@@ -108,12 +125,29 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 		DebugEnabled:         viper.GetBool(ConfigKeyDebugEnabled),
 		DefaultDB:            viper.GetString(ConfigKeyDefaultDatabase),
 		LogFilePath:          filepath.Join(dataDirPath, logFileName),
-		MaxKeysPerDB:         common.DbMaxKeyCount,
-		MaxHashMapFields:     common.HashMapMaxFields,
+		MaxKeysPerDB:         DefaultMaxKeysPerDB,
+		MaxHashMapFields:     DefaultMaxHashMapFields,
 		PortInUse:            viper.GetUint16(ConfigKeyPort),
 		MaxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
 		TLSCertPath:          viper.GetString(ConfigKeyTLSCertPath),
 		TLSPrivKeyPath:       viper.GetString(ConfigKeyTLSPrivKeyPath),
+	}
+}
+
+// DefaultConfig returns the default configurations.
+func DefaultConfig() ServerConfig {
+	return ServerConfig{
+		LogFileEnabled:       DefaultLogFileEnabled,
+		TLSEnabled:           DefaultTLSEnabled,
+		DebugEnabled:         DefaultDebugEnabled,
+		DefaultDB:            DefaultDatabase,
+		LogFilePath:          DefaultLogFilePath,
+		MaxKeysPerDB:         DefaultMaxKeysPerDB,
+		MaxHashMapFields:     DefaultMaxHashMapFields,
+		PortInUse:            DefaultPort,
+		MaxClientConnections: DefaultMaxClientConnections,
+		TLSCertPath:          DefaultTLSCertPath,
+		TLSPrivKeyPath:       DefaultTLSPrivKeyPath,
 	}
 }
 

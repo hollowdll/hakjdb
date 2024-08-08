@@ -1,31 +1,23 @@
 package kvdb
 
 import (
+	"bytes"
 	"testing"
 	"time"
 
 	"github.com/hollowdll/kvdb/internal/common"
 )
 
-func TestCreateDatabase(t *testing.T) {
-	db := CreateDatabase("test")
-	expectedDb := newDatabase("test")
-
-	if db == nil {
-		t.Fatal("expected db but got nil")
+func TestGetKeyType(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
 	}
 
-	if db.GetName() != expectedDb.GetName() {
-		t.Fatalf("expected db with name %s but got %s", expectedDb.GetName(), db.GetName())
-	}
-}
-
-func TestGetTypeOfKey(t *testing.T) {
 	t.Run("KeyNotFound", func(t *testing.T) {
-		db := newDatabase("test")
-		keyType, ok := db.GetTypeOfKey("key1")
+		db := NewDB("test", "", dbCfg)
+		keyType, ok := db.GetKeyType("key1")
 
-		expectedKeyType := ""
+		expectedKeyType := DBKeyType("")
 		if keyType != expectedKeyType {
 			t.Errorf("expected key type = %s; got = %s", expectedKeyType, keyType)
 		}
@@ -36,12 +28,12 @@ func TestGetTypeOfKey(t *testing.T) {
 		}
 	})
 
-	t.Run("String", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "value")
-		keyType, ok := db.GetTypeOfKey("key1")
+	t.Run("StringKey", func(t *testing.T) {
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("value"))
+		keyType, ok := db.GetKeyType("key1")
 
-		expectedKeyType := "String"
+		expectedKeyType := DBKeyType("String")
 		if keyType != expectedKeyType {
 			t.Errorf("expected key type = %s; got = %s", expectedKeyType, keyType)
 		}
@@ -52,12 +44,12 @@ func TestGetTypeOfKey(t *testing.T) {
 		}
 	})
 
-	t.Run("HashMap", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", make(map[string]string), common.HashMapMaxFields)
-		keyType, ok := db.GetTypeOfKey("key1")
+	t.Run("HashMapKey", func(t *testing.T) {
+		db := NewDB("test", "", dbCfg)
+		db.SetHashMap("key1", make(map[string][]byte))
+		keyType, ok := db.GetKeyType("key1")
 
-		expectedKeyType := "HashMap"
+		expectedKeyType := DBKeyType("HashMap")
 		if keyType != expectedKeyType {
 			t.Errorf("expected key type = %s; got = %s", expectedKeyType, keyType)
 		}
@@ -69,10 +61,14 @@ func TestGetTypeOfKey(t *testing.T) {
 	})
 }
 
-func TestDatabaseSetString(t *testing.T) {
+func TestSetString(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+
 	t.Run("SetNonExistentKey", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "value1")
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("value1"))
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -82,9 +78,9 @@ func TestDatabaseSetString(t *testing.T) {
 	})
 
 	t.Run("OverwriteExistingKey", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "value1")
-		db.SetString("key1", "value2")
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("value1"))
+		db.SetString("key1", []byte("value2"))
 
 		var expectedKeys uint32 = 1
 		keys := db.GetKeyCount()
@@ -94,22 +90,63 @@ func TestDatabaseSetString(t *testing.T) {
 	})
 
 	t.Run("DatabaseIsUpdated", func(t *testing.T) {
-		db := newDatabase("test")
-		originalTime := db.UpdatedAt
+		db := NewDB("test", "", dbCfg)
+		originalTime := db.UpdatedAt()
 
 		time.Sleep(10 * time.Millisecond)
-		db.SetString("key1", "value1")
+		db.SetString("key1", []byte("value1"))
 
-		updatedTime := db.UpdatedAt
+		updatedTime := db.UpdatedAt()
 		if !updatedTime.After(originalTime) {
 			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
 		}
 	})
 }
 
-func TestDatabaseDeleteKey(t *testing.T) {
+func TestGetStringKey(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+
+	t.Run("GetNonExistentKey", func(t *testing.T) {
+		db := NewDB("test", "", dbCfg)
+		kv, ok := db.GetStringKey("key1")
+
+		expectedValue := StringValue("")
+		if !bytes.Equal(kv.Value, expectedValue) {
+			t.Errorf("expected value = %s; got = %s", expectedValue, kv.Value)
+		}
+
+		expectedOk := false
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+
+	t.Run("GetExistingKey", func(t *testing.T) {
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("value1"))
+		kv, ok := db.GetStringKey("key1")
+
+		expectedValue := StringValue("value1")
+		if !bytes.Equal(kv.Value, expectedValue) {
+			t.Errorf("expected value = %s; got = %s", expectedValue, kv.Value)
+		}
+
+		expectedOk := true
+		if ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, ok)
+		}
+	})
+}
+
+func TestDeleteKeys(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+
 	t.Run("DeleteNonExistentKey", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		result := db.DeleteKeys([]string{"key1"})
 		var expectedResult uint32 = 0
 
@@ -126,8 +163,8 @@ func TestDatabaseDeleteKey(t *testing.T) {
 	})
 
 	t.Run("DeleteExistingKey", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "value1")
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("value1"))
 
 		result := db.DeleteKeys([]string{"key1"})
 		var expectedResult uint32 = 1
@@ -142,11 +179,11 @@ func TestDatabaseDeleteKey(t *testing.T) {
 		}
 	})
 
-	t.Run("DeleteMultipleKeys", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "val1")
-		db.SetString("key2", "val2")
-		db.SetString("key3", "val3")
+	t.Run("DeleteMultipleExistingKeys", func(t *testing.T) {
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("val1"))
+		db.SetString("key2", []byte("val2"))
+		db.SetString("key3", []byte("val3"))
 
 		result := db.DeleteKeys([]string{"key1", "key2", "key3"})
 		var expectedResult uint32 = 3
@@ -154,7 +191,7 @@ func TestDatabaseDeleteKey(t *testing.T) {
 			t.Errorf("expected result = %v; got = %v", expectedResult, result)
 		}
 
-		result = db.DeleteKeys([]string{"key2", "key3"})
+		result = db.DeleteKeys([]string{"key3", "key1", "key2"})
 		expectedResult = 0
 		if result != expectedResult {
 			t.Errorf("expected result = %v; got = %v", expectedResult, result)
@@ -162,11 +199,11 @@ func TestDatabaseDeleteKey(t *testing.T) {
 	})
 
 	t.Run("DeleteMultipleKeysButNotAll", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "val1")
-		db.SetString("key2", "val2")
-		db.SetString("key3", "val3")
-		db.SetString("key4", "val4")
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("val1"))
+		db.SetString("key2", []byte("val2"))
+		db.SetString("key3", []byte("val3"))
+		db.SetString("key4", []byte("val4"))
 
 		result := db.DeleteKeys([]string{"key3", "key4"})
 		var expectedResult uint32 = 2
@@ -194,81 +231,52 @@ func TestDatabaseDeleteKey(t *testing.T) {
 	})
 
 	t.Run("DatabaseIsNotUpdatedIfKeyNotExists", func(t *testing.T) {
-		db := newDatabase("test")
-		originalTime := db.UpdatedAt
+		db := NewDB("test", "", dbCfg)
+		originalTime := db.UpdatedAt()
 
 		time.Sleep(10 * time.Millisecond)
 		db.DeleteKeys([]string{"key1"})
 
-		updatedTime := db.UpdatedAt
+		updatedTime := db.UpdatedAt()
 		if !updatedTime.Equal(originalTime) {
 			t.Errorf("expected times to be equal; updated time = %s; original time = %s", updatedTime, originalTime)
 		}
 	})
 
 	t.Run("DatabaseIsUpdatedIfKeyDeleted", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetString("key1", "value1")
+		db := NewDB("test", "", dbCfg)
+		db.SetString("key1", []byte("val1"))
 
-		originalTime := db.UpdatedAt
+		originalTime := db.UpdatedAt()
 		time.Sleep(10 * time.Millisecond)
 		db.DeleteKeys([]string{"key1"})
 
-		updatedTime := db.UpdatedAt
+		updatedTime := db.UpdatedAt()
 		if !updatedTime.After(originalTime) {
 			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
 		}
 	})
 }
 
-func TestDatabaseGetString(t *testing.T) {
-	t.Run("GetNonExistentKey", func(t *testing.T) {
-		db := newDatabase("test")
-		value, found := db.GetString("key1")
-
-		expectedValue := ""
-		if value != expectedValue {
-			t.Errorf("expected value = %s; got = %s", expectedValue, value)
-		}
-
-		expectedFound := false
-		if found != expectedFound {
-			t.Errorf("expected found = %v; got = %v", expectedFound, found)
-		}
-	})
-
-	t.Run("GetExistingKey", func(t *testing.T) {
-		db := newDatabase("test")
-		expectedValue := "value1"
-		key := "key1"
-		db.SetString(key, expectedValue)
-		value, found := db.GetString(key)
-
-		if value != expectedValue {
-			t.Errorf("expected value = %s; got = %s", expectedValue, value)
-		}
-
-		expectedFound := true
-		if found != expectedFound {
-			t.Errorf("expected found = %v; got = %v", expectedFound, found)
-		}
-	})
-}
-
-func TestGetDatabaseKeyCount(t *testing.T) {
-	db := newDatabase("test")
+func TestGetKeyCount(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+	db := NewDB("test", "", dbCfg)
 	count := db.GetKeyCount()
 	if count != 0 {
 		t.Fatalf("key count should be 0 but got %d", count)
 	}
 
-	db.SetString("key1", "value1")
+	db.SetString("key1", []byte("value1"))
 	count = db.GetKeyCount()
 	if count != 1 {
 		t.Fatalf("key count should be 1 but got %d", count)
 	}
 
-	db.SetString("key2", "value2")
+	db.SetHashMap("key2", map[string][]byte{
+		"field1": []byte("value1"),
+	})
 	count = db.GetKeyCount()
 	if count != 2 {
 		t.Fatalf("key count should be 2 but got %d", count)
@@ -279,11 +287,21 @@ func TestGetDatabaseKeyCount(t *testing.T) {
 	if count != 1 {
 		t.Fatalf("key count should be 1 but got %d", count)
 	}
+
+	db.DeleteKeys([]string{"key2"})
+	count = db.GetKeyCount()
+	if count != 0 {
+		t.Fatalf("key count should be 0 but got %d", count)
+	}
 }
 
 func TestDeleteAllKeys(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+
 	t.Run("NoKeys", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		db.DeleteAllKeys()
 		count := db.GetKeyCount()
 		expectedCount := 0
@@ -293,30 +311,35 @@ func TestDeleteAllKeys(t *testing.T) {
 	})
 
 	t.Run("MultipleKeys", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		keys := []string{"key1", "key2", "key3"}
 		for _, key := range keys {
-			db.SetString(key, "value")
+			db.SetString(key, []byte("value"))
 		}
 
 		count := db.GetKeyCount()
-		if count != uint32(len(keys)) {
-			t.Fatalf("expected keys = %d; got = %d", len(keys), count)
+		var expectedCount uint32 = 3
+		if count != expectedCount {
+			t.Fatalf("expected keys = %d; got = %d", expectedCount, count)
 		}
 
 		db.DeleteAllKeys()
 		count = db.GetKeyCount()
-		var expectedCount uint32 = 0
+		expectedCount = 0
 		if count != expectedCount {
 			t.Errorf("expected keys = %d; got = %d", expectedCount, count)
 		}
 	})
 }
 
-func TestGetKeys(t *testing.T) {
+func TestGetAllKeys(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+
 	t.Run("NoKeys", func(t *testing.T) {
-		db := newDatabase("test")
-		keys := db.GetKeys()
+		db := NewDB("test", "", dbCfg)
+		keys := db.GetAllKeys()
 		expectedKeys := 0
 		if len(keys) != expectedKeys {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, len(keys))
@@ -324,13 +347,13 @@ func TestGetKeys(t *testing.T) {
 	})
 
 	t.Run("MultipleKeys", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		keys := []string{"key1", "key2", "key3"}
 		for _, key := range keys {
-			db.SetString(key, "value")
+			db.SetString(key, []byte("val"))
 		}
 
-		actualKeys := db.GetKeys()
+		actualKeys := db.GetAllKeys()
 		if len(actualKeys) != len(keys) {
 			t.Fatalf("expected keys = %d; got = %d", len(keys), len(actualKeys))
 		}
@@ -344,14 +367,17 @@ func TestGetKeys(t *testing.T) {
 }
 
 func TestSetHashMap(t *testing.T) {
-	fields := make(map[string]string)
-	fields["field1"] = "value1"
-	fields["field2"] = "value2"
-	fields["field3"] = "value3"
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+	fields := make(map[string][]byte)
+	fields["field1"] = []byte("value1")
+	fields["field2"] = []byte("value2")
+	fields["field3"] = []byte("value3")
 
 	t.Run("SetNonExistentKey", func(t *testing.T) {
-		db := newDatabase("test")
-		fieldsAdded := db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		db := NewDB("test", "", dbCfg)
+		fieldsAdded := db.SetHashMap("key1", fields)
 
 		var expectedFieldsAdded uint32 = 3
 		if fieldsAdded != expectedFieldsAdded {
@@ -366,19 +392,13 @@ func TestSetHashMap(t *testing.T) {
 	})
 
 	t.Run("OverwriteExistingHashMapKey", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
-		fieldsAdded := db.SetHashMap("key1", make(map[string]string), common.HashMapMaxFields)
+		db := NewDB("test", "", dbCfg)
+		db.SetHashMap("key1", fields)
+		fieldsAdded := db.SetHashMap("key1", make(map[string][]byte))
 
 		var expectedFieldsAdded uint32 = 0
 		if fieldsAdded != expectedFieldsAdded {
 			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded, fieldsAdded)
-		}
-
-		var expectedFields uint32 = 3
-		fieldCount := db.GetHashMapFieldCount("key1")
-		if fieldCount != expectedFields {
-			t.Errorf("expected fields = %d; got = %d", expectedFields, fieldCount)
 		}
 
 		var expectedKeys uint32 = 1
@@ -389,28 +409,29 @@ func TestSetHashMap(t *testing.T) {
 	})
 
 	t.Run("DatabaseIsUpdated", func(t *testing.T) {
-		db := newDatabase("test")
-		originalTime := db.UpdatedAt
+		db := NewDB("test", "", dbCfg)
+		originalTime := db.UpdatedAt()
 
 		time.Sleep(10 * time.Millisecond)
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		db.SetHashMap("key1", fields)
 
-		updatedTime := db.UpdatedAt
+		updatedTime := db.UpdatedAt()
 		if !updatedTime.After(originalTime) {
 			t.Errorf("expected time %s to be after %s", updatedTime, originalTime)
 		}
 	})
 
 	t.Run("MaxFieldLimitReached", func(t *testing.T) {
-		db := newDatabase("test")
-		var maxFieldLimit uint32 = 2
-		fields2 := make(map[string]string)
-		fields2["field4"] = "value4"
-		fields2["field5"] = "value5"
-		fields2["field6"] = "value6"
+		dbCfg := dbCfg
+		dbCfg.MaxHashMapFields = 2
+		db := NewDB("test", "", dbCfg)
+		fields2 := make(map[string][]byte)
+		fields2["field4"] = []byte("val")
+		fields2["field5"] = []byte("val")
+		fields2["field6"] = []byte("val")
 
-		fieldsAdded1 := db.SetHashMap("key1", fields, maxFieldLimit)
-		fieldsAdded2 := db.SetHashMap("key1", fields2, maxFieldLimit)
+		fieldsAdded1 := db.SetHashMap("key1", fields)
+		fieldsAdded2 := db.SetHashMap("key1", fields2)
 
 		var expectedFieldsAdded1 uint32 = 2
 		if fieldsAdded1 != expectedFieldsAdded1 {
@@ -424,19 +445,22 @@ func TestSetHashMap(t *testing.T) {
 	})
 }
 
-func TestGetHashMapFieldValue(t *testing.T) {
-	fields := make(map[string]string)
-	fields["field1"] = "value1"
-	fields["field2"] = "value2"
-	fields["field3"] = "value3"
+func TestGetHashMapFieldValues(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+	fields := make(map[string][]byte)
+	fields["field1"] = []byte("value1")
+	fields["field2"] = []byte("value2")
+	fields["field3"] = []byte("value3")
 
 	t.Run("GetNonExistentKey", func(t *testing.T) {
-		db := newDatabase("test")
-		value, ok := db.GetHashMapFieldValue("key1", []string{"field2"})
+		db := NewDB("test", "", dbCfg)
+		values, ok := db.GetHashMapFieldValues("key1", []string{"field2"})
 
 		expectedFields := 0
-		if len(value) != expectedFields {
-			t.Errorf("expected fields = %d; got = %d", expectedFields, len(value))
+		if len(values) != expectedFields {
+			t.Errorf("expected fields = %d; got = %d", expectedFields, len(values))
 		}
 
 		expectedOk := false
@@ -446,34 +470,34 @@ func TestGetHashMapFieldValue(t *testing.T) {
 	})
 
 	t.Run("GetNonExistentField", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		key := "key1"
-		db.SetHashMap(key, fields, common.HashMapMaxFields)
-		value, _ := db.GetHashMapFieldValue(key, []string{"field1234"})
+		db.SetHashMap(key, fields)
+		values, _ := db.GetHashMapFieldValues(key, []string{"field1234"})
 
-		expectedValue := ""
-		if value["field1234"].Value != expectedValue {
-			t.Errorf("expected value = %s; got = %s", expectedValue, value["field1234"].Value)
+		expectedValue := []byte("")
+		if !bytes.Equal(values["field1234"].FieldValue.Value, expectedValue) {
+			t.Errorf("expected value = %s; got = %s", expectedValue, values["field1234"].FieldValue.Value)
 		}
 
 		expectedOk := false
-		if value["field1234"].Ok != expectedOk {
-			t.Errorf("expected ok = %v; got = %v", expectedOk, value["field1234"].Ok)
+		if values["field1234"].Ok != expectedOk {
+			t.Errorf("expected ok = %v; got = %v", expectedOk, values["field1234"].Ok)
 		}
 	})
 
 	t.Run("GetExistingKeyAndFields", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		key := "key1"
-		db.SetHashMap(key, fields, common.HashMapMaxFields)
-		value, ok := db.GetHashMapFieldValue(key, []string{"field1", "field2", "field3"})
+		db.SetHashMap(key, fields)
+		values, ok := db.GetHashMapFieldValues(key, []string{"field1", "field2", "field3"})
 
 		for field, expectedValue := range fields {
-			if value[field].Value != expectedValue {
-				t.Errorf("expected value = %s; got = %s", expectedValue, value[field].Value)
+			if !bytes.Equal(values[field].FieldValue.Value, expectedValue) {
+				t.Errorf("expected value = %s; got = %s", expectedValue, values[field].FieldValue.Value)
 			}
-			if !value[field].Ok {
-				t.Errorf("expected ok = %v; got = %v", true, value[field].Ok)
+			if !values[field].Ok {
+				t.Errorf("expected ok = %v; got = %v", true, values[field].Ok)
 			}
 		}
 
@@ -485,18 +509,21 @@ func TestGetHashMapFieldValue(t *testing.T) {
 }
 
 func TestDeleteHashMapFields(t *testing.T) {
-	fields := make(map[string]string)
-	fields["field1"] = "value1"
-	fields["field2"] = "value2"
-	fields["field3"] = "value3"
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+	fields := make(map[string][]byte)
+	fields["field1"] = []byte("val")
+	fields["field2"] = []byte("val")
+	fields["field3"] = []byte("val")
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field2", "field3"})
 
 		var expectedFieldsRemoved uint32 = 0
 		if fieldsRemoved != expectedFieldsRemoved {
-			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+			t.Errorf("expected fields removed = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
 		}
 
 		expectedOk := false
@@ -506,13 +533,13 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("FieldsExist", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		db := NewDB("test", "", dbCfg)
+		db.SetHashMap("key1", fields)
 		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field2", "field3"})
 
 		var expectedFieldsRemoved uint32 = 2
 		if fieldsRemoved != expectedFieldsRemoved {
-			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+			t.Errorf("expected fields removed = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
 		}
 
 		expectedOk := true
@@ -522,13 +549,13 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("FieldsNotFound", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		db := NewDB("test", "", dbCfg)
+		db.SetHashMap("key1", fields)
 		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field123", "field1234"})
 
 		var expectedFieldsRemoved uint32 = 0
 		if fieldsRemoved != expectedFieldsRemoved {
-			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+			t.Errorf("expected fields removed = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
 		}
 
 		expectedOk := true
@@ -538,13 +565,13 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("DuplicateFields", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
+		db := NewDB("test", "", dbCfg)
+		db.SetHashMap("key1", fields)
 		fieldsRemoved, ok := db.DeleteHashMapFields("key1", []string{"field1", "field1", "field1"})
 
 		var expectedFieldsRemoved uint32 = 1
 		if fieldsRemoved != expectedFieldsRemoved {
-			t.Errorf("expected value = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
+			t.Errorf("expected fields removed = %d; got = %d", expectedFieldsRemoved, fieldsRemoved)
 		}
 
 		expectedOk := true
@@ -554,23 +581,22 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 }
 
-func TestGetAllHashMapFieldsAndValues(t *testing.T) {
-	fields := make(map[string]string)
-	fields["field1"] = "value123"
-	fields["field2"] = "value777"
-	fields["field3"] = "value915"
+func TestGetHashMapKey(t *testing.T) {
+	dbCfg := DBConfig{
+		MaxHashMapFields: common.HashMapMaxFields,
+	}
+	fields := make(map[string][]byte)
+	fields["field1"] = []byte("val")
+	fields["field2"] = []byte("val")
+	fields["field3"] = []byte("val")
 
 	t.Run("GetNonExistentKey", func(t *testing.T) {
-		db := newDatabase("test")
-		result, ok := db.GetAllHashMapFieldsAndValues("key1")
-
-		if result == nil {
-			t.Fatalf("expected result but got nil")
-		}
+		db := NewDB("test", "", dbCfg)
+		kv, ok := db.GetHashMapKey("key1")
 
 		expectedElements := 0
-		if len(result) != expectedElements {
-			t.Errorf("expected elements = %d; got = %d", expectedElements, len(result))
+		if len(kv.Value) != expectedElements {
+			t.Errorf("expected elements = %d; got = %d", expectedElements, len(kv.Value))
 		}
 
 		expectedOk := false
@@ -580,14 +606,14 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	})
 
 	t.Run("GetExistingKey", func(t *testing.T) {
-		db := newDatabase("test")
+		db := NewDB("test", "", dbCfg)
 		key := "key1"
-		db.SetHashMap(key, fields, common.HashMapMaxFields)
-		result, ok := db.GetAllHashMapFieldsAndValues(key)
+		db.SetHashMap(key, fields)
+		kv, ok := db.GetHashMapKey(key)
 
 		expectedElements := 3
-		if len(result) != expectedElements {
-			t.Errorf("expected elements = %d; got = %d", expectedElements, len(result))
+		if len(kv.Value) != expectedElements {
+			t.Errorf("expected elements = %d; got = %d", expectedElements, len(kv.Value))
 		}
 
 		expectedOk := true
@@ -596,42 +622,13 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 		}
 
 		for expectedField, expectedValue := range fields {
-			actualValue, exists := result[expectedField]
+			actualValue, exists := kv.Value[expectedField]
 			if !exists {
-				t.Errorf("expected field '%s' in result", expectedField)
+				t.Errorf("expected field '%s'", expectedField)
 			}
-			if expectedValue != actualValue {
+			if !bytes.Equal(expectedValue, actualValue.Value) {
 				t.Errorf("expected field value = %s; got = %s", expectedValue, actualValue)
 			}
-		}
-	})
-}
-
-func TestGetHashMapFieldCount(t *testing.T) {
-	fields := make(map[string]string)
-	fields["field_a"] = "a"
-	fields["field_b"] = "b"
-	fields["field_c"] = "c"
-	fields["field_d"] = ""
-
-	t.Run("KeyNotFound", func(t *testing.T) {
-		db := newDatabase("test")
-		fieldCount := db.GetHashMapFieldCount("key1")
-
-		var expectedFieldCount uint32 = 0
-		if fieldCount != expectedFieldCount {
-			t.Errorf("expected field count = %d; got = %d", expectedFieldCount, fieldCount)
-		}
-	})
-
-	t.Run("KeyFound", func(t *testing.T) {
-		db := newDatabase("test")
-		db.SetHashMap("key1", fields, common.HashMapMaxFields)
-		fieldCount := db.GetHashMapFieldCount("key1")
-
-		var expectedFieldCount uint32 = 4
-		if fieldCount != expectedFieldCount {
-			t.Errorf("expected field count = %d; got = %d", expectedFieldCount, fieldCount)
 		}
 	})
 }

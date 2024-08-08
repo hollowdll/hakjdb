@@ -4,36 +4,39 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
-func TestGetServerInfoWithTls(t *testing.T) {
+func TestGetServerInfoWithTLS(t *testing.T) {
+	cfg := tlsConfig()
+	_, gs, port := startTestServer(cfg)
+	defer gs.Stop()
+	address := getServerAddress(port)
+
 	t.Run("WithCredentials", func(t *testing.T) {
-		conn, err := secureConnection()
+		conn, err := secureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
-		client := kvdbserverpb.NewServerServiceClient(conn)
+		client := serverpb.NewServerServiceClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 		defer cancel()
 
-		req := &kvdbserverpb.GetServerInfoRequest{}
+		req := &serverpb.GetServerInfoRequest{}
 		res, err := client.GetServerInfo(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 	})
 
-	t.Run("NoCredentials", func(t *testing.T) {
-		conn, err := grpc.Dial(getTlsServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	t.Run("WithoutCredentials", func(t *testing.T) {
+		conn, err := insecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
-		client := kvdbserverpb.NewServerServiceClient(conn)
+		client := serverpb.NewServerServiceClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 		defer cancel()
 
-		req := &kvdbserverpb.GetServerInfoRequest{}
+		req := &serverpb.GetServerInfoRequest{}
 		res, err := client.GetServerInfo(ctx, req)
 		require.Error(t, err)
 		require.Nil(t, res)
