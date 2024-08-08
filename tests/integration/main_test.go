@@ -37,13 +37,14 @@ func TestMain(m *testing.M) {
 }
 
 func startTestServer(cfg config.ServerConfig) (*grpc.Server, int) {
+	fmt.Fprintf(os.Stderr, "creating test server ...")
 	s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
 	s.CreateDefaultDatabase(cfg.DefaultDB)
 	gs := grpcserver.SetupGrpcServer(s)
 
 	lis, err := net.Listen("tcp", ":0")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
+		fmt.Fprintf(os.Stderr, "failed to listen: %v\n", err)
 	}
 	port := lis.Addr().(*net.TCPAddr).Port
 	s.Cfg.PortInUse = uint16(port)
@@ -53,7 +54,7 @@ func startTestServer(cfg config.ServerConfig) (*grpc.Server, int) {
 
 	go func() {
 		if err := gs.Serve(connLis); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to serve gRPC: %v\n", err)
+			fmt.Fprintf(os.Stderr, "failed to serve gRPC: %v\n", err)
 		}
 	}()
 
@@ -67,11 +68,11 @@ func defaultConfig() config.ServerConfig {
 func tlsConfig() config.ServerConfig {
 	tlsCertPath, err := filepath.Abs("../../tls/test-cert/kvdbserver.crt")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to get TLS certificate path: %v\n", err)
+		fmt.Fprintf(os.Stderr, "failed to get TLS certificate path: %v\n", err)
 	}
 	tlsPrivKeyPath, err := filepath.Abs("../../tls/test-cert/kvdbserver.key")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to get TLS private key path: %v\n", err)
+		fmt.Fprintf(os.Stderr, "failed to get TLS private key path: %v\n", err)
 	}
 	cfg := config.DefaultConfig()
 	cfg.TLSEnabled = true
@@ -95,11 +96,11 @@ func insecureConnection() (*grpc.ClientConn, error) {
 func secureConnection() (*grpc.ClientConn, error) {
 	certBytes, err := os.ReadFile("../../tls/test-cert/kvdbserver.crt")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to read TLS certificate: %v\n", err)
+		fmt.Fprintf(os.Stderr, "failed to read TLS certificate: %v\n", err)
 	}
 	certPool := x509.NewCertPool()
 	if !certPool.AppendCertsFromPEM(certBytes) {
-		fmt.Fprint(os.Stderr, "Failed to parse certificate\n")
+		fmt.Fprint(os.Stderr, "failed to parse certificate\n")
 	}
 
 	creds := credentials.NewClientTLSFromCert(certPool, "")
