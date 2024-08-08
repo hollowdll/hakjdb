@@ -9,8 +9,13 @@ import (
 )
 
 func TestGetServerInfoWithTLS(t *testing.T) {
+	cfg := tlsConfig()
+	_, gs, port := startTestServer(cfg)
+	defer gs.Stop()
+	address := getServerAddress(port)
+
 	t.Run("WithCredentials", func(t *testing.T) {
-		conn, err := secureConnection(getServerAddress(tlsTestServerPort))
+		conn, err := secureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)
@@ -24,7 +29,7 @@ func TestGetServerInfoWithTLS(t *testing.T) {
 	})
 
 	t.Run("WithoutCredentials", func(t *testing.T) {
-		conn, err := insecureConnection(getServerAddress(tlsTestServerPort))
+		conn, err := insecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)

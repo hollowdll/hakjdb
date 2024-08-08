@@ -20,18 +20,7 @@ import (
 
 const ctxTimeout = time.Second * 5
 
-var (
-	testServerPort    = 0
-	tlsTestServerPort = 0
-)
-
 func TestMain(m *testing.M) {
-	_, grpcServer, port := startTestServer(defaultConfig())
-	testServerPort = port
-	defer grpcServer.Stop()
-	_, tlsGrpcServer, port := startTestServer(tlsConfig())
-	tlsTestServerPort = port
-	defer tlsGrpcServer.Stop()
 	code := m.Run()
 	os.Exit(code)
 }
