@@ -149,12 +149,13 @@ func TestGetString(t *testing.T) {
 		s.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
+		expectedValue := []byte(nil)
 		req := &kvpb.GetStringRequest{Key: "key1"}
 		res, err := gs.GetString(ctx, req)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, res)
 		assert.Equalf(t, false, res.Ok, "expected ok = %v; got = %v", false, res.Ok)
-		assert.Equalf(t, "", res.Value, "expected empty string; got = %s", res.Value)
+		assert.Equalf(t, expectedValue, res.Value, "expected value = %s; got = %s", expectedValue, res.Value)
 	})
 
 	t.Run("KeyFound", func(t *testing.T) {

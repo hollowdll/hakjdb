@@ -310,6 +310,7 @@ func TestDeleteAllKeys(t *testing.T) {
 		gsGeneralKV := NewGeneralKVServiceServer(s)
 		gsStringKV := NewStringKVServiceServer(s)
 		dbName := "db0"
+		s.CreateDefaultDatabase(dbName)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, dbName))
 
 		reqSet := &kvpb.SetStringRequest{Key: "key1", Value: []byte("val")}
