@@ -19,6 +19,7 @@ import (
 
 func TestGetKeyType(t *testing.T) {
 	cfg := config.DefaultConfig()
+	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
 		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
@@ -112,6 +113,7 @@ func TestGetKeyType(t *testing.T) {
 
 func TestGetAllKeys(t *testing.T) {
 	cfg := config.DefaultConfig()
+	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
 		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
@@ -188,6 +190,7 @@ func TestGetAllKeys(t *testing.T) {
 
 func TestDeleteKeys(t *testing.T) {
 	cfg := config.DefaultConfig()
+	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
 		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
@@ -258,6 +261,7 @@ func TestDeleteKeys(t *testing.T) {
 
 func TestDeleteAllKeys(t *testing.T) {
 	cfg := config.DefaultConfig()
+	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
 		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
