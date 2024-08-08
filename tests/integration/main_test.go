@@ -46,6 +46,7 @@ func startTestServer(cfg config.ServerConfig) (*grpc.Server, int) {
 		fmt.Fprintf(os.Stderr, "Failed to listen: %v\n", err)
 	}
 	port := lis.Addr().(*net.TCPAddr).Port
+	s.Cfg.PortInUse = uint16(port)
 	connLis := server.NewClientConnListener(lis, s, cfg.MaxClientConnections)
 	s.ClientConnListener = connLis
 	fmt.Fprintf(os.Stderr, "test server listening at %v\n", lis.Addr())

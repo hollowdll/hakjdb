@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hollowdll/kvdb/proto/kvdbserverpb"
+	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -13,19 +13,22 @@ import (
 
 func TestMaxClientConnections(t *testing.T) {
 	var maxConnections uint32 = 5
-	server, port := startTestServer(maxConnections)
-	defer server.Stop()
+	cfg := defaultConfig()
+	cfg.MaxClientConnections = maxConnections
+	s, port := startTestServer(cfg)
+	defer s.Stop()
+
 	address := fmt.Sprintf("localhost:%d", port)
 	connections := make([]*grpc.ClientConn, maxConnections+5)
-	req := &kvdbserverpb.GetServerInfoRequest{}
+	req := &serverpb.GetServerInfoRequest{}
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	for i := 0; i < len(connections); i++ {
-		conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
 
-		client := kvdbserverpb.NewServerServiceClient(conn)
+		client := serverpb.NewServerServiceClient(conn)
 		_, err = client.GetServerInfo(ctx, req)
 
 		if i < int(maxConnections) {
@@ -42,10 +45,10 @@ func TestMaxClientConnections(t *testing.T) {
 		}
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoErrorf(t, err, "expected no error; error = %v", err)
 
-	client := kvdbserverpb.NewServerServiceClient(conn)
+	client := serverpb.NewServerServiceClient(conn)
 	_, err = client.GetServerInfo(ctx, req)
 	assert.NoErrorf(t, err, "expected no error; error = %v", err)
 }
