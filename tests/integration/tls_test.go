@@ -6,13 +6,11 @@ import (
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestGetServerInfoWithTLS(t *testing.T) {
 	t.Run("WithCredentials", func(t *testing.T) {
-		conn, err := secureConnection()
+		conn, err := secureConnection(getServerAddress(tlsTestServerPort))
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)
@@ -25,8 +23,8 @@ func TestGetServerInfoWithTLS(t *testing.T) {
 		require.NotNil(t, res)
 	})
 
-	t.Run("NoCredentials", func(t *testing.T) {
-		conn, err := grpc.NewClient(getTlsServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	t.Run("WithoutCredentials", func(t *testing.T) {
+		conn, err := insecureConnection(getServerAddress(tlsTestServerPort))
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)

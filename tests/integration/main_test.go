@@ -26,18 +26,18 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	grpcServer, port := startTestServer(defaultConfig())
+	_, grpcServer, port := startTestServer(defaultConfig())
 	testServerPort = port
 	defer grpcServer.Stop()
-	tlsGrpcServer, port := startTestServer(tlsConfig())
+	_, tlsGrpcServer, port := startTestServer(tlsConfig())
 	tlsTestServerPort = port
 	defer tlsGrpcServer.Stop()
 	code := m.Run()
 	os.Exit(code)
 }
 
-func startTestServer(cfg config.ServerConfig) (*grpc.Server, int) {
-	fmt.Fprintf(os.Stderr, "creating test server ...")
+func startTestServer(cfg config.ServerConfig) (*server.KvdbServer, *grpc.Server, int) {
+	fmt.Fprint(os.Stderr, "creating test server ...\n")
 	s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
 	s.CreateDefaultDatabase(cfg.DefaultDB)
 	gs := grpcserver.SetupGrpcServer(s)
@@ -58,7 +58,7 @@ func startTestServer(cfg config.ServerConfig) (*grpc.Server, int) {
 		}
 	}()
 
-	return gs, port
+	return s, gs, port
 }
 
 func defaultConfig() config.ServerConfig {
@@ -81,19 +81,15 @@ func tlsConfig() config.ServerConfig {
 	return cfg
 }
 
-func getServerAddress() string {
-	return fmt.Sprintf("localhost:%d", testServerPort)
+func getServerAddress(port int) string {
+	return fmt.Sprintf("localhost:%d", port)
 }
 
-func getTlsServerAddress() string {
-	return fmt.Sprintf("localhost:%d", tlsTestServerPort)
+func insecureConnection(address string) (*grpc.ClientConn, error) {
+	return grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 }
 
-func insecureConnection() (*grpc.ClientConn, error) {
-	return grpc.NewClient(getServerAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
-}
-
-func secureConnection() (*grpc.ClientConn, error) {
+func secureConnection(address string) (*grpc.ClientConn, error) {
 	certBytes, err := os.ReadFile("../../tls/test-cert/kvdbserver.crt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to read TLS certificate: %v\n", err)
@@ -104,5 +100,5 @@ func secureConnection() (*grpc.ClientConn, error) {
 	}
 
 	creds := credentials.NewClientTLSFromCert(certPool, "")
-	return grpc.NewClient(getTlsServerAddress(), grpc.WithTransportCredentials(creds))
+	return grpc.NewClient(address, grpc.WithTransportCredentials(creds))
 }
