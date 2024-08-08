@@ -56,4 +56,26 @@ func TestPasswordAuth(t *testing.T) {
 		require.Equal(t, expectedOk, ok, "expected ok")
 		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
 	})
+
+	t.Run("InvalidCredentials", func(t *testing.T) {
+		conn, err := insecureConnection(address)
+		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
+		defer conn.Close()
+		client := serverpb.NewServerServiceClient(conn)
+		ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyPassword, "invalid"))
+		ctx, cancel := context.WithTimeout(ctx, ctxTimeout)
+		defer cancel()
+
+		req := &serverpb.GetServerInfoRequest{}
+		res, err := client.GetServerInfo(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, res)
+
+		expectedOk := true
+		expectedCode := codes.Unauthenticated
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, expectedOk, ok, "expected ok")
+		assert.Equal(t, expectedCode, st.Code(), "expected status = %s; got = %s", expectedCode, st.Code())
+	})
 }
