@@ -2,9 +2,11 @@ package grpc
 
 import (
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	dbrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/db"
+	echorpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/echo"
 	kvrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/kv"
 	serverrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/server"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
@@ -20,6 +22,7 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	chainUnaryInterceptors := []grpc.UnaryServerInterceptor{
 		newLogUnaryInterceptor(s),
 		newAuthUnaryInterceptor(s),
+		newHeaderUnaryInterceptor(s),
 	}
 	opts = append(opts, grpc.ChainUnaryInterceptor(chainUnaryInterceptors...))
 
@@ -33,6 +36,7 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	}
 
 	grpcServer := grpc.NewServer(opts...)
+	echopb.RegisterEchoServiceServer(grpcServer, echorpc.NewEchoServiceServer())
 	serverpb.RegisterServerServiceServer(grpcServer, serverrpc.NewServerServiceServer(s))
 	dbpb.RegisterDBServiceServer(grpcServer, dbrpc.NewDBServiceServer(s))
 	kvpb.RegisterGeneralKVServiceServer(grpcServer, kvrpc.NewGeneralKVServiceServer(s))

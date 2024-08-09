@@ -4,8 +4,24 @@ import (
 	"context"
 
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/kvdb/version"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
+
+// newMetadataUnaryInterceptor returns unary interceptor that sends metadata back to the client.
+func newHeaderUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		lg := s.Logger()
+		md := metadata.Pairs(common.GrpcMetadataKeyAPIVersion, version.APIVersion)
+		lg.Debugf("metadata to be sent to the client: %v", md)
+		if err := grpc.SendHeader(ctx, md); err != nil {
+			return nil, err
+		}
+		return handler(ctx, req)
+	}
+}
 
 // newAuthUnaryInterceptor returns unary interceptor to handle RPC call authorization.
 func newAuthUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {

@@ -1,8 +1,10 @@
 package common
 
 const (
-	// GrpcMetadataKeyDbName represents the gRPC metadata key for database.
+	// GrpcMetadataKeyDbName is the gRPC metadata key for database.
 	GrpcMetadataKeyDbName string = "database"
-	// GrpcMetadataKeyPassword represents the gRPC metadata key for password.
+	// GrpcMetadataKeyPassword is the gRPC metadata key for password.
 	GrpcMetadataKeyPassword string = "password"
+	// GrpcMetadataKeyAPIVersion is the gRPC metadata key for API version.
+	GrpcMetadataKeyAPIVersion string = "api-version"
 )
