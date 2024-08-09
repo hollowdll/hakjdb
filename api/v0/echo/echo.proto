@@ -1,0 +1,30 @@
+// kvdbserver gRPC API
+// API version: 0.1.0
+//
+// This package contains Protobuf definitions related to echo RPCs.
+
+syntax = "proto3";
+package api.v0.echopb;
+
+option go_package = "api/v0/echopb";
+
+message UnaryEchoRequest {
+  // Message to be sent.
+  string msg = 1;
+}
+
+message UnaryEchoResponse {
+  // Message to be received.
+  string msg = 1;
+}
+
+// EchoService provides echo RPCs.
+// The RPCs in this service can be used to test connections to the server
+// with minimal network overhead.
+//
+// Common gRPC metadata keys for this service's RPCs:
+// - password: The server password. Used for authentication if the server is password protected.
+service EchoService {
+  // UnaryEcho sends a message to the server and returns the same message back.
+  rpc UnaryEcho(UnaryEchoRequest) returns (UnaryEchoResponse) {}
+}
