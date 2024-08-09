@@ -20,6 +20,7 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	chainUnaryInterceptors := []grpc.UnaryServerInterceptor{
 		newLogUnaryInterceptor(s),
 		newAuthUnaryInterceptor(s),
+		newMetadataUnaryInterceptor(s),
 	}
 	opts = append(opts, grpc.ChainUnaryInterceptor(chainUnaryInterceptors...))
 
