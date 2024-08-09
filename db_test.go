@@ -70,7 +70,7 @@ func TestSetString(t *testing.T) {
 		db := NewDB("test", "", dbCfg)
 		db.SetString("key1", []byte("value1"))
 
-		var expectedKeys uint32 = 1
+		var expectedKeys = 1
 		keys := db.GetKeyCount()
 		if keys != expectedKeys {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
@@ -82,7 +82,7 @@ func TestSetString(t *testing.T) {
 		db.SetString("key1", []byte("value1"))
 		db.SetString("key1", []byte("value2"))
 
-		var expectedKeys uint32 = 1
+		var expectedKeys = 1
 		keys := db.GetKeyCount()
 		if keys != expectedKeys {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
@@ -293,6 +293,15 @@ func TestGetKeyCount(t *testing.T) {
 	if count != 0 {
 		t.Fatalf("key count should be 0 but got %d", count)
 	}
+
+	db.SetString("key1", []byte("value1"))
+	db.SetHashMap("key2", map[string][]byte{
+		"field1": []byte("value1"),
+	})
+	count = db.GetKeyCount()
+	if count != 2 {
+		t.Fatalf("key count should be 2 but got %d", count)
+	}
 }
 
 func TestDeleteAllKeys(t *testing.T) {
@@ -318,7 +327,7 @@ func TestDeleteAllKeys(t *testing.T) {
 		}
 
 		count := db.GetKeyCount()
-		var expectedCount uint32 = 3
+		var expectedCount = 3
 		if count != expectedCount {
 			t.Fatalf("expected keys = %d; got = %d", expectedCount, count)
 		}
@@ -384,7 +393,7 @@ func TestSetHashMap(t *testing.T) {
 			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded, fieldsAdded)
 		}
 
-		var expectedKeys uint32 = 1
+		var expectedKeys = 1
 		keys := db.GetKeyCount()
 		if keys != expectedKeys {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)
@@ -401,7 +410,7 @@ func TestSetHashMap(t *testing.T) {
 			t.Errorf("expected fields added = %d; got = %d", expectedFieldsAdded, fieldsAdded)
 		}
 
-		var expectedKeys uint32 = 1
+		var expectedKeys = 1
 		keys := db.GetKeyCount()
 		if keys != expectedKeys {
 			t.Errorf("expected keys = %d; got = %d", expectedKeys, keys)

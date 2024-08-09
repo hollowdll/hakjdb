@@ -180,7 +180,7 @@ func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) 
 		Name:      db.Name(),
 		CreatedAt: timestamppb.New(db.CreatedAt()),
 		UpdatedAt: timestamppb.New(db.UpdatedAt()),
-		KeyCount:  db.GetKeyCount(),
+		KeyCount:  uint32(db.GetKeyCount()),
 		DataSize:  db.GetEstimatedStorageSizeBytes(),
 	}
 

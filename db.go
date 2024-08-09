@@ -82,10 +82,9 @@ type DB struct {
 	updatedAt time.Time
 	// The data stored in this database.
 	storedData dbStoredData
-	// The current number of keys in this database.
-	keyCount uint32
-	cfg      DBConfig
-	mu       sync.RWMutex
+
+	cfg DBConfig
+	mu  sync.RWMutex
 }
 
 func NewDB(name string, desc string, cfg DBConfig) *DB {
@@ -95,7 +94,6 @@ func NewDB(name string, desc string, cfg DBConfig) *DB {
 		createdAt:   time.Now().UTC(),
 		updatedAt:   time.Now().UTC(),
 		storedData:  *newDBStoredData(),
-		keyCount:    0,
 		cfg:         cfg,
 	}
 }
@@ -151,10 +149,10 @@ func (db *DB) keyExists(key DBKey) bool {
 }
 
 // GetKeyCount returns the number of keys in the database.
-func (db *DB) GetKeyCount() uint32 {
+func (db *DB) GetKeyCount() int {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
-	return db.keyCount
+	return len(db.storedData.stringData) + len(db.storedData.hashMapData)
 }
 
 // GetEstimatedStorageSizeBytes returns the estimated size of stored data in bytes.
@@ -230,10 +228,6 @@ func (db *DB) SetString(key string, value []byte) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	if !db.keyExists(DBKey(key)) {
-		db.keyCount++
-	}
-
 	// Overwrite other data types
 	delete(db.storedData.hashMapData, DBKey(key))
 
@@ -253,14 +247,12 @@ func (db *DB) DeleteKeys(keys []string) uint32 {
 		if ok {
 			delete(db.storedData.stringData, DBKey(key))
 			keysDeleted++
-			db.keyCount--
 			continue
 		}
 		_, ok = db.storedData.hashMapData[DBKey(key)]
 		if ok {
 			delete(db.storedData.hashMapData, DBKey(key))
 			keysDeleted++
-			db.keyCount--
 		}
 	}
 
@@ -281,8 +273,6 @@ func (db *DB) DeleteAllKeys() {
 	for key := range db.storedData.hashMapData {
 		delete(db.storedData.hashMapData, key)
 	}
-
-	db.keyCount = 0
 	db.update()
 }
 
@@ -307,10 +297,6 @@ func (db *DB) GetAllKeys() []string {
 func (db *DB) SetHashMap(key string, fields map[string][]byte) uint32 {
 	db.mu.Lock()
 	defer db.mu.Unlock()
-
-	if !db.keyExists(DBKey(key)) {
-		db.keyCount++
-	}
 
 	// Overwrite other data types
 	delete(db.storedData.stringData, DBKey(key))

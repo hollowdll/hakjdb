@@ -208,7 +208,7 @@ func (s *KvdbServer) CreateDefaultDatabase(name string) {
 
 // DBMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
 func (s *KvdbServer) DBMaxKeysReached(db *kvdb.DB) bool {
-	return db.GetKeyCount() >= s.Cfg.MaxKeysPerDB
+	return uint32(db.GetKeyCount()) >= s.Cfg.MaxKeysPerDB
 }
 
 // Init initializes the server.
