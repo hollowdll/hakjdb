@@ -11,7 +11,7 @@ import (
 )
 
 // newMetadataUnaryInterceptor returns unary interceptor that sends metadata back to the client.
-func newMetadataUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
+func newHeaderUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		lg := s.Logger()
 		md := metadata.Pairs(common.GrpcMetadataKeyAPIVersion, version.APIVersion)
