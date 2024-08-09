@@ -1,5 +1,5 @@
 // kvdbserver gRPC API
-// API version: 0.1.0
+// API version: 0.2.0
 //
 // This package contains Protobuf definitions related to the server.
 
