@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,7 +22,7 @@ func TestSetString(t *testing.T) {
 	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -33,7 +33,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -51,7 +51,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("Success", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -64,7 +64,7 @@ func TestSetString(t *testing.T) {
 	})
 
 	t.Run("InvalidKey", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -84,7 +84,7 @@ func TestSetString(t *testing.T) {
 	t.Run("MaxKeyLimitReached", func(t *testing.T) {
 		cfg := cfg
 		cfg.MaxKeysPerDB = 1
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -114,7 +114,7 @@ func TestGetString(t *testing.T) {
 	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -125,7 +125,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -143,7 +143,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -159,7 +159,7 @@ func TestGetString(t *testing.T) {
 	})
 
 	t.Run("KeyFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewStringKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)

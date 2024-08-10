@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -19,7 +19,7 @@ func TestCreateDB(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("DatabaseNotExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "test"
 
@@ -32,7 +32,7 @@ func TestCreateDB(t *testing.T) {
 	})
 
 	t.Run("DatabaseAlreadyExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "test"
 
@@ -51,7 +51,7 @@ func TestCreateDB(t *testing.T) {
 	})
 
 	t.Run("InvalidDatabaseName", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "   "
 
@@ -71,7 +71,7 @@ func TestGetAllDBs(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("NoDatabases", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		expected := 0
 		req := &dbpb.GetAllDBsRequest{}
@@ -83,7 +83,7 @@ func TestGetAllDBs(t *testing.T) {
 	})
 
 	t.Run("MultipleDatabases", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 
 		dbs := []string{"db0", "db1", "db2"}
@@ -109,7 +109,7 @@ func TestGetDBInfo(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "db0"
 
@@ -125,7 +125,7 @@ func TestGetDBInfo(t *testing.T) {
 	})
 
 	t.Run("DatabaseExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "db0"
 
@@ -150,7 +150,7 @@ func TestDeleteDB(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("DatabaseExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -164,7 +164,7 @@ func TestDeleteDB(t *testing.T) {
 	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 
@@ -184,7 +184,7 @@ func TestDefaultDatabase(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("GetDatabaseInfo", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -197,7 +197,7 @@ func TestDefaultDatabase(t *testing.T) {
 	})
 
 	t.Run("GetAllDatabases", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)

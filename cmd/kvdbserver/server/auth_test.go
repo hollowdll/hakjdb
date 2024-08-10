@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -19,7 +19,7 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("PasswordEnabled", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		password := "pass321"
 		s.EnablePasswordProtection(password)
 
@@ -29,13 +29,13 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 	})
 
 	t.Run("PasswordDisabled", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		err := s.AuthorizeIncomingRpcCall(context.Background())
 		assert.NoErrorf(t, err, "expected no error; error = %s", err)
 	})
 
 	t.Run("InvalidCredentials", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		password := "pass321!"
 		s.EnablePasswordProtection(password)
 

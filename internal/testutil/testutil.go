@@ -16,15 +16,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func DisabledLogger() kvdb.Logger {
-	lg := kvdb.NewDefaultLogger()
-	lg.Disable()
-	return lg
-}
-
 func StartTestServer(cfg config.ServerConfig) (*server.KvdbServer, *grpc.Server, int) {
 	fmt.Fprint(os.Stderr, "creating test server\n")
-	s := server.NewKvdbServer(cfg, DisabledLogger())
+	s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 	s.CreateDefaultDatabase(cfg.DefaultDB)
 	gs := grpcserver.SetupGrpcServer(s)
 

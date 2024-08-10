@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,7 +20,7 @@ func TestGetServerInfo(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("Success", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		connLis := server.NewClientConnListener(nil, s, cfg.MaxClientConnections)
 		s.ClientConnListener = connLis
 		grpcSrv := NewServerServiceServer(s)
@@ -36,7 +36,7 @@ func TestGetLogs(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("LogFileNotEnabled", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		grpcSrv := NewServerServiceServer(s)
 		req := &serverpb.GetLogsRequest{}
 		resp, err := grpcSrv.GetLogs(context.Background(), req)
@@ -54,7 +54,7 @@ func TestGetLogs(t *testing.T) {
 		cfg := cfg
 		cfg.LogFilePath = logFilePath
 		cfg.LogFileEnabled = true
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		s.EnableLogFile()
 		defer s.CloseLogger()
 		grpcSrv := NewServerServiceServer(s)
@@ -80,7 +80,7 @@ func TestGetLogs(t *testing.T) {
 		cfg := cfg
 		cfg.LogFilePath = logFilePath
 		cfg.LogFileEnabled = true
-		s := server.NewKvdbServer(cfg, testutil.DisabledLogger())
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		s.EnableLogFile()
 		defer s.CloseLogger()
 		grpcSrv := NewServerServiceServer(s)
