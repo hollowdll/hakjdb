@@ -5,17 +5,18 @@ import (
 	"testing"
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/internal/testutil"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetServerInfoWithTLS(t *testing.T) {
-	cfg := tlsConfig()
-	_, gs, port := startTestServer(cfg)
-	defer gs.Stop()
-	address := getServerAddress(port)
+	cfg := testutil.TLSConfig()
+	_, gs, port := testutil.StartTestServer(cfg)
+	defer testutil.StopTestServer(gs)
+	address := testutil.GetServerAddress(port)
 
 	t.Run("WithCredentials", func(t *testing.T) {
-		conn, err := secureConnection(address)
+		conn, err := testutil.SecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)
@@ -29,7 +30,7 @@ func TestGetServerInfoWithTLS(t *testing.T) {
 	})
 
 	t.Run("WithoutCredentials", func(t *testing.T) {
-		conn, err := insecureConnection(address)
+		conn, err := testutil.InsecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)

@@ -79,6 +79,12 @@ func NewDefaultLogger() *DefaultLogger {
 	return lg
 }
 
+func DisabledLogger() *DefaultLogger {
+	lg := NewDefaultLogger()
+	lg.Disable()
+	return lg
+}
+
 func (l *DefaultLogger) SetLogLevel(level LogLevel) {
 	l.logLevel = level
 }

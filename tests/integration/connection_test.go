@@ -5,25 +5,26 @@ import (
 	"testing"
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 )
 
 func TestMaxClientConnections(t *testing.T) {
 	var maxConnections uint32 = 5
-	cfg := defaultConfig()
+	cfg := testutil.DefaultConfig()
 	cfg.MaxClientConnections = maxConnections
-	_, gs, port := startTestServer(cfg)
-	defer gs.Stop()
+	_, gs, port := testutil.StartTestServer(cfg)
+	defer testutil.StopTestServer(gs)
 
-	address := getServerAddress(port)
+	address := testutil.GetServerAddress(port)
 	connections := make([]*grpc.ClientConn, maxConnections+5)
 	req := &serverpb.GetServerInfoRequest{}
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
 
 	for i := 0; i < len(connections); i++ {
-		conn, err := insecureConnection(address)
+		conn, err := testutil.InsecureConnection(address)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
 
 		client := serverpb.NewServerServiceClient(conn)
@@ -43,7 +44,7 @@ func TestMaxClientConnections(t *testing.T) {
 		}
 	}
 
-	conn, err := insecureConnection(address)
+	conn, err := testutil.InsecureConnection(address)
 	assert.NoErrorf(t, err, "expected no error; error = %v", err)
 
 	client := serverpb.NewServerServiceClient(conn)
