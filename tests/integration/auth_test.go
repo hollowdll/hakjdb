@@ -6,6 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/kvdb/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -14,15 +15,15 @@ import (
 )
 
 func TestPasswordAuth(t *testing.T) {
-	cfg := defaultConfig()
+	cfg := testutil.DefaultConfig()
 	password := "pass123"
-	s, gs, port := startTestServer(cfg)
-	defer gs.Stop()
+	s, gs, port := testutil.StartTestServer(cfg)
+	defer testutil.StopTestServer(gs)
 	s.EnablePasswordProtection(password)
-	address := getServerAddress(port)
+	address := testutil.GetServerAddress(port)
 
 	t.Run("WithPassword", func(t *testing.T) {
-		conn, err := insecureConnection(address)
+		conn, err := testutil.InsecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)
@@ -37,7 +38,7 @@ func TestPasswordAuth(t *testing.T) {
 	})
 
 	t.Run("WithoutPassword", func(t *testing.T) {
-		conn, err := insecureConnection(address)
+		conn, err := testutil.InsecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)
@@ -58,7 +59,7 @@ func TestPasswordAuth(t *testing.T) {
 	})
 
 	t.Run("InvalidCredentials", func(t *testing.T) {
-		conn, err := insecureConnection(address)
+		conn, err := testutil.InsecureConnection(address)
 		require.NoErrorf(t, err, "expected connection but connection failed: %v", err)
 		defer conn.Close()
 		client := serverpb.NewServerServiceClient(conn)
