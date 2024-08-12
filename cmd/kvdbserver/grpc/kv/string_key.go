@@ -6,7 +6,6 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
 
 type StringKVServiceServer struct {
@@ -20,10 +19,6 @@ func NewStringKVServiceServer(s *server.KvdbServer) kvpb.StringKVServiceServer {
 
 // SetString is the implementation of RPC SetString.
 func (s *StringKVServiceServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) (res *kvpb.SetStringResponse, err error) {
-	if err = validation.ValidateDBKey(req.Key); err != nil {
-		return nil, grpcerrors.ToGrpcError(err)
-	}
-
 	res, err = s.srv.SetString(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)

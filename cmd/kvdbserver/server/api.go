@@ -10,6 +10,7 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -131,6 +132,10 @@ func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	if err := validation.ValidateDBName(req.DbName); err != nil {
+		return nil, err
+	}
+
 	if s.dbExists(req.DbName) {
 		return nil, kvdberrors.ErrDatabaseExists
 	}
@@ -245,6 +250,10 @@ func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) 
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
+	if err := validation.ValidateDBKey(req.Key); err != nil {
+		return nil, err
+	}
+
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		return nil, kvdberrors.ErrDatabaseNotFound
@@ -276,6 +285,10 @@ func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) 
 func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
+
+	if err := validation.ValidateDBKey(req.Key); err != nil {
+		return nil, err
+	}
 
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
