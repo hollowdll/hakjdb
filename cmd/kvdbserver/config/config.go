@@ -15,8 +15,6 @@ const (
 	configFileType string = "yaml"
 	logFileName    string = "kvdbserver.log"
 
-	// EnvPrefix is the prefix that environment variables use.
-	EnvPrefix string = "KVDB"
 	// ConfigKeyPort is the configuration key for port.
 	ConfigKeyPort string = "port"
 	// ConfigKeyDebugEnabled is the configuration key for debug mode.
@@ -35,13 +33,18 @@ const (
 	ConfigKeyMaxClientConnections string = "max_client_connections"
 	// ConfigKeyLogLevel is the configuration key for log level.
 	ConfigKeyLogLevel string = "log_level"
+	// VerboseLogsEnabled is the configuration key for enabling verbose logs.
+	ConfigKeyVerboseLogsEnabled string = "verbose_logs_enabled"
 
+	// EnvPrefix is the prefix that environment variables use.
+	EnvPrefix string = "KVDB"
 	// EnvVarPassword is the environment variable for server password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 
 	DefaultLogFileEnabled       bool   = false
 	DefaultTLSEnabled           bool   = false
 	DefaultDebugEnabled         bool   = false
+	DefaultVerboseLogsEnabled   bool   = false
 	DefaultDatabase             string = "default"
 	DefaultPort                 uint16 = common.ServerDefaultPort
 	DefaultLogFilePath          string = ""
@@ -55,9 +58,10 @@ const (
 
 // ServerConfig holds the server's configuration.
 type ServerConfig struct {
-	LogFileEnabled bool
-	TLSEnabled     bool
-	DebugEnabled   bool
+	LogFileEnabled     bool
+	TLSEnabled         bool
+	DebugEnabled       bool
+	VerboseLogsEnabled bool
 
 	// The name of the default database that is created at server startup.
 	DefaultDB string
@@ -100,6 +104,7 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
 	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
 	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
+	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
 	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
 	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
@@ -123,6 +128,7 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 		LogFileEnabled:       viper.GetBool(ConfigKeyLogFileEnabled),
 		TLSEnabled:           viper.GetBool(ConfigKeyTLSEnabled),
 		DebugEnabled:         viper.GetBool(ConfigKeyDebugEnabled),
+		VerboseLogsEnabled:   viper.GetBool(ConfigKeyVerboseLogsEnabled),
 		DefaultDB:            viper.GetString(ConfigKeyDefaultDatabase),
 		LogFilePath:          filepath.Join(dataDirPath, logFileName),
 		MaxKeysPerDB:         DefaultMaxKeysPerDB,
@@ -140,6 +146,7 @@ func DefaultConfig() ServerConfig {
 		LogFileEnabled:       DefaultLogFileEnabled,
 		TLSEnabled:           DefaultTLSEnabled,
 		DebugEnabled:         DefaultDebugEnabled,
+		VerboseLogsEnabled:   DefaultVerboseLogsEnabled,
 		DefaultDB:            DefaultDatabase,
 		LogFilePath:          DefaultLogFilePath,
 		MaxKeysPerDB:         DefaultMaxKeysPerDB,
