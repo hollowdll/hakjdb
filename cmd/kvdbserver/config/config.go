@@ -124,6 +124,10 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 	lg.Infof("Using log level %s", logLevelStr)
 	lg.SetLogLevel(logLevel)
 
+	if viper.GetBool(ConfigKeyVerboseLogsEnabled) {
+		lg.Info("verbose logs are enabled")
+	}
+
 	return ServerConfig{
 		LogFileEnabled:       viper.GetBool(ConfigKeyLogFileEnabled),
 		TLSEnabled:           viper.GetBool(ConfigKeyTLSEnabled),
