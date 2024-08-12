@@ -49,7 +49,7 @@ type HashMapKVService interface {
 }
 
 func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
-	logger := s.Logger()
+	lg := s.Logger()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	if s.ClientConnListener != nil {
@@ -59,7 +59,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 
 	osInfo, err := getOsInfo()
 	if err != nil {
-		logger.Errorf("%v: %v", kvdberrors.ErrGetOSInfo, err)
+		lg.Errorf("%v: %v", kvdberrors.ErrGetOSInfo, err)
 		return nil, kvdberrors.ErrGetOSInfo
 	}
 	var m runtime.MemStats
@@ -111,7 +111,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 }
 
 func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (*serverpb.GetLogsResponse, error) {
-	logger := s.Logger()
+	lg := s.Logger()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -121,7 +121,7 @@ func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) 
 
 	logs, err := common.ReadFileLines(s.Cfg.LogFilePath)
 	if err != nil {
-		logger.Errorf("%v: %v", kvdberrors.ErrReadLogFile, err)
+		lg.Errorf("%v: %v", kvdberrors.ErrReadLogFile, err)
 		return nil, kvdberrors.ErrReadLogFile
 	}
 
@@ -129,33 +129,42 @@ func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) 
 }
 
 func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
+	lg := s.Logger()
 	if err := validation.ValidateDBName(req.DbName); err != nil {
+		logCannotCreateDB(lg, req.DbName, err)
 		return nil, err
 	}
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if s.dbExists(req.DbName) {
-		return nil, kvdberrors.ErrDatabaseExists
+		err := kvdberrors.ErrDatabaseExists
+		logCannotCreateDB(lg, req.DbName, err)
+		return nil, err
 	}
 
 	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
 	db := kvdb.NewDB(req.DbName, "", dbConfig)
 	s.dbs[db.Name()] = db
+	lg.Infof("Created database '%s'", db.Name())
 
 	return &dbpb.CreateDBResponse{DbName: db.Name()}, nil
 }
 
 func (s *KvdbServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error) {
+	lg := s.Logger()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if !s.dbExists(req.DbName) {
-		return nil, kvdberrors.ErrDatabaseNotFound
+		err := kvdberrors.ErrDatabaseNotFound
+		logCannotDeleteDB(lg, req.DbName, err)
+		return nil, err
 	}
 
 	delete(s.dbs, req.DbName)
+	lg.Infof("Deleted database '%s'", req.DbName)
 
 	return &dbpb.DeleteDBResponse{DbName: req.DbName}, nil
 }
@@ -173,11 +182,14 @@ func (s *KvdbServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) 
 }
 
 func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error) {
+	lg := s.Logger()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
 	if !s.dbExists(req.DbName) {
-		return nil, kvdberrors.ErrDatabaseNotFound
+		err := kvdberrors.ErrDatabaseNotFound
+		logCannotGetDBInfo(lg, req.DbName, err)
+		return nil, err
 	}
 
 	db := s.dbs[req.DbName]
@@ -247,12 +259,12 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysR
 }
 
 func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) (*kvpb.SetStringResponse, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
 	if err := validation.ValidateDBKey(req.Key); err != nil {
 		return nil, err
 	}
+
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
@@ -283,12 +295,12 @@ func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) 
 }
 
 func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
 	if err := validation.ValidateDBKey(req.Key); err != nil {
 		return nil, err
 	}
+
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
@@ -356,4 +368,16 @@ func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHa
 	fieldsRemovedCount, ok := s.dbs[dbName].DeleteHashMapFields(req.Key, req.Fields)
 
 	return &kvpb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
+}
+
+func logCannotCreateDB(lg kvdb.Logger, dbName string, err error) {
+	lg.Errorf("cannot create database '%s': %v", dbName, err)
+}
+
+func logCannotDeleteDB(lg kvdb.Logger, dbName string, err error) {
+	lg.Errorf("cannot delete database '%s': %v", dbName, err)
+}
+
+func logCannotGetDBInfo(lg kvdb.Logger, dbName string, err error) {
+	lg.Errorf("cannot get information about database '%s': %v", dbName, err)
 }
