@@ -38,14 +38,10 @@ var (
 
 	// ErrMissingMetadata is returned when gRPC requires metadata
 	// but it is missing.
-	//
-	// DEPRECATED.
 	ErrMissingMetadata = errors.New("missing metadata")
 
 	// ErrMissingKeyInMetadata is returned when a required key is missing
 	// in gRPC metadata.
-	//
-	// DEPRECATED.
 	ErrMissingKeyInMetadata = errors.New("missing key in metadata")
 
 	// ErrInvalidCredentials is returned in authorization process
