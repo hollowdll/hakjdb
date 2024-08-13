@@ -6,7 +6,6 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
 
 type HashMapKVServiceServer struct {
@@ -20,10 +19,6 @@ func NewHashMapKVServiceServer(s *server.KvdbServer) kvpb.HashMapKVServiceServer
 
 // SetHashMap is the implementation of RPC SetHashMap.
 func (s *HashMapKVServiceServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (res *kvpb.SetHashMapResponse, err error) {
-	if err = validation.ValidateDBKey(req.Key); err != nil {
-		return nil, grpcerrors.ToGrpcError(err)
-	}
-
 	res, err = s.srv.SetHashMap(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)

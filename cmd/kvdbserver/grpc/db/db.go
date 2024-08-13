@@ -6,7 +6,6 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 )
 
 type DBServiceServer struct {
@@ -20,10 +19,6 @@ func NewDBServiceServer(s *server.KvdbServer) dbpb.DBServiceServer {
 
 // CreateDB is the implementation of RPC CreateDB.
 func (s *DBServiceServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (res *dbpb.CreateDBResponse, err error) {
-	if err = validation.ValidateDBName(req.DbName); err != nil {
-		return nil, grpcerrors.ToGrpcError(err)
-	}
-
 	res, err = s.srv.CreateDB(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)

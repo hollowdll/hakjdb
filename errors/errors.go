@@ -1,29 +1,29 @@
 package errors
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	// ErrDatabaseNotFound is returned when a database couldn't be found.
 	ErrDatabaseNotFound = errors.New("database not found")
 
-	// ErrDatabaseExists is returned when creating a database that already exists.
+	// ErrDatabaseExists is returned when setting a database name that already exists.
 	ErrDatabaseExists = errors.New("database already exists")
 
-	// ErrDatabaseNameEmpty is returned when creating a database with a blank name.
+	// ErrDatabaseNameRequired is returned when setting a blank database name.
 	ErrDatabaseNameRequired = errors.New("database name required")
 
-	// ErrDatabaseNameTooLong is returned when creating a database with a name
-	// that is larger than DbNameMaxSize.
+	// ErrDatabaseNameTooLong is returned when setting a database name that is too long.
 	ErrDatabaseNameTooLong = errors.New("database name too long")
 
-	// ErrDatabaseNameInvalid is returned when creating a database with a name
-	// that contains invalid characters.
+	// ErrDatabaseNameInvalid is returned when setting a database name that contains invalid characters.
 	ErrDatabaseNameInvalid = errors.New("database name contains invalid characters")
 
 	// ErrDatabaseKeyRequired is returned when inserting a key with a blank name.
 	ErrDatabaseKeyRequired = errors.New("key required")
 
-	// ErrDatabaseKeyTooLong is returned when inserting a key that is larger than DbKeyMaxSize.
+	// ErrDatabaseKeyTooLong is returned when inserting a key that is too long.
 	ErrDatabaseKeyTooLong = errors.New("key too long")
 
 	// ErrDatabaseKeyInvalid is returned when inserting a key with a name that contains
@@ -38,14 +38,10 @@ var (
 
 	// ErrMissingMetadata is returned when gRPC requires metadata
 	// but it is missing.
-	//
-	// DEPRECATED.
 	ErrMissingMetadata = errors.New("missing metadata")
 
 	// ErrMissingKeyInMetadata is returned when a required key is missing
 	// in gRPC metadata.
-	//
-	// DEPRECATED.
 	ErrMissingKeyInMetadata = errors.New("missing key in metadata")
 
 	// ErrInvalidCredentials is returned in authorization process

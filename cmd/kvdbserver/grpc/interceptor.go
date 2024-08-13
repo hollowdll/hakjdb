@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 
+	"github.com/hollowdll/kvdb"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
@@ -41,13 +42,37 @@ func newLogUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		logger := s.Logger()
 		dbName := s.GetDBNameFromContext(ctx)
-		logger.Debugf("(call) %s: db = %s; req = %v", info.FullMethod, dbName, req)
+		logRequestCall(logger, s.Cfg.VerboseLogsEnabled, info.FullMethod, dbName, req)
 		resp, err := handler(ctx, req)
 		if err != nil {
-			logger.Errorf("(failed) %s: db = %s; req = %v; error = %v", info.FullMethod, dbName, req, err)
+			logRequestFailed(logger, s.Cfg.VerboseLogsEnabled, info.FullMethod, dbName, req, err)
 		} else {
-			logger.Debugf("(success) %s: db = %s; req = %v; resp = %v", info.FullMethod, dbName, req, resp)
+			logRequestSuccess(logger, s.Cfg.VerboseLogsEnabled, info.FullMethod, dbName, req, resp)
 		}
 		return resp, err
+	}
+}
+
+func logRequestCall(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any) {
+	if verbose {
+		logger.Debugf("(call) %s: db = %s; req = %v", fullMethod, dbName, req)
+	} else {
+		logger.Debugf("(call) %s", fullMethod)
+	}
+}
+
+func logRequestFailed(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, err error) {
+	if verbose {
+		logger.Errorf("(failed) %s: db = %s; req = %v; error = %v", fullMethod, dbName, req, err)
+	} else {
+		logger.Errorf("(failed) %s: %v", fullMethod, err)
+	}
+}
+
+func logRequestSuccess(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, resp any) {
+	if verbose {
+		logger.Debugf("(success) %s: db = %s; req = %v; resp = %v", fullMethod, dbName, req, resp)
+	} else {
+		logger.Debugf("(success) %s", fullMethod)
 	}
 }
