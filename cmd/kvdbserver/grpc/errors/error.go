@@ -24,6 +24,7 @@ var grpcErrorMap = map[error]error{
 	kvdberrors.ErrLogFileNotEnabled:  status.Error(codes.FailedPrecondition, kvdberrors.ErrLogFileNotEnabled.Error()),
 	kvdberrors.ErrReadLogFile:        status.Error(codes.Internal, kvdberrors.ErrReadLogFile.Error()),
 	kvdberrors.ErrGetOSInfo:          status.Error(codes.Internal, kvdberrors.ErrGetOSInfo.Error()),
+	kvdberrors.ErrMissingMetadata:    status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error()),
 }
 
 // ToGrpcError converts error to the correct gRPC error status.
