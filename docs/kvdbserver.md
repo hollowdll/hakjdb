@@ -35,6 +35,7 @@ tls_cert_path: ""
 tls_enabled: false
 tls_private_key_path: ""
 log_level: info
+verbose_logs_enabled: false
 ```
 
 Meaning of fields:
@@ -48,6 +49,7 @@ Meaning of fields:
 - `tls_enabled`: Enable TLS. If enabled, connections will be encrypted. Can be true or false.
 - `tls_private_key_path`: The path to the TLS private key.
 - `log_level`: The log level. Can be debug, info, warning, error, or fatal.
+- `verbose_logs_enabled`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
 
 # Environment variables
 
@@ -65,6 +67,7 @@ Below is a list of all environment variables:
 - `KVDB_TLS_PRIVATE_KEY_PATH`: The path to the TLS private key.
 - `KVDB_MAX_CLIENT_CONNECTIONS`: The maximum number of active client connections allowed.
 - `KVDB_LOG_LEVEL`: The log level. Can be debug, info, warning, error, or fatal.
+- `KVDB_VERBOSE_LOGS_ENABLED`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
 
 # Debug mode
 

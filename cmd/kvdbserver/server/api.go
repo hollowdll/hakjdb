@@ -116,7 +116,7 @@ func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) 
 	defer s.mu.RUnlock()
 
 	if !s.Cfg.LogFileEnabled {
-		lg.Debugf("Logs were requested but the log file is not enabled. Consider enabling it.")
+		lg.Debug("Logs were requested but the log file is not enabled. Consider enabling it.")
 		return nil, kvdberrors.ErrLogFileNotEnabled
 	}
 
