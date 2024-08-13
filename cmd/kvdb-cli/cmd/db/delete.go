@@ -7,45 +7,36 @@ import (
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc/metadata"
 )
 
 var cmdDbDelete = &cobra.Command{
-	Use:   "delete",
+	Use:   "delete NAME",
 	Short: "Delete a database",
 	Long:  "Deletes a database.",
+	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteDatabase()
+		deleteDatabase(args[0])
 	},
 }
 
-func init() {
-	cmdDbDelete.Flags().StringVarP(&dbName, "name", "n", "", "name of the database")
-}
-
-func deleteDatabase() {
-	if !promptConfirmDelete() {
+func deleteDatabase(name string) {
+	if !promptConfirmDelete(name) {
 		return
 	}
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
-	if len(dbName) < 1 {
-		dbName = viper.GetString(config.ConfigKeyDatabase)
-	}
 
-	res, err := client.GrpcDBClient.DeleteDB(ctx, &dbpb.DeleteDBRequest{DbName: dbName})
+	res, err := client.GrpcDBClient.DeleteDB(ctx, &dbpb.DeleteDBRequest{DbName: name})
 	client.CheckGrpcError(err)
-
 	fmt.Println(res.DbName)
 }
 
-func promptConfirmDelete() bool {
+func promptConfirmDelete(dbName string) bool {
 	var input string
-	fmt.Print("Delete database and all its data? Yes/No: ")
+	fmt.Printf("Delete database '%s' and all its data? Yes/No: ", dbName)
 	_, err := fmt.Scanln(&input)
 	input = strings.TrimSpace(input)
 	if input == "" {
