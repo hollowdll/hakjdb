@@ -34,3 +34,9 @@ git tag -a v0.1.0 -m "Release v0.1.0"
 git push origin v0.1.0
 ```
 Replace `v0.1.0` with the actual release version.
+
+# Update the gRPC API version
+
+- Update the `APIVersion` constant in `version/version.go` source code file.
+- Update the API version comment in all .proto files in `api/` directory.
+- Treat the API version as a whole in all proto files so it is clear which API version the proto file belongs to.
