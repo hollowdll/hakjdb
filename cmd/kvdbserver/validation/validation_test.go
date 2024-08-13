@@ -59,6 +59,64 @@ func TestValidateDBName(t *testing.T) {
 	}
 }
 
+func TestValidateDBDesc(t *testing.T) {
+	maxDBDescSize := 255
+	type TestCase struct {
+		desc  string
+		valid bool
+	}
+	cases := []TestCase{
+		{
+			desc:  "",
+			valid: true,
+		},
+		{
+			desc:  " ",
+			valid: true,
+		},
+		{
+			desc:  "  ",
+			valid: true,
+		},
+		{
+			desc:  "          ",
+			valid: true,
+		},
+		{
+			desc:  "   asd      ",
+			valid: true,
+		},
+		{
+			desc:  "  a   s     d    .",
+			valid: true,
+		},
+		{
+			desc:  strings.Repeat("a", maxDBDescSize),
+			valid: true,
+		},
+		{
+			desc:  strings.Repeat(" ", maxDBDescSize),
+			valid: true,
+		},
+		{
+			desc:  strings.Repeat("a", maxDBDescSize+1),
+			valid: false,
+		},
+		{
+			desc:  strings.Repeat(" ", maxDBDescSize+1),
+			valid: false,
+		},
+	}
+	for _, test := range cases {
+		err := ValidateDBDesc(test.desc)
+		if test.valid && err != nil {
+			t.Errorf("database description '%s' should be valid but is invalid", test.desc)
+		} else if !test.valid && err == nil {
+			t.Errorf("database description '%s' should be invalid but is valid", test.desc)
+		}
+	}
+}
+
 func TestValidateDBKey(t *testing.T) {
 	maxKeySize := 1024
 	type TestCase struct {
