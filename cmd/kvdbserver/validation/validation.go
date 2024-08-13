@@ -10,6 +10,8 @@ import (
 const (
 	// DbNameMaxSize is the maximum length of a database name in bytes.
 	DbNameMaxSize int = 64
+	// DbDescriptionMaxSize is the maximum length of a database description in bytes.
+	DbDescMaxSize int = 255
 	// DbKeyMaxSize is the maximum length of a database key in bytes.
 	DbKeyMaxSize int = 1024
 )
@@ -44,7 +46,15 @@ func ValidateDBName(name string) error {
 	if !dbNameContainsValidCharacters(name) {
 		return kvdberrors.ErrDatabaseNameInvalid
 	}
+	return nil
+}
 
+// ValidateDBDesc validates database description.
+// Returns error if validation error is matched.
+func ValidateDBDesc(desc string) error {
+	if isTooLong(desc, DbDescMaxSize) {
+		return kvdberrors.ErrDatabaseDescriptionTooLong
+	}
 	return nil
 }
 
@@ -57,6 +67,5 @@ func ValidateDBKey(key string) error {
 	if isTooLong(string(key), DbKeyMaxSize) {
 		return kvdberrors.ErrDatabaseKeyTooLong
 	}
-
 	return nil
 }

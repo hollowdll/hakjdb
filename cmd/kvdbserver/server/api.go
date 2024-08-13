@@ -130,7 +130,7 @@ func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) 
 }
 
 func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error) {
-	if err := validation.ValidateDBName(req.DbName); err != nil {
+	if err := validateCreateDB(req); err != nil {
 		return nil, err
 	}
 
@@ -139,12 +139,12 @@ func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*
 	defer s.mu.Unlock()
 
 	if s.dbExists(req.DbName) {
-		logDBNotFound(lg, req.DbName)
+		logDBAlreadyExists(lg, req.DbName)
 		return nil, kvdberrors.ErrDatabaseExists
 	}
 
 	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
-	db := kvdb.NewDB(req.DbName, "", dbConfig)
+	db := kvdb.NewDB(req.DbName, req.Description, dbConfig)
 	s.dbs[db.Name()] = db
 	lg.Infof("Created database '%s'", db.Name())
 
@@ -191,11 +191,12 @@ func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) 
 
 	db := s.dbs[req.DbName]
 	data := &dbpb.DBInfo{
-		Name:      db.Name(),
-		CreatedAt: timestamppb.New(db.CreatedAt()),
-		UpdatedAt: timestamppb.New(db.UpdatedAt()),
-		KeyCount:  uint32(db.GetKeyCount()),
-		DataSize:  db.GetEstimatedStorageSizeBytes(),
+		Name:        db.Name(),
+		Description: db.Description(),
+		CreatedAt:   timestamppb.New(db.CreatedAt()),
+		UpdatedAt:   timestamppb.New(db.UpdatedAt()),
+		KeyCount:    uint32(db.GetKeyCount()),
+		DataSize:    db.GetEstimatedStorageSizeBytes(),
 	}
 
 	return &dbpb.GetDBInfoResponse{Data: data}, nil
@@ -399,4 +400,14 @@ func logDBAlreadyExists(lg kvdb.Logger, dbName string) {
 
 func logMaxKeysReached(lg kvdb.Logger, dbName string) {
 	lg.Warningf("maximum number of keys reached in database '%s'", dbName)
+}
+
+func validateCreateDB(req *dbpb.CreateDBRequest) error {
+	if err := validation.ValidateDBName(req.DbName); err != nil {
+		return err
+	}
+	if err := validation.ValidateDBDesc(req.Description); err != nil {
+		return err
+	}
+	return nil
 }

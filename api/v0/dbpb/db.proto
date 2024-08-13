@@ -11,8 +11,10 @@ import "google/protobuf/timestamp.proto";
 option go_package = "api/v0/dbpb";
 
 message CreateDBRequest {
-  // Name of the database to create.
+  // Name of the database.
   string db_name = 1;
+  // Description of the database.
+  string description = 2;
 }
 
 message CreateDBResponse {
@@ -55,10 +57,12 @@ message DBInfo {
   google.protobuf.Timestamp created_at = 2;
   // UTC timestamp when the database was updated.
   google.protobuf.Timestamp updated_at = 3;
-  // Size of the data in bytes.
+  // Size of the stored data in bytes.
   uint64 data_size = 4;
   // Number of keys in the database.
   uint32 key_count = 5;
+  // Description of the database.
+  string description = 6;
 }
 
 // DBService provides database-related RPCs.
