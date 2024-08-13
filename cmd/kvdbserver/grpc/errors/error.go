@@ -9,11 +9,12 @@ import (
 )
 
 var grpcErrorMap = map[error]error{
-	kvdberrors.ErrDatabaseNotFound:     status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error()),
-	kvdberrors.ErrDatabaseExists:       status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error()),
-	kvdberrors.ErrDatabaseNameRequired: status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameRequired.Error()),
-	kvdberrors.ErrDatabaseNameTooLong:  status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameTooLong.Error()),
-	kvdberrors.ErrDatabaseNameInvalid:  status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameInvalid.Error()),
+	kvdberrors.ErrDatabaseNotFound:           status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error()),
+	kvdberrors.ErrDatabaseExists:             status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error()),
+	kvdberrors.ErrDatabaseNameRequired:       status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameRequired.Error()),
+	kvdberrors.ErrDatabaseNameTooLong:        status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameTooLong.Error()),
+	kvdberrors.ErrDatabaseNameInvalid:        status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameInvalid.Error()),
+	kvdberrors.ErrDatabaseDescriptionTooLong: status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseDescriptionTooLong.Error()),
 
 	kvdberrors.ErrDatabaseKeyRequired: status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseKeyRequired.Error()),
 	kvdberrors.ErrDatabaseKeyTooLong:  status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseKeyTooLong.Error()),

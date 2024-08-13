@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/hollowdll/kvdb"
@@ -56,6 +57,23 @@ func TestCreateDB(t *testing.T) {
 		dbName := "   "
 
 		req := &dbpb.CreateDBRequest{DbName: dbName}
+		resp, err := gs.CreateDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
+	})
+
+	t.Run("InvalidDatabaseDescription", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		name := "db123"
+		desc := strings.Repeat("a", 256)
+
+		req := &dbpb.CreateDBRequest{DbName: name, Description: desc}
 		resp, err := gs.CreateDB(context.Background(), req)
 		require.Error(t, err)
 		require.Nil(t, resp)
@@ -127,20 +145,22 @@ func TestGetDBInfo(t *testing.T) {
 	t.Run("DatabaseExists", func(t *testing.T) {
 		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
-		dbName := "db0"
+		name := "db0"
+		desc := "Test database."
 
-		reqCreate := &dbpb.CreateDBRequest{DbName: dbName}
+		reqCreate := &dbpb.CreateDBRequest{DbName: name, Description: desc}
 		_, err := gs.CreateDB(context.Background(), reqCreate)
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 
-		reqGet := &dbpb.GetDBInfoRequest{DbName: dbName}
+		reqGet := &dbpb.GetDBInfoRequest{DbName: name}
 		resp, err := gs.GetDBInfo(context.Background(), reqGet)
 		expectedKeyCount := uint32(0)
 		expectedDataSize := uint64(0)
 
 		require.NoErrorf(t, err, "expected no error; error = %s", err)
 		require.NotNil(t, resp)
-		assert.Equalf(t, dbName, resp.Data.Name, "expected db name = %s; got = %s", dbName, resp.Data.Name)
+		assert.Equalf(t, name, resp.Data.Name, "expected db name = %s; got = %s", name, resp.Data.Name)
+		assert.Equalf(t, desc, resp.Data.Description, "expected description = %s; got = %s", desc, resp.Data.Description)
 		assert.Equalf(t, expectedKeyCount, resp.Data.KeyCount, "expected keys = %d; got = %d", expectedKeyCount, resp.Data.KeyCount)
 		assert.Equalf(t, expectedDataSize, resp.Data.DataSize, "expected data size = %d; got = %d", expectedDataSize, resp.Data.DataSize)
 	})
