@@ -12,6 +12,16 @@ If the server is password protected, the client needs to authenticate with passw
 
 The gRPC metadata key for password is `password`. The actual password to send is set as the value of the key.
 
+# Common gRPC Metadata
+
+This section lists common gRPC metadata that all RPCs use:
+
+Request metadata:
+- `password`: The server password. Used for authentication if the server is password protected.
+
+Response metadata:
+- `api-version`: The gRPC API version. It is of format `0.0.0`.
+
 # API v0 gRPC services
 
 ## ServerService
