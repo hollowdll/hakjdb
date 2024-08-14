@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
+	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
@@ -27,6 +28,7 @@ const (
 )
 
 var (
+	GrpcEchoClient      echopb.EchoServiceClient
 	GrpcServerClient    serverpb.ServerServiceClient
 	GrpcDBClient        dbpb.DBServiceClient
 	GrpcGeneralKVClient kvpb.GeneralKVServiceClient
@@ -60,6 +62,7 @@ func InitClient() {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}
 
+	GrpcEchoClient = echopb.NewEchoServiceClient(conn)
 	GrpcServerClient = serverpb.NewServerServiceClient(conn)
 	GrpcDBClient = dbpb.NewDBServiceClient(conn)
 	GrpcGeneralKVClient = kvpb.NewGeneralKVServiceClient(conn)
