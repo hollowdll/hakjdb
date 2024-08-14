@@ -13,7 +13,10 @@ import (
 var cmdEcho = &cobra.Command{
 	Use:   "echo [MESSAGE]",
 	Short: "Test connection",
-	Long:  "Test connection to the server. Sends a message to the server and returns the same message back.",
+	Long: `
+Test connection to the server. Sends a message to the server and returns the same message back.
+Can be useful for verifying that the server is still alive and can process requests.
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		msg := ""
 		if len(args) > 0 {
