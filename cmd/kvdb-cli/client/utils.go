@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/status"
@@ -18,4 +19,20 @@ func CheckGrpcError(err error) {
 			cobra.CheckErr(err)
 		}
 	}
+}
+
+// Prompts user a confirm message and reads input.
+// The input should be of type Yes/No.
+// Returns true if the user entered Yes.
+func PromptConfirm(msg string) bool {
+	var input string
+	fmt.Printf(msg)
+	_, err := fmt.Scanln(&input)
+	input = strings.TrimSpace(input)
+	if input == "" {
+		return false
+	}
+	cobra.CheckErr(err)
+
+	return strings.ToLower(input) == "yes"
 }

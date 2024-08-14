@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
@@ -22,7 +21,7 @@ var cmdDbDelete = &cobra.Command{
 }
 
 func deleteDatabase(name string) {
-	if !promptConfirmDelete(name) {
+	if !client.PromptConfirm(fmt.Sprintf("Delete database '%s' and all its data? Yes/No: ", name)) {
 		return
 	}
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
@@ -32,17 +31,4 @@ func deleteDatabase(name string) {
 	res, err := client.GrpcDBClient.DeleteDB(ctx, &dbpb.DeleteDBRequest{DbName: name})
 	client.CheckGrpcError(err)
 	fmt.Println(res.DbName)
-}
-
-func promptConfirmDelete(dbName string) bool {
-	var input string
-	fmt.Printf("Delete database '%s' and all its data? Yes/No: ", dbName)
-	_, err := fmt.Scanln(&input)
-	input = strings.TrimSpace(input)
-	if input == "" {
-		return false
-	}
-	cobra.CheckErr(err)
-
-	return strings.ToLower(input) == "yes"
 }
