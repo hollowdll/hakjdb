@@ -33,7 +33,6 @@ func init() {
 	rootCmd.AddCommand(cmdGetString)
 	rootCmd.AddCommand(cmdSetString)
 	rootCmd.AddCommand(cmdDeleteKeys)
-	rootCmd.AddCommand(cmdDeleteAllKeys)
 	rootCmd.AddCommand(cmdInfo)
 	rootCmd.AddCommand(cmdGetKeys)
 	rootCmd.AddCommand(cmdLogs)
