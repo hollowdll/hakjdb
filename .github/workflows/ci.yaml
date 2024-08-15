@@ -21,7 +21,7 @@ jobs:
         go-version: '1.22'
 
     - name: Set permissions
-      run: chmod u+x ./build_kvdbserver.sh ./build_kvdbctl.sh
+      run: chmod +x ./build_kvdbserver.sh ./build_kvdbctl.sh
 
     - name: Build kvdbserver
       run: ./build_kvdbserver.sh
