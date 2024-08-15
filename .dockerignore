@@ -24,14 +24,14 @@ logs/
 *.log
 dist/
 
-# Config files
-.kvdb-cli.json
-.kvdbserver.json
-
 # Environment variables
 .env
+
+# Config files
+kvdbctl-config.yaml
+kvdbserver-config.yaml
 
 ### Above is copied from .gitignore ###
 
 # Directories
-cmd/kvdb-cli
+cmd/kvdbctl

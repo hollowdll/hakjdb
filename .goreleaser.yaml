@@ -15,9 +15,9 @@ before:
     - go generate ./...
 
 builds:
-  - id: kvdb-cli
-    binary: kvdb-cli
-    main: ./cmd/kvdb-cli/main.go
+  - id: kvdbctl
+    binary: kvdbctl
+    main: ./cmd/kvdbctl/main.go
     env:
       - CGO_ENABLED=0
     goos:
