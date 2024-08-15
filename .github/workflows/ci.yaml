@@ -23,8 +23,8 @@ jobs:
     - name: Build kvdbserver
       run: go build -o ./bin/kvdbserver/ ./cmd/kvdbserver/
 
-    - name: Build kvdb-cli
-      run: go build -o ./bin/kvdb-cli/ ./cmd/kvdb-cli/
+    - name: Build kvdbctl
+      run: go build -o ./bin/kvdbctl/ ./cmd/kvdbctl/
 
     - name: Test
       run: go test -v ./...
