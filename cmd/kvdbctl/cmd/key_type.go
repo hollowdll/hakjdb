@@ -14,8 +14,13 @@ import (
 var cmdGetKeyType = &cobra.Command{
 	Use:   "keytype KEY",
 	Short: "Get the data type of a key",
-	Long:  "Get the data type of a key.",
-	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+	Long:  "Get the data type of a key. Returns (None) if the key doesn't exist.",
+	Example: `# Use the default database
+kvdbctl keytype mykey
+
+# Specify the database to use
+kvdbctl keytype mykey --database default`,
+	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getKeyType(args[0])
 	},

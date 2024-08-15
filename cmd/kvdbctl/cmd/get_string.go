@@ -14,8 +14,13 @@ import (
 var cmdGetString = &cobra.Command{
 	Use:   "get KEY",
 	Short: "Get the value of a String key",
-	Long:  "Get the value of a String key.",
-	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+	Long:  "Get the value of a String key. Returns (None) if the key doesn't exist.",
+	Example: `# Use the default database
+kvdbctl get key1
+
+# Specify the database to use
+kvdbctl get key1 --database default`,
+	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getString(args[0])
 	},

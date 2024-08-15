@@ -15,6 +15,8 @@ var cmdLogs = &cobra.Command{
 	Use:   "logs",
 	Short: "Get logs from the server",
 	Long:  "Get logs from the server if the server's log file is enabled. Currently gets all the logs.",
+	Example: `# Get all logs
+kvdbctl logs`,
 	Run: func(cmd *cobra.Command, args []string) {
 		getLogs()
 	},

@@ -18,11 +18,9 @@ Can be useful for verifying that the server is still alive and can process reque
 `,
 	Example: `# Send an empty message
 kvdbctl echo
-""
 
 # Send message "Hello"
-kvdbctl echo "Hello"
-"Hello"`,
+kvdbctl echo "Hello"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		msg := ""
 		if len(args) > 0 {

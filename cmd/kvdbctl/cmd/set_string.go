@@ -18,6 +18,11 @@ var cmdSetString = &cobra.Command{
 Creates the key if it doesn't exist.
 Overwrites the key if it is holding a value of another data type.
 `,
+	Example: `# Use the default database
+kvdbctl set key1 "Hello world!"
+
+# Specify the database to use
+kvdbctl set key2 "value123" --database default`,
 	Args: cobra.MatchAll(cobra.ExactArgs(2)),
 	Run: func(cmd *cobra.Command, args []string) {
 		setString(args[0], []byte(args[1]))

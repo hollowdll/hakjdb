@@ -13,13 +13,25 @@ import (
 
 var (
 	cmdDeleteKeys = &cobra.Command{
-		Use:   "delete [key ...]",
+		Use:   "delete [KEY ...]",
 		Short: "Delete keys",
 		Long: `Delete the specified keys and the values they are holding.
 Ignores keys that do not exist.
 This command can delete multiple keys.
 All the keys of a database can be deleted with --all option.
+Returns the number of keys that were deleted or OK if all the keys were deleted.
 `,
+		Example: `# Use the default database
+kvdbctl delete key1
+
+# Specify the database to use
+kvdbctl delete key2 --database default
+
+# Delete multiple keys
+kvdbctl delete key3 key4 key5
+
+# Delete all the keys
+kvdbctl delete --all`,
 		Run: func(cmd *cobra.Command, args []string) {
 			deleteKeys(args)
 		},

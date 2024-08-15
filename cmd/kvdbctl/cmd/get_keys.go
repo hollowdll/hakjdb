@@ -16,6 +16,11 @@ var cmdGetKeys = &cobra.Command{
 	Use:   "getkeys",
 	Short: "List keys",
 	Long:  "List all the keys of a database.",
+	Example: `# Use the default database
+kvdbctl getkeys
+
+# Specify the database to use
+kvdbctl getkeys --database default`,
 	Run: func(cmd *cobra.Command, args []string) {
 		getKeys()
 	},
