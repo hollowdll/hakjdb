@@ -19,7 +19,7 @@ kvdbctl db create NAME [flags]
 kvdbctl db create mydb
 
 # Create database 'mydb2' with description
-kvdbctl db create mydb2 --description "Database description.
+kvdbctl db create mydb2 --description "Database description."
 ```
 
 ### Options

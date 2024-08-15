@@ -4,7 +4,7 @@ Delete a database
 
 ### Synopsis
 
-Delete a database with the specified name. Returns the name of the deleted database.
+Delete the database with the specified name. Returns the name of the deleted database.
 
 ```
 kvdbctl db delete NAME [flags]
