@@ -15,7 +15,7 @@ import (
 var cmdInfo = &cobra.Command{
 	Use:   "info",
 	Short: "Show information about the server",
-	Long:  "Shows information about the server.",
+	Long:  "Show information about the server.",
 	Run: func(cmd *cobra.Command, args []string) {
 		showServerInfo()
 	},

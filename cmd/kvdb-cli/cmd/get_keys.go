@@ -14,15 +14,15 @@ import (
 
 var cmdGetKeys = &cobra.Command{
 	Use:   "getkeys",
-	Short: "Get all the keys of a database",
-	Long:  "Gets all the keys of a database.",
+	Short: "List keys",
+	Long:  "List all the keys of a database.",
 	Run: func(cmd *cobra.Command, args []string) {
 		getKeys()
 	},
 }
 
 func init() {
-	cmdGetKeys.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdGetKeys.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func getKeys() {

@@ -14,7 +14,7 @@ var (
 	cmdDbCreate = &cobra.Command{
 		Use:   "create NAME",
 		Short: "Create a new database",
-		Long:  "Creates a new database.",
+		Long:  "Create a new database with the specified name. An optional description can be set with --description option.",
 		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 		Run: func(cmd *cobra.Command, args []string) {
 			createDatabase(args[0])
@@ -24,7 +24,7 @@ var (
 )
 
 func init() {
-	cmdDbCreate.Flags().StringVarP(&dbDesc, "description", "d", "", "description of the database")
+	cmdDbCreate.Flags().StringVarP(&dbDesc, "description", "d", "", "Description of the database")
 }
 
 func createDatabase(name string) {

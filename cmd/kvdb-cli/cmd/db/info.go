@@ -16,14 +16,14 @@ import (
 var cmdDbInfo = &cobra.Command{
 	Use:   "info",
 	Short: "Show information about a database",
-	Long:  "Shows information about a database.",
+	Long:  "Show information about a database. If the database name is not specified, shows information about the default database.",
 	Run: func(cmd *cobra.Command, args []string) {
 		showDbInfo()
 	},
 }
 
 func init() {
-	cmdDbInfo.Flags().StringVarP(&dbName, "name", "n", "", "name of the database")
+	cmdDbInfo.Flags().StringVarP(&dbName, "name", "n", "", "The name of the database")
 }
 
 func showDbInfo() {

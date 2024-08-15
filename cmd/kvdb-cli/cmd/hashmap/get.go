@@ -13,10 +13,9 @@ import (
 )
 
 var cmdGetHashMapFieldValues = &cobra.Command{
-	Use:   "get [key] [field ...]",
-	Short: "Get HashMap field values",
-	Long: `
-Gets the values of the specified fields in the HashMap stored at a key.
+	Use:   "get KEY FIELD [FIELD ...]",
+	Short: "Get field values of a HashMap key",
+	Long: `Get the values of the specified fields of a HashMap key.
 This command can return multiple values.
 `,
 	Args: cobra.MatchAll(cobra.MinimumNArgs(2)),
@@ -26,7 +25,7 @@ This command can return multiple values.
 }
 
 func init() {
-	cmdGetHashMapFieldValues.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdGetHashMapFieldValues.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func getHashMapFieldValues(key string, fields []string) {

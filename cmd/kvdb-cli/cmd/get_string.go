@@ -12,9 +12,9 @@ import (
 )
 
 var cmdGetString = &cobra.Command{
-	Use:   "get [key]",
-	Short: "Get a String value",
-	Long:  "Gets the value a String key is holding.",
+	Use:   "get KEY",
+	Short: "Get the value of a String key",
+	Long:  "Get the value of a String key.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getString(args[0])
@@ -22,7 +22,7 @@ var cmdGetString = &cobra.Command{
 }
 
 func init() {
-	cmdGetString.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdGetString.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func getString(key string) {

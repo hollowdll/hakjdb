@@ -13,8 +13,8 @@ import (
 
 var cmdDbLs = &cobra.Command{
 	Use:   "ls",
-	Short: "List all databases",
-	Long:  "Lists all the databases that exist on the server.",
+	Short: "List all the databases",
+	Long:  "List the names of all the databases that exist on the server.",
 	Run: func(cmd *cobra.Command, args []string) {
 		showDatabaseNames()
 	},

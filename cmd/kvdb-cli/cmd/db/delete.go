@@ -13,7 +13,7 @@ import (
 var cmdDbDelete = &cobra.Command{
 	Use:   "delete NAME",
 	Short: "Delete a database",
-	Long:  "Deletes a database.",
+	Long:  "Delete a database with the specified name.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteDatabase(args[0])

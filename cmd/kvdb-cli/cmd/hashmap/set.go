@@ -12,10 +12,9 @@ import (
 )
 
 var cmdSetHashMap = &cobra.Command{
-	Use:   "set [key] [field value ...]",
+	Use:   "set KEY FIELD VALUE [FIELD VALUE ...]",
 	Short: "Set HashMap fields and values",
-	Long: `
-Sets the specified fields and their values in the HashMap stored at a key.
+	Long: `Set the specified fields and their values of a HashMap key.
 If the specified fields exist, they will be overwritten with the new values.
 Creates the key if it doesn't exist.
 Overwrites the key if it is holding a value of another data type.
@@ -37,7 +36,7 @@ This command can set multiple fields.
 }
 
 func init() {
-	cmdSetHashMap.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdSetHashMap.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func setHashMap(key string, fieldValueMap map[string][]byte) {

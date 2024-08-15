@@ -12,10 +12,9 @@ import (
 )
 
 var cmdSetString = &cobra.Command{
-	Use:   "set [key] [value]",
-	Short: "Set a string value",
-	Long: `
-Sets a key to hold a String value.
+	Use:   "set KEY VALUE",
+	Short: "Set the value of a String key",
+	Long: `Set the value of a String key.
 Creates the key if it doesn't exist.
 Overwrites the key if it is holding a value of another data type.
 `,
@@ -26,7 +25,7 @@ Overwrites the key if it is holding a value of another data type.
 }
 
 func init() {
-	cmdSetString.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdSetString.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func setString(key string, value []byte) {

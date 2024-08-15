@@ -12,9 +12,9 @@ import (
 )
 
 var cmdGetKeyType = &cobra.Command{
-	Use:   "keytype [key]",
+	Use:   "keytype KEY",
 	Short: "Get the data type of a key",
-	Long:  "Gets the data type of the value a key is holding.",
+	Long:  "Get the data type of a key.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getKeyType(args[0])
@@ -22,7 +22,7 @@ var cmdGetKeyType = &cobra.Command{
 }
 
 func init() {
-	cmdGetKeyType.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdGetKeyType.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func getKeyType(key string) {

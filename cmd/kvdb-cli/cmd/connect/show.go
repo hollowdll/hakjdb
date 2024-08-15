@@ -11,7 +11,7 @@ import (
 var cmdConnectShow = &cobra.Command{
 	Use:   "show",
 	Short: "Show connection settings",
-	Long:  "Shows the currently configured connection settings used to connect to a kvdb server.",
+	Long:  "Show the currently configured connection settings used to connect to a server.",
 	Run: func(cmd *cobra.Command, args []string) {
 		showConnectionSettings()
 	},

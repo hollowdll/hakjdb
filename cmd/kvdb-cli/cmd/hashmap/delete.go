@@ -12,10 +12,9 @@ import (
 )
 
 var cmdDeleteHashMapFields = &cobra.Command{
-	Use:   "delete [key] [field ...]",
-	Short: "Remove fields from a HashMap",
-	Long: `
-Removes the specified fields from the HashMap stored at a key.
+	Use:   "delete KEY FIELD [FIELD ...]",
+	Short: "Remove fields from a HashMap key",
+	Long: `Remove the specified fields from a HashMap key.
 Ignores fields that do not exist.
 This command can remove multiple fields.
 `,
@@ -26,7 +25,7 @@ This command can remove multiple fields.
 }
 
 func init() {
-	cmdDeleteHashMapFields.Flags().StringVarP(&dbName, "database", "d", "", "database to use")
+	cmdDeleteHashMapFields.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
 func deleteHashMapFields(key string, fields []string) {

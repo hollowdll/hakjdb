@@ -19,7 +19,7 @@ var (
 	cmdConnectSet = &cobra.Command{
 		Use:   "set",
 		Short: "Change connection settings",
-		Long:  "Changes the connection settings used to connect to a kvdb server.",
+		Long:  "Change the connection settings used to connect to a server. Only sets those that are specified.",
 		Run: func(cmd *cobra.Command, args []string) {
 			setConnectionSettings()
 		},
@@ -27,9 +27,9 @@ var (
 )
 
 func init() {
-	cmdConnectSet.Flags().StringVarP(&host, "host", "a", defaultHost, "host or IP address")
-	cmdConnectSet.Flags().Uint16VarP(&port, "port", "p", defaultPort, "port number")
-	cmdConnectSet.Flags().StringVarP(&dbName, "database", "d", defaultDbName, "database to use")
+	cmdConnectSet.Flags().StringVarP(&host, "host", "a", defaultHost, "Host or IP address")
+	cmdConnectSet.Flags().Uint16VarP(&port, "port", "p", defaultPort, "Port number")
+	cmdConnectSet.Flags().StringVarP(&dbName, "database", "d", defaultDbName, "Default database to use")
 }
 
 func setConnectionSettings() {

@@ -15,7 +15,7 @@ var (
 	cmdDeleteKeys = &cobra.Command{
 		Use:   "delete [key ...]",
 		Short: "Delete keys",
-		Long: `Deletes the specified keys and the values they are holding.
+		Long: `Delete the specified keys and the values they are holding.
 Ignores keys that do not exist.
 This command can delete multiple keys.
 All the keys of a database can be deleted with --all option.
@@ -28,7 +28,7 @@ All the keys of a database can be deleted with --all option.
 )
 
 func init() {
-	cmdDeleteKeys.Flags().StringVarP(&dbName, "database", "d", "", "The database to use. If not present, the default database is used")
+	cmdDeleteKeys.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 	cmdDeleteKeys.Flags().BoolVar(&deleteAll, "all", false, "Delete all the keys of the database that is being used")
 }
 
