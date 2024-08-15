@@ -6,6 +6,7 @@ import (
 	"github.com/hollowdll/kvdb/cmd/kvdbctl/cmd/db"
 	"github.com/hollowdll/kvdb/cmd/kvdbctl/cmd/hashmap"
 	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -41,8 +42,17 @@ func init() {
 	rootCmd.AddCommand(cmdEcho)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
-	rootCmd.DisableAutoGenTag = false
+	rootCmd.DisableAutoGenTag = true
 
-	err := doc.GenMarkdownTree(rootCmd, "../../../docs/kvdb-cli-commands/generated/")
+	dir := createGeneratedDocsDir()
+	err := doc.GenMarkdownTree(rootCmd, dir)
 	cobra.CheckErr(err)
+}
+
+func createGeneratedDocsDir() string {
+	parentDir, err := common.GetExecParentDirPath()
+	cobra.CheckErr(err)
+	dir, err := common.GetDirPath(parentDir, "./generated-docs")
+	cobra.CheckErr(err)
+	return dir
 }
