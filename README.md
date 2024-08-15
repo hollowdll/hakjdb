@@ -78,12 +78,14 @@ go build -o ./bin/kvdbserver/ ./cmd/kvdbserver/
 
 Build the CLI:
 ```sh
-go build -o ./bin/kvdb-cli/ ./cmd/kvdb-cli/
+go build -o ./bin/kvdbctl/ ./cmd/kvdbctl/
 ```
 
 These will build the binaries to `bin/` directory in the project root. You can change the output directory and binary names to whatever you like by modifying the path with `-o` flag.
 
 For more advanced build, use `go help build` to see more build options.
+
+You can also use the scripts `build_kvdbctl` and `build_kvdbserver` to build the binaries.
 
 # Docker
 
@@ -159,6 +161,18 @@ For example:
 ```sh
 go test -v ./tests/integration
 ```
+
+## Benchmarks
+
+Benchmarks are useful for testing the average performance of the server. They measure the average number of requests that can be performed in a second.
+
+Run benchmarks:
+```sh
+cd tests/benchmark
+go test -bench=. -v
+```
+
+Better benchmarks and their results coming in later releases.
 
 # License
 
