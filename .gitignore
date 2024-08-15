@@ -31,5 +31,5 @@ dist/
 .env
 
 # Config files
+kvdbctl-config.yaml
 kvdbserver-config.yaml
-kvdb-cli-config.yaml

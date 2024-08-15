@@ -21,7 +21,7 @@ Returns the name of the created database.
 kvdbctl db create mydb
 
 # Create database 'mydb2' with description
-kvdbctl db create mydb2 --description "Database description.`,
+kvdbctl db create mydb2 --description "Database description."`,
 		Args: cobra.MatchAll(cobra.ExactArgs(1)),
 		Run: func(cmd *cobra.Command, args []string) {
 			createDatabase(args[0])
