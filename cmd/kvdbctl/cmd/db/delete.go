@@ -13,7 +13,7 @@ import (
 var cmdDbDelete = &cobra.Command{
 	Use:   "delete NAME",
 	Short: "Delete a database",
-	Long:  "Delete a database with the specified name.",
+	Long:  "Delete a database with the specified name. Returns the name of the deleted database.",
 	Example: `# Delete database 'mydb'
 kvdbctl db delete mydb`,
 	Args: cobra.MatchAll(cobra.ExactArgs(1)),

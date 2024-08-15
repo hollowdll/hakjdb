@@ -14,9 +14,14 @@ import (
 
 var cmdGetAllHashMapFieldsAndValues = &cobra.Command{
 	Use:   "getall KEY",
-	Short: "Get all the fields and values of a HashMap key",
-	Long:  "Get all the fields and values of a HashMap key.",
-	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+	Short: "Get all the fields and values of a HashMap key value",
+	Long:  "Get all the fields and values of a HashMap key value. Returns (None) if the key doesn't exist.",
+	Example: `# Use the default database
+kvdbctl hashmap getall key1
+
+# Specify the database to use
+kvdbctl hashmap getall key1 --database default`,
+	Args: cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
 		getAllHashMapFieldsAndValues(args[0])
 	},

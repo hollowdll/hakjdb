@@ -14,7 +14,9 @@ var (
 	cmdDbCreate = &cobra.Command{
 		Use:   "create NAME",
 		Short: "Create a new database",
-		Long:  "Create a new database with the specified name. An optional description can be set with --description option.",
+		Long: `Create a new database with the specified name. An optional description can be set with --description option.
+Returns the name of the created database.
+`,
 		Example: `# Create database 'mydb' without description
 kvdbctl db create mydb
 

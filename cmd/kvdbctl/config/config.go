@@ -22,7 +22,7 @@ const (
 	ConfigKeyTlsCertPath string = "tls_cert_path"
 
 	// EnvPrefix is the prefix for environment variables.
-	EnvPrefix string = "KVDBCLI"
+	EnvPrefix string = "KVDBCTL"
 	// EnvVarPassword is the environment variable for password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 

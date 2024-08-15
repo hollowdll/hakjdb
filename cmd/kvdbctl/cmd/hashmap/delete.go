@@ -13,11 +13,19 @@ import (
 
 var cmdDeleteHashMapFields = &cobra.Command{
 	Use:   "delete KEY FIELD [FIELD ...]",
-	Short: "Remove fields from a HashMap key",
-	Long: `Remove the specified fields from a HashMap key.
-Ignores fields that do not exist.
-This command can remove multiple fields.
+	Short: "Remove fields from a HashMap key value",
+	Long: `Remove the specified fields from a HashMap key value.
+Ignores fields that do not exist. This command can remove multiple fields.
+Returns the number of fields that were removed.
 `,
+	Example: `# Use the default database
+kvdbctl hashmap delete key1 field1
+
+# Specify the database to use
+kvdbctl hashmap delete key1 field2 --database default
+
+# Remove multiple fields
+kvdbctl hashmap delete key1 field3 field4 field5`,
 	Args: cobra.MatchAll(cobra.MinimumNArgs(2)),
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteHashMapFields(args[0], args[1:])
