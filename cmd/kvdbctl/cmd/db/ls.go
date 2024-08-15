@@ -15,6 +15,8 @@ var cmdDbLs = &cobra.Command{
 	Use:   "ls",
 	Short: "List all the databases",
 	Long:  "List the names of all the databases that exist on the server.",
+	Example: `# List the names of all the databases
+kvdbctl db ls`,
 	Run: func(cmd *cobra.Command, args []string) {
 		showDatabaseNames()
 	},

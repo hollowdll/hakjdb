@@ -12,6 +12,8 @@ var cmdConnectShow = &cobra.Command{
 	Use:   "show",
 	Short: "Show connection settings",
 	Long:  "Show the currently configured connection settings used to connect to a server.",
+	Example: `# Show all connection settings
+kvdbctl connect show`,
 	Run: func(cmd *cobra.Command, args []string) {
 		showConnectionSettings()
 	},

@@ -15,7 +15,12 @@ var (
 		Use:   "create NAME",
 		Short: "Create a new database",
 		Long:  "Create a new database with the specified name. An optional description can be set with --description option.",
-		Args:  cobra.MatchAll(cobra.ExactArgs(1)),
+		Example: `# Create database 'mydb' without description
+kvdbctl db create mydb
+
+# Create database 'mydb2' with description
+kvdbctl db create mydb2 --description "Database description.`,
+		Args: cobra.MatchAll(cobra.ExactArgs(1)),
 		Run: func(cmd *cobra.Command, args []string) {
 			createDatabase(args[0])
 		},

@@ -20,6 +20,11 @@ var (
 		Use:   "set",
 		Short: "Change connection settings",
 		Long:  "Change the connection settings used to connect to a server. Only sets those that are specified.",
+		Example: `# Change the host and port
+kvdbctl connect set --host 127.0.0.1 --port 9000
+
+# Change only the default database
+kvdbctl connect set --database default`,
 		Run: func(cmd *cobra.Command, args []string) {
 			setConnectionSettings()
 		},
