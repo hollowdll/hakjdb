@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )

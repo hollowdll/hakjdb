@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/cmd"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package connect
 import (
 	"fmt"
 
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

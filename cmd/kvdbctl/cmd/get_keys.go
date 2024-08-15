@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"

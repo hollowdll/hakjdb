@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hollowdll/kvdb/api/v0/echopb"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -16,6 +16,14 @@ var cmdEcho = &cobra.Command{
 	Long: `
 Test connection to the server. Sends a message to the server and returns the same message back.
 Can be useful for verifying that the server is still alive and can process requests.
+`,
+	Example: `# Send an empty message
+kvdbctl echo
+""
+
+# Send message "Hello"
+kvdbctl echo "Hello"
+"Hello"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		msg := ""

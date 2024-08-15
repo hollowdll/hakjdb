@@ -5,27 +5,27 @@ import (
 	"fmt"
 
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
 
-var cmdGetString = &cobra.Command{
-	Use:   "get KEY",
-	Short: "Get the value of a String key",
-	Long:  "Get the value of a String key.",
+var cmdGetKeyType = &cobra.Command{
+	Use:   "keytype KEY",
+	Short: "Get the data type of a key",
+	Long:  "Get the data type of a key.",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1)),
 	Run: func(cmd *cobra.Command, args []string) {
-		getString(args[0])
+		getKeyType(args[0])
 	},
 }
 
 func init() {
-	cmdGetString.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
+	cmdGetKeyType.Flags().StringVarP(&dbName, "database", "d", "", client.DBFlagMsg)
 }
 
-func getString(key string) {
+func getKeyType(key string) {
 	md := client.GetBaseGrpcMetadata()
 	if len(dbName) > 0 {
 		md.Set(common.GrpcMetadataKeyDbName, dbName)
@@ -34,11 +34,11 @@ func getString(key string) {
 	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
 	defer cancel()
 
-	response, err := client.GrpcStringKVClient.GetString(ctx, &kvpb.GetStringRequest{Key: key})
+	response, err := client.GrpcGeneralKVClient.GetKeyType(ctx, &kvpb.GetKeyTypeRequest{Key: key})
 	client.CheckGrpcError(err)
 
 	if response.Ok {
-		fmt.Printf("\"%s\"\n", response.Value)
+		fmt.Printf("\"%s\"\n", response.KeyType)
 	} else {
 		fmt.Println(client.ValueNone)
 	}

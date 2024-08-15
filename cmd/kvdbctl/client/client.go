@@ -10,7 +10,7 @@ import (
 	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

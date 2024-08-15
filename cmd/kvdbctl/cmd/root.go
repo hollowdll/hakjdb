@@ -1,21 +1,22 @@
 package cmd
 
 import (
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/connect"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/db"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/cmd/hashmap"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/cmd/connect"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/cmd/db"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/cmd/hashmap"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 )
 
 var (
 	dbName  string
 	rootCmd = &cobra.Command{
-		Use:     "kvdb-cli",
-		Short:   "CLI tool for kvdb key-value store",
-		Long:    "CLI tool for kvdb key-value store. Use it to manage kvdb servers.",
+		Use:     "kvdbctl",
+		Short:   "CLI tool for kvdb key-value data store",
+		Long:    "CLI tool for kvdb key-value data store. Use it to manage kvdb servers.",
 		Version: version.Version,
 	}
 )
@@ -40,4 +41,8 @@ func init() {
 	rootCmd.AddCommand(cmdEcho)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	rootCmd.DisableAutoGenTag = false
+
+	err := doc.GenMarkdownTree(rootCmd, "../../../docs/kvdb-cli-commands/generated/")
+	cobra.CheckErr(err)
 }

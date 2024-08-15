@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/client"
-	"github.com/hollowdll/kvdb/cmd/kvdb-cli/config"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc/metadata"
