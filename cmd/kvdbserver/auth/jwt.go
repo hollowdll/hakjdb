@@ -13,7 +13,7 @@ type JWTOptions struct {
 	SignMethod jwt.SigningMethod
 	// The signing key
 	SignKey string
-	// Time to live in seconds
+	// Token time to live in seconds
 	TTL time.Duration
 }
 
