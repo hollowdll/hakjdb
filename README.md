@@ -13,7 +13,7 @@ Components:
   
 **Note!** This project is in early development. The `main` branch is currently unstable and getting breaking changes! Use a specific release version if you want to use this.
 
-The name of the project will be changed before full release.
+Some documentations are outdated. They will be updated before full release. The name of the project will be changed before full release.
 
 # Data types
 
