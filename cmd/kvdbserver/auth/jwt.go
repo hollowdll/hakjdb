@@ -9,8 +9,6 @@ import (
 )
 
 type JWTOptions struct {
-	// The signing method
-	SignMethod jwt.SigningMethod
 	// The signing key
 	SignKey string
 	// Token time to live in seconds
@@ -23,7 +21,7 @@ type AuthInfo struct {
 
 // GenerateJWT generates a new JWT token.
 func GenerateJWT(ctx context.Context, opts *JWTOptions, username string) (string, error) {
-	token := jwt.NewWithClaims(opts.SignMethod, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
 		"iat":      time.Now().Unix(),
 		"exp":      time.Now().Add(opts.TTL).Unix(),
@@ -40,7 +38,7 @@ func GenerateJWT(ctx context.Context, opts *JWTOptions, username string) (string
 // ValidateJWT validates JWT token.
 func ValidateJWT(ctx context.Context, tokenStr string, opts *JWTOptions) (*AuthInfo, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		if token.Method.Alg() != opts.SignMethod.Alg() {
+		if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
 			return nil, errors.New("invalid signing method")
 		}
 		return opts.SignKey, nil

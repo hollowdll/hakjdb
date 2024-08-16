@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"time"
 
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
 	"google.golang.org/grpc/codes"
@@ -15,28 +17,32 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	if s.credentialStore.IsServerPasswordEnabled() {
+	if s.Cfg.AuthEnabled {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error())
+			return status.Error(codes.Unauthenticated, kvdberrors.ErrMissingMetadata.Error())
 		}
 
-		passwordValues := md.Get(common.GrpcMetadataKeyPassword)
-		if len(passwordValues) < 1 {
+		values := md.Get(common.GrpcMetadataKeyAuthToken)
+		if len(values) < 1 {
 			return status.Errorf(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
 		}
-		password := passwordValues[0]
+		tokenStr := values[0]
 
-		// clear password
+		// clear token
 		defer func() {
-			for i := range passwordValues {
-				passwordValues[i] = ""
+			for i := range values {
+				values[i] = ""
 			}
-			password = ""
-			md.Set(common.GrpcMetadataKeyPassword, "")
+			tokenStr = ""
+			md.Set(common.GrpcMetadataKeyAuthToken, "")
 		}()
 
-		err := s.credentialStore.IsCorrectServerPassword([]byte(password))
+		opts := &auth.JWTOptions{
+			SignKey: s.Cfg.AuthTokenSecretKey,
+			TTL:     time.Second * time.Duration(s.Cfg.AuthTokenTTL),
+		}
+		_, err := auth.ValidateJWT(ctx, tokenStr, opts)
 		if err != nil {
 			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
 		}
