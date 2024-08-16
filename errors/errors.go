@@ -45,4 +45,7 @@ var (
 	// ErrMaxClientConnectionsReached is returned when a new client tries to connect to the server
 	// but the maximum number of client connections is reached.
 	ErrMaxClientConnectionsReached = errors.New("max client connections reached")
+
+	// ErrUserNotFound is returned when a user was not found.
+	ErrUserNotFound = errors.New("user not found")
 )
