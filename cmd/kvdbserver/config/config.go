@@ -35,6 +35,8 @@ const (
 	ConfigKeyLogLevel string = "log_level"
 	// VerboseLogsEnabled is the configuration key for enabling verbose logs.
 	ConfigKeyVerboseLogsEnabled string = "verbose_logs_enabled"
+	// ConfigKeyAuthEnabled is the configuration key for enabling authentication.
+	ConfigKeyAuthEnabled string = "auth_enabled"
 
 	// EnvPrefix is the prefix that environment variables use.
 	EnvPrefix string = "KVDB"
@@ -45,6 +47,7 @@ const (
 	DefaultTLSEnabled           bool   = false
 	DefaultDebugEnabled         bool   = false
 	DefaultVerboseLogsEnabled   bool   = false
+	DefaultAuthEnabled          bool   = false
 	DefaultDatabase             string = "default"
 	DefaultPort                 uint16 = common.ServerDefaultPort
 	DefaultLogFilePath          string = ""
@@ -62,6 +65,7 @@ type ServerConfig struct {
 	TLSEnabled         bool
 	DebugEnabled       bool
 	VerboseLogsEnabled bool
+	AuthEnabled        bool
 
 	// The name of the default database that is created at server startup.
 	DefaultDB string
@@ -105,6 +109,7 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
 	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
 	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
+	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
 	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
 	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
@@ -133,6 +138,7 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 		TLSEnabled:           viper.GetBool(ConfigKeyTLSEnabled),
 		DebugEnabled:         viper.GetBool(ConfigKeyDebugEnabled),
 		VerboseLogsEnabled:   viper.GetBool(ConfigKeyVerboseLogsEnabled),
+		AuthEnabled:          viper.GetBool(ConfigKeyAuthEnabled),
 		DefaultDB:            viper.GetString(ConfigKeyDefaultDatabase),
 		LogFilePath:          filepath.Join(dataDirPath, logFileName),
 		MaxKeysPerDB:         DefaultMaxKeysPerDB,
@@ -151,6 +157,7 @@ func DefaultConfig() ServerConfig {
 		TLSEnabled:           DefaultTLSEnabled,
 		DebugEnabled:         DefaultDebugEnabled,
 		VerboseLogsEnabled:   DefaultVerboseLogsEnabled,
+		AuthEnabled:          DefaultAuthEnabled,
 		DefaultDB:            DefaultDatabase,
 		LogFilePath:          DefaultLogFilePath,
 		MaxKeysPerDB:         DefaultMaxKeysPerDB,
