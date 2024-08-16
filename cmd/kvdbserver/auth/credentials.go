@@ -12,6 +12,15 @@ type CredentialStore interface {
 	SetServerPassword(password []byte) error
 	IsCorrectServerPassword(password []byte) error
 	IsServerPasswordEnabled() bool
+
+	// SetServerPassword sets a new password for user.
+	// If the user doesn't exist, it is added along with the password.
+	// The password is hashed using bcrypt before storing it in memory.
+	// Max password size is 72 bytes.
+	SetPassword(user string, password []byte) error
+	// IsCorrectServerPassword checks if the provided password matches the user's stored password.
+	// Returns nil if matches, otherwise an error is returned.
+	IsCorrectPassword(user string, password []byte) error
 }
 
 // InMemoryCredentialStore is an implementation of interface CredentialStore.
@@ -64,10 +73,6 @@ func (cs *InMemoryCredentialStore) IsCorrectServerPassword(password []byte) erro
 	return bcrypt.CompareHashAndPassword(cs.serverPasswordHash, password)
 }
 
-// SetServerPassword sets a new password for user.
-// If the user doesn't exist, it is added along with the password.
-// The password is hashed using bcrypt before storing it in memory.
-// Max password size is 72 bytes.
 func (cs *InMemoryCredentialStore) SetPassword(user string, password []byte) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
@@ -77,8 +82,6 @@ func (cs *InMemoryCredentialStore) SetPassword(user string, password []byte) err
 	return nil
 }
 
-// IsCorrectServerPassword checks if the provided password matches the user's stored password.
-// Returns nil if matches, otherwise an error is returned.
 func (cs *InMemoryCredentialStore) IsCorrectPassword(user string, password []byte) error {
 	userPassword, ok := cs.userPasswords[user]
 	if !ok {
