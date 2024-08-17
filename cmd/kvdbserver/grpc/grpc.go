@@ -1,10 +1,12 @@
 package grpc
 
 import (
+	"github.com/hollowdll/kvdb/api/v0/authpb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	authrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/auth"
 	dbrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/db"
 	echorpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/echo"
 	kvrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/kv"
@@ -42,6 +44,7 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	kvpb.RegisterGeneralKVServiceServer(grpcServer, kvrpc.NewGeneralKVServiceServer(s))
 	kvpb.RegisterStringKVServiceServer(grpcServer, kvrpc.NewStringKVServiceServer(s))
 	kvpb.RegisterHashMapKVServiceServer(grpcServer, kvrpc.NewHashMapKVServiceServer(s))
+	authpb.RegisterAuthServiceServer(grpcServer, authrpc.NewAuthServiceServer(s))
 
 	// enable gRPC server reflection in debug mode
 	if s.Cfg.DebugEnabled {

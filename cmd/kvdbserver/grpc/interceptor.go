@@ -29,8 +29,7 @@ func newAuthUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
 			logger := s.Logger()
-			logger.Errorf("Failed to authorize request: %v", err)
-
+			logger.Debugf("Failed to authorize request: %v", err)
 			return nil, err
 		}
 		return handler(ctx, req)

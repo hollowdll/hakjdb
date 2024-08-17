@@ -35,7 +35,7 @@ var (
 	// ErrInvalidAuthToken is returned when auth token is invalid.
 	ErrInvalidAuthToken = errors.New("invalid auth token")
 	// ErrAuthFailed is returned when authentication fails.
-	ErrAuthFailed = errors.New("authentication failed")
+	ErrAuthFailed = errors.New("failed to obtain auth token")
 	// ErrAuthNotEnabled is returned when authentication is not enabled
 	ErrAuthNotEnabled = errors.New("authentication not enabled")
 	// ErrUserNotFound is returned when a user was not found.
