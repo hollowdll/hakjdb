@@ -40,7 +40,7 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 
 		opts := &auth.JWTOptions{
 			SignKey: s.Cfg.AuthTokenSecretKey,
-			TTL:     time.Second * time.Duration(s.Cfg.AuthTokenTTL),
+			TTL:     time.Duration(s.Cfg.AuthTokenTTL),
 		}
 		_, err := auth.ValidateJWT(ctx, tokenStr, opts)
 		if err != nil {

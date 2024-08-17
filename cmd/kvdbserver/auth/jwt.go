@@ -9,9 +9,9 @@ import (
 )
 
 type JWTOptions struct {
-	// The signing key
+	// The signing key.
 	SignKey string
-	// Token time to live in seconds
+	// Token time to live.
 	TTL time.Duration
 }
 

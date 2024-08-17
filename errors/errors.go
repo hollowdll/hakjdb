@@ -30,9 +30,16 @@ var (
 	// but it is missing.
 	ErrMissingMetadata = errors.New("missing metadata")
 
-	// ErrInvalidCredentials is returned in authorization process
-	// if provided credentials are incorrect.
+	// ErrInvalidCredentials is returned if provided credentials are incorrect.
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	// ErrInvalidAuthToken is returned when auth token is invalid.
+	ErrInvalidAuthToken = errors.New("invalid auth token")
+	// ErrAuthFailed is returned when authentication fails.
+	ErrAuthFailed = errors.New("authentication failed")
+	// ErrAuthNotEnabled is returned when authentication is not enabled
+	ErrAuthNotEnabled = errors.New("authentication not enabled")
+	// ErrUserNotFound is returned when a user was not found.
+	ErrUserNotFound = errors.New("user not found")
 
 	// ErrLogFileNotEnabled is returned when trying to access logs but log file is not enabled.
 	ErrLogFileNotEnabled = errors.New("log file is not enabled")
@@ -45,7 +52,4 @@ var (
 	// ErrMaxClientConnectionsReached is returned when a new client tries to connect to the server
 	// but the maximum number of client connections is reached.
 	ErrMaxClientConnectionsReached = errors.New("max client connections reached")
-
-	// ErrUserNotFound is returned when a user was not found.
-	ErrUserNotFound = errors.New("user not found")
 )

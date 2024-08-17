@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/hollowdll/kvdb"
+	"github.com/hollowdll/kvdb/api/v0/authpb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
+	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
 	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
 	kvdberrors "github.com/hollowdll/kvdb/errors"
 	"github.com/hollowdll/kvdb/internal/common"
@@ -46,6 +48,10 @@ type HashMapKVService interface {
 	GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHashMapFieldValuesRequest) (*kvpb.GetHashMapFieldValuesResponse, error)
 	GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb.GetAllHashMapFieldsAndValuesRequest) (*kvpb.GetAllHashMapFieldsAndValuesResponse, error)
 	DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHashMapFieldsRequest) (*kvpb.DeleteHashMapFieldsResponse, error)
+}
+
+type AuthService interface {
+	Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error)
 }
 
 func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
@@ -388,6 +394,35 @@ func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHa
 	fieldsRemovedCount, ok := s.dbs[dbName].DeleteHashMapFields(req.Key, req.Fields)
 
 	return &kvpb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
+}
+
+func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
+	lg := s.Logger()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	if !s.Cfg.AuthEnabled {
+		return nil, kvdberrors.ErrAuthNotEnabled
+	}
+
+	err := s.credentialStore.IsCorrectPassword(auth.RootUserName, []byte(req.Password))
+	if err != nil {
+		lg.Debugf("%v: %v", kvdberrors.ErrInvalidCredentials, err)
+		return nil, kvdberrors.ErrInvalidCredentials
+	}
+
+	opts := &auth.JWTOptions{
+		SignKey: s.Cfg.AuthTokenSecretKey,
+		TTL:     time.Duration(s.Cfg.AuthTokenTTL),
+	}
+	lg.Debugf("JWT token TTL: %s", opts.TTL)
+	token, err := auth.GenerateJWT(ctx, opts, auth.RootUserName)
+	if err != nil {
+		lg.Debugf("failed to generate JWT token: %v", err)
+		return nil, kvdberrors.ErrAuthFailed
+	}
+
+	return &authpb.AuthenticateResponse{AuthToken: token}, nil
 }
 
 func logDBNotFound(lg kvdb.Logger, dbName string) {
