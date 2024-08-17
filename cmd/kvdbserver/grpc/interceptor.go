@@ -62,9 +62,9 @@ func logRequestCall(logger kvdb.Logger, verbose bool, fullMethod string, dbName 
 
 func logRequestFailed(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, err error) {
 	if verbose {
-		logger.Errorf("(failed) %s: db = %s; req = %v; error = %v", fullMethod, dbName, req, err)
+		logger.Debugf("(failed) %s: db = %s; req = %v; error = %v", fullMethod, dbName, req, err)
 	} else {
-		logger.Errorf("(failed) %s: %v", fullMethod, err)
+		logger.Debugf("(failed) %s: %v", fullMethod, err)
 	}
 }
 

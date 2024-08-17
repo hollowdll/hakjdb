@@ -405,7 +405,8 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 		return nil, kvdberrors.ErrAuthNotEnabled
 	}
 
-	err := s.credentialStore.IsCorrectPassword(auth.RootUserName, []byte(req.Password))
+	username := auth.RootUserName
+	err := s.credentialStore.IsCorrectPassword(username, []byte(req.Password))
 	if err != nil {
 		lg.Debugf("%v: %v", kvdberrors.ErrInvalidCredentials, err)
 		return nil, kvdberrors.ErrInvalidCredentials
@@ -416,11 +417,12 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 		TTL:     time.Duration(s.Cfg.AuthTokenTTL),
 	}
 	lg.Debugf("JWT token TTL: %s", opts.TTL)
-	token, err := auth.GenerateJWT(ctx, opts, auth.RootUserName)
+	token, err := auth.GenerateJWT(ctx, opts, username)
 	if err != nil {
 		lg.Debugf("failed to generate JWT token: %v", err)
 		return nil, kvdberrors.ErrAuthFailed
 	}
+	lg.Debugf("created a new JWT token: username = %s; token = %s", username, token)
 
 	return &authpb.AuthenticateResponse{AuthToken: token}, nil
 }
