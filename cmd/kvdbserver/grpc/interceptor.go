@@ -27,10 +27,12 @@ func newHeaderUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor
 // newAuthUnaryInterceptor returns unary interceptor to handle RPC call authorization.
 func newAuthUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
-			logger := s.Logger()
-			logger.Debugf("Failed to authorize request: %v", err)
-			return nil, err
+		if !bypassAuthorization(info.FullMethod) {
+			if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
+				logger := s.Logger()
+				logger.Debugf("Failed to authorize request: %v", err)
+				return nil, err
+			}
 		}
 		return handler(ctx, req)
 	}
@@ -74,4 +76,8 @@ func logRequestSuccess(logger kvdb.Logger, verbose bool, fullMethod string, dbNa
 	} else {
 		logger.Debugf("(success) %s", fullMethod)
 	}
+}
+
+func bypassAuthorization(fullMethod string) bool {
+	return fullMethod == "/api.v0.authpb.AuthService/Authenticate"
 }

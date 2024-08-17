@@ -401,6 +401,12 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
+	defer func() {
+		if req != nil {
+			req.Password = ""
+		}
+	}()
+
 	if !s.Cfg.AuthEnabled {
 		return nil, kvdberrors.ErrAuthNotEnabled
 	}
