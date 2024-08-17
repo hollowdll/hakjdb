@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hollowdll/kvdb/api/v0/authpb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
@@ -29,6 +30,7 @@ const (
 
 var (
 	GrpcEchoClient      echopb.EchoServiceClient
+	GrpcAuthClient      authpb.AuthServiceClient
 	GrpcServerClient    serverpb.ServerServiceClient
 	GrpcDBClient        dbpb.DBServiceClient
 	GrpcGeneralKVClient kvpb.GeneralKVServiceClient
@@ -63,6 +65,7 @@ func InitClient() {
 	}
 
 	GrpcEchoClient = echopb.NewEchoServiceClient(conn)
+	GrpcAuthClient = authpb.NewAuthServiceClient(conn)
 	GrpcServerClient = serverpb.NewServerServiceClient(conn)
 	GrpcDBClient = dbpb.NewDBServiceClient(conn)
 	GrpcGeneralKVClient = kvpb.NewGeneralKVServiceClient(conn)
