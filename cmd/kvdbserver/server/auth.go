@@ -40,10 +40,12 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 
 		opts := &auth.JWTOptions{
 			SignKey: s.Cfg.AuthTokenSecretKey,
-			TTL:     time.Duration(s.Cfg.AuthTokenTTL),
+			TTL:     time.Duration(s.Cfg.AuthTokenTTL) * time.Second,
 		}
 		_, err := auth.ValidateJWT(tokenStr, opts)
 		if err != nil {
+			lg := s.Logger()
+			lg.Debugf("failed to validate JWT token: %v", err)
 			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error())
 		}
 	}

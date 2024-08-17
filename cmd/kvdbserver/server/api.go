@@ -77,17 +77,17 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 	}
 
 	generalInfo := &serverpb.GeneralInfo{
-		KvdbVersion:     version.Version,
-		GoVersion:       runtime.Version(),
-		Os:              osInfo,
-		Arch:            runtime.GOARCH,
-		ProcessId:       uint32(os.Getpid()),
-		UptimeSeconds:   uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:         uint32(s.Cfg.PortInUse),
-		TlsEnabled:      s.Cfg.TLSEnabled,
-		PasswordEnabled: s.credentialStore.IsServerPasswordEnabled(),
-		LogfileEnabled:  s.Cfg.LogFileEnabled,
-		DebugEnabled:    s.Cfg.DebugEnabled,
+		KvdbVersion:    version.Version,
+		GoVersion:      runtime.Version(),
+		Os:             osInfo,
+		Arch:           runtime.GOARCH,
+		ProcessId:      uint32(os.Getpid()),
+		UptimeSeconds:  uint64(time.Since(s.startTime).Seconds()),
+		TcpPort:        uint32(s.Cfg.PortInUse),
+		TlsEnabled:     s.Cfg.TLSEnabled,
+		AuthEnabled:    s.Cfg.AuthEnabled,
+		LogfileEnabled: s.Cfg.LogFileEnabled,
+		DebugEnabled:   s.Cfg.DebugEnabled,
 	}
 	memoryInfo := &serverpb.MemoryInfo{
 		MemoryAlloc:      m.Alloc,
@@ -414,7 +414,7 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 
 	opts := &auth.JWTOptions{
 		SignKey: s.Cfg.AuthTokenSecretKey,
-		TTL:     time.Duration(s.Cfg.AuthTokenTTL),
+		TTL:     time.Duration(s.Cfg.AuthTokenTTL) * time.Second,
 	}
 	lg.Debugf("JWT token TTL: %s", opts.TTL)
 	token, err := auth.GenerateJWT(opts, username)

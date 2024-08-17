@@ -35,20 +35,20 @@ func GenerateJWT(opts *JWTOptions, username string) (string, error) {
 }
 
 // ValidateJWT validates JWT token.
-func ValidateJWT(tokenStr string, opts *JWTOptions) (*AuthInfo, error) {
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+func ValidateJWT(token string, opts *JWTOptions) (*AuthInfo, error) {
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
 			return nil, errors.New("invalid signing method")
 		}
-		return opts.SignKey, nil
+		return []byte(opts.SignKey), nil
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !token.Valid || !ok {
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !parsedToken.Valid || !ok {
 		return nil, errors.New("failed to get claims from JWT token")
 	}
 

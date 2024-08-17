@@ -19,22 +19,26 @@ import (
 
 func TestAuthorizeIncomingRpcCall(t *testing.T) {
 	cfg := config.DefaultConfig()
+	cfg.AuthEnabled = true
+	cfg.AuthTokenSecretKey = "test-key"
+	cfg.AuthTokenTTL = 60
 
 	t.Run("AuthDisabled", func(t *testing.T) {
+		cfg := config.DefaultConfig()
 		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		ctx := context.Background()
 		err := s.AuthorizeIncomingRpcCall(ctx)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
 	})
 
-	t.Run("AuthEnabled", func(t *testing.T) {
+	t.Run("ValidToken", func(t *testing.T) {
 		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
 		password := "pass1234"
 		user := "root"
 		s.EnableAuth(password)
 		jwtOpts := &auth.JWTOptions{
-			SignKey: "test-key",
-			TTL:     time.Second * 30,
+			SignKey: cfg.AuthTokenSecretKey,
+			TTL:     time.Duration(cfg.AuthTokenTTL) * time.Second,
 		}
 		token, err := auth.GenerateJWT(jwtOpts, user)
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
