@@ -60,8 +60,8 @@ message GeneralInfo {
   uint32 tcp_port = 7;
   // True if TLS is enabled.
   bool tls_enabled = 8;
-  // True if password protection is enabled.
-  bool password_enabled = 9;
+  // True if authentication is enabled.
+  bool auth_enabled = 9;
   // True if the log file is enabled.
   bool logfile_enabled = 10;
   // True if debug mode is enabled.
