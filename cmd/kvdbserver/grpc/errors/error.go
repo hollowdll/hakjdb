@@ -19,12 +19,16 @@ var grpcErrorMap = map[error]error{
 	kvdberrors.ErrDatabaseKeyRequired: status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseKeyRequired.Error()),
 	kvdberrors.ErrDatabaseKeyTooLong:  status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseKeyTooLong.Error()),
 
-	kvdberrors.ErrInvalidCredentials: status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error()),
-	kvdberrors.ErrMaxKeysReached:     status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error()),
-	kvdberrors.ErrLogFileNotEnabled:  status.Error(codes.FailedPrecondition, kvdberrors.ErrLogFileNotEnabled.Error()),
-	kvdberrors.ErrReadLogFile:        status.Error(codes.Internal, kvdberrors.ErrReadLogFile.Error()),
-	kvdberrors.ErrGetOSInfo:          status.Error(codes.Internal, kvdberrors.ErrGetOSInfo.Error()),
-	kvdberrors.ErrMissingMetadata:    status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error()),
+	kvdberrors.ErrInvalidCredentials: status.Error(codes.InvalidArgument, kvdberrors.ErrInvalidCredentials.Error()),
+	kvdberrors.ErrInvalidAuthToken:   status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error()),
+	kvdberrors.ErrAuthFailed:         status.Error(codes.InvalidArgument, kvdberrors.ErrAuthFailed.Error()),
+	kvdberrors.ErrAuthNotEnabled:     status.Error(codes.FailedPrecondition, kvdberrors.ErrAuthNotEnabled.Error()),
+
+	kvdberrors.ErrMaxKeysReached:    status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error()),
+	kvdberrors.ErrLogFileNotEnabled: status.Error(codes.FailedPrecondition, kvdberrors.ErrLogFileNotEnabled.Error()),
+	kvdberrors.ErrReadLogFile:       status.Error(codes.Internal, kvdberrors.ErrReadLogFile.Error()),
+	kvdberrors.ErrGetOSInfo:         status.Error(codes.Internal, kvdberrors.ErrGetOSInfo.Error()),
+	kvdberrors.ErrMissingMetadata:   status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error()),
 }
 
 // ToGrpcError converts error to the correct gRPC error status.
