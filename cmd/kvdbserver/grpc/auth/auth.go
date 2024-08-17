@@ -18,7 +18,7 @@ func NewAuthServiceServer(s *server.KvdbServer) authpb.AuthServiceServer {
 }
 
 // Authenticate is the implementation of RPC Authenticate.
-func (s *AuthServiceServer) Authenticate(ctx, context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
+func (s *AuthServiceServer) Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
 	res, err := s.srv.Authenticate(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
