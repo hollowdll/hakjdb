@@ -417,7 +417,7 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 		TTL:     time.Duration(s.Cfg.AuthTokenTTL),
 	}
 	lg.Debugf("JWT token TTL: %s", opts.TTL)
-	token, err := auth.GenerateJWT(ctx, opts, username)
+	token, err := auth.GenerateJWT(opts, username)
 	if err != nil {
 		lg.Debugf("failed to generate JWT token: %v", err)
 		return nil, kvdberrors.ErrAuthFailed

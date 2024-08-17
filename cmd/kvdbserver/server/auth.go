@@ -25,7 +25,7 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 
 		values := md.Get(common.GrpcMetadataKeyAuthToken)
 		if len(values) < 1 {
-			return status.Errorf(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
+			return status.Errorf(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error())
 		}
 		tokenStr := values[0]
 
@@ -42,9 +42,9 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 			SignKey: s.Cfg.AuthTokenSecretKey,
 			TTL:     time.Duration(s.Cfg.AuthTokenTTL),
 		}
-		_, err := auth.ValidateJWT(ctx, tokenStr, opts)
+		_, err := auth.ValidateJWT(tokenStr, opts)
 		if err != nil {
-			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidCredentials.Error())
+			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error())
 		}
 	}
 	return nil

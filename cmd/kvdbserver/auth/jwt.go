@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"errors"
 	"time"
 
@@ -20,7 +19,7 @@ type AuthInfo struct {
 }
 
 // GenerateJWT generates a new JWT token.
-func GenerateJWT(ctx context.Context, opts *JWTOptions, username string) (string, error) {
+func GenerateJWT(opts *JWTOptions, username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
 		"iat":      time.Now().Unix(),
@@ -36,7 +35,7 @@ func GenerateJWT(ctx context.Context, opts *JWTOptions, username string) (string
 }
 
 // ValidateJWT validates JWT token.
-func ValidateJWT(ctx context.Context, tokenStr string, opts *JWTOptions) (*AuthInfo, error) {
+func ValidateJWT(tokenStr string, opts *JWTOptions) (*AuthInfo, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
 			return nil, errors.New("invalid signing method")
