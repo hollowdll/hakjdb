@@ -85,10 +85,7 @@ message GetLogsResponse {
   repeated string logs = 1;
 }
 
-// ServerService provides server-related RPCs.
-//
-// Common gRPC metadata keys for this service's RPCs:
-// - password: The server password. Used for authentication if the server is password protected.
+// ServerService provides RPCs related to the server.
 service ServerService {
   // GetServerInfo returns information about the server.
   rpc GetServerInfo(GetServerInfoRequest) returns (GetServerInfoResponse) {}
