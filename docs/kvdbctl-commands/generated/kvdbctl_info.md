@@ -9,6 +9,7 @@ Meaning of the returned fields:
 
 General
 - kvdb_version: Version of kvdb.
+- api_version: Version of API.
 - go_version: Version of Go used to compile the server.
 - os: Server operating system.
 - arch: Architecture which can be 32 or 64 bits.

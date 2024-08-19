@@ -26,4 +26,5 @@ CLI tool for kvdb key-value data store. Use it to manage kvdb servers.
 * [kvdbctl keytype](kvdbctl_keytype.md)	 - Get the data type of a key
 * [kvdbctl logs](kvdbctl_logs.md)	 - Get logs from the server
 * [kvdbctl set](kvdbctl_set.md)	 - Set the value of a String key
+* [kvdbctl version](kvdbctl_version.md)	 - Show version information
 

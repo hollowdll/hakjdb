@@ -41,6 +41,7 @@ func init() {
 	rootCmd.AddCommand(cmdGetKeyType)
 	rootCmd.AddCommand(cmdEcho)
 	rootCmd.AddCommand(cmdAuthenticate)
+	rootCmd.AddCommand(cmdVersion)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.DisableAutoGenTag = true
