@@ -14,6 +14,7 @@ CLI tool for kvdb key-value data store. Use it to manage kvdb servers.
 
 ### SEE ALSO
 
+* [kvdbctl authenticate](kvdbctl_authenticate.md)	 - Authenticate to the server
 * [kvdbctl connect](kvdbctl_connect.md)	 - Manage connection settings
 * [kvdbctl db](kvdbctl_db.md)	 - Manage databases
 * [kvdbctl delete](kvdbctl_delete.md)	 - Delete keys
