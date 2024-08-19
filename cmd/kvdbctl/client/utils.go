@@ -2,8 +2,13 @@ package client
 
 import (
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
+	"github.com/hollowdll/kvdb/internal/common"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/status"
 )
@@ -35,4 +40,47 @@ func PromptConfirm(msg string) bool {
 	cobra.CheckErr(err)
 
 	return strings.ToLower(input) == "yes"
+}
+
+func WriteTokenCache(filePath string, token string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write([]byte(token))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ReadTokenFromCache(filePath string) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	token, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+
+	return string(token), nil
+}
+
+func GetTokenCacheFilePath() (string, error) {
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		return "", err
+	}
+	subCacheDir := filepath.Join(cacheDir, config.CacheDirSubDirName)
+	err = common.CreateDirectoriesInDirPath(subCacheDir)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(subCacheDir, config.TokenCacheFileName), nil
 }

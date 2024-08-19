@@ -7,8 +7,10 @@ import (
 )
 
 const (
-	configFileName string = "kvdbctl-config"
-	configFileType string = "yaml"
+	configFileName     string = "kvdbctl-config"
+	configFileType     string = "yaml"
+	CacheDirSubDirName string = ".kvdbctl"
+	TokenCacheFileName string = "._kvdbctl_token_cache___"
 
 	// ConfigKeyHost is the configuration key for host.
 	ConfigKeyHost string = "host"
