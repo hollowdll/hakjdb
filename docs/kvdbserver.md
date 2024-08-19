@@ -36,6 +36,9 @@ tls_enabled: false
 tls_private_key_path: ""
 log_level: info
 verbose_logs_enabled: false
+auth_enabled: false
+auth_token_secret_key: ""
+auth_token_ttl: 900
 ```
 
 Meaning of fields:
@@ -50,6 +53,9 @@ Meaning of fields:
 - `tls_private_key_path`: The path to the TLS private key.
 - `log_level`: The log level. Can be debug, info, warning, error, or fatal.
 - `verbose_logs_enabled`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
+- `auth_enabled`: Enable authentication. If enabled, clients need to authenticate.
+- `auth_token_secret_key`: Secret key used to sign JWT tokens. Should be long and secure.
+- `auth_token_ttl`: JWT token time to live in seconds. Once a JWT token is created, it expires after the number of seconds specified by this.
 
 # Environment variables
 
@@ -58,7 +64,7 @@ It is also possible to change configurations with environment variables. Environ
 Below is a list of all environment variables:
 
 - `KVDB_PORT`: Server TCP/IP port. Ranges from 1 to 65535.
-- `KVDB_PASSWORD`: Server password. If not set, password protection is disabled.
+- `KVDB_PASSWORD`: Server password. Password is used in authentication.
 - `KVDB_DEBUG_ENABLED`: Enable debug mode. Some features are only enabled in debug mode. Can be true or false.
 - `KVDB_DEFAULT_DB`: The name of the default database that is created at server startup.
 - `KVDB_LOGFILE_ENABLED`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
@@ -68,6 +74,9 @@ Below is a list of all environment variables:
 - `KVDB_MAX_CLIENT_CONNECTIONS`: The maximum number of active client connections allowed.
 - `KVDB_LOG_LEVEL`: The log level. Can be debug, info, warning, error, or fatal.
 - `KVDB_VERBOSE_LOGS_ENABLED`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
+- `KVDB_AUTH_ENABLED`: Enable authentication. If enabled, clients need to authenticate.
+- `KVDB_AUTH_TOKEN_SECRET_KEY`: Secret key used to sign JWT tokens. Should be long and secure.
+- `KVDB_AUTH_TOKEN_TTL`: JWT token time to live in seconds. Once a JWT token is created, it expires after the number of seconds specified by this.
 
 # Debug mode
 
@@ -111,11 +120,13 @@ The name of the log file is `kvdbserver.log`. If log file is enabled, the file i
 
 # Security
 
-## Password protection
+## Authentication
 
-The server can be password protected to prevent unauthorized use. When password protection is enabled, all clients must authenticate using password. By default, password protection is disabled.
+The server can enable authentication to prevent unauthorized use. By default, authentication is disabled. When authentication is enabled, all clients must authenticate using password. Authentication process returns a JWT token that the client can use to make authorized requests. Passwords and JWT tokens are not logged in order to improve security.
 
-Password protection can be enabled by setting password with environment variable `KVDB_PASSWORD`. The password is hashed using bcrypt before storing it in memory. The maximum password size is 72 bytes.
+Authentication can be enabled in the configuration file or with environment variable. By default, the server uses empty password and JWT secret key. These should be set as the default values are insecure. By default, JWT tokens expire 15 minutes after they have been created. This can be changed.
+
+Password can be set with environment variable `KVDB_PASSWORD`. The password is hashed using bcrypt before storing it in memory. Authentication process compares the provided password to this password by hashing it with bcrypt. The maximum password size is 72 bytes.
 
 ## TLS
 
