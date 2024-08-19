@@ -1,4 +1,4 @@
-# API
+# API v0
 
 The kvdb server API is implemented with gRPC and defined with Protocol Buffers. HTTP/2 is needed in the connections. Requests are made with RPCs (Remote Procedure Calls). Connections require a gRPC client.
 
@@ -8,21 +8,43 @@ RPCs are grouped to gRPC services that provide related RPCs. The protobuf gRPC s
 
 # Authentication
 
-If the server is password protected, the client needs to authenticate with password. The password is sent in gRPC metadata and needs to be included in all requests.
+If authentication is enabled, the client needs to authorize itself with a JWT token. The token is sent in gRPC metadata and needs to be included in all requests, except the authentication endpoint, which returns a token if the provided password is correct.
 
-The gRPC metadata key for password is `password`. The actual password to send is set as the value of the key.
+The gRPC metadata key for the token is `auth-token`. The actual token to send is set as the value of the key.
 
 # Common gRPC Metadata
 
 This section lists common gRPC metadata that all RPCs use:
 
 Request metadata:
-- `password`: The server password. Used for authentication if the server is password protected.
+- `auth-token`: The JWT token. Used to authorize the client if authentication is enabled. Not needed in the authentication RPC.
 
 Response metadata:
 - `api-version`: The gRPC API version. It is of format `0.0.0`.
 
-# API v0 gRPC services
+# gRPC services
+
+## AuthService
+
+- Service name: `AuthService`
+- Package: `api.v0.authpb`
+- Proto file: `auth.proto`
+
+[Link to the protobuf definitions](../api/v0/authpb/auth.proto)
+
+AuthService provides RPCs related to authentication.
+
+## EchoService
+
+- Service name: `EchoService`
+- Package: `api.v0.echopb`
+- Proto file: `echo.proto`
+
+[Link to the protobuf definitions](../api/v0/echopb/echo.proto)
+
+EchoService provides connection utility RPCs.
+The RPCs in this service can be used to test connections to the server
+with minimal network overhead.
 
 ## ServerService
 
@@ -32,10 +54,7 @@ Response metadata:
 
 [Link to the protobuf definitions](../api/v0/serverpb/server.proto)
 
-ServerService provides server-related RPCs.
-
-Common gRPC metadata for this service's RPCs:
-- `password`: The server password. Used for authentication if the server is password protected.
+ServerService provides RPCs related to the server.
 
 ## DBService
 
@@ -45,10 +64,7 @@ Common gRPC metadata for this service's RPCs:
 
 [Link to the protobuf definitions](../api/v0/dbpb/db.proto)
 
-DBService provides database-related RPCs.
-
-Common gRPC metadata for this service's RPCs:
-- `password`: The server password. Used for authentication if the server is password protected.
+DBService provides RPCs related to databases.
 
 ## GeneralKVService
 
@@ -61,7 +77,6 @@ Common gRPC metadata for this service's RPCs:
 GeneralKVService provides RPCs related to general key management.
 
 Common gRPC metadata keys for this service's RPCs:
-- `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
 
 ## StringKVService
@@ -75,7 +90,6 @@ Common gRPC metadata keys for this service's RPCs:
 StringKVService provides RPCs related to String keys.
 
 Common gRPC metadata keys for this service's RPCs:
-- `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
 
 ## HashMapKVService
@@ -89,6 +103,5 @@ Common gRPC metadata keys for this service's RPCs:
 HashMapKVService provides RPCs related to HashMap keys.
 
 Common gRPC metadata keys for this service's RPCs:
-- `password`: The server password. Used for authentication if the server is password protected.
 - `database`: The database to use. If omitted, the default database is used.
 
