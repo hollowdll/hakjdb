@@ -35,6 +35,12 @@ const (
 	ConfigKeyLogLevel string = "log_level"
 	// VerboseLogsEnabled is the configuration key for enabling verbose logs.
 	ConfigKeyVerboseLogsEnabled string = "verbose_logs_enabled"
+	// ConfigKeyAuthEnabled is the configuration key for enabling authentication.
+	ConfigKeyAuthEnabled string = "auth_enabled"
+	// ConfigKeyAuthTokenSecretKey is the configuration key for setting the secret key used to sign JWT tokens.
+	ConfigKeyAuthTokenSecretKey string = "auth_token_secret_key"
+	// ConfigKeyAuthTokenTTL is the configuration key for setting the JWT token time to live in seconds.
+	ConfigKeyAuthTokenTTL string = "auth_token_ttl"
 
 	// EnvPrefix is the prefix that environment variables use.
 	EnvPrefix string = "KVDB"
@@ -45,6 +51,7 @@ const (
 	DefaultTLSEnabled           bool   = false
 	DefaultDebugEnabled         bool   = false
 	DefaultVerboseLogsEnabled   bool   = false
+	DefaultAuthEnabled          bool   = false
 	DefaultDatabase             string = "default"
 	DefaultPort                 uint16 = common.ServerDefaultPort
 	DefaultLogFilePath          string = ""
@@ -54,6 +61,8 @@ const (
 	DefaultTLSCertPath          string = ""
 	DefaultTLSPrivKeyPath       string = ""
 	DefaultLogLevel             string = kvdb.DefaultLogLevelStr
+	DefaultAuthTokenSecretKey   string = ""
+	DefaultAuthTokenTTL         uint32 = 900
 )
 
 // ServerConfig holds the server's configuration.
@@ -62,6 +71,7 @@ type ServerConfig struct {
 	TLSEnabled         bool
 	DebugEnabled       bool
 	VerboseLogsEnabled bool
+	AuthEnabled        bool
 
 	// The name of the default database that is created at server startup.
 	DefaultDB string
@@ -81,6 +91,11 @@ type ServerConfig struct {
 
 	TLSCertPath    string
 	TLSPrivKeyPath string
+
+	// Secret key used to sign JWT tokens.
+	AuthTokenSecretKey string
+	// JWT token time to live in seconds.
+	AuthTokenTTL uint32
 }
 
 // LoadConfig loads server configurations.
@@ -105,10 +120,13 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
 	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
 	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
+	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
 	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
 	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
 	viper.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
+	viper.SetDefault(ConfigKeyAuthTokenSecretKey, DefaultAuthTokenSecretKey)
+	viper.SetDefault(ConfigKeyAuthTokenTTL, DefaultAuthTokenTTL)
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
@@ -133,6 +151,7 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 		TLSEnabled:           viper.GetBool(ConfigKeyTLSEnabled),
 		DebugEnabled:         viper.GetBool(ConfigKeyDebugEnabled),
 		VerboseLogsEnabled:   viper.GetBool(ConfigKeyVerboseLogsEnabled),
+		AuthEnabled:          viper.GetBool(ConfigKeyAuthEnabled),
 		DefaultDB:            viper.GetString(ConfigKeyDefaultDatabase),
 		LogFilePath:          filepath.Join(dataDirPath, logFileName),
 		MaxKeysPerDB:         DefaultMaxKeysPerDB,
@@ -141,6 +160,8 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 		MaxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
 		TLSCertPath:          viper.GetString(ConfigKeyTLSCertPath),
 		TLSPrivKeyPath:       viper.GetString(ConfigKeyTLSPrivKeyPath),
+		AuthTokenSecretKey:   viper.GetString(ConfigKeyAuthTokenSecretKey),
+		AuthTokenTTL:         viper.GetUint32(ConfigKeyAuthTokenTTL),
 	}
 }
 
@@ -151,6 +172,7 @@ func DefaultConfig() ServerConfig {
 		TLSEnabled:           DefaultTLSEnabled,
 		DebugEnabled:         DefaultDebugEnabled,
 		VerboseLogsEnabled:   DefaultVerboseLogsEnabled,
+		AuthEnabled:          DefaultAuthEnabled,
 		DefaultDB:            DefaultDatabase,
 		LogFilePath:          DefaultLogFilePath,
 		MaxKeysPerDB:         DefaultMaxKeysPerDB,
@@ -159,6 +181,8 @@ func DefaultConfig() ServerConfig {
 		MaxClientConnections: DefaultMaxClientConnections,
 		TLSCertPath:          DefaultTLSCertPath,
 		TLSPrivKeyPath:       DefaultTLSPrivKeyPath,
+		AuthTokenSecretKey:   DefaultAuthTokenSecretKey,
+		AuthTokenTTL:         DefaultAuthTokenTTL,
 	}
 }
 

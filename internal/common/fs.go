@@ -64,6 +64,10 @@ func createDirIfNotExist(dirPath string) error {
 	return nil
 }
 
+func CreateDirectoriesInDirPath(dirPath string) error {
+	return os.MkdirAll(dirPath, os.ModePerm)
+}
+
 // CreateFileIfNotExist creates a file if it doesn't exist.
 func CreateFileIfNotExist(filePath string) error {
 	_, err := os.Stat(filePath)

@@ -1,5 +1,5 @@
 // kvdbserver gRPC API
-// API version: 0.2.0
+// API version: 0.3.0
 //
 // This package contains Protobuf definitions related to key-value storage.
 
@@ -42,10 +42,6 @@ message DeleteAllKeysRequest {}
 message DeleteAllKeysResponse {}
 
 // GeneralKVService provides RPCs related to general key management.
-//
-// Common gRPC metadata keys for this service's RPCs:
-// - password: The server password. Used for authentication if the server is password protected.
-// - database: The database to use. If omitted, the default database is used.
 service GeneralKVService {
   // GetAllKeys returns all the keys.
   // Uses the database sent in gRPC metadata or the default database if omitted.

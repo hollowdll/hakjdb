@@ -187,12 +187,15 @@ func (s *KvdbServer) CloseLogger() {
 	}
 }
 
-// EnablePasswordProtection enables server password protection and sets the password.
-func (s *KvdbServer) EnablePasswordProtection(password string) {
-	if err := s.credentialStore.SetServerPassword([]byte(password)); err != nil {
-		s.logger.Fatalf("Failed to set server password: %v", err)
+// EnableAuth enables authentication.
+func (s *KvdbServer) EnableAuth(rootPassword string) {
+	if err := s.credentialStore.SetPassword(auth.RootUserName, []byte(rootPassword)); err != nil {
+		s.logger.Fatalf("Failed to set root password: %v", err)
 	}
-	s.logger.Infof("Password protection is enabled. Clients need to authenticate using password.")
+	s.logger.Infof("Authentication is enabled. Clients need to authenticate.")
+	if rootPassword == "" {
+		s.logger.Warning("Using empty password. Consider changing it to a strong password.")
+	}
 }
 
 // CreateDefaultDatabase creates an empty default database.
@@ -224,11 +227,12 @@ func (s *KvdbServer) Init() {
 		s.logger.Info("Debug mode is enabled")
 	}
 
-	password, ok := config.ShouldUsePassword()
-	if ok {
-		s.EnablePasswordProtection(password)
+	if s.Cfg.AuthEnabled {
+		s.logger.Info("Enabling authentication")
+		password, _ := config.ShouldUsePassword()
+		s.EnableAuth(password)
 	} else {
-		s.logger.Warning("Password protection is disabled")
+		s.logger.Warning("Authentication is disabled")
 	}
 
 	s.CreateDefaultDatabase(s.Cfg.DefaultDB)

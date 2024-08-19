@@ -1,5 +1,5 @@
 // kvdbserver gRPC API
-// API version: 0.2.0
+// API version: 0.3.0
 //
 // This package contains Protobuf definitions related to key-value storage.
 
@@ -30,10 +30,6 @@ message GetStringResponse {
 }
 
 // StringKVService provides RPCs related to String keys.
-//
-// Common gRPC metadata keys for this service's RPCs:
-// - password: The server password. Used for authentication if the server is password protected.
-// - database: The database to use. If omitted, the default database is used.
 service StringKVService {
   // SetString sets a key to hold a String value. Creates the key if it doesn't exist.
   // Overwrites the key if it is holding a value of another data type.

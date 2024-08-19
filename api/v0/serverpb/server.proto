@@ -1,5 +1,5 @@
 // kvdbserver gRPC API
-// API version: 0.2.0
+// API version: 0.3.0
 //
 // This package contains Protobuf definitions related to the server.
 
@@ -60,8 +60,8 @@ message GeneralInfo {
   uint32 tcp_port = 7;
   // True if TLS is enabled.
   bool tls_enabled = 8;
-  // True if password protection is enabled.
-  bool password_enabled = 9;
+  // True if authentication is enabled.
+  bool auth_enabled = 9;
   // True if the log file is enabled.
   bool logfile_enabled = 10;
   // True if debug mode is enabled.
@@ -85,10 +85,7 @@ message GetLogsResponse {
   repeated string logs = 1;
 }
 
-// ServerService provides server-related RPCs.
-//
-// Common gRPC metadata keys for this service's RPCs:
-// - password: The server password. Used for authentication if the server is password protected.
+// ServerService provides RPCs related to the server.
 service ServerService {
   // GetServerInfo returns information about the server.
   rpc GetServerInfo(GetServerInfoRequest) returns (GetServerInfoResponse) {}

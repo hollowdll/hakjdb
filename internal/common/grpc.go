@@ -7,4 +7,6 @@ const (
 	GrpcMetadataKeyPassword string = "password"
 	// GrpcMetadataKeyAPIVersion is the gRPC metadata key for API version.
 	GrpcMetadataKeyAPIVersion string = "api-version"
+	// GrpcMetadataKeyAuthToken is the gRPC metadata key for authentication token.
+	GrpcMetadataKeyAuthToken string = "auth-token"
 )

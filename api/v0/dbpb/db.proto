@@ -1,5 +1,5 @@
 // kvdbserver gRPC API
-// API version: 0.2.0
+// API version: 0.3.0
 //
 // This package contains Protobuf definitions related to databases.
 
@@ -65,10 +65,7 @@ message DBInfo {
   string description = 6;
 }
 
-// DBService provides database-related RPCs.
-//
-// Common gRPC metadata keys for this service's RPCs:
-// - password: The server password. Used for authentication if the server is password protected.
+// DBService provides RPCs related to databases.
 service DBService {
   // CreateDB creates a new database.
   rpc CreateDB(CreateDBRequest) returns (CreateDBResponse) {}

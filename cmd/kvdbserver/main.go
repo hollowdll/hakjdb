@@ -16,6 +16,7 @@ func start() {
 		}
 	}()
 	logger.Infof("Starting kvdb v%s server ...", version.Version)
+	logger.Infof("API version %s", version.APIVersion)
 	cfg := config.LoadConfig(logger)
 	s := server.NewKvdbServer(cfg, logger)
 	s.Init()

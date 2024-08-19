@@ -1,0 +1,23 @@
+// kvdbserver gRPC API
+// API version: 0.3.0
+//
+// This package contains Protobuf definitions related to authentication.
+
+syntax = "proto3";
+package api.v0.authpb;
+
+option go_package = "api/v0/authpb";
+
+message AuthenticateRequest {
+  string password = 1;
+}
+
+message AuthenticateResponse {
+  string auth_token = 1;
+}
+
+// AuthService provides RPCs related to authentication.
+service AuthService {
+  // Authenticate authenticates a client.
+  rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {}
+}

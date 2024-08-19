@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hollowdll/kvdb/api/v0/authpb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/api/v0/kvpb"
@@ -29,6 +30,7 @@ const (
 
 var (
 	GrpcEchoClient      echopb.EchoServiceClient
+	GrpcAuthClient      authpb.AuthServiceClient
 	GrpcServerClient    serverpb.ServerServiceClient
 	GrpcDBClient        dbpb.DBServiceClient
 	GrpcGeneralKVClient kvpb.GeneralKVServiceClient
@@ -39,7 +41,27 @@ var (
 
 // InitClient initializes the client and connections.
 func InitClient() {
-	var dialOption grpc.DialOption = nil
+	var dialOpts []grpc.DialOption
+	dialOpts = append(dialOpts, grpc.WithTransportCredentials(getTransportCreds()))
+	createEmptyTokenCache()
+
+	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
+	conn, err := grpc.NewClient(address, dialOpts...)
+	if err != nil {
+		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
+	}
+
+	GrpcEchoClient = echopb.NewEchoServiceClient(conn)
+	GrpcAuthClient = authpb.NewAuthServiceClient(conn)
+	GrpcServerClient = serverpb.NewServerServiceClient(conn)
+	GrpcDBClient = dbpb.NewDBServiceClient(conn)
+	GrpcGeneralKVClient = kvpb.NewGeneralKVServiceClient(conn)
+	GrpcStringKVClient = kvpb.NewStringKVServiceClient(conn)
+	GrpcHashMapKVClient = kvpb.NewHashMapKVServiceClient(conn)
+	grpcClientConn = conn
+}
+
+func getTransportCreds() credentials.TransportCredentials {
 	if viper.GetBool(config.ConfigKeyTlsEnabled) {
 		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCertPath))
 		if err != nil {
@@ -50,25 +72,10 @@ func InitClient() {
 			cobra.CheckErr("failed to parse TLS certificate")
 		}
 
-		creds := credentials.NewClientTLSFromCert(certPool, "")
-		dialOption = grpc.WithTransportCredentials(creds)
+		return credentials.NewClientTLSFromCert(certPool, "")
 	} else {
-		dialOption = grpc.WithTransportCredentials(insecure.NewCredentials())
+		return insecure.NewCredentials()
 	}
-
-	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
-	conn, err := grpc.NewClient(address, dialOption)
-	if err != nil {
-		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
-	}
-
-	GrpcEchoClient = echopb.NewEchoServiceClient(conn)
-	GrpcServerClient = serverpb.NewServerServiceClient(conn)
-	GrpcDBClient = dbpb.NewDBServiceClient(conn)
-	GrpcGeneralKVClient = kvpb.NewGeneralKVServiceClient(conn)
-	GrpcStringKVClient = kvpb.NewStringKVServiceClient(conn)
-	GrpcHashMapKVClient = kvpb.NewHashMapKVServiceClient(conn)
-	grpcClientConn = conn
 }
 
 // CloseConnections closes all connections to the server.
@@ -90,9 +97,12 @@ func ReadPasswordFromEnv() (string, bool) {
 // It can be overwritten or extended.
 func GetBaseGrpcMetadata() metadata.MD {
 	md := metadata.Pairs()
-	password, ok := ReadPasswordFromEnv()
-	if ok {
-		md.Set(common.GrpcMetadataKeyPassword, password)
+	file, err := GetTokenCacheFilePath()
+	cobra.CheckErr(err)
+	token, err := ReadTokenFromCache(file)
+	cobra.CheckErr(err)
+	if token != "" {
+		md.Set(common.GrpcMetadataKeyAuthToken, token)
 	}
 
 	dbName := viper.GetString(config.ConfigKeyDatabase)
