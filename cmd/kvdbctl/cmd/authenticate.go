@@ -57,9 +57,11 @@ func authenticate(password string) {
 	res, err := client.GrpcAuthClient.Authenticate(ctx, req)
 	client.CheckGrpcError(err)
 
+	tokenCachePath, err := client.GetTokenCacheFilePath()
+	cobra.CheckErr(err)
+	err = client.WriteTokenCache(tokenCachePath, res.AuthToken)
+	cobra.CheckErr(err)
 	fmt.Println("OK")
-	// TODO write to token cache file
-	fmt.Println(res.AuthToken)
 }
 
 func readPasswordFromEnv() string {
