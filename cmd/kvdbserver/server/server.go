@@ -193,6 +193,9 @@ func (s *KvdbServer) EnableAuth(rootPassword string) {
 		s.logger.Fatalf("Failed to set root password: %v", err)
 	}
 	s.logger.Infof("Authentication is enabled. Clients need to authenticate.")
+	if rootPassword == "" {
+		s.logger.Warning("Using empty password. Consider changing it to a strong password.")
+	}
 }
 
 // CreateDefaultDatabase creates an empty default database.
