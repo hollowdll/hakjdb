@@ -41,25 +41,12 @@ var (
 
 // InitClient initializes the client and connections.
 func InitClient() {
-	var dialOption grpc.DialOption = nil
-	if viper.GetBool(config.ConfigKeyTlsEnabled) {
-		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCertPath))
-		if err != nil {
-			cobra.CheckErr(fmt.Sprintf("failed to read TLS certificate: %v", err))
-		}
-		certPool := x509.NewCertPool()
-		if !certPool.AppendCertsFromPEM(certBytes) {
-			cobra.CheckErr("failed to parse TLS certificate")
-		}
-
-		creds := credentials.NewClientTLSFromCert(certPool, "")
-		dialOption = grpc.WithTransportCredentials(creds)
-	} else {
-		dialOption = grpc.WithTransportCredentials(insecure.NewCredentials())
-	}
+	var dialOpts []grpc.DialOption
+	dialOpts = append(dialOpts, grpc.WithTransportCredentials(getTransportCreds()))
+	createEmptyTokenCache()
 
 	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
-	conn, err := grpc.NewClient(address, dialOption)
+	conn, err := grpc.NewClient(address, dialOpts...)
 	if err != nil {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
 	}
@@ -72,6 +59,23 @@ func InitClient() {
 	GrpcStringKVClient = kvpb.NewStringKVServiceClient(conn)
 	GrpcHashMapKVClient = kvpb.NewHashMapKVServiceClient(conn)
 	grpcClientConn = conn
+}
+
+func getTransportCreds() credentials.TransportCredentials {
+	if viper.GetBool(config.ConfigKeyTlsEnabled) {
+		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCertPath))
+		if err != nil {
+			cobra.CheckErr(fmt.Sprintf("failed to read TLS certificate: %v", err))
+		}
+		certPool := x509.NewCertPool()
+		if !certPool.AppendCertsFromPEM(certBytes) {
+			cobra.CheckErr("failed to parse TLS certificate")
+		}
+
+		return credentials.NewClientTLSFromCert(certPool, "")
+	} else {
+		return insecure.NewCredentials()
+	}
 }
 
 // CloseConnections closes all connections to the server.
@@ -93,9 +97,12 @@ func ReadPasswordFromEnv() (string, bool) {
 // It can be overwritten or extended.
 func GetBaseGrpcMetadata() metadata.MD {
 	md := metadata.Pairs()
-	password, ok := ReadPasswordFromEnv()
-	if ok {
-		md.Set(common.GrpcMetadataKeyPassword, password)
+	file, err := GetTokenCacheFilePath()
+	cobra.CheckErr(err)
+	token, err := ReadTokenFromCache(file)
+	cobra.CheckErr(err)
+	if token != "" {
+		md.Set(common.GrpcMetadataKeyAuthToken, token)
 	}
 
 	dbName := viper.GetString(config.ConfigKeyDatabase)

@@ -84,3 +84,9 @@ func GetTokenCacheFilePath() (string, error) {
 	}
 	return filepath.Join(subCacheDir, config.TokenCacheFileName), nil
 }
+
+func createEmptyTokenCache() {
+	path, err := GetTokenCacheFilePath()
+	cobra.CheckErr(err)
+	cobra.CheckErr(common.CreateFileIfNotExist(path))
+}
