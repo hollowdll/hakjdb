@@ -88,6 +88,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 		AuthEnabled:    s.Cfg.AuthEnabled,
 		LogfileEnabled: s.Cfg.LogFileEnabled,
 		DebugEnabled:   s.Cfg.DebugEnabled,
+		ApiVersion:     version.APIVersion,
 	}
 	memoryInfo := &serverpb.MemoryInfo{
 		MemoryAlloc:      m.Alloc,

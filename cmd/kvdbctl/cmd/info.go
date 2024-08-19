@@ -20,6 +20,7 @@ Meaning of the returned fields:
 
 General
 - kvdb_version: Version of kvdb.
+- api_version: Version of API.
 - go_version: Version of Go used to compile the server.
 - os: Server operating system.
 - arch: Architecture which can be 32 or 64 bits.
@@ -65,6 +66,7 @@ func showServerInfo() {
 	var info strings.Builder
 	info.WriteString("** General **\n")
 	info.WriteString(fmt.Sprintf("kvdb_version: %s\n", res.GeneralInfo.KvdbVersion))
+	info.WriteString(fmt.Sprintf("api_version: %s\n", res.GeneralInfo.ApiVersion))
 	info.WriteString(fmt.Sprintf("go_version: %s\n", res.GeneralInfo.GoVersion))
 	info.WriteString(fmt.Sprintf("os: %s\n", res.GeneralInfo.Os))
 	info.WriteString(fmt.Sprintf("arch: %s\n", res.GeneralInfo.Arch))
