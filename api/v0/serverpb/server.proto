@@ -46,7 +46,7 @@ message DatabaseInfo {
 message GeneralInfo {
   // Version of kvdb.
   string kvdb_version = 1;
-  // Version of go used to compile the server.
+  // Version of Go used to compile the server.
   string go_version = 2;
   // Server operating system.
   string os = 3;
@@ -66,6 +66,8 @@ message GeneralInfo {
   bool logfile_enabled = 10;
   // True if debug mode is enabled.
   bool debug_enabled = 11;
+  // Version of API.
+  string api_version = 12;
 }
 
 message GetServerInfoRequest {}
