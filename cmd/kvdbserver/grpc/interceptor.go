@@ -56,7 +56,11 @@ func newLogUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 
 func logRequestCall(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any) {
 	if verbose {
-		logger.Debugf("(call) %s: db = %s; req = %v", fullMethod, dbName, req)
+		if bypassDetailedLog(fullMethod) {
+			logger.Debugf("(call) %s: db = %s", fullMethod, dbName)
+		} else {
+			logger.Debugf("(call) %s: db = %s; req = %v", fullMethod, dbName, req)
+		}
 	} else {
 		logger.Debugf("(call) %s", fullMethod)
 	}
@@ -64,7 +68,11 @@ func logRequestCall(logger kvdb.Logger, verbose bool, fullMethod string, dbName 
 
 func logRequestFailed(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, err error) {
 	if verbose {
-		logger.Debugf("(failed) %s: db = %s; req = %v; error = %v", fullMethod, dbName, req, err)
+		if bypassDetailedLog(fullMethod) {
+			logger.Debugf("(failed) %s: db = %s; error = %v", fullMethod, dbName, err)
+		} else {
+			logger.Debugf("(failed) %s: db = %s; req = %v; error = %v", fullMethod, dbName, req, err)
+		}
 	} else {
 		logger.Debugf("(failed) %s: %v", fullMethod, err)
 	}
@@ -72,12 +80,22 @@ func logRequestFailed(logger kvdb.Logger, verbose bool, fullMethod string, dbNam
 
 func logRequestSuccess(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, resp any) {
 	if verbose {
-		logger.Debugf("(success) %s: db = %s; req = %v; resp = %v", fullMethod, dbName, req, resp)
+		if bypassDetailedLog(fullMethod) {
+			logger.Debugf("(success) %s: db = %s", fullMethod, dbName)
+		} else {
+			logger.Debugf("(success) %s: db = %s; req = %v; resp = %v", fullMethod, dbName, req, resp)
+		}
 	} else {
 		logger.Debugf("(success) %s", fullMethod)
 	}
 }
 
 func bypassAuthorization(fullMethod string) bool {
+	return fullMethod == "/api.v0.authpb.AuthService/Authenticate"
+}
+
+// bypassDetailedLog is used to check if request and response data are logged.
+// Mainly used to prevent logging sensitive data like passwords.
+func bypassDetailedLog(fullMethod string) bool {
 	return fullMethod == "/api.v0.authpb.AuthService/Authenticate"
 }

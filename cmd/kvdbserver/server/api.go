@@ -428,7 +428,7 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 		lg.Debugf("failed to generate JWT token: %v", err)
 		return nil, kvdberrors.ErrAuthFailed
 	}
-	lg.Debugf("created a new JWT token: username = %s; token = %s", username, token)
+	lg.Debugf("created a new JWT token for user %s", username)
 
 	return &authpb.AuthenticateResponse{AuthToken: token}, nil
 }

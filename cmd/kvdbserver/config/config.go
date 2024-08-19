@@ -62,7 +62,7 @@ const (
 	DefaultTLSPrivKeyPath       string = ""
 	DefaultLogLevel             string = kvdb.DefaultLogLevelStr
 	DefaultAuthTokenSecretKey   string = ""
-	DefaultAuthTokenTTL         uint32 = 3600
+	DefaultAuthTokenTTL         uint32 = 900
 )
 
 // ServerConfig holds the server's configuration.
