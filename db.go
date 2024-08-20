@@ -120,14 +120,14 @@ func (db *DB) UpdatedAt() time.Time {
 	return db.updatedAt
 }
 
-func (db *DB) UpdateName(newName string) {
+func (db *DB) ChangeName(newName string) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 	db.name = newName
 	db.update()
 }
 
-func (db *DB) UpdateDescription(newDescription string) {
+func (db *DB) ChangeDescription(newDescription string) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 	db.description = newDescription

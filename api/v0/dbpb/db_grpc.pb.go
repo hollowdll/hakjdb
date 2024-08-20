@@ -30,6 +30,8 @@ type DBServiceClient interface {
 	GetDBInfo(ctx context.Context, in *GetDBInfoRequest, opts ...grpc.CallOption) (*GetDBInfoResponse, error)
 	// DeleteDB deletes a database.
 	DeleteDB(ctx context.Context, in *DeleteDBRequest, opts ...grpc.CallOption) (*DeleteDBResponse, error)
+	// ChangeDB changes the metadata of a database.
+	ChangeDB(ctx context.Context, in *ChangeDBRequest, opts ...grpc.CallOption) (*ChangeDBResponse, error)
 }
 
 type dBServiceClient struct {
@@ -76,6 +78,15 @@ func (c *dBServiceClient) DeleteDB(ctx context.Context, in *DeleteDBRequest, opt
 	return out, nil
 }
 
+func (c *dBServiceClient) ChangeDB(ctx context.Context, in *ChangeDBRequest, opts ...grpc.CallOption) (*ChangeDBResponse, error) {
+	out := new(ChangeDBResponse)
+	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/ChangeDB", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DBServiceServer is the server API for DBService service.
 // All implementations must embed UnimplementedDBServiceServer
 // for forward compatibility
@@ -88,6 +99,8 @@ type DBServiceServer interface {
 	GetDBInfo(context.Context, *GetDBInfoRequest) (*GetDBInfoResponse, error)
 	// DeleteDB deletes a database.
 	DeleteDB(context.Context, *DeleteDBRequest) (*DeleteDBResponse, error)
+	// ChangeDB changes the metadata of a database.
+	ChangeDB(context.Context, *ChangeDBRequest) (*ChangeDBResponse, error)
 	mustEmbedUnimplementedDBServiceServer()
 }
 
@@ -106,6 +119,9 @@ func (UnimplementedDBServiceServer) GetDBInfo(context.Context, *GetDBInfoRequest
 }
 func (UnimplementedDBServiceServer) DeleteDB(context.Context, *DeleteDBRequest) (*DeleteDBResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDB not implemented")
+}
+func (UnimplementedDBServiceServer) ChangeDB(context.Context, *ChangeDBRequest) (*ChangeDBResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeDB not implemented")
 }
 func (UnimplementedDBServiceServer) mustEmbedUnimplementedDBServiceServer() {}
 
@@ -192,6 +208,24 @@ func _DBService_DeleteDB_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DBService_ChangeDB_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeDBRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DBServiceServer).ChangeDB(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.v0.dbpb.DBService/ChangeDB",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DBServiceServer).ChangeDB(ctx, req.(*ChangeDBRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DBService_ServiceDesc is the grpc.ServiceDesc for DBService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +248,10 @@ var DBService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDB",
 			Handler:    _DBService_DeleteDB_Handler,
+		},
+		{
+			MethodName: "ChangeDB",
+			Handler:    _DBService_ChangeDB_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

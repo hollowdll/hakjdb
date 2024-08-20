@@ -200,6 +200,141 @@ func TestDeleteDB(t *testing.T) {
 	})
 }
 
+func TestChangeDB(t *testing.T) {
+	cfg := config.DefaultConfig()
+
+	t.Run("ChangeNameAndDesc", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+
+		newName := "new-name"
+		newDesc := "new-desc"
+		req := &dbpb.ChangeDBRequest{
+			DbName:            dbName,
+			NewName:           newName,
+			ChangeName:        true,
+			NewDescription:    newDesc,
+			ChangeDescription: true,
+		}
+		resp, err := gs.ChangeDB(context.Background(), req)
+
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, resp)
+		assert.Equalf(t, newName, resp.DbName, "expected db name = &s; got = %s", newName, resp.DbName)
+	})
+
+	t.Run("ChangeOnlyDesc", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+
+		newDesc := "new-desc"
+		req := &dbpb.ChangeDBRequest{
+			DbName:            dbName,
+			NewDescription:    newDesc,
+			ChangeDescription: true,
+		}
+		resp, err := gs.ChangeDB(context.Background(), req)
+
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, resp)
+		assert.Equalf(t, dbName, resp.DbName, "expected db name = &s; got = %s", dbName, resp.DbName)
+	})
+
+	t.Run("DatabaseNotFound", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "test"
+
+		req := &dbpb.ChangeDBRequest{DbName: dbName}
+		resp, err := gs.ChangeDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.NotFound, st.Code(), "expected status = %s; got = %s", codes.NotFound, st.Code())
+	})
+
+	t.Run("InvalidName", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+
+		req := &dbpb.ChangeDBRequest{
+			DbName:     dbName,
+			NewName:    "???",
+			ChangeName: true,
+		}
+		resp, err := gs.ChangeDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
+	})
+
+	t.Run("InvalidDescription", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+		desc := strings.Repeat("a", 256)
+
+		req := &dbpb.ChangeDBRequest{
+			DbName:            dbName,
+			NewDescription:    desc,
+			ChangeDescription: true,
+		}
+		resp, err := gs.ChangeDB(context.Background(), req)
+		require.Error(t, err)
+		require.Nil(t, resp)
+
+		st, ok := status.FromError(err)
+		require.NotNil(t, st)
+		require.Equal(t, true, ok, "expected ok")
+		assert.Equal(t, codes.InvalidArgument, st.Code(), "expected status = %s; got = %s", codes.InvalidArgument, st.Code())
+	})
+
+	t.Run("ChangeNameDbExists", func(t *testing.T) {
+		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		gs := NewDBServiceServer(s)
+		dbName := "default"
+		s.CreateDefaultDatabase(dbName)
+
+		newName := "new-name"
+		req := &dbpb.ChangeDBRequest{
+			DbName:     dbName,
+			NewName:    newName,
+			ChangeName: true,
+		}
+		resp, err := gs.ChangeDB(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, resp)
+		assert.Equalf(t, newName, resp.DbName, "expected db name = &s; got = %s", newName, resp.DbName)
+
+		reqGet := &dbpb.GetDBInfoRequest{DbName: newName}
+		respGet, err := gs.GetDBInfo(context.Background(), reqGet)
+		require.NoErrorf(t, err, "expected no error; error = %s", err)
+		require.NotNil(t, respGet)
+		assert.Equalf(t, newName, respGet.Data.Name, "expected db name = %s; got = %s", newName, respGet.Data.Name)
+
+		reqGetAll := &dbpb.GetAllDBsRequest{}
+		respGetAll, err := gs.GetAllDBs(context.Background(), reqGetAll)
+		expectedDbCount := 1
+		require.NoErrorf(t, err, "expected no error; error = %s", err)
+		require.NotNil(t, respGetAll)
+		assert.Equalf(t, expectedDbCount, len(respGetAll.DbNames), "expected databases = %d; got = %d", expectedDbCount, len(respGetAll.DbNames))
+	})
+}
+
 func TestDefaultDatabase(t *testing.T) {
 	cfg := config.DefaultConfig()
 
