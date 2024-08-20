@@ -58,6 +58,8 @@ func InitConfig() {
 	cobra.CheckErr(viper.ReadInConfig())
 }
 
+// GetCmdTimeout gets the configured command timeout.
+// Command timeout is the maximum number of seconds to wait before a request is cancelled.
 func GetCmdTimeout() time.Duration {
 	return time.Duration(viper.GetUint32(ConfigKeyCommandTimeout)) * time.Second
 }
