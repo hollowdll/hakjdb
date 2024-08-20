@@ -219,9 +219,9 @@ func (s *KvdbServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if s.dbExists(req.DbName) {
+	if !s.dbExists(req.DbName) {
 		logDBNotFound(lg, req.DbName)
-		return nil, kvdberrors.ErrDatabaseExists
+		return nil, kvdberrors.ErrDatabaseNotFound
 	}
 
 	db := s.dbs[req.DbName]
