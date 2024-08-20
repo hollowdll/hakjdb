@@ -4,7 +4,6 @@ import (
 	"crypto/x509"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/hollowdll/kvdb/api/v0/authpb"
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
@@ -22,8 +21,6 @@ import (
 )
 
 const (
-	// CtxTimeout specifies the number of seconds to wait until operation terminates.
-	CtxTimeout time.Duration = time.Second * 10
 	// ValueNone is a special value for values that do not exist.
 	ValueNone string = "(None)"
 )

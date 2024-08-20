@@ -7,6 +7,7 @@ import (
 
 	"github.com/hollowdll/kvdb/api/v0/dbpb"
 	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -24,7 +25,7 @@ kvdbctl db ls`,
 
 func showDatabaseNames() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
+	ctx, cancel := context.WithTimeout(ctx, config.GetCmdTimeout())
 	defer cancel()
 	response, err := client.GrpcDBClient.GetAllDBs(ctx, &dbpb.GetAllDBsRequest{})
 	client.CheckGrpcError(err)
