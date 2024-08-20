@@ -56,3 +56,13 @@ func (s *DBServiceServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequ
 
 	return res, nil
 }
+
+// ChangeDB is the implementation of RPC ChangeDB.
+func (s *DBServiceServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (res *dbpb.ChangeDBResponse, err error) {
+	res, err = s.srv.ChangeDB(ctx, req)
+	if err != nil {
+		return nil, grpcerrors.ToGrpcError(err)
+	}
+
+	return res, nil
+}
