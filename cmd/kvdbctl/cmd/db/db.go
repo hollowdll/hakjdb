@@ -18,4 +18,5 @@ func init() {
 	CmdDb.AddCommand(cmdDbDelete)
 	CmdDb.AddCommand(cmdDbLs)
 	CmdDb.AddCommand(cmdDbInfo)
+	CmdDb.AddCommand(cmdDbChange)
 }

@@ -52,7 +52,7 @@ func showDbInfo() {
 
 	var info string
 	info += fmt.Sprintf("name: %s\n", resp.Data.Name)
-	info += fmt.Sprintf("description: %s\n", resp.Data.Description)
+	info += fmt.Sprintf("description: \"%s\"\n", resp.Data.Description)
 	info += fmt.Sprintf("created_at: %s00:00\n", resp.Data.CreatedAt.AsTime().Format(time.RFC3339))
 	info += fmt.Sprintf("updated_at: %s00:00\n", resp.Data.UpdatedAt.AsTime().Format(time.RFC3339))
 	info += fmt.Sprintf("key_count: %d\n", resp.Data.GetKeyCount())
