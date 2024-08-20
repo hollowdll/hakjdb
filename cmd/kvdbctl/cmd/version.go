@@ -6,6 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/api/v0/serverpb"
 	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/hollowdll/kvdb/version"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
@@ -24,7 +25,7 @@ func showVersionInfo() {
 	fmt.Printf("kvdbctl version: %s\n", version.Version)
 
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
+	ctx, cancel := context.WithTimeout(ctx, config.GetCmdTimeout())
 	defer cancel()
 	res, err := client.GrpcServerClient.GetServerInfo(ctx, &serverpb.GetServerInfoRequest{})
 	client.CheckGrpcError(err)

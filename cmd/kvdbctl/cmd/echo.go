@@ -6,6 +6,7 @@ import (
 
 	"github.com/hollowdll/kvdb/api/v0/echopb"
 	"github.com/hollowdll/kvdb/cmd/kvdbctl/client"
+	"github.com/hollowdll/kvdb/cmd/kvdbctl/config"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/metadata"
 )
@@ -32,7 +33,7 @@ kvdbctl echo "Hello"`,
 
 func echo(msg string) {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
+	ctx, cancel := context.WithTimeout(ctx, config.GetCmdTimeout())
 	defer cancel()
 
 	res, err := client.GrpcEchoClient.UnaryEcho(ctx, &echopb.UnaryEchoRequest{Msg: msg})

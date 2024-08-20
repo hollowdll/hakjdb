@@ -50,7 +50,7 @@ func promptPassword(prompt string) string {
 }
 
 func authenticate(password string) {
-	ctx, cancel := context.WithTimeout(context.Background(), client.CtxTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), config.GetCmdTimeout())
 	defer cancel()
 
 	req := &authpb.AuthenticateRequest{Password: password}

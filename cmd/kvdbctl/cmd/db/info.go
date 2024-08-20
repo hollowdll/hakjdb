@@ -42,7 +42,7 @@ func init() {
 
 func showDbInfo() {
 	ctx := metadata.NewOutgoingContext(context.Background(), client.GetBaseGrpcMetadata())
-	ctx, cancel := context.WithTimeout(ctx, client.CtxTimeout)
+	ctx, cancel := context.WithTimeout(ctx, config.GetCmdTimeout())
 	defer cancel()
 	if len(dbName) < 1 {
 		dbName = viper.GetString(config.ConfigKeyDatabase)
