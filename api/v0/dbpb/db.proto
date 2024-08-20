@@ -50,18 +50,20 @@ message DeleteDBResponse {
 }
 
 message ChangeDBRequest {
+  // Name of the requested database.
+  string db_name = 1;
   // New name of the database.
-  string name = 1;
+  string new_name = 2;
   // If database name should be changed.
-  bool change_name = 2;
+  bool change_name = 3;
   // New description of the database.
-  string description = 3;
+  string new_description = 4;
   // If database description should be changed.
-  bool change_description = 4;
+  bool change_description = 5;
 }
 
 message ChangeDBResponse {
-  // New name of the changed database.
+  // Name of the changed database.
   string db_name = 1;
 }
 
