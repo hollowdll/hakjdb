@@ -29,6 +29,7 @@ type DBService interface {
 	DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error)
 	GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) (*dbpb.GetAllDBsResponse, error)
 	GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error)
+	ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*dbpb.ChangeDBResponse, error)
 }
 
 type GeneralKVService interface {
@@ -207,6 +208,37 @@ func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) 
 	}
 
 	return &dbpb.GetDBInfoResponse{Data: data}, nil
+}
+
+func (s *KvdbServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*dbpb.ChangeDBResponse, error) {
+	if err := validateChangeDB(req); err != nil {
+		return nil, err
+	}
+
+	lg := s.Logger()
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.dbExists(req.DbName) {
+		logDBNotFound(lg, req.DbName)
+		return nil, kvdberrors.ErrDatabaseExists
+	}
+
+	db := s.dbs[req.DbName]
+	dbName := req.DbName
+	if req.ChangeName {
+		db.ChangeName(req.NewName)
+		dbName = req.NewName
+		delete(s.dbs, req.DbName)
+		lg.Infof("Changed name of database '%s', new name: '%s'", req.DbName, dbName)
+	}
+	if req.ChangeDescription {
+		db.ChangeDescription(req.NewDescription)
+		lg.Infof("Changed description of database '%s'", req.DbName)
+	}
+	s.dbs[dbName] = db
+
+	return &dbpb.ChangeDBResponse{DbName: dbName}, nil
 }
 
 func (s *KvdbServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest) (*kvpb.GetAllKeysResponse, error) {
@@ -452,6 +484,20 @@ func validateCreateDB(req *dbpb.CreateDBRequest) error {
 	}
 	if err := validation.ValidateDBDesc(req.Description); err != nil {
 		return err
+	}
+	return nil
+}
+
+func validateChangeDB(req *dbpb.ChangeDBRequest) error {
+	if req.ChangeName {
+		if err := validation.ValidateDBName(req.NewName); err != nil {
+			return err
+		}
+	}
+	if req.ChangeDescription {
+		if err := validation.ValidateDBDesc(req.NewDescription); err != nil {
+			return err
+		}
 	}
 	return nil
 }
