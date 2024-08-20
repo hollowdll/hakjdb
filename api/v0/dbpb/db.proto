@@ -49,6 +49,22 @@ message DeleteDBResponse {
   string db_name = 1;
 }
 
+message ChangeDBRequest {
+  // New name of the database.
+  string name = 1;
+  // If database name should be changed.
+  bool change_name = 2;
+  // New description of the database.
+  string description = 3;
+  // If database description should be changed.
+  bool change_description = 4;
+}
+
+message ChangeDBResponse {
+  // New name of the changed database.
+  string db_name = 1;
+}
+
 // DBInfo represents information about a database.
 message DBInfo {
   // Name of the database.
@@ -78,4 +94,7 @@ service DBService {
 
   // DeleteDB deletes a database.
   rpc DeleteDB(DeleteDBRequest) returns (DeleteDBResponse) {}
+
+  // ChangeDB changes the metadata of a database.
+  rpc ChangeDB(ChangeDBRequest) returns (ChangeDBResponse) {}
 }
