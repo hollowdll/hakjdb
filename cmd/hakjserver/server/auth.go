@@ -4,28 +4,28 @@ import (
 	"context"
 	"time"
 
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
-	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/auth"
+	hakjerrors "github.com/hollowdll/hakjdb/errors"
+	"github.com/hollowdll/hakjdb/internal/common"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 // AuthorizeIncomingRpcCall checks that incoming RPC call provides valid credentials.
-func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
+func (s *HakjServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
 	if s.Cfg.AuthEnabled {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
-			return status.Error(codes.Unauthenticated, kvdberrors.ErrMissingMetadata.Error())
+			return status.Error(codes.Unauthenticated, hakjerrors.ErrMissingMetadata.Error())
 		}
 
 		values := md.Get(common.GrpcMetadataKeyAuthToken)
 		if len(values) < 1 {
-			return status.Errorf(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error())
+			return status.Errorf(codes.Unauthenticated, hakjerrors.ErrInvalidAuthToken.Error())
 		}
 		tokenStr := values[0]
 
@@ -46,7 +46,7 @@ func (s *KvdbServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 		if err != nil {
 			lg := s.Logger()
 			lg.Debugf("failed to validate JWT token: %v", err)
-			return status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error())
+			return status.Error(codes.Unauthenticated, hakjerrors.ErrInvalidAuthToken.Error())
 		}
 	}
 	return nil

@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	kvdberrors "github.com/hollowdll/kvdb/errors"
+	"github.com/hollowdll/hakjdb/errors"
 )
 
 const (
@@ -38,13 +38,13 @@ func dbNameContainsValidCharacters(name string) bool {
 // Returns error if validation error is matched.
 func ValidateDBName(name string) error {
 	if isBlank(name) {
-		return kvdberrors.ErrDatabaseNameRequired
+		return errors.ErrDatabaseNameRequired
 	}
 	if isTooLong(name, DbNameMaxSize) {
-		return kvdberrors.ErrDatabaseNameTooLong
+		return errors.ErrDatabaseNameTooLong
 	}
 	if !dbNameContainsValidCharacters(name) {
-		return kvdberrors.ErrDatabaseNameInvalid
+		return errors.ErrDatabaseNameInvalid
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func ValidateDBName(name string) error {
 // Returns error if validation error is matched.
 func ValidateDBDesc(desc string) error {
 	if isTooLong(desc, DbDescMaxSize) {
-		return kvdberrors.ErrDatabaseDescriptionTooLong
+		return errors.ErrDatabaseDescriptionTooLong
 	}
 	return nil
 }
@@ -62,10 +62,10 @@ func ValidateDBDesc(desc string) error {
 // Returns error if validation error is matched.
 func ValidateDBKey(key string) error {
 	if isBlank(string(key)) {
-		return kvdberrors.ErrDatabaseKeyRequired
+		return errors.ErrDatabaseKeyRequired
 	}
 	if isTooLong(string(key), DbKeyMaxSize) {
-		return kvdberrors.ErrDatabaseKeyTooLong
+		return errors.ErrDatabaseKeyTooLong
 	}
 	return nil
 }

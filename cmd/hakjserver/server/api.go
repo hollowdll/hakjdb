@@ -6,16 +6,16 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/api/v0/authpb"
-	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
-	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/version"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/api/v1/authpb"
+	"github.com/hollowdll/hakjdb/api/v1/dbpb"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	"github.com/hollowdll/hakjdb/api/v1/serverpb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/auth"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/validation"
+	hakjerrors "github.com/hollowdll/hakjdb/errors"
+	"github.com/hollowdll/hakjdb/internal/common"
+	"github.com/hollowdll/hakjdb/version"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -55,7 +55,7 @@ type AuthService interface {
 	Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error)
 }
 
-func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
+func (s *HakjServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
 	lg := s.Logger()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -66,8 +66,8 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 
 	osInfo, err := getOsInfo()
 	if err != nil {
-		lg.Errorf("%v: %v", kvdberrors.ErrGetOSInfo, err)
-		return nil, kvdberrors.ErrGetOSInfo
+		lg.Errorf("%v: %v", hakjerrors.ErrGetOSInfo, err)
+		return nil, hakjerrors.ErrGetOSInfo
 	}
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
@@ -78,7 +78,7 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 	}
 
 	generalInfo := &serverpb.GeneralInfo{
-		KvdbVersion:    version.Version,
+		ServerVersion:  version.Version,
 		GoVersion:      runtime.Version(),
 		Os:             osInfo,
 		Arch:           runtime.GOARCH,
@@ -118,26 +118,26 @@ func (s *KvdbServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 	}, nil
 }
 
-func (s *KvdbServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (*serverpb.GetLogsResponse, error) {
+func (s *HakjServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (*serverpb.GetLogsResponse, error) {
 	lg := s.Logger()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
 	if !s.Cfg.LogFileEnabled {
 		lg.Debug("Logs were requested but the log file is not enabled. Consider enabling it.")
-		return nil, kvdberrors.ErrLogFileNotEnabled
+		return nil, hakjerrors.ErrLogFileNotEnabled
 	}
 
 	logs, err := common.ReadFileLines(s.Cfg.LogFilePath)
 	if err != nil {
-		lg.Errorf("%v: %v", kvdberrors.ErrReadLogFile, err)
-		return nil, kvdberrors.ErrReadLogFile
+		lg.Errorf("%v: %v", hakjerrors.ErrReadLogFile, err)
+		return nil, hakjerrors.ErrReadLogFile
 	}
 
 	return &serverpb.GetLogsResponse{Logs: logs}, nil
 }
 
-func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error) {
+func (s *HakjServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error) {
 	if err := validateCreateDB(req); err != nil {
 		return nil, err
 	}
@@ -148,25 +148,25 @@ func (s *KvdbServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*
 
 	if s.dbExists(req.DbName) {
 		logDBAlreadyExists(lg, req.DbName)
-		return nil, kvdberrors.ErrDatabaseExists
+		return nil, hakjerrors.ErrDatabaseExists
 	}
 
-	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
-	db := kvdb.NewDB(req.DbName, req.Description, dbConfig)
+	dbConfig := hakjdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	db := hakjdb.NewDB(req.DbName, req.Description, dbConfig)
 	s.dbs[db.Name()] = db
 	lg.Infof("Created database '%s'", db.Name())
 
 	return &dbpb.CreateDBResponse{DbName: db.Name()}, nil
 }
 
-func (s *KvdbServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error) {
+func (s *HakjServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*dbpb.DeleteDBResponse, error) {
 	lg := s.Logger()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if !s.dbExists(req.DbName) {
 		logDBNotFound(lg, req.DbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	delete(s.dbs, req.DbName)
@@ -175,7 +175,7 @@ func (s *KvdbServer) DeleteDB(ctx context.Context, req *dbpb.DeleteDBRequest) (*
 	return &dbpb.DeleteDBResponse{DbName: req.DbName}, nil
 }
 
-func (s *KvdbServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) (*dbpb.GetAllDBsResponse, error) {
+func (s *HakjServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) (*dbpb.GetAllDBsResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -187,14 +187,14 @@ func (s *KvdbServer) GetAllDBs(ctx context.Context, req *dbpb.GetAllDBsRequest) 
 	return &dbpb.GetAllDBsResponse{DbNames: dbNames}, nil
 }
 
-func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error) {
+func (s *HakjServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) (*dbpb.GetDBInfoResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
 	if !s.dbExists(req.DbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, req.DbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	db := s.dbs[req.DbName]
@@ -210,7 +210,7 @@ func (s *KvdbServer) GetDBInfo(ctx context.Context, req *dbpb.GetDBInfoRequest) 
 	return &dbpb.GetDBInfoResponse{Data: data}, nil
 }
 
-func (s *KvdbServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*dbpb.ChangeDBResponse, error) {
+func (s *HakjServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*dbpb.ChangeDBResponse, error) {
 	if err := validateChangeDB(req); err != nil {
 		return nil, err
 	}
@@ -221,7 +221,7 @@ func (s *KvdbServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*
 
 	if !s.dbExists(req.DbName) {
 		logDBNotFound(lg, req.DbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	db := s.dbs[req.DbName]
@@ -241,7 +241,7 @@ func (s *KvdbServer) ChangeDB(ctx context.Context, req *dbpb.ChangeDBRequest) (*
 	return &dbpb.ChangeDBResponse{DbName: dbName}, nil
 }
 
-func (s *KvdbServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest) (*kvpb.GetAllKeysResponse, error) {
+func (s *HakjServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest) (*kvpb.GetAllKeysResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -249,13 +249,13 @@ func (s *KvdbServer) GetAllKeys(ctx context.Context, req *kvpb.GetAllKeysRequest
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	return &kvpb.GetAllKeysResponse{Keys: s.dbs[dbName].GetAllKeys()}, nil
 }
 
-func (s *KvdbServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest) (*kvpb.GetKeyTypeResponse, error) {
+func (s *HakjServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest) (*kvpb.GetKeyTypeResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -263,7 +263,7 @@ func (s *KvdbServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	keyType, ok := s.dbs[dbName].GetKeyType(req.Key)
@@ -271,7 +271,7 @@ func (s *KvdbServer) GetKeyType(ctx context.Context, req *kvpb.GetKeyTypeRequest
 	return &kvpb.GetKeyTypeResponse{KeyType: keyType.String(), Ok: ok}, nil
 }
 
-func (s *KvdbServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest) (*kvpb.DeleteKeysResponse, error) {
+func (s *HakjServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest) (*kvpb.DeleteKeysResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -279,7 +279,7 @@ func (s *KvdbServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	keysDeletedCount := s.dbs[dbName].DeleteKeys(req.Keys)
@@ -287,7 +287,7 @@ func (s *KvdbServer) DeleteKeys(ctx context.Context, req *kvpb.DeleteKeysRequest
 	return &kvpb.DeleteKeysResponse{KeysDeletedCount: keysDeletedCount}, nil
 }
 
-func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysRequest) (*kvpb.DeleteAllKeysResponse, error) {
+func (s *HakjServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysRequest) (*kvpb.DeleteAllKeysResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -295,7 +295,7 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysR
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	s.dbs[dbName].DeleteAllKeys()
@@ -303,7 +303,7 @@ func (s *KvdbServer) DeleteAllKeys(ctx context.Context, req *kvpb.DeleteAllKeysR
 	return &kvpb.DeleteAllKeysResponse{}, nil
 }
 
-func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) (*kvpb.SetStringResponse, error) {
+func (s *HakjServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) (*kvpb.SetStringResponse, error) {
 	if err := validation.ValidateDBKey(req.Key); err != nil {
 		return nil, err
 	}
@@ -315,12 +315,12 @@ func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) 
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	if s.DBMaxKeysReached(s.dbs[dbName]) {
 		logMaxKeysReached(lg, dbName)
-		return nil, kvdberrors.ErrMaxKeysReached
+		return nil, hakjerrors.ErrMaxKeysReached
 	}
 
 	s.dbs[dbName].SetString(req.Key, req.Value)
@@ -328,7 +328,7 @@ func (s *KvdbServer) SetString(ctx context.Context, req *kvpb.SetStringRequest) 
 	return &kvpb.SetStringResponse{}, nil
 }
 
-func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) (*kvpb.GetStringResponse, error) {
+func (s *HakjServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) (*kvpb.GetStringResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -336,7 +336,7 @@ func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) 
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	kv, ok := s.dbs[dbName].GetStringKey(req.Key)
@@ -344,7 +344,7 @@ func (s *KvdbServer) GetString(ctx context.Context, req *kvpb.GetStringRequest) 
 	return &kvpb.GetStringResponse{Value: kv.Value, Ok: ok}, nil
 }
 
-func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error) {
+func (s *HakjServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest) (*kvpb.SetHashMapResponse, error) {
 	if err := validation.ValidateDBKey(req.Key); err != nil {
 		return nil, err
 	}
@@ -356,12 +356,12 @@ func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest
 	dbName := s.GetDBNameFromContext(ctx)
 	if !s.dbExists(dbName) {
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	if s.DBMaxKeysReached(s.dbs[dbName]) {
 		logMaxKeysReached(lg, dbName)
-		return nil, kvdberrors.ErrMaxKeysReached
+		return nil, hakjerrors.ErrMaxKeysReached
 	}
 
 	fieldsAddedCount := s.dbs[dbName].SetHashMap(req.Key, req.FieldValueMap)
@@ -369,7 +369,7 @@ func (s *KvdbServer) SetHashMap(ctx context.Context, req *kvpb.SetHashMapRequest
 	return &kvpb.SetHashMapResponse{FieldsAddedCount: fieldsAddedCount}, nil
 }
 
-func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHashMapFieldValuesRequest) (res *kvpb.GetHashMapFieldValuesResponse, err error) {
+func (s *HakjServer) GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHashMapFieldValuesRequest) (res *kvpb.GetHashMapFieldValuesResponse, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -377,7 +377,7 @@ func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHas
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	result, ok := s.dbs[dbName].GetHashMapFieldValues(req.Key, req.Fields)
@@ -393,7 +393,7 @@ func (s *KvdbServer) GetHashMapFieldValues(ctx context.Context, req *kvpb.GetHas
 	return &kvpb.GetHashMapFieldValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }
 
-func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb.GetAllHashMapFieldsAndValuesRequest) (res *kvpb.GetAllHashMapFieldsAndValuesResponse, err error) {
+func (s *HakjServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb.GetAllHashMapFieldsAndValuesRequest) (res *kvpb.GetAllHashMapFieldsAndValuesResponse, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -401,7 +401,7 @@ func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	kv, ok := s.dbs[dbName].GetHashMapKey(req.Key)
@@ -413,7 +413,7 @@ func (s *KvdbServer) GetAllHashMapFieldsAndValues(ctx context.Context, req *kvpb
 	return &kvpb.GetAllHashMapFieldsAndValuesResponse{FieldValueMap: fieldValueMap, Ok: ok}, nil
 }
 
-func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHashMapFieldsRequest) (res *kvpb.DeleteHashMapFieldsResponse, err error) {
+func (s *HakjServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHashMapFieldsRequest) (res *kvpb.DeleteHashMapFieldsResponse, err error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -421,7 +421,7 @@ func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHa
 	if !s.dbExists(dbName) {
 		lg := s.Logger()
 		logDBNotFound(lg, dbName)
-		return nil, kvdberrors.ErrDatabaseNotFound
+		return nil, hakjerrors.ErrDatabaseNotFound
 	}
 
 	fieldsRemovedCount, ok := s.dbs[dbName].DeleteHashMapFields(req.Key, req.Fields)
@@ -429,7 +429,7 @@ func (s *KvdbServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHa
 	return &kvpb.DeleteHashMapFieldsResponse{FieldsRemovedCount: fieldsRemovedCount, Ok: ok}, nil
 }
 
-func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
+func (s *HakjServer) Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
 	lg := s.Logger()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -441,14 +441,14 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 	}()
 
 	if !s.Cfg.AuthEnabled {
-		return nil, kvdberrors.ErrAuthNotEnabled
+		return nil, hakjerrors.ErrAuthNotEnabled
 	}
 
 	username := auth.RootUserName
 	err := s.credentialStore.IsCorrectPassword(username, []byte(req.Password))
 	if err != nil {
-		lg.Debugf("%v: %v", kvdberrors.ErrInvalidCredentials, err)
-		return nil, kvdberrors.ErrInvalidCredentials
+		lg.Debugf("%v: %v", hakjerrors.ErrInvalidCredentials, err)
+		return nil, hakjerrors.ErrInvalidCredentials
 	}
 
 	opts := &auth.JWTOptions{
@@ -459,22 +459,22 @@ func (s *KvdbServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 	token, err := auth.GenerateJWT(opts, username)
 	if err != nil {
 		lg.Debugf("failed to generate JWT token: %v", err)
-		return nil, kvdberrors.ErrAuthFailed
+		return nil, hakjerrors.ErrAuthFailed
 	}
 	lg.Debugf("created a new JWT token for user %s", username)
 
 	return &authpb.AuthenticateResponse{AuthToken: token}, nil
 }
 
-func logDBNotFound(lg kvdb.Logger, dbName string) {
+func logDBNotFound(lg hakjdb.Logger, dbName string) {
 	lg.Warningf("database '%s' not found", dbName)
 }
 
-func logDBAlreadyExists(lg kvdb.Logger, dbName string) {
+func logDBAlreadyExists(lg hakjdb.Logger, dbName string) {
 	lg.Warningf("database '%s' already exists", dbName)
 }
 
-func logMaxKeysReached(lg kvdb.Logger, dbName string) {
+func logMaxKeysReached(lg hakjdb.Logger, dbName string) {
 	lg.Warningf("maximum number of keys reached in database '%s'", dbName)
 }
 

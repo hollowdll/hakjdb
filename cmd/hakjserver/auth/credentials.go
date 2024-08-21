@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/hollowdll/kvdb/errors"
+	"github.com/hollowdll/hakjdb/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
