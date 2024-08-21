@@ -10,12 +10,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/auth"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/validation"
-	kvdberrors "github.com/hollowdll/kvdb/errors"
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/auth"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/validation"
+	hakjerrors "github.com/hollowdll/hakjdb/errors"
+	"github.com/hollowdll/hakjdb/internal/common"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -23,7 +23,7 @@ import (
 // that accepts new connections and tracks active connections.
 type ClientConnListener struct {
 	net.Listener
-	server *KvdbServer
+	server *HakjServer
 
 	// clientConnectionsCount is the current number of client connections.
 	clientConnectionsCount uint32
@@ -35,7 +35,7 @@ type ClientConnListener struct {
 	mu sync.RWMutex
 }
 
-func NewClientConnListener(lis net.Listener, s *KvdbServer, maxConnections uint32) *ClientConnListener {
+func NewClientConnListener(lis net.Listener, s *HakjServer, maxConnections uint32) *ClientConnListener {
 	return &ClientConnListener{
 		Listener:               lis,
 		server:                 s,
@@ -68,7 +68,7 @@ func (l *ClientConnListener) Accept() (net.Conn, error) {
 	}}
 
 	if l.clientConnectionsCount > l.maxClientConnections {
-		logger.Errorf("Incoming connection denied: %s", kvdberrors.ErrMaxClientConnectionsReached.Error())
+		logger.Errorf("Incoming connection denied: %s", hakjerrors.ErrMaxClientConnectionsReached.Error())
 		l.mu.Unlock()
 		clientConn.Close()
 	} else {
@@ -100,14 +100,14 @@ func (c *clientConn) Close() error {
 	return err
 }
 
-type KvdbServer struct {
+type HakjServer struct {
 	startTime time.Time
 
 	// dbs holds the databases and their names that exist on the server.
-	dbs map[string]*kvdb.DB
+	dbs map[string]*hakjdb.DB
 
 	credentialStore auth.CredentialStore
-	logger          kvdb.Logger
+	logger          hakjdb.Logger
 	loggerMu        sync.RWMutex
 
 	// Cfg is the configuration that the server is configured with.
@@ -118,10 +118,10 @@ type KvdbServer struct {
 	mu sync.RWMutex
 }
 
-func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
-	return &KvdbServer{
+func NewKvdbServer(cfg config.ServerConfig, lg hakjdb.Logger) *HakjServer {
+	return &HakjServer{
 		startTime:          time.Now(),
-		dbs:                make(map[string]*kvdb.DB),
+		dbs:                make(map[string]*hakjdb.DB),
 		credentialStore:    auth.NewInMemoryCredentialStore(),
 		logger:             lg,
 		Cfg:                cfg,
@@ -129,7 +129,7 @@ func NewKvdbServer(cfg config.ServerConfig, lg kvdb.Logger) *KvdbServer {
 	}
 }
 
-func (s *KvdbServer) Logger() kvdb.Logger {
+func (s *HakjServer) Logger() hakjdb.Logger {
 	s.loggerMu.RLock()
 	l := s.logger
 	s.loggerMu.RUnlock()
@@ -137,7 +137,7 @@ func (s *KvdbServer) Logger() kvdb.Logger {
 }
 
 // totalStoredDataSize returns the total amount of stored data on this server in bytes.
-func (s *KvdbServer) totalStoredDataSize() uint64 {
+func (s *HakjServer) totalStoredDataSize() uint64 {
 	var sum uint64
 	for _, db := range s.dbs {
 		sum += db.GetEstimatedStorageSizeBytes()
@@ -147,13 +147,13 @@ func (s *KvdbServer) totalStoredDataSize() uint64 {
 }
 
 // dbExists returns true if a database with the given name exists on the server.
-func (s *KvdbServer) dbExists(name string) bool {
+func (s *HakjServer) dbExists(name string) bool {
 	_, exists := s.dbs[name]
 	return exists
 }
 
 // GetDBNameFromContext gets the database name from the incoming context gRPC metadata.
-func (s *KvdbServer) GetDBNameFromContext(ctx context.Context) string {
+func (s *HakjServer) GetDBNameFromContext(ctx context.Context) string {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return s.Cfg.DefaultDB
@@ -168,7 +168,7 @@ func (s *KvdbServer) GetDBNameFromContext(ctx context.Context) string {
 }
 
 // EnableLogFile enables logger to write logs to the log file.
-func (s *KvdbServer) EnableLogFile() {
+func (s *HakjServer) EnableLogFile() {
 	s.loggerMu.RLock()
 	defer s.loggerMu.RUnlock()
 	err := s.logger.EnableLogFile(s.Cfg.LogFilePath)
@@ -178,7 +178,7 @@ func (s *KvdbServer) EnableLogFile() {
 }
 
 // CloseLogger closes logger and releases its possible resources.
-func (s *KvdbServer) CloseLogger() {
+func (s *HakjServer) CloseLogger() {
 	s.loggerMu.RLock()
 	defer s.loggerMu.RUnlock()
 	err := s.logger.CloseLogFile()
@@ -188,7 +188,7 @@ func (s *KvdbServer) CloseLogger() {
 }
 
 // EnableAuth enables authentication.
-func (s *KvdbServer) EnableAuth(rootPassword string) {
+func (s *HakjServer) EnableAuth(rootPassword string) {
 	if err := s.credentialStore.SetPassword(auth.RootUserName, []byte(rootPassword)); err != nil {
 		s.logger.Fatalf("Failed to set root password: %v", err)
 	}
@@ -199,23 +199,23 @@ func (s *KvdbServer) EnableAuth(rootPassword string) {
 }
 
 // CreateDefaultDatabase creates an empty default database.
-func (s *KvdbServer) CreateDefaultDatabase(name string) {
+func (s *HakjServer) CreateDefaultDatabase(name string) {
 	if err := validation.ValidateDBName(name); err != nil {
 		s.logger.Fatalf("Failed to create default database: %v", err)
 	}
-	dbConfig := kvdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
-	db := kvdb.NewDB(name, "", dbConfig)
+	dbConfig := hakjdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	db := hakjdb.NewDB(name, "", dbConfig)
 	s.dbs[db.Name()] = db
 	s.logger.Infof("Created default database '%s'", db.Name())
 }
 
 // DBMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
-func (s *KvdbServer) DBMaxKeysReached(db *kvdb.DB) bool {
+func (s *HakjServer) DBMaxKeysReached(db *hakjdb.DB) bool {
 	return uint32(db.GetKeyCount()) >= s.Cfg.MaxKeysPerDB
 }
 
 // Init initializes the server.
-func (s *KvdbServer) Init() {
+func (s *HakjServer) Init() {
 	s.logger.Infof("Initializing server ...")
 
 	if s.Cfg.LogFileEnabled {
@@ -238,7 +238,7 @@ func (s *KvdbServer) Init() {
 	s.CreateDefaultDatabase(s.Cfg.DefaultDB)
 }
 
-func (s *KvdbServer) GetTLSCert() tls.Certificate {
+func (s *HakjServer) GetTLSCert() tls.Certificate {
 	logger := s.Logger()
 	certBytes, err := os.ReadFile(s.Cfg.TLSCertPath)
 	if err != nil {
@@ -261,7 +261,7 @@ func (s *KvdbServer) GetTLSCert() tls.Certificate {
 	return cert
 }
 
-func (s *KvdbServer) SetupListener() {
+func (s *HakjServer) SetupListener() {
 	logger := s.Logger()
 	logger.Infof("Setting up listener ...")
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.Cfg.PortInUse))
