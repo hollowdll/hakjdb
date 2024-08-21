@@ -1,11 +1,11 @@
-package kvdb
+package hakjdb
 
 import (
 	"bytes"
 	"testing"
 	"time"
 
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb/internal/common"
 )
 
 func TestGetKeyType(t *testing.T) {

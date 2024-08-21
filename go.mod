@@ -1,4 +1,4 @@
-module github.com/hollowdll/kvdb
+module github.com/hollowdll/hakjdb
 
 go 1.22
 
