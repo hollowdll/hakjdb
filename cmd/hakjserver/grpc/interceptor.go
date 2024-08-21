@@ -82,6 +82,8 @@ func logRequestSuccess(logger hakjdb.Logger, verbose bool, fullMethod string, db
 	if verbose {
 		if bypassDetailedLog(fullMethod) {
 			logger.Debugf("(success) %s: db = %s", fullMethod, dbName)
+		} else if bypassResponseDataLog(fullMethod) {
+			logger.Debugf("(success) %s: db = %s; req = %v", fullMethod, dbName, req)
 		} else {
 			logger.Debugf("(success) %s: db = %s; req = %v; resp = %v", fullMethod, dbName, req, resp)
 		}
@@ -98,4 +100,8 @@ func bypassAuthorization(fullMethod string) bool {
 // Mainly used to prevent logging sensitive data like passwords.
 func bypassDetailedLog(fullMethod string) bool {
 	return fullMethod == "/api.v1.authpb.AuthService/Authenticate"
+}
+
+func bypassResponseDataLog(fullMethod string) bool {
+	return fullMethod == "/api.v1.serverpb.ServerService/GetLogs"
 }
