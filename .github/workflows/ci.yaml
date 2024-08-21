@@ -21,13 +21,13 @@ jobs:
         go-version: '1.22'
 
     - name: Set permissions
-      run: chmod +x ./build_kvdbserver.sh ./build_kvdbctl.sh
+      run: chmod +x ./build_hakjserver.sh ./build_hakjctl.sh
 
-    - name: Build kvdbserver
-      run: ./build_kvdbserver.sh
+    - name: Build hakjserver
+      run: ./build_hakjserver.sh
 
-    - name: Build kvdbctl
-      run: ./build_kvdbctl.sh
+    - name: Build hakjctl
+      run: ./build_hakjctl.sh
 
     - name: Test
       run: go test -v ./...
