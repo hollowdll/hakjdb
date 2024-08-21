@@ -161,8 +161,102 @@ func BenchmarkGetStringWithAuth(b *testing.B) {
 	})
 }
 
+func BenchmarkSetStringWithAuthAndTLS(b *testing.B) {
+	cfg := authTLSCfg()
+	password := "pass123"
+	s, gs, port := testutil.StartTestServer(cfg)
+	defer testutil.StopTestServer(gs)
+	s.EnableAuth(password)
+	address := testutil.GetServerAddress(port)
+	conn, err := testutil.SecureConnection(address)
+	if err != nil {
+		b.Fatalf("setting up connection failed: %v", err)
+	}
+	defer conn.Close()
+
+	authClient := authpb.NewAuthServiceClient(conn)
+	client := kvpb.NewStringKVServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	authResp, err := authClient.Authenticate(ctx, &authpb.AuthenticateRequest{Password: password})
+	if err != nil {
+		b.Fatalf("failed to authenticate: %v", err)
+	}
+	ctx = metadata.NewOutgoingContext(
+		ctx,
+		metadata.Pairs(common.GrpcMetadataKeyAuthToken, authResp.AuthToken),
+	)
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			req := &kvpb.SetStringRequest{
+				Key:   "key",
+				Value: []byte("value"),
+			}
+			client.SetString(ctx, req)
+		}
+	})
+}
+
+func BenchmarkGetStringWithAuthAndTLS(b *testing.B) {
+	cfg := authTLSCfg()
+	password := "pass123"
+	s, gs, port := testutil.StartTestServer(cfg)
+	defer testutil.StopTestServer(gs)
+	s.EnableAuth(password)
+	address := testutil.GetServerAddress(port)
+	conn, err := testutil.SecureConnection(address)
+	if err != nil {
+		b.Fatalf("setting up connection failed: %v", err)
+	}
+	defer conn.Close()
+
+	authClient := authpb.NewAuthServiceClient(conn)
+	client := kvpb.NewStringKVServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	authResp, err := authClient.Authenticate(ctx, &authpb.AuthenticateRequest{Password: password})
+	if err != nil {
+		b.Fatalf("failed to authenticate: %v", err)
+	}
+	ctx = metadata.NewOutgoingContext(
+		ctx,
+		metadata.Pairs(common.GrpcMetadataKeyAuthToken, authResp.AuthToken),
+	)
+
+	reqSet := &kvpb.SetStringRequest{
+		Key:   "key",
+		Value: []byte("value"),
+	}
+	_, err = client.SetString(ctx, reqSet)
+	if err != nil {
+		b.Fatalf("failed to set string KV: %v", err)
+	}
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			req := &kvpb.GetStringRequest{
+				Key: "key",
+			}
+			client.GetString(ctx, req)
+		}
+	})
+}
+
 func authCfg() config.ServerConfig {
 	cfg := testutil.DefaultConfig()
+	cfg.AuthEnabled = true
+	cfg.AuthTokenTTL = 30
+	cfg.AuthTokenSecretKey = "benchmark"
+	return cfg
+}
+
+func authTLSCfg() config.ServerConfig {
+	cfg := testutil.TLSConfig()
 	cfg.AuthEnabled = true
 	cfg.AuthTokenTTL = 30
 	cfg.AuthTokenSecretKey = "benchmark"
