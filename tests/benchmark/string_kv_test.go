@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hollowdll/kvdb/api/v0/authpb"
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/internal/testutil"
+	"github.com/hollowdll/hakjdb/api/v1/authpb"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	"github.com/hollowdll/hakjdb/internal/common"
+	"github.com/hollowdll/hakjdb/internal/testutil"
 	"google.golang.org/grpc/metadata"
 )
 
