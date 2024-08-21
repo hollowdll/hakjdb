@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/api/v1/dbpb"
+	grpcerrors "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/errors"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 )
 
 type DBServiceServer struct {
@@ -13,7 +13,7 @@ type DBServiceServer struct {
 	dbpb.UnimplementedDBServiceServer
 }
 
-func NewDBServiceServer(s *server.KvdbServer) dbpb.DBServiceServer {
+func NewDBServiceServer(s *server.HakjServer) dbpb.DBServiceServer {
 	return &DBServiceServer{srv: s}
 }
 

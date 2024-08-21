@@ -3,22 +3,22 @@ package testutil
 import (
 	"crypto/x509"
 	"fmt"
-	"github.com/hollowdll/kvdb"
+	"github.com/hollowdll/hakjdb"
 	"net"
 	"os"
 	"path/filepath"
 
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	grpcserver "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	grpcserver "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func StartTestServer(cfg config.ServerConfig) (*server.KvdbServer, *grpc.Server, int) {
+func StartTestServer(cfg config.ServerConfig) (*server.HakjServer, *grpc.Server, int) {
 	fmt.Fprint(os.Stderr, "creating test server\n")
-	s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+	s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 	s.CreateDefaultDatabase(cfg.DefaultDB)
 	gs := grpcserver.SetupGrpcServer(s)
 

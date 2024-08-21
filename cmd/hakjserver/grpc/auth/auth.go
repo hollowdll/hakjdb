@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/authpb"
-	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/api/v1/authpb"
+	grpcerrors "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/errors"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 )
 
 type AuthServiceServer struct {
@@ -13,7 +13,7 @@ type AuthServiceServer struct {
 	authpb.UnimplementedAuthServiceServer
 }
 
-func NewAuthServiceServer(s *server.KvdbServer) authpb.AuthServiceServer {
+func NewAuthServiceServer(s *server.HakjServer) authpb.AuthServiceServer {
 	return &AuthServiceServer{srv: s}
 }
 

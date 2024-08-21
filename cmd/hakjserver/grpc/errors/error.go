@@ -3,32 +3,32 @@ package errors
 import (
 	"context"
 
-	kvdberrors "github.com/hollowdll/kvdb/errors"
+	errors "github.com/hollowdll/hakjdb/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var grpcErrorMap = map[error]error{
-	kvdberrors.ErrDatabaseNotFound:           status.Error(codes.NotFound, kvdberrors.ErrDatabaseNotFound.Error()),
-	kvdberrors.ErrDatabaseExists:             status.Error(codes.AlreadyExists, kvdberrors.ErrDatabaseExists.Error()),
-	kvdberrors.ErrDatabaseNameRequired:       status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameRequired.Error()),
-	kvdberrors.ErrDatabaseNameTooLong:        status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameTooLong.Error()),
-	kvdberrors.ErrDatabaseNameInvalid:        status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseNameInvalid.Error()),
-	kvdberrors.ErrDatabaseDescriptionTooLong: status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseDescriptionTooLong.Error()),
+	errors.ErrDatabaseNotFound:           status.Error(codes.NotFound, errors.ErrDatabaseNotFound.Error()),
+	errors.ErrDatabaseExists:             status.Error(codes.AlreadyExists, errors.ErrDatabaseExists.Error()),
+	errors.ErrDatabaseNameRequired:       status.Error(codes.InvalidArgument, errors.ErrDatabaseNameRequired.Error()),
+	errors.ErrDatabaseNameTooLong:        status.Error(codes.InvalidArgument, errors.ErrDatabaseNameTooLong.Error()),
+	errors.ErrDatabaseNameInvalid:        status.Error(codes.InvalidArgument, errors.ErrDatabaseNameInvalid.Error()),
+	errors.ErrDatabaseDescriptionTooLong: status.Error(codes.InvalidArgument, errors.ErrDatabaseDescriptionTooLong.Error()),
 
-	kvdberrors.ErrDatabaseKeyRequired: status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseKeyRequired.Error()),
-	kvdberrors.ErrDatabaseKeyTooLong:  status.Error(codes.InvalidArgument, kvdberrors.ErrDatabaseKeyTooLong.Error()),
+	errors.ErrDatabaseKeyRequired: status.Error(codes.InvalidArgument, errors.ErrDatabaseKeyRequired.Error()),
+	errors.ErrDatabaseKeyTooLong:  status.Error(codes.InvalidArgument, errors.ErrDatabaseKeyTooLong.Error()),
 
-	kvdberrors.ErrInvalidCredentials: status.Error(codes.InvalidArgument, kvdberrors.ErrInvalidCredentials.Error()),
-	kvdberrors.ErrInvalidAuthToken:   status.Error(codes.Unauthenticated, kvdberrors.ErrInvalidAuthToken.Error()),
-	kvdberrors.ErrAuthFailed:         status.Error(codes.InvalidArgument, kvdberrors.ErrAuthFailed.Error()),
-	kvdberrors.ErrAuthNotEnabled:     status.Error(codes.FailedPrecondition, kvdberrors.ErrAuthNotEnabled.Error()),
+	errors.ErrInvalidCredentials: status.Error(codes.InvalidArgument, errors.ErrInvalidCredentials.Error()),
+	errors.ErrInvalidAuthToken:   status.Error(codes.Unauthenticated, errors.ErrInvalidAuthToken.Error()),
+	errors.ErrAuthFailed:         status.Error(codes.InvalidArgument, errors.ErrAuthFailed.Error()),
+	errors.ErrAuthNotEnabled:     status.Error(codes.FailedPrecondition, errors.ErrAuthNotEnabled.Error()),
 
-	kvdberrors.ErrMaxKeysReached:    status.Error(codes.FailedPrecondition, kvdberrors.ErrMaxKeysReached.Error()),
-	kvdberrors.ErrLogFileNotEnabled: status.Error(codes.FailedPrecondition, kvdberrors.ErrLogFileNotEnabled.Error()),
-	kvdberrors.ErrReadLogFile:       status.Error(codes.Internal, kvdberrors.ErrReadLogFile.Error()),
-	kvdberrors.ErrGetOSInfo:         status.Error(codes.Internal, kvdberrors.ErrGetOSInfo.Error()),
-	kvdberrors.ErrMissingMetadata:   status.Error(codes.InvalidArgument, kvdberrors.ErrMissingMetadata.Error()),
+	errors.ErrMaxKeysReached:    status.Error(codes.FailedPrecondition, errors.ErrMaxKeysReached.Error()),
+	errors.ErrLogFileNotEnabled: status.Error(codes.FailedPrecondition, errors.ErrLogFileNotEnabled.Error()),
+	errors.ErrReadLogFile:       status.Error(codes.Internal, errors.ErrReadLogFile.Error()),
+	errors.ErrGetOSInfo:         status.Error(codes.Internal, errors.ErrGetOSInfo.Error()),
+	errors.ErrMissingMetadata:   status.Error(codes.InvalidArgument, errors.ErrMissingMetadata.Error()),
 }
 
 // ToGrpcError converts error to the correct gRPC error status.

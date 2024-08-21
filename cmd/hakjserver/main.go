@@ -18,7 +18,7 @@ func start() {
 	logger.Infof("Starting HakjDB v%s server ...", version.Version)
 	logger.Infof("API version %s", version.APIVersion)
 	cfg := config.LoadConfig(logger)
-	s := server.NewKvdbServer(cfg, logger)
+	s := server.NewHakjServer(cfg, logger)
 	s.Init()
 	grpcServer := grpc.SetupGrpcServer(s)
 	s.SetupListener()

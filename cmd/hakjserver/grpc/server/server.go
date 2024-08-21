@@ -3,9 +3,9 @@ package server
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/api/v1/serverpb"
+	grpcerrors "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/errors"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 )
 
 type ServerServiceServer struct {
@@ -13,7 +13,7 @@ type ServerServiceServer struct {
 	serverpb.UnimplementedServerServiceServer
 }
 
-func NewServerServiceServer(s *server.KvdbServer) serverpb.ServerServiceServer {
+func NewServerServiceServer(s *server.HakjServer) serverpb.ServerServiceServer {
 	return &ServerServiceServer{srv: s}
 }
 

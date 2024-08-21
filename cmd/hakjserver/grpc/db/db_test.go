@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/api/v1/dbpb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
+	"github.com/hollowdll/hakjdb/internal/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -20,7 +20,7 @@ func TestCreateDB(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("DatabaseNotExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "test"
 
@@ -33,7 +33,7 @@ func TestCreateDB(t *testing.T) {
 	})
 
 	t.Run("DatabaseAlreadyExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "test"
 
@@ -52,7 +52,7 @@ func TestCreateDB(t *testing.T) {
 	})
 
 	t.Run("InvalidDatabaseName", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "   "
 
@@ -68,7 +68,7 @@ func TestCreateDB(t *testing.T) {
 	})
 
 	t.Run("InvalidDatabaseDescription", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		name := "db123"
 		desc := strings.Repeat("a", 256)
@@ -89,7 +89,7 @@ func TestGetAllDBs(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("NoDatabases", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		expected := 0
 		req := &dbpb.GetAllDBsRequest{}
@@ -101,7 +101,7 @@ func TestGetAllDBs(t *testing.T) {
 	})
 
 	t.Run("MultipleDatabases", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 
 		dbs := []string{"db0", "db1", "db2"}
@@ -127,7 +127,7 @@ func TestGetDBInfo(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "db0"
 
@@ -143,7 +143,7 @@ func TestGetDBInfo(t *testing.T) {
 	})
 
 	t.Run("DatabaseExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		name := "db0"
 		desc := "Test database."
@@ -170,7 +170,7 @@ func TestDeleteDB(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("DatabaseExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -184,7 +184,7 @@ func TestDeleteDB(t *testing.T) {
 	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 
@@ -204,7 +204,7 @@ func TestChangeDB(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("ChangeNameAndDesc", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -226,7 +226,7 @@ func TestChangeDB(t *testing.T) {
 	})
 
 	t.Run("ChangeOnlyDesc", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -245,7 +245,7 @@ func TestChangeDB(t *testing.T) {
 	})
 
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "test"
 
@@ -261,7 +261,7 @@ func TestChangeDB(t *testing.T) {
 	})
 
 	t.Run("InvalidName", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -282,7 +282,7 @@ func TestChangeDB(t *testing.T) {
 	})
 
 	t.Run("InvalidDescription", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -304,7 +304,7 @@ func TestChangeDB(t *testing.T) {
 	})
 
 	t.Run("ChangeNameDbExists", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -339,7 +339,7 @@ func TestDefaultDatabase(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	t.Run("GetDatabaseInfo", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)
@@ -352,7 +352,7 @@ func TestDefaultDatabase(t *testing.T) {
 	})
 
 	t.Run("GetAllDatabases", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewDBServiceServer(s)
 		dbName := "default"
 		s.CreateDefaultDatabase(dbName)

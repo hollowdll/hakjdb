@@ -3,9 +3,9 @@ package kv
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	grpcerrors "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/errors"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 )
 
 type HashMapKVServiceServer struct {
@@ -13,7 +13,7 @@ type HashMapKVServiceServer struct {
 	kvpb.UnimplementedHashMapKVServiceServer
 }
 
-func NewHashMapKVServiceServer(s *server.KvdbServer) kvpb.HashMapKVServiceServer {
+func NewHashMapKVServiceServer(s *server.HakjServer) kvpb.HashMapKVServiceServer {
 	return &HashMapKVServiceServer{srv: s}
 }
 

@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
+	"github.com/hollowdll/hakjdb/internal/common"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,7 +22,7 @@ func TestGetKeyType(t *testing.T) {
 	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -33,7 +33,7 @@ func TestGetKeyType(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(common.GrpcMetadataKeyDbName, "DBNotFound"))
@@ -52,7 +52,7 @@ func TestGetKeyType(t *testing.T) {
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -69,7 +69,7 @@ func TestGetKeyType(t *testing.T) {
 	})
 
 	t.Run("StringKey", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gsGeneralKV := NewGeneralKVServiceServer(s)
 		gsStringKV := NewStringKVServiceServer(s)
 		dbName := "db123"
@@ -90,7 +90,7 @@ func TestGetKeyType(t *testing.T) {
 	})
 
 	t.Run("HashMapKey", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gsGeneralKV := NewGeneralKVServiceServer(s)
 		gsHashMapKV := NewHashMapKVServiceServer(s)
 		dbName := "db123"
@@ -116,7 +116,7 @@ func TestGetAllKeys(t *testing.T) {
 	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -127,7 +127,7 @@ func TestGetAllKeys(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -147,7 +147,7 @@ func TestGetAllKeys(t *testing.T) {
 	})
 
 	t.Run("NoKeysPresent", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -162,7 +162,7 @@ func TestGetAllKeys(t *testing.T) {
 	})
 
 	t.Run("KeysPresent", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gsGeneralKV := NewGeneralKVServiceServer(s)
 		gsStringKV := NewStringKVServiceServer(s)
 		dbName := "db123"
@@ -193,7 +193,7 @@ func TestDeleteKeys(t *testing.T) {
 	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -204,7 +204,7 @@ func TestDeleteKeys(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -224,7 +224,7 @@ func TestDeleteKeys(t *testing.T) {
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -239,7 +239,7 @@ func TestDeleteKeys(t *testing.T) {
 	})
 
 	t.Run("KeyFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gsGeneralKV := NewGeneralKVServiceServer(s)
 		gsStringKV := NewStringKVServiceServer(s)
 		dbName := "db123"
@@ -264,7 +264,7 @@ func TestDeleteAllKeys(t *testing.T) {
 	cfg.DefaultDB = "default"
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -275,7 +275,7 @@ func TestDeleteAllKeys(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -293,7 +293,7 @@ func TestDeleteAllKeys(t *testing.T) {
 	})
 
 	t.Run("NoKeysPresent", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewGeneralKVServiceServer(s)
 		dbName := "db0"
 		s.CreateDefaultDatabase(dbName)
@@ -306,7 +306,7 @@ func TestDeleteAllKeys(t *testing.T) {
 	})
 
 	t.Run("KeysPresent", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gsGeneralKV := NewGeneralKVServiceServer(s)
 		gsStringKV := NewStringKVServiceServer(s)
 		dbName := "db0"

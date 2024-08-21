@@ -3,16 +3,16 @@ package grpc
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/internal/common"
-	"github.com/hollowdll/kvdb/version"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
+	"github.com/hollowdll/hakjdb/internal/common"
+	"github.com/hollowdll/hakjdb/version"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
 // newMetadataUnaryInterceptor returns unary interceptor that sends metadata back to the client.
-func newHeaderUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
+func newHeaderUnaryInterceptor(s *server.HakjServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		lg := s.Logger()
 		md := metadata.Pairs(common.GrpcMetadataKeyAPIVersion, version.APIVersion)
@@ -25,7 +25,7 @@ func newHeaderUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor
 }
 
 // newAuthUnaryInterceptor returns unary interceptor to handle RPC call authorization.
-func newAuthUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
+func newAuthUnaryInterceptor(s *server.HakjServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if !bypassAuthorization(info.FullMethod) {
 			if err := s.AuthorizeIncomingRpcCall(ctx); err != nil {
@@ -39,7 +39,7 @@ func newAuthUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 }
 
 // newUnaryAuthInterceptor returns unary interceptor to handle RPC call logging.
-func newLogUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
+func newLogUnaryInterceptor(s *server.HakjServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		logger := s.Logger()
 		dbName := s.GetDBNameFromContext(ctx)
@@ -54,7 +54,7 @@ func newLogUnaryInterceptor(s *server.KvdbServer) grpc.UnaryServerInterceptor {
 	}
 }
 
-func logRequestCall(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any) {
+func logRequestCall(logger hakjdb.Logger, verbose bool, fullMethod string, dbName string, req any) {
 	if verbose {
 		if bypassDetailedLog(fullMethod) {
 			logger.Debugf("(call) %s: db = %s", fullMethod, dbName)
@@ -66,7 +66,7 @@ func logRequestCall(logger kvdb.Logger, verbose bool, fullMethod string, dbName 
 	}
 }
 
-func logRequestFailed(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, err error) {
+func logRequestFailed(logger hakjdb.Logger, verbose bool, fullMethod string, dbName string, req any, err error) {
 	if verbose {
 		if bypassDetailedLog(fullMethod) {
 			logger.Debugf("(failed) %s: db = %s; error = %v", fullMethod, dbName, err)
@@ -78,7 +78,7 @@ func logRequestFailed(logger kvdb.Logger, verbose bool, fullMethod string, dbNam
 	}
 }
 
-func logRequestSuccess(logger kvdb.Logger, verbose bool, fullMethod string, dbName string, req any, resp any) {
+func logRequestSuccess(logger hakjdb.Logger, verbose bool, fullMethod string, dbName string, req any, resp any) {
 	if verbose {
 		if bypassDetailedLog(fullMethod) {
 			logger.Debugf("(success) %s: db = %s", fullMethod, dbName)
@@ -91,11 +91,11 @@ func logRequestSuccess(logger kvdb.Logger, verbose bool, fullMethod string, dbNa
 }
 
 func bypassAuthorization(fullMethod string) bool {
-	return fullMethod == "/api.v0.authpb.AuthService/Authenticate"
+	return fullMethod == "/api.v1.authpb.AuthService/Authenticate"
 }
 
 // bypassDetailedLog is used to check if request and response data are logged.
 // Mainly used to prevent logging sensitive data like passwords.
 func bypassDetailedLog(fullMethod string) bool {
-	return fullMethod == "/api.v0.authpb.AuthService/Authenticate"
+	return fullMethod == "/api.v1.authpb.AuthService/Authenticate"
 }

@@ -3,9 +3,9 @@ package kv
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	grpcerrors "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/errors"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	grpcerrors "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/errors"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 )
 
 type GeneralKVServiceServer struct {
@@ -13,7 +13,7 @@ type GeneralKVServiceServer struct {
 	kvpb.UnimplementedGeneralKVServiceServer
 }
 
-func NewGeneralKVServiceServer(s *server.KvdbServer) kvpb.GeneralKVServiceServer {
+func NewGeneralKVServiceServer(s *server.HakjServer) kvpb.GeneralKVServiceServer {
 	return &GeneralKVServiceServer{srv: s}
 }
 

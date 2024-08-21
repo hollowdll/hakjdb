@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hollowdll/kvdb/api/v0/echopb"
+	"github.com/hollowdll/hakjdb/api/v1/echopb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

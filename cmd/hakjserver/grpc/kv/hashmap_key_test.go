@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
+	"github.com/hollowdll/hakjdb/internal/common"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -26,7 +26,7 @@ func TestSetHashMap(t *testing.T) {
 	fields["field3"] = []byte("value3")
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -37,7 +37,7 @@ func TestSetHashMap(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -57,7 +57,7 @@ func TestSetHashMap(t *testing.T) {
 	})
 
 	t.Run("FieldsAdded", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -73,7 +73,7 @@ func TestSetHashMap(t *testing.T) {
 	})
 
 	t.Run("OverwriteFields", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -101,7 +101,7 @@ func TestSetHashMap(t *testing.T) {
 	})
 
 	t.Run("InvalidKey", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -123,7 +123,7 @@ func TestSetHashMap(t *testing.T) {
 	t.Run("MaxKeyLimitReached", func(t *testing.T) {
 		cfg := cfg
 		cfg.MaxKeysPerDB = 1
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -150,7 +150,7 @@ func TestSetHashMap(t *testing.T) {
 	t.Run("MaxFieldLimitReached", func(t *testing.T) {
 		cfg := cfg
 		cfg.MaxHashMapFields = 4
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -187,7 +187,7 @@ func TestGetHashMapFieldValues(t *testing.T) {
 	fields["field3"] = []byte("value3")
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -198,7 +198,7 @@ func TestGetHashMapFieldValues(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -218,7 +218,7 @@ func TestGetHashMapFieldValues(t *testing.T) {
 	})
 
 	t.Run("KeyAndFieldFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -240,7 +240,7 @@ func TestGetHashMapFieldValues(t *testing.T) {
 	})
 
 	t.Run("MultipleFieldsFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -261,7 +261,7 @@ func TestGetHashMapFieldValues(t *testing.T) {
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -276,7 +276,7 @@ func TestGetHashMapFieldValues(t *testing.T) {
 	})
 
 	t.Run("FieldNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -306,7 +306,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 	fieldsToRemove := []string{"field2", "field3"}
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -317,7 +317,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -337,7 +337,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -354,7 +354,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("FieldsNotExist", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -374,7 +374,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("FieldsExist", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -394,7 +394,7 @@ func TestDeleteHashMapFields(t *testing.T) {
 	})
 
 	t.Run("DuplicateFields", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -423,7 +423,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	fields["field3"] = []byte("value3")
 
 	t.Run("DBNotSentInMetadataUseDefaultDB", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 
@@ -434,7 +434,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	})
 
 	t.Run("DBNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		s.CreateDefaultDatabase(cfg.DefaultDB)
 		dbName := "db123"
@@ -454,7 +454,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)
@@ -472,7 +472,7 @@ func TestGetAllHashMapFieldsAndValues(t *testing.T) {
 	})
 
 	t.Run("KeyFound", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		gs := NewHashMapKVServiceServer(s)
 		dbName := "db123"
 		s.CreateDefaultDatabase(dbName)

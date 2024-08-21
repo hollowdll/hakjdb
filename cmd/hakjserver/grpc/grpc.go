@@ -1,23 +1,23 @@
 package grpc
 
 import (
-	"github.com/hollowdll/kvdb/api/v0/authpb"
-	"github.com/hollowdll/kvdb/api/v0/dbpb"
-	"github.com/hollowdll/kvdb/api/v0/echopb"
-	"github.com/hollowdll/kvdb/api/v0/kvpb"
-	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	authrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/auth"
-	dbrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/db"
-	echorpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/echo"
-	kvrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/kv"
-	serverrpc "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc/server"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/api/v1/authpb"
+	"github.com/hollowdll/hakjdb/api/v1/dbpb"
+	"github.com/hollowdll/hakjdb/api/v1/echopb"
+	"github.com/hollowdll/hakjdb/api/v1/kvpb"
+	"github.com/hollowdll/hakjdb/api/v1/serverpb"
+	authrpc "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/auth"
+	dbrpc "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/db"
+	echorpc "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/echo"
+	kvrpc "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/kv"
+	serverrpc "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/server"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 )
 
-func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
+func SetupGrpcServer(s *server.HakjServer) *grpc.Server {
 	logger := s.Logger()
 	logger.Infof("Setting up gRPC server ...")
 	var opts []grpc.ServerOption
@@ -56,7 +56,7 @@ func SetupGrpcServer(s *server.KvdbServer) *grpc.Server {
 	return grpcServer
 }
 
-func ServeGrpcServer(s *server.KvdbServer, grpcServer *grpc.Server) {
+func ServeGrpcServer(s *server.HakjServer, grpcServer *grpc.Server) {
 	logger := s.Logger()
 	if err := grpcServer.Serve(s.ClientConnListener); err != nil {
 		logger.Errorf("Failed to accept incoming connection: %v", err)

@@ -3,7 +3,7 @@ package echo
 import (
 	"context"
 
-	"github.com/hollowdll/kvdb/api/v0/echopb"
+	"github.com/hollowdll/hakjdb/api/v1/echopb"
 )
 
 type EchoServiceServer struct {

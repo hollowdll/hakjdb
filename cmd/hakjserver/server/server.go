@@ -118,7 +118,7 @@ type HakjServer struct {
 	mu sync.RWMutex
 }
 
-func NewKvdbServer(cfg config.ServerConfig, lg hakjdb.Logger) *HakjServer {
+func NewHakjServer(cfg config.ServerConfig, lg hakjdb.Logger) *HakjServer {
 	return &HakjServer{
 		startTime:          time.Now(),
 		dbs:                make(map[string]*hakjdb.DB),
