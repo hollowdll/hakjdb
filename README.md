@@ -15,12 +15,6 @@ Components:
 
 Some documentations are outdated. They will be updated before full release. The name of the project will be changed before full release.
 
-# Data types
-
-Currently supported data types:
-- `String`
-- `HashMap`
-
 # Documentation
 
 - [Using the CLI](./docs/kvdb-cli.md)
@@ -164,7 +158,7 @@ go test -v ./tests/integration
 
 ## Benchmarks
 
-Benchmarks are useful for testing the average performance of the server. They measure the average number of requests that can be performed in a second.
+Benchmarks are useful for testing the average performance of the server. They can measure the average number of requests that can be performed in a second.
 
 Run benchmarks:
 ```sh
@@ -172,7 +166,17 @@ cd tests/benchmark
 go test -bench=. -v
 ```
 
-Better benchmarks and their results coming in later releases.
+Results show that the best performance is achieved when not using authentication or TLS. They reduce the throughput a little bit. Benchmarks were done for String key writes and reads. They have about the same average performance.
+
+Benchmarks were run with Intel Ultra 7 155H CPU and requests were handled in parallel using goroutines.
+
+Average results are shown in the table below
+
+Auth enabled | TLS enabled | Average requests per second
+-------------|-------------|----------------------------
+No           | No          | ~33000
+Yes          | No          | ~24000
+Yes          | Yes         | ~22000
 
 # License
 
