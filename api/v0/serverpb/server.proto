@@ -1,4 +1,4 @@
-// kvdbserver gRPC API
+// HakjDB gRPC API
 // API version: 0.3.0
 //
 // This package contains Protobuf definitions related to the server.
@@ -44,8 +44,8 @@ message DatabaseInfo {
 
 // GeneralInfo represents general information about the server.
 message GeneralInfo {
-  // Version of kvdb.
-  string kvdb_version = 1;
+  // Version of the server.
+  string server_version = 1;
   // Version of Go used to compile the server.
   string go_version = 2;
   // Server operating system.
@@ -66,7 +66,7 @@ message GeneralInfo {
   bool logfile_enabled = 10;
   // True if debug mode is enabled.
   bool debug_enabled = 11;
-  // Version of API.
+  // Version of the API.
   string api_version = 12;
 }
 

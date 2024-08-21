@@ -1,4 +1,4 @@
-// kvdbserver gRPC API
+// HakjDB gRPC API
 // API version: 0.3.0
 //
 // This package contains Protobuf definitions related to connection utility RPCs.
