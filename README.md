@@ -15,12 +15,6 @@ Components:
 
 Some documentations are outdated. They will be updated before full release. The name of the project will be changed before full release.
 
-# Data types
-
-Currently supported data types:
-- `String`
-- `HashMap`
-
 # Documentation
 
 - [Using the CLI](./docs/kvdb-cli.md)
