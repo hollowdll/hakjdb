@@ -25,14 +25,14 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 
 	t.Run("AuthDisabled", func(t *testing.T) {
 		cfg := config.DefaultConfig()
-		s := server.NewKvdbServer(cfg, hakjdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		ctx := context.Background()
 		err := s.AuthorizeIncomingRpcCall(ctx)
 		assert.NoErrorf(t, err, "expected no error; error = %v", err)
 	})
 
 	t.Run("ValidToken", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, hakjdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		password := "pass1234"
 		user := "root"
 		s.EnableAuth(password)
@@ -49,7 +49,7 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 	})
 
 	t.Run("MetadataNotSent", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, hakjdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		password := "pass1234"
 		s.EnableAuth(password)
 
@@ -64,7 +64,7 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 	})
 
 	t.Run("TokenNotSent", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, hakjdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		password := "pass1234"
 		s.EnableAuth(password)
 
@@ -79,7 +79,7 @@ func TestAuthorizeIncomingRpcCall(t *testing.T) {
 	})
 
 	t.Run("InvalidToken", func(t *testing.T) {
-		s := server.NewKvdbServer(cfg, hakjdb.DisabledLogger())
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 		password := "pass321!"
 		s.EnableAuth(password)
 
