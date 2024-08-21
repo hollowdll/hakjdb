@@ -28,10 +28,10 @@ dist/
 .env
 
 # Config files
-kvdbctl-config.yaml
-kvdbserver-config.yaml
+hakjctl-config.yaml
+hakjserver-config.yaml
 
 ### Above is copied from .gitignore ###
 
 # Directories
-cmd/kvdbctl
+cmd/hakjctl

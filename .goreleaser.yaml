@@ -5,6 +5,9 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
+# Note: This is the goreleaser configuration for HakjDB v1.
+# The release notes changelog URL at the bottom of the file needs to be updated in every major version.
+
 version: 1
 
 before:
@@ -15,18 +18,18 @@ before:
     - go generate ./...
 
 builds:
-  - id: kvdbctl
-    binary: kvdbctl
-    main: ./cmd/kvdbctl/main.go
+  - id: hakjctl
+    binary: hakjctl
+    main: ./cmd/hakjctl/main.go
     env:
       - CGO_ENABLED=0
     goos:
       - linux
       - windows
       - darwin
-  - id: kvdbserver
-    binary: kvdbserver
-    main: ./cmd/kvdbserver/main.go
+  - id: hakjserver
+    binary: hakjserver
+    main: ./cmd/hakjserver/main.go
     env:
       - CGO_ENABLED=0
     goos:
@@ -60,4 +63,4 @@ release:
   header: |
     ## Release notes
     
-    Release notes for this release are available [here](https://github.com/hollowdll/kvdb/blob/main/docs/changelog/{{ .Tag }}.md).
+    Release notes for this release are available [here](https://github.com/hollowdll/hakjdb/blob/main/docs/changelog/v1/{{ .Tag }}.md).

@@ -3,10 +3,10 @@ WORKDIR /src
 COPY . .
 RUN go mod download
 
-WORKDIR /src/cmd/kvdbserver
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o kvdbserver .
+WORKDIR /src/cmd/hakjserver
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o hakjserver .
 
 FROM debian:bookworm-slim
-WORKDIR /kvdb
-COPY --from=builder /src/cmd/kvdbserver/kvdbserver .
-CMD ["./kvdbserver"]
+WORKDIR /hakjdb
+COPY --from=builder /src/cmd/hakjserver/hakjserver .
+CMD ["./hakjserver"]
