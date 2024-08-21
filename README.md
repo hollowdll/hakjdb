@@ -174,7 +174,7 @@ go test -bench=. -v
 
 Results show that the best performance is achieved when not using authentication or TLS. They reduce the throughput a little bit. Benchmarks were done for String key writes and reads. They have about the same average performance.
 
-Benchmarks were run with Intel Ultra 7 155H CPU (16 cores, 22 threads) and requests were handled in parallel using goroutines.
+Benchmarks were run with Intel Ultra 7 155H CPU and requests were handled in parallel using goroutines.
 
 Average results are shown in the table below
 
