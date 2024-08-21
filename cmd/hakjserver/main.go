@@ -1,21 +1,21 @@
 package main
 
 import (
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/grpc"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
-	"github.com/hollowdll/kvdb/version"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/grpc"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
+	"github.com/hollowdll/hakjdb/version"
 )
 
 func start() {
-	logger := kvdb.NewDefaultLogger()
+	logger := hakjdb.NewDefaultLogger()
 	defer func() {
 		if err := logger.CloseLogFile(); err != nil {
 			logger.Errorf("Failed to close log file: %v", err)
 		}
 	}()
-	logger.Infof("Starting kvdb v%s server ...", version.Version)
+	logger.Infof("Starting HakjDB v%s server ...", version.Version)
 	logger.Infof("API version %s", version.APIVersion)
 	cfg := config.LoadConfig(logger)
 	s := server.NewKvdbServer(cfg, logger)

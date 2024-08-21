@@ -4,16 +4,16 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hollowdll/kvdb"
-	"github.com/hollowdll/kvdb/internal/common"
+	"github.com/hollowdll/hakjdb"
+	"github.com/hollowdll/hakjdb/internal/common"
 	"github.com/spf13/viper"
 )
 
 const (
 	dataDirName    string = "data"
-	configFileName string = "kvdbserver-config"
+	configFileName string = "hakjserver-config"
 	configFileType string = "yaml"
-	logFileName    string = "kvdbserver.log"
+	logFileName    string = "hakjserver.log"
 
 	// ConfigKeyPort is the configuration key for port.
 	ConfigKeyPort string = "port"
@@ -43,7 +43,7 @@ const (
 	ConfigKeyAuthTokenTTL string = "auth_token_ttl"
 
 	// EnvPrefix is the prefix that environment variables use.
-	EnvPrefix string = "KVDB"
+	EnvPrefix string = "HAKJ"
 	// EnvVarPassword is the environment variable for server password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 
@@ -60,7 +60,7 @@ const (
 	DefaultMaxClientConnections uint32 = common.DefaultMaxClientConnections
 	DefaultTLSCertPath          string = ""
 	DefaultTLSPrivKeyPath       string = ""
-	DefaultLogLevel             string = kvdb.DefaultLogLevelStr
+	DefaultLogLevel             string = hakjdb.DefaultLogLevelStr
 	DefaultAuthTokenSecretKey   string = ""
 	DefaultAuthTokenTTL         uint32 = 900
 )
@@ -99,7 +99,7 @@ type ServerConfig struct {
 }
 
 // LoadConfig loads server configurations.
-func LoadConfig(lg kvdb.Logger) ServerConfig {
+func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	lg.Infof("Loading configurations ...")
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
@@ -135,7 +135,7 @@ func LoadConfig(lg kvdb.Logger) ServerConfig {
 		lg.Errorf("Failed to read configuration file: %v", err)
 	}
 
-	logLevel, logLevelStr, ok := kvdb.GetLogLevelFromStr(viper.GetString(ConfigKeyLogLevel))
+	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(viper.GetString(ConfigKeyLogLevel))
 	if !ok {
 		lg.Warning("Invalid log level configured. Default log level will be used")
 	}
