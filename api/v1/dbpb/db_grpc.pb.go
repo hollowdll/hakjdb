@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/dbpb/db.proto
+// source: api/v1/dbpb/db.proto
 
 package dbpb
 
@@ -44,7 +44,7 @@ func NewDBServiceClient(cc grpc.ClientConnInterface) DBServiceClient {
 
 func (c *dBServiceClient) CreateDB(ctx context.Context, in *CreateDBRequest, opts ...grpc.CallOption) (*CreateDBResponse, error) {
 	out := new(CreateDBResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/CreateDB", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.dbpb.DBService/CreateDB", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *dBServiceClient) CreateDB(ctx context.Context, in *CreateDBRequest, opt
 
 func (c *dBServiceClient) GetAllDBs(ctx context.Context, in *GetAllDBsRequest, opts ...grpc.CallOption) (*GetAllDBsResponse, error) {
 	out := new(GetAllDBsResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/GetAllDBs", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.dbpb.DBService/GetAllDBs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *dBServiceClient) GetAllDBs(ctx context.Context, in *GetAllDBsRequest, o
 
 func (c *dBServiceClient) GetDBInfo(ctx context.Context, in *GetDBInfoRequest, opts ...grpc.CallOption) (*GetDBInfoResponse, error) {
 	out := new(GetDBInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/GetDBInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.dbpb.DBService/GetDBInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *dBServiceClient) GetDBInfo(ctx context.Context, in *GetDBInfoRequest, o
 
 func (c *dBServiceClient) DeleteDB(ctx context.Context, in *DeleteDBRequest, opts ...grpc.CallOption) (*DeleteDBResponse, error) {
 	out := new(DeleteDBResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/DeleteDB", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.dbpb.DBService/DeleteDB", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (c *dBServiceClient) DeleteDB(ctx context.Context, in *DeleteDBRequest, opt
 
 func (c *dBServiceClient) ChangeDB(ctx context.Context, in *ChangeDBRequest, opts ...grpc.CallOption) (*ChangeDBResponse, error) {
 	out := new(ChangeDBResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.dbpb.DBService/ChangeDB", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.dbpb.DBService/ChangeDB", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func _DBService_CreateDB_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DBService/CreateDB",
+		FullMethod: "/api.v1.dbpb.DBService/CreateDB",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DBServiceServer).CreateDB(ctx, req.(*CreateDBRequest))
@@ -164,7 +164,7 @@ func _DBService_GetAllDBs_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DBService/GetAllDBs",
+		FullMethod: "/api.v1.dbpb.DBService/GetAllDBs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DBServiceServer).GetAllDBs(ctx, req.(*GetAllDBsRequest))
@@ -182,7 +182,7 @@ func _DBService_GetDBInfo_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DBService/GetDBInfo",
+		FullMethod: "/api.v1.dbpb.DBService/GetDBInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DBServiceServer).GetDBInfo(ctx, req.(*GetDBInfoRequest))
@@ -200,7 +200,7 @@ func _DBService_DeleteDB_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DBService/DeleteDB",
+		FullMethod: "/api.v1.dbpb.DBService/DeleteDB",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DBServiceServer).DeleteDB(ctx, req.(*DeleteDBRequest))
@@ -218,7 +218,7 @@ func _DBService_ChangeDB_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.dbpb.DBService/ChangeDB",
+		FullMethod: "/api.v1.dbpb.DBService/ChangeDB",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DBServiceServer).ChangeDB(ctx, req.(*ChangeDBRequest))
@@ -230,7 +230,7 @@ func _DBService_ChangeDB_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DBService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.dbpb.DBService",
+	ServiceName: "api.v1.dbpb.DBService",
 	HandlerType: (*DBServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -255,5 +255,5 @@ var DBService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/dbpb/db.proto",
+	Metadata: "api/v1/dbpb/db.proto",
 }

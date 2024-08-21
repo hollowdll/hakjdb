@@ -1,12 +1,12 @@
 // HakjDB gRPC API
-// API version: 0.3.0
+// API version: 1.0.0
 //
 // This package contains Protobuf definitions related to authentication.
 
 syntax = "proto3";
-package api.v0.authpb;
+package api.v1.authpb;
 
-option go_package = "api/v0/authpb";
+option go_package = "api/v1/authpb";
 
 message AuthenticateRequest {
   string password = 1;

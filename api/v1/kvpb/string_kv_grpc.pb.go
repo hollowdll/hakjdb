@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/kvpb/string_kv.proto
+// source: api/v1/kvpb/string_kv.proto
 
 package kvpb
 
@@ -41,7 +41,7 @@ func NewStringKVServiceClient(cc grpc.ClientConnInterface) StringKVServiceClient
 
 func (c *stringKVServiceClient) SetString(ctx context.Context, in *SetStringRequest, opts ...grpc.CallOption) (*SetStringResponse, error) {
 	out := new(SetStringResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.StringKVService/SetString", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.StringKVService/SetString", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *stringKVServiceClient) SetString(ctx context.Context, in *SetStringRequ
 
 func (c *stringKVServiceClient) GetString(ctx context.Context, in *GetStringRequest, opts ...grpc.CallOption) (*GetStringResponse, error) {
 	out := new(GetStringResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.StringKVService/GetString", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.StringKVService/GetString", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func _StringKVService_SetString_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.StringKVService/SetString",
+		FullMethod: "/api.v1.kvpb.StringKVService/SetString",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StringKVServiceServer).SetString(ctx, req.(*SetStringRequest))
@@ -122,7 +122,7 @@ func _StringKVService_GetString_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.StringKVService/GetString",
+		FullMethod: "/api.v1.kvpb.StringKVService/GetString",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StringKVServiceServer).GetString(ctx, req.(*GetStringRequest))
@@ -134,7 +134,7 @@ func _StringKVService_GetString_Handler(srv interface{}, ctx context.Context, de
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var StringKVService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.kvpb.StringKVService",
+	ServiceName: "api.v1.kvpb.StringKVService",
 	HandlerType: (*StringKVServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -147,5 +147,5 @@ var StringKVService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/kvpb/string_kv.proto",
+	Metadata: "api/v1/kvpb/string_kv.proto",
 }

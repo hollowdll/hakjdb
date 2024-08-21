@@ -1,14 +1,14 @@
 // HakjDB gRPC API
-// API version: 0.3.0
+// API version: 1.0.0
 //
 // This package contains Protobuf definitions related to databases.
 
 syntax = "proto3";
-package api.v0.dbpb;
+package api.v1.dbpb;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "api/v0/dbpb";
+option go_package = "api/v1/dbpb";
 
 message CreateDBRequest {
   // Name of the database.

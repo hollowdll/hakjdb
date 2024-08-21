@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/kvpb/general_kv.proto
+// source: api/v1/kvpb/general_kv.proto
 
 package kvpb
 
@@ -47,7 +47,7 @@ func NewGeneralKVServiceClient(cc grpc.ClientConnInterface) GeneralKVServiceClie
 
 func (c *generalKVServiceClient) GetAllKeys(ctx context.Context, in *GetAllKeysRequest, opts ...grpc.CallOption) (*GetAllKeysResponse, error) {
 	out := new(GetAllKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/GetAllKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.GeneralKVService/GetAllKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *generalKVServiceClient) GetAllKeys(ctx context.Context, in *GetAllKeysR
 
 func (c *generalKVServiceClient) GetKeyType(ctx context.Context, in *GetKeyTypeRequest, opts ...grpc.CallOption) (*GetKeyTypeResponse, error) {
 	out := new(GetKeyTypeResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/GetKeyType", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.GeneralKVService/GetKeyType", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c *generalKVServiceClient) GetKeyType(ctx context.Context, in *GetKeyTypeR
 
 func (c *generalKVServiceClient) DeleteKeys(ctx context.Context, in *DeleteKeysRequest, opts ...grpc.CallOption) (*DeleteKeysResponse, error) {
 	out := new(DeleteKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/DeleteKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.GeneralKVService/DeleteKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (c *generalKVServiceClient) DeleteKeys(ctx context.Context, in *DeleteKeysR
 
 func (c *generalKVServiceClient) DeleteAllKeys(ctx context.Context, in *DeleteAllKeysRequest, opts ...grpc.CallOption) (*DeleteAllKeysResponse, error) {
 	out := new(DeleteAllKeysResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.GeneralKVService/DeleteAllKeys", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.GeneralKVService/DeleteAllKeys", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func _GeneralKVService_GetAllKeys_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.GeneralKVService/GetAllKeys",
+		FullMethod: "/api.v1.kvpb.GeneralKVService/GetAllKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GeneralKVServiceServer).GetAllKeys(ctx, req.(*GetAllKeysRequest))
@@ -158,7 +158,7 @@ func _GeneralKVService_GetKeyType_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.GeneralKVService/GetKeyType",
+		FullMethod: "/api.v1.kvpb.GeneralKVService/GetKeyType",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GeneralKVServiceServer).GetKeyType(ctx, req.(*GetKeyTypeRequest))
@@ -176,7 +176,7 @@ func _GeneralKVService_DeleteKeys_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.GeneralKVService/DeleteKeys",
+		FullMethod: "/api.v1.kvpb.GeneralKVService/DeleteKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GeneralKVServiceServer).DeleteKeys(ctx, req.(*DeleteKeysRequest))
@@ -194,7 +194,7 @@ func _GeneralKVService_DeleteAllKeys_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.GeneralKVService/DeleteAllKeys",
+		FullMethod: "/api.v1.kvpb.GeneralKVService/DeleteAllKeys",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GeneralKVServiceServer).DeleteAllKeys(ctx, req.(*DeleteAllKeysRequest))
@@ -206,7 +206,7 @@ func _GeneralKVService_DeleteAllKeys_Handler(srv interface{}, ctx context.Contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GeneralKVService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.kvpb.GeneralKVService",
+	ServiceName: "api.v1.kvpb.GeneralKVService",
 	HandlerType: (*GeneralKVServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -227,5 +227,5 @@ var GeneralKVService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/kvpb/general_kv.proto",
+	Metadata: "api/v1/kvpb/general_kv.proto",
 }

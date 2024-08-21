@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/serverpb/server.proto
+// source: api/v1/serverpb/server.proto
 
 package serverpb
 
@@ -38,7 +38,7 @@ func NewServerServiceClient(cc grpc.ClientConnInterface) ServerServiceClient {
 
 func (c *serverServiceClient) GetServerInfo(ctx context.Context, in *GetServerInfoRequest, opts ...grpc.CallOption) (*GetServerInfoResponse, error) {
 	out := new(GetServerInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.serverpb.ServerService/GetServerInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.serverpb.ServerService/GetServerInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *serverServiceClient) GetServerInfo(ctx context.Context, in *GetServerIn
 
 func (c *serverServiceClient) GetLogs(ctx context.Context, in *GetLogsRequest, opts ...grpc.CallOption) (*GetLogsResponse, error) {
 	out := new(GetLogsResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.serverpb.ServerService/GetLogs", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.serverpb.ServerService/GetLogs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func _ServerService_GetServerInfo_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.serverpb.ServerService/GetServerInfo",
+		FullMethod: "/api.v1.serverpb.ServerService/GetServerInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ServerServiceServer).GetServerInfo(ctx, req.(*GetServerInfoRequest))
@@ -116,7 +116,7 @@ func _ServerService_GetLogs_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.serverpb.ServerService/GetLogs",
+		FullMethod: "/api.v1.serverpb.ServerService/GetLogs",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ServerServiceServer).GetLogs(ctx, req.(*GetLogsRequest))
@@ -128,7 +128,7 @@ func _ServerService_GetLogs_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ServerService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.serverpb.ServerService",
+	ServiceName: "api.v1.serverpb.ServerService",
 	HandlerType: (*ServerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -141,5 +141,5 @@ var ServerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/serverpb/server.proto",
+	Metadata: "api/v1/serverpb/server.proto",
 }

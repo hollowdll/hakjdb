@@ -1,12 +1,12 @@
 // HakjDB gRPC API
-// API version: 0.3.0
+// API version: 1.0.0
 //
 // This package contains Protobuf definitions related to the server.
 
 syntax = "proto3";
-package api.v0.serverpb;
+package api.v1.serverpb;
 
-option go_package = "api/v0/serverpb";
+option go_package = "api/v1/serverpb";
 
 // MemoryInfo represents information about memory consumption.
 message MemoryInfo {

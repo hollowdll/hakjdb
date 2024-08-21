@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/kvpb/hashmap_kv.proto
+// source: api/v1/kvpb/hashmap_kv.proto
 
 package kvpb
 
@@ -49,7 +49,7 @@ func NewHashMapKVServiceClient(cc grpc.ClientConnInterface) HashMapKVServiceClie
 
 func (c *hashMapKVServiceClient) SetHashMap(ctx context.Context, in *SetHashMapRequest, opts ...grpc.CallOption) (*SetHashMapResponse, error) {
 	out := new(SetHashMapResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.HashMapKVService/SetHashMap", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.HashMapKVService/SetHashMap", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (c *hashMapKVServiceClient) SetHashMap(ctx context.Context, in *SetHashMapR
 
 func (c *hashMapKVServiceClient) GetHashMapFieldValues(ctx context.Context, in *GetHashMapFieldValuesRequest, opts ...grpc.CallOption) (*GetHashMapFieldValuesResponse, error) {
 	out := new(GetHashMapFieldValuesResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.HashMapKVService/GetHashMapFieldValues", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.HashMapKVService/GetHashMapFieldValues", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (c *hashMapKVServiceClient) GetHashMapFieldValues(ctx context.Context, in *
 
 func (c *hashMapKVServiceClient) GetAllHashMapFieldsAndValues(ctx context.Context, in *GetAllHashMapFieldsAndValuesRequest, opts ...grpc.CallOption) (*GetAllHashMapFieldsAndValuesResponse, error) {
 	out := new(GetAllHashMapFieldsAndValuesResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.HashMapKVService/GetAllHashMapFieldsAndValues", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.HashMapKVService/GetAllHashMapFieldsAndValues", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (c *hashMapKVServiceClient) GetAllHashMapFieldsAndValues(ctx context.Contex
 
 func (c *hashMapKVServiceClient) DeleteHashMapFields(ctx context.Context, in *DeleteHashMapFieldsRequest, opts ...grpc.CallOption) (*DeleteHashMapFieldsResponse, error) {
 	out := new(DeleteHashMapFieldsResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.kvpb.HashMapKVService/DeleteHashMapFields", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.kvpb.HashMapKVService/DeleteHashMapFields", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func _HashMapKVService_SetHashMap_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.HashMapKVService/SetHashMap",
+		FullMethod: "/api.v1.kvpb.HashMapKVService/SetHashMap",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HashMapKVServiceServer).SetHashMap(ctx, req.(*SetHashMapRequest))
@@ -162,7 +162,7 @@ func _HashMapKVService_GetHashMapFieldValues_Handler(srv interface{}, ctx contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.HashMapKVService/GetHashMapFieldValues",
+		FullMethod: "/api.v1.kvpb.HashMapKVService/GetHashMapFieldValues",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HashMapKVServiceServer).GetHashMapFieldValues(ctx, req.(*GetHashMapFieldValuesRequest))
@@ -180,7 +180,7 @@ func _HashMapKVService_GetAllHashMapFieldsAndValues_Handler(srv interface{}, ctx
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.HashMapKVService/GetAllHashMapFieldsAndValues",
+		FullMethod: "/api.v1.kvpb.HashMapKVService/GetAllHashMapFieldsAndValues",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HashMapKVServiceServer).GetAllHashMapFieldsAndValues(ctx, req.(*GetAllHashMapFieldsAndValuesRequest))
@@ -198,7 +198,7 @@ func _HashMapKVService_DeleteHashMapFields_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.kvpb.HashMapKVService/DeleteHashMapFields",
+		FullMethod: "/api.v1.kvpb.HashMapKVService/DeleteHashMapFields",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HashMapKVServiceServer).DeleteHashMapFields(ctx, req.(*DeleteHashMapFieldsRequest))
@@ -210,7 +210,7 @@ func _HashMapKVService_DeleteHashMapFields_Handler(srv interface{}, ctx context.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var HashMapKVService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.kvpb.HashMapKVService",
+	ServiceName: "api.v1.kvpb.HashMapKVService",
 	HandlerType: (*HashMapKVServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -231,5 +231,5 @@ var HashMapKVService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/kvpb/hashmap_kv.proto",
+	Metadata: "api/v1/kvpb/hashmap_kv.proto",
 }

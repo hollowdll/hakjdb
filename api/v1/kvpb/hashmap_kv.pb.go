@@ -1,5 +1,5 @@
 // HakjDB gRPC API
-// API version: 0.3.0
+// API version: 1.0.0
 //
 // This package contains Protobuf definitions related to key-value storage.
 
@@ -7,7 +7,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v5.27.1
-// source: api/v0/kvpb/hashmap_kv.proto
+// source: api/v1/kvpb/hashmap_kv.proto
 
 package kvpb
 
@@ -39,7 +39,7 @@ type SetHashMapRequest struct {
 func (x *SetHashMapRequest) Reset() {
 	*x = SetHashMapRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[0]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -52,7 +52,7 @@ func (x *SetHashMapRequest) String() string {
 func (*SetHashMapRequest) ProtoMessage() {}
 
 func (x *SetHashMapRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[0]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -65,7 +65,7 @@ func (x *SetHashMapRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetHashMapRequest.ProtoReflect.Descriptor instead.
 func (*SetHashMapRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{0}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *SetHashMapRequest) GetKey() string {
@@ -94,7 +94,7 @@ type SetHashMapResponse struct {
 func (x *SetHashMapResponse) Reset() {
 	*x = SetHashMapResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[1]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -107,7 +107,7 @@ func (x *SetHashMapResponse) String() string {
 func (*SetHashMapResponse) ProtoMessage() {}
 
 func (x *SetHashMapResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[1]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -120,7 +120,7 @@ func (x *SetHashMapResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetHashMapResponse.ProtoReflect.Descriptor instead.
 func (*SetHashMapResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{1}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SetHashMapResponse) GetFieldsAddedCount() uint32 {
@@ -144,7 +144,7 @@ type GetHashMapFieldValuesRequest struct {
 func (x *GetHashMapFieldValuesRequest) Reset() {
 	*x = GetHashMapFieldValuesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[2]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -157,7 +157,7 @@ func (x *GetHashMapFieldValuesRequest) String() string {
 func (*GetHashMapFieldValuesRequest) ProtoMessage() {}
 
 func (x *GetHashMapFieldValuesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[2]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -170,7 +170,7 @@ func (x *GetHashMapFieldValuesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHashMapFieldValuesRequest.ProtoReflect.Descriptor instead.
 func (*GetHashMapFieldValuesRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{2}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetHashMapFieldValuesRequest) GetKey() string {
@@ -201,7 +201,7 @@ type HashMapFieldValue struct {
 func (x *HashMapFieldValue) Reset() {
 	*x = HashMapFieldValue{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[3]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -214,7 +214,7 @@ func (x *HashMapFieldValue) String() string {
 func (*HashMapFieldValue) ProtoMessage() {}
 
 func (x *HashMapFieldValue) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[3]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -227,7 +227,7 @@ func (x *HashMapFieldValue) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HashMapFieldValue.ProtoReflect.Descriptor instead.
 func (*HashMapFieldValue) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{3}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *HashMapFieldValue) GetValue() []byte {
@@ -258,7 +258,7 @@ type GetHashMapFieldValuesResponse struct {
 func (x *GetHashMapFieldValuesResponse) Reset() {
 	*x = GetHashMapFieldValuesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[4]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -271,7 +271,7 @@ func (x *GetHashMapFieldValuesResponse) String() string {
 func (*GetHashMapFieldValuesResponse) ProtoMessage() {}
 
 func (x *GetHashMapFieldValuesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[4]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +284,7 @@ func (x *GetHashMapFieldValuesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHashMapFieldValuesResponse.ProtoReflect.Descriptor instead.
 func (*GetHashMapFieldValuesResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{4}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetHashMapFieldValuesResponse) GetFieldValueMap() map[string]*HashMapFieldValue {
@@ -313,7 +313,7 @@ type GetAllHashMapFieldsAndValuesRequest struct {
 func (x *GetAllHashMapFieldsAndValuesRequest) Reset() {
 	*x = GetAllHashMapFieldsAndValuesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[5]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -326,7 +326,7 @@ func (x *GetAllHashMapFieldsAndValuesRequest) String() string {
 func (*GetAllHashMapFieldsAndValuesRequest) ProtoMessage() {}
 
 func (x *GetAllHashMapFieldsAndValuesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[5]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -339,7 +339,7 @@ func (x *GetAllHashMapFieldsAndValuesRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetAllHashMapFieldsAndValuesRequest.ProtoReflect.Descriptor instead.
 func (*GetAllHashMapFieldsAndValuesRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{5}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetAllHashMapFieldsAndValuesRequest) GetKey() string {
@@ -363,7 +363,7 @@ type GetAllHashMapFieldsAndValuesResponse struct {
 func (x *GetAllHashMapFieldsAndValuesResponse) Reset() {
 	*x = GetAllHashMapFieldsAndValuesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[6]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -376,7 +376,7 @@ func (x *GetAllHashMapFieldsAndValuesResponse) String() string {
 func (*GetAllHashMapFieldsAndValuesResponse) ProtoMessage() {}
 
 func (x *GetAllHashMapFieldsAndValuesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[6]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -389,7 +389,7 @@ func (x *GetAllHashMapFieldsAndValuesResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetAllHashMapFieldsAndValuesResponse.ProtoReflect.Descriptor instead.
 func (*GetAllHashMapFieldsAndValuesResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{6}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetAllHashMapFieldsAndValuesResponse) GetFieldValueMap() map[string][]byte {
@@ -420,7 +420,7 @@ type DeleteHashMapFieldsRequest struct {
 func (x *DeleteHashMapFieldsRequest) Reset() {
 	*x = DeleteHashMapFieldsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[7]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -433,7 +433,7 @@ func (x *DeleteHashMapFieldsRequest) String() string {
 func (*DeleteHashMapFieldsRequest) ProtoMessage() {}
 
 func (x *DeleteHashMapFieldsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[7]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -446,7 +446,7 @@ func (x *DeleteHashMapFieldsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteHashMapFieldsRequest.ProtoReflect.Descriptor instead.
 func (*DeleteHashMapFieldsRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{7}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteHashMapFieldsRequest) GetKey() string {
@@ -477,7 +477,7 @@ type DeleteHashMapFieldsResponse struct {
 func (x *DeleteHashMapFieldsResponse) Reset() {
 	*x = DeleteHashMapFieldsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[8]
+		mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -490,7 +490,7 @@ func (x *DeleteHashMapFieldsResponse) String() string {
 func (*DeleteHashMapFieldsResponse) ProtoMessage() {}
 
 func (x *DeleteHashMapFieldsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_kvpb_hashmap_kv_proto_msgTypes[8]
+	mi := &file_api_v1_kvpb_hashmap_kv_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -503,7 +503,7 @@ func (x *DeleteHashMapFieldsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteHashMapFieldsResponse.ProtoReflect.Descriptor instead.
 func (*DeleteHashMapFieldsResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{8}
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteHashMapFieldsResponse) GetFieldsRemovedCount() uint32 {
@@ -520,17 +520,17 @@ func (x *DeleteHashMapFieldsResponse) GetOk() bool {
 	return false
 }
 
-var File_api_v0_kvpb_hashmap_kv_proto protoreflect.FileDescriptor
+var File_api_v1_kvpb_hashmap_kv_proto protoreflect.FileDescriptor
 
-var file_api_v0_kvpb_hashmap_kv_proto_rawDesc = []byte{
-	0x0a, 0x1c, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x30, 0x2f, 0x6b, 0x76, 0x70, 0x62, 0x2f, 0x68, 0x61,
+var file_api_v1_kvpb_hashmap_kv_proto_rawDesc = []byte{
+	0x0a, 0x1c, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x2f, 0x6b, 0x76, 0x70, 0x62, 0x2f, 0x68, 0x61,
 	0x73, 0x68, 0x6d, 0x61, 0x70, 0x5f, 0x6b, 0x76, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0b,
-	0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x22, 0xc2, 0x01, 0x0a, 0x11,
+	0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x22, 0xc2, 0x01, 0x0a, 0x11,
 	0x53, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03,
 	0x6b, 0x65, 0x79, 0x12, 0x59, 0x0a, 0x0f, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x5f, 0x76, 0x61, 0x6c,
 	0x75, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x31, 0x2e, 0x61,
-	0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x53, 0x65, 0x74, 0x48, 0x61,
+	0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x53, 0x65, 0x74, 0x48, 0x61,
 	0x73, 0x68, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x46, 0x69, 0x65,
 	0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52,
 	0x0d, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x4d, 0x61, 0x70, 0x1a, 0x40,
@@ -554,7 +554,7 @@ var file_api_v0_kvpb_hashmap_kv_proto_rawDesc = []byte{
 	0x74, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c,
 	0x75, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x65, 0x0a, 0x0f, 0x66,
 	0x69, 0x65, 0x6c, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x0b, 0x32, 0x3d, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x3d, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76,
 	0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65,
 	0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x2e, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x4d, 0x61, 0x70, 0x45, 0x6e,
@@ -564,7 +564,7 @@ var file_api_v0_kvpb_hashmap_kv_proto_rawDesc = []byte{
 	0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x34, 0x0a, 0x05, 0x76, 0x61,
 	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x61, 0x70, 0x69, 0x2e,
-	0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46,
+	0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46,
 	0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
 	0x3a, 0x02, 0x38, 0x01, 0x22, 0x37, 0x0a, 0x23, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x48, 0x61,
 	0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x41, 0x6e, 0x64, 0x56, 0x61,
@@ -574,7 +574,7 @@ var file_api_v0_kvpb_hashmap_kv_proto_rawDesc = []byte{
 	0x69, 0x65, 0x6c, 0x64, 0x73, 0x41, 0x6e, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6c, 0x0a, 0x0f, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x5f,
 	0x76, 0x61, 0x6c, 0x75, 0x65, 0x5f, 0x6d, 0x61, 0x70, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x44, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65,
+	0x44, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65,
 	0x74, 0x41, 0x6c, 0x6c, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64,
 	0x73, 0x41, 0x6e, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x2e, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x4d, 0x61, 0x70,
@@ -597,77 +597,77 @@ var file_api_v0_kvpb_hashmap_kv_proto_rawDesc = []byte{
 	0x0e, 0x0a, 0x02, 0x6f, 0x6b, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x32,
 	0xc9, 0x03, 0x0a, 0x10, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x4b, 0x56, 0x53, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x12, 0x4f, 0x0a, 0x0a, 0x53, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d,
-	0x61, 0x70, 0x12, 0x1e, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62,
+	0x61, 0x70, 0x12, 0x1e, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62,
 	0x2e, 0x53, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62,
+	0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62,
 	0x2e, 0x53, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f,
 	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x70, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68,
 	0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x12, 0x29,
-	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74,
+	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74,
 	0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75,
 	0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2a, 0x2e, 0x61, 0x70, 0x69, 0x2e,
-	0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d,
+	0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x61, 0x73, 0x68, 0x4d,
 	0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x85, 0x01, 0x0a, 0x1c, 0x47, 0x65, 0x74, 0x41,
 	0x6c, 0x6c, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x41,
 	0x6e, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x12, 0x30, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76,
-	0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x48, 0x61, 0x73,
+	0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x48, 0x61, 0x73,
 	0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x41, 0x6e, 0x64, 0x56, 0x61, 0x6c,
 	0x75, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x61, 0x70, 0x69,
-	0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x48,
+	0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x48,
 	0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x41, 0x6e, 0x64, 0x56,
 	0x61, 0x6c, 0x75, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
 	0x6a, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70,
-	0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x27, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e,
+	0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x27, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e,
 	0x6b, 0x76, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x48, 0x61, 0x73, 0x68, 0x4d,
 	0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x28, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x44, 0x65,
+	0x28, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x6b, 0x76, 0x70, 0x62, 0x2e, 0x44, 0x65,
 	0x6c, 0x65, 0x74, 0x65, 0x48, 0x61, 0x73, 0x68, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64,
 	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x61,
-	0x70, 0x69, 0x2f, 0x76, 0x30, 0x2f, 0x6b, 0x76, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x70, 0x69, 0x2f, 0x76, 0x31, 0x2f, 0x6b, 0x76, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x33,
 }
 
 var (
-	file_api_v0_kvpb_hashmap_kv_proto_rawDescOnce sync.Once
-	file_api_v0_kvpb_hashmap_kv_proto_rawDescData = file_api_v0_kvpb_hashmap_kv_proto_rawDesc
+	file_api_v1_kvpb_hashmap_kv_proto_rawDescOnce sync.Once
+	file_api_v1_kvpb_hashmap_kv_proto_rawDescData = file_api_v1_kvpb_hashmap_kv_proto_rawDesc
 )
 
-func file_api_v0_kvpb_hashmap_kv_proto_rawDescGZIP() []byte {
-	file_api_v0_kvpb_hashmap_kv_proto_rawDescOnce.Do(func() {
-		file_api_v0_kvpb_hashmap_kv_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v0_kvpb_hashmap_kv_proto_rawDescData)
+func file_api_v1_kvpb_hashmap_kv_proto_rawDescGZIP() []byte {
+	file_api_v1_kvpb_hashmap_kv_proto_rawDescOnce.Do(func() {
+		file_api_v1_kvpb_hashmap_kv_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1_kvpb_hashmap_kv_proto_rawDescData)
 	})
-	return file_api_v0_kvpb_hashmap_kv_proto_rawDescData
+	return file_api_v1_kvpb_hashmap_kv_proto_rawDescData
 }
 
-var file_api_v0_kvpb_hashmap_kv_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
-var file_api_v0_kvpb_hashmap_kv_proto_goTypes = []interface{}{
-	(*SetHashMapRequest)(nil),                    // 0: api.v0.kvpb.SetHashMapRequest
-	(*SetHashMapResponse)(nil),                   // 1: api.v0.kvpb.SetHashMapResponse
-	(*GetHashMapFieldValuesRequest)(nil),         // 2: api.v0.kvpb.GetHashMapFieldValuesRequest
-	(*HashMapFieldValue)(nil),                    // 3: api.v0.kvpb.HashMapFieldValue
-	(*GetHashMapFieldValuesResponse)(nil),        // 4: api.v0.kvpb.GetHashMapFieldValuesResponse
-	(*GetAllHashMapFieldsAndValuesRequest)(nil),  // 5: api.v0.kvpb.GetAllHashMapFieldsAndValuesRequest
-	(*GetAllHashMapFieldsAndValuesResponse)(nil), // 6: api.v0.kvpb.GetAllHashMapFieldsAndValuesResponse
-	(*DeleteHashMapFieldsRequest)(nil),           // 7: api.v0.kvpb.DeleteHashMapFieldsRequest
-	(*DeleteHashMapFieldsResponse)(nil),          // 8: api.v0.kvpb.DeleteHashMapFieldsResponse
-	nil,                                          // 9: api.v0.kvpb.SetHashMapRequest.FieldValueMapEntry
-	nil,                                          // 10: api.v0.kvpb.GetHashMapFieldValuesResponse.FieldValueMapEntry
-	nil,                                          // 11: api.v0.kvpb.GetAllHashMapFieldsAndValuesResponse.FieldValueMapEntry
+var file_api_v1_kvpb_hashmap_kv_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_api_v1_kvpb_hashmap_kv_proto_goTypes = []interface{}{
+	(*SetHashMapRequest)(nil),                    // 0: api.v1.kvpb.SetHashMapRequest
+	(*SetHashMapResponse)(nil),                   // 1: api.v1.kvpb.SetHashMapResponse
+	(*GetHashMapFieldValuesRequest)(nil),         // 2: api.v1.kvpb.GetHashMapFieldValuesRequest
+	(*HashMapFieldValue)(nil),                    // 3: api.v1.kvpb.HashMapFieldValue
+	(*GetHashMapFieldValuesResponse)(nil),        // 4: api.v1.kvpb.GetHashMapFieldValuesResponse
+	(*GetAllHashMapFieldsAndValuesRequest)(nil),  // 5: api.v1.kvpb.GetAllHashMapFieldsAndValuesRequest
+	(*GetAllHashMapFieldsAndValuesResponse)(nil), // 6: api.v1.kvpb.GetAllHashMapFieldsAndValuesResponse
+	(*DeleteHashMapFieldsRequest)(nil),           // 7: api.v1.kvpb.DeleteHashMapFieldsRequest
+	(*DeleteHashMapFieldsResponse)(nil),          // 8: api.v1.kvpb.DeleteHashMapFieldsResponse
+	nil,                                          // 9: api.v1.kvpb.SetHashMapRequest.FieldValueMapEntry
+	nil,                                          // 10: api.v1.kvpb.GetHashMapFieldValuesResponse.FieldValueMapEntry
+	nil,                                          // 11: api.v1.kvpb.GetAllHashMapFieldsAndValuesResponse.FieldValueMapEntry
 }
-var file_api_v0_kvpb_hashmap_kv_proto_depIdxs = []int32{
-	9,  // 0: api.v0.kvpb.SetHashMapRequest.field_value_map:type_name -> api.v0.kvpb.SetHashMapRequest.FieldValueMapEntry
-	10, // 1: api.v0.kvpb.GetHashMapFieldValuesResponse.field_value_map:type_name -> api.v0.kvpb.GetHashMapFieldValuesResponse.FieldValueMapEntry
-	11, // 2: api.v0.kvpb.GetAllHashMapFieldsAndValuesResponse.field_value_map:type_name -> api.v0.kvpb.GetAllHashMapFieldsAndValuesResponse.FieldValueMapEntry
-	3,  // 3: api.v0.kvpb.GetHashMapFieldValuesResponse.FieldValueMapEntry.value:type_name -> api.v0.kvpb.HashMapFieldValue
-	0,  // 4: api.v0.kvpb.HashMapKVService.SetHashMap:input_type -> api.v0.kvpb.SetHashMapRequest
-	2,  // 5: api.v0.kvpb.HashMapKVService.GetHashMapFieldValues:input_type -> api.v0.kvpb.GetHashMapFieldValuesRequest
-	5,  // 6: api.v0.kvpb.HashMapKVService.GetAllHashMapFieldsAndValues:input_type -> api.v0.kvpb.GetAllHashMapFieldsAndValuesRequest
-	7,  // 7: api.v0.kvpb.HashMapKVService.DeleteHashMapFields:input_type -> api.v0.kvpb.DeleteHashMapFieldsRequest
-	1,  // 8: api.v0.kvpb.HashMapKVService.SetHashMap:output_type -> api.v0.kvpb.SetHashMapResponse
-	4,  // 9: api.v0.kvpb.HashMapKVService.GetHashMapFieldValues:output_type -> api.v0.kvpb.GetHashMapFieldValuesResponse
-	6,  // 10: api.v0.kvpb.HashMapKVService.GetAllHashMapFieldsAndValues:output_type -> api.v0.kvpb.GetAllHashMapFieldsAndValuesResponse
-	8,  // 11: api.v0.kvpb.HashMapKVService.DeleteHashMapFields:output_type -> api.v0.kvpb.DeleteHashMapFieldsResponse
+var file_api_v1_kvpb_hashmap_kv_proto_depIdxs = []int32{
+	9,  // 0: api.v1.kvpb.SetHashMapRequest.field_value_map:type_name -> api.v1.kvpb.SetHashMapRequest.FieldValueMapEntry
+	10, // 1: api.v1.kvpb.GetHashMapFieldValuesResponse.field_value_map:type_name -> api.v1.kvpb.GetHashMapFieldValuesResponse.FieldValueMapEntry
+	11, // 2: api.v1.kvpb.GetAllHashMapFieldsAndValuesResponse.field_value_map:type_name -> api.v1.kvpb.GetAllHashMapFieldsAndValuesResponse.FieldValueMapEntry
+	3,  // 3: api.v1.kvpb.GetHashMapFieldValuesResponse.FieldValueMapEntry.value:type_name -> api.v1.kvpb.HashMapFieldValue
+	0,  // 4: api.v1.kvpb.HashMapKVService.SetHashMap:input_type -> api.v1.kvpb.SetHashMapRequest
+	2,  // 5: api.v1.kvpb.HashMapKVService.GetHashMapFieldValues:input_type -> api.v1.kvpb.GetHashMapFieldValuesRequest
+	5,  // 6: api.v1.kvpb.HashMapKVService.GetAllHashMapFieldsAndValues:input_type -> api.v1.kvpb.GetAllHashMapFieldsAndValuesRequest
+	7,  // 7: api.v1.kvpb.HashMapKVService.DeleteHashMapFields:input_type -> api.v1.kvpb.DeleteHashMapFieldsRequest
+	1,  // 8: api.v1.kvpb.HashMapKVService.SetHashMap:output_type -> api.v1.kvpb.SetHashMapResponse
+	4,  // 9: api.v1.kvpb.HashMapKVService.GetHashMapFieldValues:output_type -> api.v1.kvpb.GetHashMapFieldValuesResponse
+	6,  // 10: api.v1.kvpb.HashMapKVService.GetAllHashMapFieldsAndValues:output_type -> api.v1.kvpb.GetAllHashMapFieldsAndValuesResponse
+	8,  // 11: api.v1.kvpb.HashMapKVService.DeleteHashMapFields:output_type -> api.v1.kvpb.DeleteHashMapFieldsResponse
 	8,  // [8:12] is the sub-list for method output_type
 	4,  // [4:8] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
@@ -675,13 +675,13 @@ var file_api_v0_kvpb_hashmap_kv_proto_depIdxs = []int32{
 	0,  // [0:4] is the sub-list for field type_name
 }
 
-func init() { file_api_v0_kvpb_hashmap_kv_proto_init() }
-func file_api_v0_kvpb_hashmap_kv_proto_init() {
-	if File_api_v0_kvpb_hashmap_kv_proto != nil {
+func init() { file_api_v1_kvpb_hashmap_kv_proto_init() }
+func file_api_v1_kvpb_hashmap_kv_proto_init() {
+	if File_api_v1_kvpb_hashmap_kv_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetHashMapRequest); i {
 			case 0:
 				return &v.state
@@ -693,7 +693,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SetHashMapResponse); i {
 			case 0:
 				return &v.state
@@ -705,7 +705,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetHashMapFieldValuesRequest); i {
 			case 0:
 				return &v.state
@@ -717,7 +717,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*HashMapFieldValue); i {
 			case 0:
 				return &v.state
@@ -729,7 +729,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetHashMapFieldValuesResponse); i {
 			case 0:
 				return &v.state
@@ -741,7 +741,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAllHashMapFieldsAndValuesRequest); i {
 			case 0:
 				return &v.state
@@ -753,7 +753,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAllHashMapFieldsAndValuesResponse); i {
 			case 0:
 				return &v.state
@@ -765,7 +765,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteHashMapFieldsRequest); i {
 			case 0:
 				return &v.state
@@ -777,7 +777,7 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_kvpb_hashmap_kv_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_kvpb_hashmap_kv_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteHashMapFieldsResponse); i {
 			case 0:
 				return &v.state
@@ -794,18 +794,18 @@ func file_api_v0_kvpb_hashmap_kv_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_api_v0_kvpb_hashmap_kv_proto_rawDesc,
+			RawDescriptor: file_api_v1_kvpb_hashmap_kv_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_v0_kvpb_hashmap_kv_proto_goTypes,
-		DependencyIndexes: file_api_v0_kvpb_hashmap_kv_proto_depIdxs,
-		MessageInfos:      file_api_v0_kvpb_hashmap_kv_proto_msgTypes,
+		GoTypes:           file_api_v1_kvpb_hashmap_kv_proto_goTypes,
+		DependencyIndexes: file_api_v1_kvpb_hashmap_kv_proto_depIdxs,
+		MessageInfos:      file_api_v1_kvpb_hashmap_kv_proto_msgTypes,
 	}.Build()
-	File_api_v0_kvpb_hashmap_kv_proto = out.File
-	file_api_v0_kvpb_hashmap_kv_proto_rawDesc = nil
-	file_api_v0_kvpb_hashmap_kv_proto_goTypes = nil
-	file_api_v0_kvpb_hashmap_kv_proto_depIdxs = nil
+	File_api_v1_kvpb_hashmap_kv_proto = out.File
+	file_api_v1_kvpb_hashmap_kv_proto_rawDesc = nil
+	file_api_v1_kvpb_hashmap_kv_proto_goTypes = nil
+	file_api_v1_kvpb_hashmap_kv_proto_depIdxs = nil
 }

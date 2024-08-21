@@ -1,5 +1,5 @@
 // HakjDB gRPC API
-// API version: 0.3.0
+// API version: 1.0.0
 //
 // This package contains Protobuf definitions related to databases.
 
@@ -7,7 +7,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v5.27.1
-// source: api/v0/dbpb/db.proto
+// source: api/v1/dbpb/db.proto
 
 package dbpb
 
@@ -40,7 +40,7 @@ type CreateDBRequest struct {
 func (x *CreateDBRequest) Reset() {
 	*x = CreateDBRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[0]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -53,7 +53,7 @@ func (x *CreateDBRequest) String() string {
 func (*CreateDBRequest) ProtoMessage() {}
 
 func (x *CreateDBRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[0]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -66,7 +66,7 @@ func (x *CreateDBRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDBRequest.ProtoReflect.Descriptor instead.
 func (*CreateDBRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{0}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CreateDBRequest) GetDbName() string {
@@ -95,7 +95,7 @@ type CreateDBResponse struct {
 func (x *CreateDBResponse) Reset() {
 	*x = CreateDBResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[1]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -108,7 +108,7 @@ func (x *CreateDBResponse) String() string {
 func (*CreateDBResponse) ProtoMessage() {}
 
 func (x *CreateDBResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[1]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -121,7 +121,7 @@ func (x *CreateDBResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDBResponse.ProtoReflect.Descriptor instead.
 func (*CreateDBResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{1}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateDBResponse) GetDbName() string {
@@ -140,7 +140,7 @@ type GetAllDBsRequest struct {
 func (x *GetAllDBsRequest) Reset() {
 	*x = GetAllDBsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[2]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -153,7 +153,7 @@ func (x *GetAllDBsRequest) String() string {
 func (*GetAllDBsRequest) ProtoMessage() {}
 
 func (x *GetAllDBsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[2]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -166,7 +166,7 @@ func (x *GetAllDBsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllDBsRequest.ProtoReflect.Descriptor instead.
 func (*GetAllDBsRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{2}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{2}
 }
 
 type GetAllDBsResponse struct {
@@ -181,7 +181,7 @@ type GetAllDBsResponse struct {
 func (x *GetAllDBsResponse) Reset() {
 	*x = GetAllDBsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[3]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -194,7 +194,7 @@ func (x *GetAllDBsResponse) String() string {
 func (*GetAllDBsResponse) ProtoMessage() {}
 
 func (x *GetAllDBsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[3]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -207,7 +207,7 @@ func (x *GetAllDBsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllDBsResponse.ProtoReflect.Descriptor instead.
 func (*GetAllDBsResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{3}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetAllDBsResponse) GetDbNames() []string {
@@ -229,7 +229,7 @@ type GetDBInfoRequest struct {
 func (x *GetDBInfoRequest) Reset() {
 	*x = GetDBInfoRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[4]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -242,7 +242,7 @@ func (x *GetDBInfoRequest) String() string {
 func (*GetDBInfoRequest) ProtoMessage() {}
 
 func (x *GetDBInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[4]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -255,7 +255,7 @@ func (x *GetDBInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDBInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetDBInfoRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{4}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetDBInfoRequest) GetDbName() string {
@@ -277,7 +277,7 @@ type GetDBInfoResponse struct {
 func (x *GetDBInfoResponse) Reset() {
 	*x = GetDBInfoResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[5]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -290,7 +290,7 @@ func (x *GetDBInfoResponse) String() string {
 func (*GetDBInfoResponse) ProtoMessage() {}
 
 func (x *GetDBInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[5]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -303,7 +303,7 @@ func (x *GetDBInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDBInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetDBInfoResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{5}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetDBInfoResponse) GetData() *DBInfo {
@@ -325,7 +325,7 @@ type DeleteDBRequest struct {
 func (x *DeleteDBRequest) Reset() {
 	*x = DeleteDBRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[6]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -338,7 +338,7 @@ func (x *DeleteDBRequest) String() string {
 func (*DeleteDBRequest) ProtoMessage() {}
 
 func (x *DeleteDBRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[6]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -351,7 +351,7 @@ func (x *DeleteDBRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDBRequest.ProtoReflect.Descriptor instead.
 func (*DeleteDBRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{6}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteDBRequest) GetDbName() string {
@@ -373,7 +373,7 @@ type DeleteDBResponse struct {
 func (x *DeleteDBResponse) Reset() {
 	*x = DeleteDBResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[7]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -386,7 +386,7 @@ func (x *DeleteDBResponse) String() string {
 func (*DeleteDBResponse) ProtoMessage() {}
 
 func (x *DeleteDBResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[7]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -399,7 +399,7 @@ func (x *DeleteDBResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDBResponse.ProtoReflect.Descriptor instead.
 func (*DeleteDBResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{7}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteDBResponse) GetDbName() string {
@@ -429,7 +429,7 @@ type ChangeDBRequest struct {
 func (x *ChangeDBRequest) Reset() {
 	*x = ChangeDBRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[8]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -442,7 +442,7 @@ func (x *ChangeDBRequest) String() string {
 func (*ChangeDBRequest) ProtoMessage() {}
 
 func (x *ChangeDBRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[8]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -455,7 +455,7 @@ func (x *ChangeDBRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeDBRequest.ProtoReflect.Descriptor instead.
 func (*ChangeDBRequest) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{8}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ChangeDBRequest) GetDbName() string {
@@ -505,7 +505,7 @@ type ChangeDBResponse struct {
 func (x *ChangeDBResponse) Reset() {
 	*x = ChangeDBResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[9]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -518,7 +518,7 @@ func (x *ChangeDBResponse) String() string {
 func (*ChangeDBResponse) ProtoMessage() {}
 
 func (x *ChangeDBResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[9]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -531,7 +531,7 @@ func (x *ChangeDBResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeDBResponse.ProtoReflect.Descriptor instead.
 func (*ChangeDBResponse) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{9}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ChangeDBResponse) GetDbName() string {
@@ -564,7 +564,7 @@ type DBInfo struct {
 func (x *DBInfo) Reset() {
 	*x = DBInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_v0_dbpb_db_proto_msgTypes[10]
+		mi := &file_api_v1_dbpb_db_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -577,7 +577,7 @@ func (x *DBInfo) String() string {
 func (*DBInfo) ProtoMessage() {}
 
 func (x *DBInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_v0_dbpb_db_proto_msgTypes[10]
+	mi := &file_api_v1_dbpb_db_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -590,7 +590,7 @@ func (x *DBInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DBInfo.ProtoReflect.Descriptor instead.
 func (*DBInfo) Descriptor() ([]byte, []int) {
-	return file_api_v0_dbpb_db_proto_rawDescGZIP(), []int{10}
+	return file_api_v1_dbpb_db_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DBInfo) GetName() string {
@@ -635,11 +635,11 @@ func (x *DBInfo) GetDescription() string {
 	return ""
 }
 
-var File_api_v0_dbpb_db_proto protoreflect.FileDescriptor
+var File_api_v1_dbpb_db_proto protoreflect.FileDescriptor
 
-var file_api_v0_dbpb_db_proto_rawDesc = []byte{
-	0x0a, 0x14, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x30, 0x2f, 0x64, 0x62, 0x70, 0x62, 0x2f, 0x64, 0x62,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0b, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64,
+var file_api_v1_dbpb_db_proto_rawDesc = []byte{
+	0x0a, 0x14, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x2f, 0x64, 0x62, 0x70, 0x62, 0x2f, 0x64, 0x62,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0b, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64,
 	0x62, 0x70, 0x62, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x4c, 0x0a, 0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x42,
@@ -659,7 +659,7 @@ var file_api_v0_dbpb_db_proto_rawDesc = []byte{
 	0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x64, 0x62, 0x4e, 0x61, 0x6d, 0x65,
 	0x22, 0x3c, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x44, 0x42, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70,
+	0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70,
 	0x62, 0x2e, 0x44, 0x42, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x2a,
 	0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x42, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x12, 0x17, 0x0a, 0x07, 0x64, 0x62, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
@@ -698,74 +698,74 @@ var file_api_v0_dbpb_db_proto_rawDesc = []byte{
 	0x69, 0x6f, 0x6e, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
 	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x88, 0x03, 0x0a, 0x09, 0x44, 0x42, 0x53, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x12, 0x49, 0x0a, 0x08, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x42,
-	0x12, 0x1c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x43,
+	0x12, 0x1c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x43,
 	0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x42, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d,
-	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65,
+	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65,
 	0x61, 0x74, 0x65, 0x44, 0x42, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
 	0x4c, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x44, 0x42, 0x73, 0x12, 0x1d, 0x2e, 0x61,
-	0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c,
+	0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c,
 	0x6c, 0x44, 0x42, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x61, 0x70,
-	0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c,
+	0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c,
 	0x44, 0x42, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4c, 0x0a,
 	0x09, 0x47, 0x65, 0x74, 0x44, 0x42, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x1d, 0x2e, 0x61, 0x70, 0x69,
-	0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x42, 0x49, 0x6e,
+	0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x42, 0x49, 0x6e,
 	0x66, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x61, 0x70, 0x69, 0x2e,
-	0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x42, 0x49, 0x6e, 0x66,
+	0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x42, 0x49, 0x6e, 0x66,
 	0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x49, 0x0a, 0x08, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x42, 0x12, 0x1c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x42, 0x12, 0x1c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31,
 	0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x42, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64,
 	0x62, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x42, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x49, 0x0a, 0x08, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65,
-	0x44, 0x42, 0x12, 0x1c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62,
+	0x44, 0x42, 0x12, 0x1c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62,
 	0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x44, 0x42, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x1d, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x30, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x43,
+	0x1a, 0x1d, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x76, 0x31, 0x2e, 0x64, 0x62, 0x70, 0x62, 0x2e, 0x43,
 	0x68, 0x61, 0x6e, 0x67, 0x65, 0x44, 0x42, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x30, 0x2f, 0x64, 0x62, 0x70, 0x62,
+	0x00, 0x42, 0x0d, 0x5a, 0x0b, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x2f, 0x64, 0x62, 0x70, 0x62,
 	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_api_v0_dbpb_db_proto_rawDescOnce sync.Once
-	file_api_v0_dbpb_db_proto_rawDescData = file_api_v0_dbpb_db_proto_rawDesc
+	file_api_v1_dbpb_db_proto_rawDescOnce sync.Once
+	file_api_v1_dbpb_db_proto_rawDescData = file_api_v1_dbpb_db_proto_rawDesc
 )
 
-func file_api_v0_dbpb_db_proto_rawDescGZIP() []byte {
-	file_api_v0_dbpb_db_proto_rawDescOnce.Do(func() {
-		file_api_v0_dbpb_db_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v0_dbpb_db_proto_rawDescData)
+func file_api_v1_dbpb_db_proto_rawDescGZIP() []byte {
+	file_api_v1_dbpb_db_proto_rawDescOnce.Do(func() {
+		file_api_v1_dbpb_db_proto_rawDescData = protoimpl.X.CompressGZIP(file_api_v1_dbpb_db_proto_rawDescData)
 	})
-	return file_api_v0_dbpb_db_proto_rawDescData
+	return file_api_v1_dbpb_db_proto_rawDescData
 }
 
-var file_api_v0_dbpb_db_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
-var file_api_v0_dbpb_db_proto_goTypes = []interface{}{
-	(*CreateDBRequest)(nil),       // 0: api.v0.dbpb.CreateDBRequest
-	(*CreateDBResponse)(nil),      // 1: api.v0.dbpb.CreateDBResponse
-	(*GetAllDBsRequest)(nil),      // 2: api.v0.dbpb.GetAllDBsRequest
-	(*GetAllDBsResponse)(nil),     // 3: api.v0.dbpb.GetAllDBsResponse
-	(*GetDBInfoRequest)(nil),      // 4: api.v0.dbpb.GetDBInfoRequest
-	(*GetDBInfoResponse)(nil),     // 5: api.v0.dbpb.GetDBInfoResponse
-	(*DeleteDBRequest)(nil),       // 6: api.v0.dbpb.DeleteDBRequest
-	(*DeleteDBResponse)(nil),      // 7: api.v0.dbpb.DeleteDBResponse
-	(*ChangeDBRequest)(nil),       // 8: api.v0.dbpb.ChangeDBRequest
-	(*ChangeDBResponse)(nil),      // 9: api.v0.dbpb.ChangeDBResponse
-	(*DBInfo)(nil),                // 10: api.v0.dbpb.DBInfo
+var file_api_v1_dbpb_db_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_api_v1_dbpb_db_proto_goTypes = []interface{}{
+	(*CreateDBRequest)(nil),       // 0: api.v1.dbpb.CreateDBRequest
+	(*CreateDBResponse)(nil),      // 1: api.v1.dbpb.CreateDBResponse
+	(*GetAllDBsRequest)(nil),      // 2: api.v1.dbpb.GetAllDBsRequest
+	(*GetAllDBsResponse)(nil),     // 3: api.v1.dbpb.GetAllDBsResponse
+	(*GetDBInfoRequest)(nil),      // 4: api.v1.dbpb.GetDBInfoRequest
+	(*GetDBInfoResponse)(nil),     // 5: api.v1.dbpb.GetDBInfoResponse
+	(*DeleteDBRequest)(nil),       // 6: api.v1.dbpb.DeleteDBRequest
+	(*DeleteDBResponse)(nil),      // 7: api.v1.dbpb.DeleteDBResponse
+	(*ChangeDBRequest)(nil),       // 8: api.v1.dbpb.ChangeDBRequest
+	(*ChangeDBResponse)(nil),      // 9: api.v1.dbpb.ChangeDBResponse
+	(*DBInfo)(nil),                // 10: api.v1.dbpb.DBInfo
 	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
 }
-var file_api_v0_dbpb_db_proto_depIdxs = []int32{
-	10, // 0: api.v0.dbpb.GetDBInfoResponse.data:type_name -> api.v0.dbpb.DBInfo
-	11, // 1: api.v0.dbpb.DBInfo.created_at:type_name -> google.protobuf.Timestamp
-	11, // 2: api.v0.dbpb.DBInfo.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: api.v0.dbpb.DBService.CreateDB:input_type -> api.v0.dbpb.CreateDBRequest
-	2,  // 4: api.v0.dbpb.DBService.GetAllDBs:input_type -> api.v0.dbpb.GetAllDBsRequest
-	4,  // 5: api.v0.dbpb.DBService.GetDBInfo:input_type -> api.v0.dbpb.GetDBInfoRequest
-	6,  // 6: api.v0.dbpb.DBService.DeleteDB:input_type -> api.v0.dbpb.DeleteDBRequest
-	8,  // 7: api.v0.dbpb.DBService.ChangeDB:input_type -> api.v0.dbpb.ChangeDBRequest
-	1,  // 8: api.v0.dbpb.DBService.CreateDB:output_type -> api.v0.dbpb.CreateDBResponse
-	3,  // 9: api.v0.dbpb.DBService.GetAllDBs:output_type -> api.v0.dbpb.GetAllDBsResponse
-	5,  // 10: api.v0.dbpb.DBService.GetDBInfo:output_type -> api.v0.dbpb.GetDBInfoResponse
-	7,  // 11: api.v0.dbpb.DBService.DeleteDB:output_type -> api.v0.dbpb.DeleteDBResponse
-	9,  // 12: api.v0.dbpb.DBService.ChangeDB:output_type -> api.v0.dbpb.ChangeDBResponse
+var file_api_v1_dbpb_db_proto_depIdxs = []int32{
+	10, // 0: api.v1.dbpb.GetDBInfoResponse.data:type_name -> api.v1.dbpb.DBInfo
+	11, // 1: api.v1.dbpb.DBInfo.created_at:type_name -> google.protobuf.Timestamp
+	11, // 2: api.v1.dbpb.DBInfo.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: api.v1.dbpb.DBService.CreateDB:input_type -> api.v1.dbpb.CreateDBRequest
+	2,  // 4: api.v1.dbpb.DBService.GetAllDBs:input_type -> api.v1.dbpb.GetAllDBsRequest
+	4,  // 5: api.v1.dbpb.DBService.GetDBInfo:input_type -> api.v1.dbpb.GetDBInfoRequest
+	6,  // 6: api.v1.dbpb.DBService.DeleteDB:input_type -> api.v1.dbpb.DeleteDBRequest
+	8,  // 7: api.v1.dbpb.DBService.ChangeDB:input_type -> api.v1.dbpb.ChangeDBRequest
+	1,  // 8: api.v1.dbpb.DBService.CreateDB:output_type -> api.v1.dbpb.CreateDBResponse
+	3,  // 9: api.v1.dbpb.DBService.GetAllDBs:output_type -> api.v1.dbpb.GetAllDBsResponse
+	5,  // 10: api.v1.dbpb.DBService.GetDBInfo:output_type -> api.v1.dbpb.GetDBInfoResponse
+	7,  // 11: api.v1.dbpb.DBService.DeleteDB:output_type -> api.v1.dbpb.DeleteDBResponse
+	9,  // 12: api.v1.dbpb.DBService.ChangeDB:output_type -> api.v1.dbpb.ChangeDBResponse
 	8,  // [8:13] is the sub-list for method output_type
 	3,  // [3:8] is the sub-list for method input_type
 	3,  // [3:3] is the sub-list for extension type_name
@@ -773,13 +773,13 @@ var file_api_v0_dbpb_db_proto_depIdxs = []int32{
 	0,  // [0:3] is the sub-list for field type_name
 }
 
-func init() { file_api_v0_dbpb_db_proto_init() }
-func file_api_v0_dbpb_db_proto_init() {
-	if File_api_v0_dbpb_db_proto != nil {
+func init() { file_api_v1_dbpb_db_proto_init() }
+func file_api_v1_dbpb_db_proto_init() {
+	if File_api_v1_dbpb_db_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_api_v0_dbpb_db_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateDBRequest); i {
 			case 0:
 				return &v.state
@@ -791,7 +791,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateDBResponse); i {
 			case 0:
 				return &v.state
@@ -803,7 +803,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAllDBsRequest); i {
 			case 0:
 				return &v.state
@@ -815,7 +815,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAllDBsResponse); i {
 			case 0:
 				return &v.state
@@ -827,7 +827,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetDBInfoRequest); i {
 			case 0:
 				return &v.state
@@ -839,7 +839,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetDBInfoResponse); i {
 			case 0:
 				return &v.state
@@ -851,7 +851,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteDBRequest); i {
 			case 0:
 				return &v.state
@@ -863,7 +863,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteDBResponse); i {
 			case 0:
 				return &v.state
@@ -875,7 +875,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ChangeDBRequest); i {
 			case 0:
 				return &v.state
@@ -887,7 +887,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ChangeDBResponse); i {
 			case 0:
 				return &v.state
@@ -899,7 +899,7 @@ func file_api_v0_dbpb_db_proto_init() {
 				return nil
 			}
 		}
-		file_api_v0_dbpb_db_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_api_v1_dbpb_db_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DBInfo); i {
 			case 0:
 				return &v.state
@@ -916,18 +916,18 @@ func file_api_v0_dbpb_db_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_api_v0_dbpb_db_proto_rawDesc,
+			RawDescriptor: file_api_v1_dbpb_db_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_api_v0_dbpb_db_proto_goTypes,
-		DependencyIndexes: file_api_v0_dbpb_db_proto_depIdxs,
-		MessageInfos:      file_api_v0_dbpb_db_proto_msgTypes,
+		GoTypes:           file_api_v1_dbpb_db_proto_goTypes,
+		DependencyIndexes: file_api_v1_dbpb_db_proto_depIdxs,
+		MessageInfos:      file_api_v1_dbpb_db_proto_msgTypes,
 	}.Build()
-	File_api_v0_dbpb_db_proto = out.File
-	file_api_v0_dbpb_db_proto_rawDesc = nil
-	file_api_v0_dbpb_db_proto_goTypes = nil
-	file_api_v0_dbpb_db_proto_depIdxs = nil
+	File_api_v1_dbpb_db_proto = out.File
+	file_api_v1_dbpb_db_proto_rawDesc = nil
+	file_api_v1_dbpb_db_proto_goTypes = nil
+	file_api_v1_dbpb_db_proto_depIdxs = nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.1
-// source: api/v0/echopb/echo.proto
+// source: api/v1/echopb/echo.proto
 
 package echopb
 
@@ -36,7 +36,7 @@ func NewEchoServiceClient(cc grpc.ClientConnInterface) EchoServiceClient {
 
 func (c *echoServiceClient) UnaryEcho(ctx context.Context, in *UnaryEchoRequest, opts ...grpc.CallOption) (*UnaryEchoResponse, error) {
 	out := new(UnaryEchoResponse)
-	err := c.cc.Invoke(ctx, "/api.v0.echopb.EchoService/UnaryEcho", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.v1.echopb.EchoService/UnaryEcho", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func _EchoService_UnaryEcho_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.v0.echopb.EchoService/UnaryEcho",
+		FullMethod: "/api.v1.echopb.EchoService/UnaryEcho",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EchoServiceServer).UnaryEcho(ctx, req.(*UnaryEchoRequest))
@@ -94,7 +94,7 @@ func _EchoService_UnaryEcho_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var EchoService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.v0.echopb.EchoService",
+	ServiceName: "api.v1.echopb.EchoService",
 	HandlerType: (*EchoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -103,5 +103,5 @@ var EchoService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v0/echopb/echo.proto",
+	Metadata: "api/v1/echopb/echo.proto",
 }
