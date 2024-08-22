@@ -49,3 +49,14 @@ Run the script `gen_kvdbctl_command_docs.sh` from the project root
 ```
 
 This generates the updated command documentation and places it in `docs/kvdbctl-commands/generated` directory.
+
+## Generate self-signed TLS certificate and private key for testing
+
+Currently no native mTLS support so only server certificate and private key.
+
+Directory `tls/test-cert` has a cert.conf for self-signed certificate configuration. Certificates should be placed there.
+
+Example of generating certificate file and private key using openssl:
+```sh
+sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout hakjserver.key -out hakjserver.crt -config cert.conf
+```
