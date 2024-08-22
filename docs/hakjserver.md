@@ -21,7 +21,7 @@ Another way to run the server is by using Docker. Instructions [here](../README.
 
 # Configuration
 
-Configurations are stored in a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `hakjserver-config.yaml` and it is created to the [data directory](#data-directory). Configurations are stored in YAML format.
+Configurations are stored in a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `hakjserver-config.yaml` and it is created to the [data directory](#data-directory). The server tries to find the file in this directory. Configurations are stored in YAML format.
 
 Below is a list of all configurations with their default values:
 
@@ -132,7 +132,7 @@ Debug log level is typically used with verbose logs. Verbose logs show more info
 
 By default logs will be written only to the standard error stream (stderr). To write logs to a file, you need to enable the log file. Log file is intended only for debugging purposes as it decreases the server's performance by doing additional writes. 
 
-The name of the log file is `hakjserver.log`. If log file is enabled, the file is created to the [data directory](#data-directory) at server startup.
+The name of the log file is `hakjserver.log`. If log file is enabled, the file is created to the [data directory](#data-directory) at server startup. The server tries to find the file in this directory.
 
 The log file can be enabled in the configuration file or with environment variable.
 
