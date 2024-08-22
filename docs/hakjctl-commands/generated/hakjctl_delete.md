@@ -1,4 +1,4 @@
-## kvdbctl delete
+## hakjctl delete
 
 Delete keys
 
@@ -12,23 +12,23 @@ Returns the number of keys that were deleted or OK if all the keys were deleted.
 
 
 ```
-kvdbctl delete [KEY ...] [flags]
+hakjctl delete [KEY ...] [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl delete key1
+hakjctl delete key1
 
 # Specify the database to use
-kvdbctl delete key2 --database default
+hakjctl delete key2 -d default
 
 # Delete multiple keys
-kvdbctl delete key3 key4 key5
+hakjctl delete key3 key4 key5
 
 # Delete all the keys
-kvdbctl delete --all
+hakjctl delete --all
 ```
 
 ### Options
@@ -41,5 +41,5 @@ kvdbctl delete --all
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

@@ -1,4 +1,4 @@
-## kvdbctl hashmap getall
+## hakjctl hashmap getall
 
 Get all the fields and values of a HashMap key value
 
@@ -7,17 +7,17 @@ Get all the fields and values of a HashMap key value
 Get all the fields and values of a HashMap key value. Returns (None) if the key doesn't exist.
 
 ```
-kvdbctl hashmap getall KEY [flags]
+hakjctl hashmap getall KEY [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl hashmap getall key1
+hakjctl hashmap getall key1
 
 # Specify the database to use
-kvdbctl hashmap getall key1 --database default
+hakjctl hashmap getall key1 -d default
 ```
 
 ### Options
@@ -29,5 +29,5 @@ kvdbctl hashmap getall key1 --database default
 
 ### SEE ALSO
 
-* [kvdbctl hashmap](kvdbctl_hashmap.md)	 - Manage HashMap keys
+* [hakjctl hashmap](hakjctl_hashmap.md)	 - Manage HashMap keys
 

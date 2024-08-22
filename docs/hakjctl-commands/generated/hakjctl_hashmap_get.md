@@ -1,4 +1,4 @@
-## kvdbctl hashmap get
+## hakjctl hashmap get
 
 Get field values of a HashMap key value
 
@@ -9,20 +9,20 @@ This command can return multiple values. Returns (None) if the key or field does
 
 
 ```
-kvdbctl hashmap get KEY FIELD [FIELD ...] [flags]
+hakjctl hashmap get KEY FIELD [FIELD ...] [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl hashmap get key1 field1
+hakjctl hashmap get key1 field1
 
 # Specify the database to use
-kvdbctl hashmap get key1 field1 --database default
+hakjctl hashmap get key1 field1 -d default
 
 # Return multiple values
-kvdbctl hashmap get key1 field1 field2 field3
+hakjctl hashmap get key1 field1 field2 field3
 ```
 
 ### Options
@@ -34,5 +34,5 @@ kvdbctl hashmap get key1 field1 field2 field3
 
 ### SEE ALSO
 
-* [kvdbctl hashmap](kvdbctl_hashmap.md)	 - Manage HashMap keys
+* [hakjctl hashmap](hakjctl_hashmap.md)	 - Manage HashMap keys
 

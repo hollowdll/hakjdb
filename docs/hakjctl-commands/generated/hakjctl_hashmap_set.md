@@ -1,4 +1,4 @@
-## kvdbctl hashmap set
+## hakjctl hashmap set
 
 Set HashMap fields and values
 
@@ -13,23 +13,23 @@ Returns the number of fields that were removed.
 
 
 ```
-kvdbctl hashmap set KEY FIELD VALUE [FIELD VALUE ...] [flags]
+hakjctl hashmap set KEY FIELD VALUE [FIELD VALUE ...] [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl hashmap set key1 field1 "value1"
+hakjctl hashmap set key1 field1 "value1"
 
 # Specify the database to use
-kvdbctl hashmap set key1 field1 "value1" --database default
+hakjctl hashmap set key1 field1 "value1" -d default
 
 # Set multiple fields
-kvdbctl hashmap set key1 field1 "value1" field2 "value2" field3 "value3"
+hakjctl hashmap set key1 field1 "value1" field2 "value2" field3 "value3"
 
 # Update the values of existing fields
-kvdbctl hashmap set key1 field1 "value111" field2 "value222" field3 "value333"
+hakjctl hashmap set key1 field1 "value111" field2 "value222" field3 "value333"
 ```
 
 ### Options
@@ -41,5 +41,5 @@ kvdbctl hashmap set key1 field1 "value111" field2 "value222" field3 "value333"
 
 ### SEE ALSO
 
-* [kvdbctl hashmap](kvdbctl_hashmap.md)	 - Manage HashMap keys
+* [hakjctl hashmap](hakjctl_hashmap.md)	 - Manage HashMap keys
 

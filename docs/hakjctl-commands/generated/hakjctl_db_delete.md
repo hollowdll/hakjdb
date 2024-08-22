@@ -1,4 +1,4 @@
-## kvdbctl db delete
+## hakjctl db delete
 
 Delete a database
 
@@ -7,14 +7,14 @@ Delete a database
 Delete the database with the specified name. Returns the name of the deleted database.
 
 ```
-kvdbctl db delete NAME [flags]
+hakjctl db delete NAME [flags]
 ```
 
 ### Examples
 
 ```
 # Delete database 'mydb'
-kvdbctl db delete mydb
+hakjctl db delete mydb
 ```
 
 ### Options
@@ -25,5 +25,5 @@ kvdbctl db delete mydb
 
 ### SEE ALSO
 
-* [kvdbctl db](kvdbctl_db.md)	 - Manage databases
+* [hakjctl db](hakjctl_db.md)	 - Manage databases
 

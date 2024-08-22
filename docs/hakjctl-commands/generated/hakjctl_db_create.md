@@ -1,4 +1,4 @@
-## kvdbctl db create
+## hakjctl db create
 
 Create a new database
 
@@ -9,17 +9,17 @@ Returns the name of the created database.
 
 
 ```
-kvdbctl db create NAME [flags]
+hakjctl db create NAME [flags]
 ```
 
 ### Examples
 
 ```
 # Create database 'mydb' without description
-kvdbctl db create mydb
+hakjctl db create mydb
 
 # Create database 'mydb2' with description
-kvdbctl db create mydb2 --description "Database description."
+hakjctl db create mydb2 -d "Database description."
 ```
 
 ### Options
@@ -31,5 +31,5 @@ kvdbctl db create mydb2 --description "Database description."
 
 ### SEE ALSO
 
-* [kvdbctl db](kvdbctl_db.md)	 - Manage databases
+* [hakjctl db](hakjctl_db.md)	 - Manage databases
 

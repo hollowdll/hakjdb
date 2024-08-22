@@ -1,4 +1,4 @@
-## kvdbctl db change
+## hakjctl db change
 
 Change a database
 
@@ -7,20 +7,20 @@ Change a database
 Change the metadata of the specified database. Returns the name of the changed database.
 
 ```
-kvdbctl db change NAME [flags]
+hakjctl db change NAME [flags]
 ```
 
 ### Examples
 
 ```
 # Change the name of database 'mydb'
-kvdbctl db change mydb --name "my-new-db"
+hakjctl db change mydb -n "my-new-db"
 
 # Change the description of database 'mydb'
-kvdbctl db change mydb --description "New database description."
+hakjctl db change mydb -d "New database description."
 
 # Change the name and description of database 'mydb'
-kvdbctl db change mydb -n "my-new-db" -d "New database description."
+hakjctl db change mydb -n "my-new-db" -d "New database description."
 ```
 
 ### Options
@@ -33,5 +33,5 @@ kvdbctl db change mydb -n "my-new-db" -d "New database description."
 
 ### SEE ALSO
 
-* [kvdbctl db](kvdbctl_db.md)	 - Manage databases
+* [hakjctl db](hakjctl_db.md)	 - Manage databases
 

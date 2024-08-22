@@ -1,4 +1,4 @@
-## kvdbctl db info
+## hakjctl db info
 
 Show information about a database
 
@@ -16,17 +16,17 @@ Meaning of the returned fields:
 
 
 ```
-kvdbctl db info [flags]
+hakjctl db info [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl db info
+hakjctl db info
 
 # Specify the database to use
-kvdbctl db info --name "mydb"
+hakjctl db info -n "mydb"
 ```
 
 ### Options
@@ -38,5 +38,5 @@ kvdbctl db info --name "mydb"
 
 ### SEE ALSO
 
-* [kvdbctl db](kvdbctl_db.md)	 - Manage databases
+* [hakjctl db](hakjctl_db.md)	 - Manage databases
 

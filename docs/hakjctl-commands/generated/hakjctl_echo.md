@@ -1,4 +1,4 @@
-## kvdbctl echo
+## hakjctl echo
 
 Test connection
 
@@ -9,17 +9,17 @@ Can be useful for verifying that the server is still alive and can process reque
 
 
 ```
-kvdbctl echo [MESSAGE] [flags]
+hakjctl echo [MESSAGE] [flags]
 ```
 
 ### Examples
 
 ```
 # Send an empty message
-kvdbctl echo
+hakjctl echo
 
 # Send message "Hello"
-kvdbctl echo "Hello"
+hakjctl echo "Hello"
 ```
 
 ### Options
@@ -30,5 +30,5 @@ kvdbctl echo "Hello"
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

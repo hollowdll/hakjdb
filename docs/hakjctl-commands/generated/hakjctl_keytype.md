@@ -1,4 +1,4 @@
-## kvdbctl keytype
+## hakjctl keytype
 
 Get the data type of a key
 
@@ -7,17 +7,17 @@ Get the data type of a key
 Get the data type of a key. Returns (None) if the key doesn't exist.
 
 ```
-kvdbctl keytype KEY [flags]
+hakjctl keytype KEY [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl keytype mykey
+hakjctl keytype mykey
 
 # Specify the database to use
-kvdbctl keytype mykey --database default
+hakjctl keytype mykey -d default
 ```
 
 ### Options
@@ -29,5 +29,5 @@ kvdbctl keytype mykey --database default
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

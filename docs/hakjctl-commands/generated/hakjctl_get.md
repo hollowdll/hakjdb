@@ -1,4 +1,4 @@
-## kvdbctl get
+## hakjctl get
 
 Get the value of a String key
 
@@ -7,17 +7,17 @@ Get the value of a String key
 Get the value of a String key. Returns (None) if the key doesn't exist.
 
 ```
-kvdbctl get KEY [flags]
+hakjctl get KEY [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl get key1
+hakjctl get key1
 
 # Specify the database to use
-kvdbctl get key1 --database default
+hakjctl get key1 -d default
 ```
 
 ### Options
@@ -29,5 +29,5 @@ kvdbctl get key1 --database default
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

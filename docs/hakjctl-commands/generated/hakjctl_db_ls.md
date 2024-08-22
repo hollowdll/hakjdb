@@ -1,4 +1,4 @@
-## kvdbctl db ls
+## hakjctl db ls
 
 List all the databases
 
@@ -7,14 +7,14 @@ List all the databases
 List the names of all the databases that exist on the server.
 
 ```
-kvdbctl db ls [flags]
+hakjctl db ls [flags]
 ```
 
 ### Examples
 
 ```
 # List the names of all the databases
-kvdbctl db ls
+hakjctl db ls
 ```
 
 ### Options
@@ -25,5 +25,5 @@ kvdbctl db ls
 
 ### SEE ALSO
 
-* [kvdbctl db](kvdbctl_db.md)	 - Manage databases
+* [hakjctl db](hakjctl_db.md)	 - Manage databases
 

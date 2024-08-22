@@ -1,4 +1,4 @@
-## kvdbctl set
+## hakjctl set
 
 Set the value of a String key
 
@@ -10,17 +10,17 @@ Overwrites the key if it is holding a value of another data type.
 
 
 ```
-kvdbctl set KEY VALUE [flags]
+hakjctl set KEY VALUE [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl set key1 "Hello world!"
+hakjctl set key1 "Hello world!"
 
 # Specify the database to use
-kvdbctl set key2 "value123" --database default
+hakjctl set key2 "value123" -d default
 ```
 
 ### Options
@@ -31,5 +31,5 @@ kvdbctl set key2 "value123" --database default
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

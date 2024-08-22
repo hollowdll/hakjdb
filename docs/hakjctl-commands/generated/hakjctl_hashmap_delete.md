@@ -1,4 +1,4 @@
-## kvdbctl hashmap delete
+## hakjctl hashmap delete
 
 Remove fields from a HashMap key value
 
@@ -10,20 +10,20 @@ Returns the number of fields that were removed.
 
 
 ```
-kvdbctl hashmap delete KEY FIELD [FIELD ...] [flags]
+hakjctl hashmap delete KEY FIELD [FIELD ...] [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl hashmap delete key1 field1
+hakjctl hashmap delete key1 field1
 
 # Specify the database to use
-kvdbctl hashmap delete key1 field2 --database default
+hakjctl hashmap delete key1 field2 -d default
 
 # Remove multiple fields
-kvdbctl hashmap delete key1 field3 field4 field5
+hakjctl hashmap delete key1 field3 field4 field5
 ```
 
 ### Options
@@ -35,5 +35,5 @@ kvdbctl hashmap delete key1 field3 field4 field5
 
 ### SEE ALSO
 
-* [kvdbctl hashmap](kvdbctl_hashmap.md)	 - Manage HashMap keys
+* [hakjctl hashmap](hakjctl_hashmap.md)	 - Manage HashMap keys
 

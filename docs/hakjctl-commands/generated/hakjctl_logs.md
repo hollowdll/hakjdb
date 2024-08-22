@@ -1,4 +1,4 @@
-## kvdbctl logs
+## hakjctl logs
 
 Get logs from the server
 
@@ -7,14 +7,14 @@ Get logs from the server
 Get logs from the server if the server's log file is enabled. Currently gets all the logs.
 
 ```
-kvdbctl logs [flags]
+hakjctl logs [flags]
 ```
 
 ### Examples
 
 ```
 # Get all logs
-kvdbctl logs
+hakjctl logs
 ```
 
 ### Options
@@ -25,5 +25,5 @@ kvdbctl logs
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

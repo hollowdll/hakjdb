@@ -1,23 +1,23 @@
-## kvdbctl connect set
+## hakjctl connect set
 
 Change connection settings
 
 ### Synopsis
 
-Change the connection settings used to connect to a server. Only sets those that are specified.
+Change the connection settings used to connect to a HakjDB server. Only sets those that are specified.
 
 ```
-kvdbctl connect set [flags]
+hakjctl connect set [flags]
 ```
 
 ### Examples
 
 ```
 # Change the host and port
-kvdbctl connect set --host 127.0.0.1 --port 9000
+hakjctl connect set --host 127.0.0.1 --port 9000
 
 # Change only the default database
-kvdbctl connect set --database default
+hakjctl connect set --database default
 ```
 
 ### Options
@@ -31,5 +31,5 @@ kvdbctl connect set --database default
 
 ### SEE ALSO
 
-* [kvdbctl connect](kvdbctl_connect.md)	 - Manage connection settings
+* [hakjctl connect](hakjctl_connect.md)	 - Manage connection settings
 

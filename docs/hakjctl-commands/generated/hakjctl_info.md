@@ -1,4 +1,4 @@
-## kvdbctl info
+## hakjctl info
 
 Show information about the server
 
@@ -8,8 +8,8 @@ Show information about the server.
 Meaning of the returned fields:
 
 General
-- kvdb_version: Version of kvdb.
-- api_version: Version of API.
+- server_version: Version of the server.
+- api_version: Version of the API.
 - go_version: Version of Go used to compile the server.
 - os: Server operating system.
 - arch: Architecture which can be 32 or 64 bits.
@@ -40,14 +40,14 @@ Memory consumption
 
 
 ```
-kvdbctl info [flags]
+hakjctl info [flags]
 ```
 
 ### Examples
 
 ```
 # Show all information
-kvdbctl info
+hakjctl info
 ```
 
 ### Options
@@ -58,5 +58,5 @@ kvdbctl info
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 

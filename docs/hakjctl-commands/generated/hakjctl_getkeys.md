@@ -1,4 +1,4 @@
-## kvdbctl getkeys
+## hakjctl getkeys
 
 List keys
 
@@ -7,17 +7,17 @@ List keys
 List all the keys of a database.
 
 ```
-kvdbctl getkeys [flags]
+hakjctl getkeys [flags]
 ```
 
 ### Examples
 
 ```
 # Use the default database
-kvdbctl getkeys
+hakjctl getkeys
 
 # Specify the database to use
-kvdbctl getkeys --database default
+hakjctl getkeys -d default
 ```
 
 ### Options
@@ -29,5 +29,5 @@ kvdbctl getkeys --database default
 
 ### SEE ALSO
 
-* [kvdbctl](kvdbctl.md)	 - CLI tool for kvdb key-value data store
+* [hakjctl](hakjctl.md)	 - CLI tool for HakjDB key-value data store
 
