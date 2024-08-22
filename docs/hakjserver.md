@@ -1,6 +1,6 @@
-# kvdbserver
+# hakjserver
 
-kvdbserver is the server process that listens for requests from kvdb clients. It is responsible for managing the server, databases and keys.
+hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases and keys.
 
 # How to use
 
@@ -9,7 +9,7 @@ kvdbserver is the server process that listens for requests from kvdb clients. It
 After you have the server binary, you can run it with:
 
 ```bash
-./kvdbserver
+./hakjserver
 ```
 This runs it from the current working directory. Make sure to be in the same directory as the binary.
 
@@ -21,7 +21,7 @@ Another way to run the server is by using Docker. Instructions [here](../README.
 
 # Configuration
 
-Configurations are stored in a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `kvdbserver-config.yaml` and it is created to the [data directory](#data-directory). Configurations are stored in YAML format.
+Configurations are stored in a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `hakjserver-config.yaml` and it is created to the [data directory](#data-directory). Configurations are stored in YAML format.
 
 Below is a list of all configurations with their default values:
 
@@ -63,20 +63,27 @@ It is also possible to change configurations with environment variables. Environ
 
 Below is a list of all environment variables:
 
-- `KVDB_PORT`: Server TCP/IP port. Ranges from 1 to 65535.
-- `KVDB_PASSWORD`: Server password. Password is used in authentication.
-- `KVDB_DEBUG_ENABLED`: Enable debug mode. Some features are only enabled in debug mode. Can be true or false.
-- `KVDB_DEFAULT_DB`: The name of the default database that is created at server startup.
-- `KVDB_LOGFILE_ENABLED`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
-- `KVDB_TLS_ENABLED`: Enable TLS. If enabled, connections will be encrypted. Can be true or false.
-- `KVDB_TLS_CERT_PATH`: The path to the TLS certificate file.
-- `KVDB_TLS_PRIVATE_KEY_PATH`: The path to the TLS private key.
-- `KVDB_MAX_CLIENT_CONNECTIONS`: The maximum number of active client connections allowed.
-- `KVDB_LOG_LEVEL`: The log level. Can be debug, info, warning, error, or fatal.
-- `KVDB_VERBOSE_LOGS_ENABLED`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
-- `KVDB_AUTH_ENABLED`: Enable authentication. If enabled, clients need to authenticate.
-- `KVDB_AUTH_TOKEN_SECRET_KEY`: Secret key used to sign JWT tokens. Should be long and secure.
-- `KVDB_AUTH_TOKEN_TTL`: JWT token time to live in seconds. Once a JWT token is created, it expires after the number of seconds specified by this.
+- `HAKJ_PORT`: Server TCP/IP port. Ranges from 1 to 65535.
+- `HAKJ_PASSWORD`: Server password. Password is used in authentication.
+- `HAKJ_DEBUG_ENABLED`: Enable debug mode. Some features are only enabled in debug mode. Can be true or false.
+- `HAKJ_DEFAULT_DB`: The name of the default database that is created at server startup.
+- `HAKJ_LOGFILE_ENABLED`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
+- `HAKJ_TLS_ENABLED`: Enable TLS. If enabled, connections will be encrypted. Can be true or false.
+- `HAKJ_TLS_CERT_PATH`: The path to the TLS certificate file.
+- `HAKJ_TLS_PRIVATE_KEY_PATH`: The path to the TLS private key.
+- `HAKJ_MAX_CLIENT_CONNECTIONS`: The maximum number of active client connections allowed.
+- `HAKJ_LOG_LEVEL`: The log level. Can be debug, info, warning, error, or fatal.
+- `HAKJ_VERBOSE_LOGS_ENABLED`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
+- `HAKJ_AUTH_ENABLED`: Enable authentication. If enabled, clients need to authenticate.
+- `HAKJ_AUTH_TOKEN_SECRET_KEY`: Secret key used to sign JWT tokens. Should be long and secure.
+- `HAKJ_AUTH_TOKEN_TTL`: JWT token time to live in seconds. Once a JWT token is created, it expires after the number of seconds specified by this.
+
+# Port
+
+Port is the TCP/IP network socket port where the gRPC server of the server process listens for requests. It can be configured in the configuration file or with environment variable.
+
+- Config file: `port`
+- Env variable: `HAKJ_PORT`
 
 # Debug mode
 
@@ -84,15 +91,18 @@ Below is a list of features that are only enabled in debug mode:
 
 - gRPC server reflection.
 
-Debug mode can be enabled in the configuration file or with environment variable `KVDB_DEBUG_ENABLED`.
+Debug mode can be enabled in the configuration file or with environment variable.
+
+- Config file: `debug_enabled`
+- Env variable: `HAKJ_DEBUG_ENABLED`
 
 # Data directory
 
 The server has a data directory `data/` that is created to the executable's parent directory if it doesn't exist. Server-specific files are stored in this directory.
 
-Here is a list of files in this directory:
-- Configuration file: `kvdbserver-config.yaml`
-- Log file: `kvdbserver.log`
+Below is a list of files in this directory:
+- Configuration file: `hakjserver-config.yaml`
+- Log file: `hakjserver.log`
 
 # Logs
 
@@ -108,15 +118,26 @@ There are five different types of logs:
 
 You can control what is logged with log level. Debug is the lowest level and Fatal is the highest level. E.g. Debug shows all types of logs and Error shows only error and fatal logs.
 
-Log level can be configured in the configuration file or with environment variable `KVDB_LOG_LEVEL`.
+Log level can be configured in the configuration file or with environment variable.
+
+- Config file: `log_level`
+- Env variable: `HAKJ_LOG_LEVEL`
+
+Debug log level is typically used with verbose logs. Verbose logs show more information about requests. It can be enabled in the configuration file or with environment variable.
+
+- Config file: `verbose_logs_enabled`
+- Env variable: `HAKJ_VERBOSE_LOGS_ENABLED`
 
 ## Log file
 
 By default logs will be written only to the standard error stream (stderr). To write logs to a file, you need to enable the log file. Log file is intended only for debugging purposes as it decreases the server's performance by doing additional writes. 
 
-The log file can be enabled in the configuration file or with environment variable `KVDB_LOGFILE_ENABLED`.
+The name of the log file is `hakjserver.log`. If log file is enabled, the file is created to the [data directory](#data-directory) at server startup.
 
-The name of the log file is `kvdbserver.log`. If log file is enabled, the file is created to the [data directory](#data-directory) at server startup.
+The log file can be enabled in the configuration file or with environment variable.
+
+- Config file: `logfile_enabled`
+- Env variable: `HAKJ_LOGFILE_ENABLED`
 
 # Security
 
@@ -128,9 +149,23 @@ Authentication can be enabled in the configuration file or with environment vari
 
 Password can be set with environment variable `KVDB_PASSWORD`. The password is hashed using bcrypt before storing it in memory. Authentication process compares the provided password to this password by hashing it with bcrypt. The maximum password size is 72 bytes.
 
+Enable authentication
+- Config file: `auth_enabled`
+- Env variable: `HAKJ_AUTH_ENABLED`
+
+JWT token time to live
+- Config file: `auth_token_ttl`
+- Env variable: `HAKJ_AUTH_TOKEN_TTL`
+
+JWT token secret key
+- Config file: `auth_token_secret_key`
+- Env variable: `HAKJ_AUTH_TOKEN_SECRET_KEY`
+
 ## TLS
 
 Connections can be encrypted with TLS/SSL. The server has native support for this.
+
+When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and using the certificate that you configured.
 
 Directory `tls/test-cert/` contains a X.509 certificate and private key for testing purposes. It can be used to test TLS locally. Alternatively, use your own certificate.
 
@@ -143,14 +178,18 @@ tls_enabled: true
 tls_private_key_path: path/to/your/privatekey
 ```
 
-Or with `KVDB_TLS_ENABLED`, `KVDB_TLS_CERT_PATH`, and `KVDB_TLS_PRIVATE_KEY_PATH` environment variables. Look at [Environment variables](#environment-variables) for possible values.
-
-When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and using the certificate that you configured.
+Or with `KVDB_TLS_ENABLED`, `KVDB_TLS_CERT_PATH`, and `KVDB_TLS_PRIVATE_KEY_PATH` environment variables.
 
 # Default database
 
-When the server starts, it creates an empty default database 'default'. The name of the default database can be changed in the configuration file or with environment variable `KVDB_DEFAULT_DB`.
+When the server starts, it creates an empty default database 'default'. The name of the default database can be changed in the configuration file or with environment variable.
+
+- Config file: `default_db`
+- Env variable: `HAKJ_DEFAULT_DB`
 
 # Connections
 
-The maximum number of active client connections can be limited. Client connections are gRPC clients that are connected to the server. By default, the server allows 1000 active connections. This can be changed in the configuration file or with environment variable `KVDB_MAX_CLIENT_CONNECTIONS`.
+The maximum number of active client connections can be limited. Client connections are gRPC clients that are connected to the server. By default, the server allows 1000 active connections. This can be changed in the configuration file or with environment variable.
+
+- Config file: `max_client_connections`
+- Env variable: `HAKJ_MAX_CLIENT_CONNECTIONS`
