@@ -1,6 +1,6 @@
 # Databases
 
-Databases are namespaces for grouping keys. They store the data in the server's memory. There is no limit to how many databases you can have.
+Databases are namespaces for grouping keys. They store the data in the server's memory. There is no limit to how many databases you can have, except running out of RAM.
 
 # Naming
 
