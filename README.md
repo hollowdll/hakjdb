@@ -30,7 +30,7 @@ This is not meant for production use, as it lacks a lot of features, and is not 
 
 Release notes are available [here](./docs/changelog/).
 
-Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/kvdb/releases).
+Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/hakjdb/releases).
 
 However, it is recommended to build the binaries from source. Instructions on how to build from source below.
 
@@ -53,14 +53,14 @@ After you have successfully installed go, clone this repository.
 
 Cloning with git:
 ```sh
-git clone https://github.com/hollowdll/kvdb.git
+git clone https://github.com/hollowdll/hakjdb.git
 ```
 
-Note: You can also download the source code for a specific release [here](https://github.com/hollowdll/kvdb/releases).
+Note: You can also download the source code for a specific release [here](https://github.com/hollowdll/hakjdb/releases).
 
 Change directory to the project root:
 ```sh
-cd kvdb
+cd hakjdb
 ```
 
 Get the dependencies:
@@ -88,32 +88,33 @@ You can also use the scripts `build_hakjctl` and `build_hakjserver` to build the
 
 Images are available in Docker Hub with multiple tags. Links below.
 
-- [Repository](https://hub.docker.com/r/hakj/kvdb)
-- [Tags](https://hub.docker.com/r/hakj/kvdb/tags)
+- [Repository](https://hub.docker.com/r/hakj/hakjdb)
+- [Old repository](https://hub.docker.com/r/hakj/kvdb)
+
 
 ## Pull the server image
 
 ```sh
-docker pull hakj/kvdb
+docker pull hakj/hakjdb
 ```
 
 ## Build the server image
 
 Make sure to be in the project root
 ```sh
-cd kvdb
+cd hakjdb
 ```
 Latest tag
 ```sh
-docker build -f "./Dockerfile.bookworm" -t kvdb:latest .
+docker build -f "./Dockerfile.bookworm" -t hakjdb:latest .
 ```
 Debian based image
 ```sh
-docker build -f "./Dockerfile.bookworm" -t kvdb:bookworm .
+docker build -f "./Dockerfile.bookworm" -t hakjdb:bookworm .
 ```
 Alpine Linux based image
 ```sh
-docker build -f "./Dockerfile.alpine" -t kvdb:alpine .
+docker build -f "./Dockerfile.alpine" -t hakjdbdb:alpine .
 ```
 
 These commands build the image only for a single architecture. If you want to build multi-arch images for other platforms, read [this](https://docs.docker.com/build/building/multi-platform/).
@@ -122,7 +123,7 @@ These commands build the image only for a single architecture. If you want to bu
 
 Example of starting a container
 ```sh
-docker run -p 12345:12345 --rm -it kvdb
+docker run -p 12345:12345 --rm -it hakjdb
 ```
 This binds the host's port `12345` to the container's port `12345` so you can access the server outside the container.
 
@@ -130,7 +131,7 @@ This binds the host's port `12345` to the container's port `12345` so you can ac
 
 Change directory to the project root:
 ```sh
-cd kvdb
+cd hakjdb
 ```
 
 Run all tests:
