@@ -1,6 +1,6 @@
 # hakjserver
 
-hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases and keys.
+hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases, and keys.
 
 # How to use
 
