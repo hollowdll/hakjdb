@@ -4,7 +4,7 @@ CLI tool for HakjDB key-value data store
 
 ### Synopsis
 
-CLI tool for HakjDB key-value data store. Use it to manage HakjDB servers.
+CLI tool for HakjDB key-value data store. Use it to control and interact with HakjDB servers.
 
 ### Options
 

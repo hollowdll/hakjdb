@@ -9,7 +9,7 @@ If the specified fields exist, they will be overwritten with the new values.
 Creates the key if it doesn't exist.
 Overwrites the key if it is holding a value of another data type.
 This command can set multiple fields.
-Returns the number of fields that were removed.
+Returns the number of fields that were added.
 
 
 ```
