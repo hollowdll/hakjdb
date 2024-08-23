@@ -17,7 +17,7 @@ var (
 	rootCmd = &cobra.Command{
 		Use:     "hakjctl",
 		Short:   "CLI tool for HakjDB key-value data store",
-		Long:    "CLI tool for HakjDB key-value data store. Use it to manage HakjDB servers.",
+		Long:    "CLI tool for HakjDB key-value data store. Use it to control and interact with HakjDB servers.",
 		Version: version.Version,
 	}
 )
