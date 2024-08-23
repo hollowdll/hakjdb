@@ -1,24 +1,27 @@
 # Overview
-kvdb is an in-memory key-value store written in the Go programming language.
 
-It uses a simple client-server model and is designed to be easy to use. It can be used as a database, session storage, or cache. It may not be suitable for complex needs.
+![logo](./docs/logos/logo_full.png)
+
+HakjDB is a simple in-memory key-value data store that was built as an educative hobby project. It is written in the Go programming language.
+
+HakjDB allows you to store key-value pairs of different data types in namespaces called databases. The data is stored in the server's memory.
+
+HakjDB uses a simple client-server model, and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage, or cache. It may not be suitable for advanced needs, and does not offer data persistence on disk.
 
 Data is stored at keys of different types. Each data type allows you to store different kind of data such as string values or objects.
 
 Instances are easily configurable with environment variables and a simple YAML file.
 
 Components:
-- `kvdbserver` - The server process
-- `kvdb-cli` - CLI tool to manage the server
-  
-**Note!** This project is in early development. The `main` branch is currently unstable and getting breaking changes! Use a specific release version if you want to use this.
+- `hakjserver` - The server process
+- `hakjctl` - CLI tool to control and interact with the server
 
-Some documentations are outdated. They will be updated before full release. The name of the project will be changed before full release.
+This is not meant for production use, as it lacks a lot of features, and is not as professional as some popular key-value stores.
 
 # Documentation
 
-- [Using the CLI](./docs/kvdb-cli.md)
-- [Using the server](./docs/kvdbserver.md)
+- [Using the server](./docs/hakjserver.md)
+- [Using the CLI](./docs/hakjctl.md)
 - [Databases](./docs/databases.md)
 - [Data types](./docs/datatypes.md)
 - [API](./docs/api.md)
@@ -67,19 +70,19 @@ go mod tidy
 
 Build the server:
 ```sh
-go build -o ./bin/kvdbserver/ ./cmd/kvdbserver/
+go build -o ./bin/hakjserver/ ./cmd/hakjserver/
 ```
 
 Build the CLI:
 ```sh
-go build -o ./bin/kvdbctl/ ./cmd/kvdbctl/
+go build -o ./bin/hakjctl/ ./cmd/hakjctl/
 ```
 
 These will build the binaries to `bin/` directory in the project root. You can change the output directory and binary names to whatever you like by modifying the path with `-o` flag.
 
 For more advanced build, use `go help build` to see more build options.
 
-You can also use the scripts `build_kvdbctl` and `build_kvdbserver` to build the binaries.
+You can also use the scripts `build_hakjctl` and `build_hakjserver` to build the binaries.
 
 # Docker
 
