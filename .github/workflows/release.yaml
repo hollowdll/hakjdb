@@ -1,4 +1,4 @@
-# This workflow will push releases with GoReleaser and publish Docker images
+# This workflow pushes releases with GoReleaser and publish Docker images to Docker Hub.
 # For more information see:
 # https://goreleaser.com/ci/actions/
 # https://docs.docker.com/build/ci/github-actions/
@@ -56,10 +56,10 @@ jobs:
           file: ./Dockerfile.bookworm
           push: true
           tags: |
-            hakj/kvdb:latest
-            hakj/kvdb:${{ github.ref_name }}
-            hakj/kvdb:bookworm
-            hakj/kvdb:${{ github.ref_name }}-bookworm
+            hakj/hakjdb:latest
+            hakj/hakjdb:${{ github.ref_name }}
+            hakj/hakjdb:bookworm
+            hakj/hakjdb:${{ github.ref_name }}-bookworm
       
       - name: Build and push Alpine Linux based image
         uses: docker/build-push-action@v5
@@ -68,5 +68,5 @@ jobs:
           file: ./Dockerfile.alpine
           push: true
           tags: |
-            hakj/kvdb:alpine
-            hakj/kvdb:${{ github.ref_name }}-alpine
+            hakj/hakjdb:alpine
+            hakj/hakjdb:${{ github.ref_name }}-alpine

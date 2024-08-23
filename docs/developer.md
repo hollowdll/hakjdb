@@ -41,11 +41,22 @@ Replace `v0.1.0` with the actual release version.
 - Update the API version comment in all .proto files in `api/` directory.
 - Treat the API version as a whole in all proto files so it is clear which API version the proto file belongs to.
 
-## Generate and update kvdbctl command documentations
+## Generate and update hakjctl command documentations
 
-Run the script `gen_kvdbctl_command_docs.sh` from the project root
+Run the script `gen_hakjctl_command_docs.sh` from the project root
 ```sh
-./gen_kvdbctl_command_docs.sh
+./gen_hakjctl_command_docs.sh
 ```
 
-This generates the updated command documentation and places it in `docs/kvdbctl-commands/generated` directory.
+This generates the updated command documentation and places it in `docs/hakjctl-commands/generated` directory.
+
+## Generate self-signed TLS certificate and private key for testing
+
+Currently no native mTLS support so only server certificate and private key.
+
+Directory `tls/test-cert` has a cert.conf for self-signed certificate configuration. Certificates should be placed there.
+
+Example of generating certificate file and private key using openssl:
+```sh
+sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout hakjserver.key -out hakjserver.crt -config cert.conf
+```

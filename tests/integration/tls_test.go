@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hollowdll/kvdb/api/v0/serverpb"
-	"github.com/hollowdll/kvdb/internal/testutil"
+	"github.com/hollowdll/hakjdb/api/v1/serverpb"
+	"github.com/hollowdll/hakjdb/internal/testutil"
 	"github.com/stretchr/testify/require"
 )
 

@@ -3,22 +3,22 @@ package testutil
 import (
 	"crypto/x509"
 	"fmt"
-	"github.com/hollowdll/kvdb"
+	"github.com/hollowdll/hakjdb"
 	"net"
 	"os"
 	"path/filepath"
 
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/config"
-	grpcserver "github.com/hollowdll/kvdb/cmd/kvdbserver/grpc"
-	"github.com/hollowdll/kvdb/cmd/kvdbserver/server"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/config"
+	grpcserver "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc"
+	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func StartTestServer(cfg config.ServerConfig) (*server.KvdbServer, *grpc.Server, int) {
+func StartTestServer(cfg config.ServerConfig) (*server.HakjServer, *grpc.Server, int) {
 	fmt.Fprint(os.Stderr, "creating test server\n")
-	s := server.NewKvdbServer(cfg, kvdb.DisabledLogger())
+	s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
 	s.CreateDefaultDatabase(cfg.DefaultDB)
 	gs := grpcserver.SetupGrpcServer(s)
 
@@ -51,11 +51,11 @@ func DefaultConfig() config.ServerConfig {
 }
 
 func TLSConfig() config.ServerConfig {
-	tlsCertPath, err := filepath.Abs("../../tls/test-cert/kvdbserver.crt")
+	tlsCertPath, err := filepath.Abs("../../tls/test-cert/hakjserver.crt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get TLS certificate path: %v\n", err)
 	}
-	tlsPrivKeyPath, err := filepath.Abs("../../tls/test-cert/kvdbserver.key")
+	tlsPrivKeyPath, err := filepath.Abs("../../tls/test-cert/hakjserver.key")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get TLS private key path: %v\n", err)
 	}
@@ -75,7 +75,7 @@ func InsecureConnection(address string) (*grpc.ClientConn, error) {
 }
 
 func SecureConnection(address string) (*grpc.ClientConn, error) {
-	certBytes, err := os.ReadFile("../../tls/test-cert/kvdbserver.crt")
+	certBytes, err := os.ReadFile("../../tls/test-cert/hakjserver.crt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to read TLS certificate: %v\n", err)
 	}

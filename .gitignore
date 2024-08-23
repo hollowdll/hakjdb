@@ -31,5 +31,5 @@ dist/
 .env
 
 # Config files
-kvdbctl-config.yaml
-kvdbserver-config.yaml
+hakjctl-config.yaml
+hakjserver-config.yaml
