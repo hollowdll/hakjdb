@@ -79,7 +79,7 @@ hakjctl needs to be properly configured to access the server to see the server a
 
 ## Connecting to a server
 
-By default, hakjctl tries to connect to a HakjDB server at localhost in port 12345. Port 12345 is the server's default port. The default database to use is `default`.
+By default, hakjctl tries to connect to a HakjDB server at localhost in port 12345. Port 12345 is the server's default port. The default database to use is `default`. The commands use this database if database to use is not explicitly specified.
 
 To see the current connection settings, use command:
 ```sh
@@ -207,237 +207,89 @@ hakjctl db info -n my-db
 ```
 This shows information about database 'my-db'.
 
-## Set string
+## Set String
 
-To store a string value, you need to set a key to hold it. If the key already exists with some value, it is overwritten. Creates the key if it doesn't exist.
-
-To set a string value, use command:
+Store a String key-value:
 ```sh
-kvdb-cli set [key] [value] -d db-name
+hakjctl set key1 "Hello World!"
 ```
-- [key] is the name of the key and [value] is the string value to store.
-- Option -d specifies the name of the database. If not specified, the default database is used.
+This sets key "key1" to hold the String "Hello World!".
 
-For example:
+## Get String
+
+Get the value of a String key:
 ```sh
-kvdb-cli set message "Hello World!" -d db0
-OK
+hakjctl get key1
 ```
-This sets key "message" to hold string "Hello World!" in database db0.
-
-## Get string
-
-To get a string value, you need to retrieve it with the key that is holding the value.
-
-To get a string value, use command:
-```sh
-kvdb-cli get [key] -d db-name
-```
-- [key] is the name of the key holding the value to retrieve.
-- Option -d specifies the name of the database. If not specified, the default database is used.
-
-For example:
-```sh
-kvdb-cli get message -d db0
-"Hello World!"
-```
-This gets the string value that key "message" is holding in database db0.
-
-If the key doesn't exist, a special value (None) is returned:
-```sh
-kvdb-cli get message123 -d db0
-(None)
-```
+This prints the value of key "key1".
 
 ## Delete keys
 
-To delete keys, use command:
-```sh
-kvdb-cli delete [key ...] -d db-name
-```
-- [key] is the key to delete.
-- Option -d specifies the name of the database. If not specified, the default database is used.
+Deleting a key removes it and its value from the database.
 
-For example:
+Delete the specified keys if they exist:
 ```sh
-kvdb-cli delete message -d db0
-1
-```
-This deletes key "message" in database db0. The number of keys that were deleted is returned.
-
-The key doesn't exist anymore so 0 keys were deleted:
-```sh
-kvdb-cli delete message -d db0
-0
+hakjctl delete key1 key2 key3
 ```
 
-## Delete all keys
-
-Deleting all the keys of a database removes the keys and the values they are holding. This can be used to remove all the data stored in a database. The database will be blocked until the operation has finished.
-
-To delete all the keys of a database, use command:
+Delete all the keys of a database:
 ```sh
-kvdb-cli deletekeys -d db-name
+hakjctl delete --all
 ```
-- Option -d specifies the name of the database. If not specified, the default database is used.
 
-For example:
+> [!WARNING]
+> This command can have dangerous consequences. Use it with caution!
+
+## List keys
+
+Listing keys returns a list of keys present in a database. This command is intended for debugging purposes. The database will be blocked until the operation has finished.
+
+The following command lists all the keys of a database:
 ```sh
-kvdb-cli deletekeys
-OK
+hakjctl getkeys
 ```
-This deletes all the keys of the default database.
 
-## Get keys
+## Get key type
 
-Getting keys returns a list of keys present in a database. This command is intended for debugging purposes. The database will be blocked until the operation has finished.
+The data type of a key can be printed.
 
-To get all the keys of a database, use command:
+The following command prints the data type of key "key1":
 ```sh
-kvdb-cli getkeys -d db-name
+hakjctl keytype key1
 ```
-- Option -d specifies the name of the database. If not specified, the default database is used.
 
-For example:
-```sh
-kvdb-cli getkeys
-1) key1
-2) key2
-3) key3
-```
-This returns all the keys of the default database.
+The data type can be "String" or "HashMap".
 
 ## Set HashMap
 
-To store a HashMap and set fields in it, you need to set a key to hold the HashMap. If the key already exists with some fields, the fields are overwritten with the new values. Creates a new HashMap if the key doesn't exist.
-
-To set HashMap field values, use command:
+Store a HashMap key-value and set fields in it:
 ```sh
-kvdb-cli hashmap set [key] [field value ...] -d db-name
+hakjctl hashmap set key1 field1 value1 field2 value2
 ```
-- [key] is the name of the key.
-- [field] is the name of a field.
-- [value] is the value of a field.
-- Option -d specifies the name of the database. If not specified, the default database is used.
-
-The command can be used to set multiple fields.
-
-For example:
-```sh
-kvdb-cli hashmap set key1 name "John" age "35"
-2
-```
-This sets key "key1" to hold a HashMap with fields "name" and "age" set to their respective values. The returned integer is the number of fields that were added.
+This sets key "key1" to hold a HashMap value and sets 2 field-value pairs in it.
 
 ## Get HashMap field values
 
-To get HashMap field values, you need to retrieve them with the key that is holding the HashMap.
+It is possible to return the values of the specified fields of a HashMap, or return all the field-value pairs that exist in the HashMap.
 
-To get HashMap field values, use command:
+Return the values of the specified fields:
 ```sh
-kvdb-cli hashmap get [key] [field ...] -d db-name
+hakjctl hashmap get key1 field1 field2
 ```
-- [key] is the name of the key holding the HashMap.
-- [field] is the field whose value should be returned.
-- Option -d specifies the name of the database. If not specified, the default database is used.
+This returns the values of fields "field1" and "field2" in the HashMap stored at key "key1".
 
-For example:
+Or return all the field-value pairs:
 ```sh
-kvdb-cli hashmap get key1 name
-1) "name": "John"
-```
-This gets the value of field "name" in the HashMap that "key1" is holding.
-
-If the key or field doesn't exist, a special value (None) is returned.
-
-Key doesn't exist:
-```sh
-kvdb-cli hashmap get key123 name
-(None)
-```
-
-Field doesn't exist:
-```sh
-kvdb-cli hashmap get key1 field123
-1) "field123": (None)
-```
-
-## Get all HashMap fields and values
-
-To get all the fields and values of a HashMap, use command:
-```sh
-kvdb-cli hashmap getall [key] -d db-name
-```
-- [key] is the name of the key holding the HashMap.
-- Option -d specifies the name of the database. If not specified, the default database is used.
-
-For example:
-```sh
-kvdb-cli hashmap getall key1
-1) "field1": "value1"
-2) "field2": "value2"
-3) "field3": "value3"
-```
-This gets all the fields and values of the HashMap that "key1" is holding.
-
-If the key doesn't exist, a special value (None) is returned:
-```sh
-kvdb-cli hashmap getall key123
-(None)
+hakjctl hashmap getall key1
 ```
 
 If the HashMap doesn't contain any fields, nothing is printed.
 
 ## Remove fields from a HashMap
 
-To remove fields from a HashMap, use command:
+Remove the specified fields from a HashMap:
 ```sh
-kvdb-cli hashmap delete [key] [field ...] -d db-name
+hakjctl hashmap delete key1 field1 field2
 ```
-- [key] is the name of the key holding the HashMap.
-- [field] is a field to be removed.
-- Option -d specifies the name of the database. If not specified, the default database is used.
-
-The command can be used to remove multiple fields.
-
-For example:
-```sh
-kvdb-cli hashmap delete key1 field1
-1
-```
-This removes the field "field1" from the HashMap that "key1" is holding. The returned integer is the number of fields that were removed.
-
-If the key doesn't exist, a special value (None) is returned:
-```sh
-kvdb-cli hashmap delete key1234 field1
-(None)
-```
-
-Fields that do not exist are ignored:
-```sh
-kvdb-cli hashmap delete key1 field12345
-0
-```
-
-## Get key type
-
-To get the data type of the value a key is holding, use command:
-```sh
-kvdb-cli keytype [key] -d db-name
-```
-- [key] is the name of the key.
-- Option -d specifies the name of the database. If not specified, the default database is used.
-
-For example:
-```sh
-kvdb-cli keytype string-key
-"String"
-```
-This gets the data type of the value that key 'string-key' is holding.
-
-If the key doesn't exist, a special value (None) is returned:
-```sh
-kvdb-cli keytype this-key-does-not-exist
-(None)
-```
+This removes the fields "field1" and "field2" along with the values they are holding from the HashMap stored at key "key1".
 
