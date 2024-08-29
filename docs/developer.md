@@ -60,3 +60,31 @@ Example of generating certificate file and private key using openssl:
 ```sh
 sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout hakjserver.key -out hakjserver.crt -config cert.conf
 ```
+
+More advanced example using CA (certificate authority) and CSR (certificate signing request):
+
+Create CA certificate and key
+```sh
+openssl req -x509 -sha256 -newkey rsa:2048 -days 365 -keyout ca-key.pem -out ca-cert.pem -nodes -config cert.conf
+```
+
+Create server private key and certificate signing request
+```sh
+openssl req -newkey rsa:2048 -keyout hakjserver-key.pem -out hakjserver-req.pem -nodes -sha256 -config cert.conf
+```
+
+Create the server certificate and sign it
+```sh
+openssl x509 -req -in hakjserver-req.pem -days 365 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out hakjserver-cert.pem -extfile cert.conf -sha256
+```
+
+Verify certificate
+```sh
+openssl x509 -in hakjserver-cert.pem -noout -text
+```
+
+Verify that certificate and private key match
+```sh
+openssl x509 -noout -modulus -in hakjserver-cert.pem | openssl sha256
+openssl rsa -noout -modulus -in hakjserver-key.pem | openssl sha256
+```
