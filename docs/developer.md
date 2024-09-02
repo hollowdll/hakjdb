@@ -65,17 +65,17 @@ More advanced example using CA (certificate authority) and CSR (certificate sign
 
 Create CA certificate and key
 ```sh
-openssl req -x509 -sha256 -newkey rsa:2048 -days 365 -keyout ca-key.pem -out ca-cert.pem -nodes -config cert.conf
+openssl req -x509 -sha256 -newkey rsa:2048 -days 9999 -keyout ca-key.pem -out ca-cert.pem -nodes -subj "/OU=HakjDB/CN=localhost"
 ```
 
 Create server private key and certificate signing request
 ```sh
-openssl req -newkey rsa:2048 -keyout hakjserver-key.pem -out hakjserver-req.pem -nodes -sha256 -config cert.conf
+openssl req -newkey rsa:2048 -keyout hakjserver-key.pem -out hakjserver-req.pem -nodes -sha256 -subj "/OU=hakjserver/CN=localhost"
 ```
 
 Create the server certificate and sign it
 ```sh
-openssl x509 -req -in hakjserver-req.pem -days 365 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out hakjserver-cert.pem -extfile cert.conf -sha256
+openssl x509 -req -in hakjserver-req.pem -days 9999 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out hakjserver-cert.pem -extfile hakjserver-ext.cfg -sha256
 ```
 
 Verify certificate
