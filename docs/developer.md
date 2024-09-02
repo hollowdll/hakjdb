@@ -54,7 +54,7 @@ This generates the updated command documentation and places it in `docs/hakjctl-
 
 Currently no native mTLS support so only server certificate and private key.
 
-Directory `tls/test-cert` has a cert.conf for self-signed certificate configuration. Certificates should be placed there.
+Directory `tls/test-cert` is meant for self-signed TLS certificates. Certificates should be placed there. They are meant only for testing and development.
 
 Example of generating certificate file and private key using openssl:
 ```sh
@@ -76,6 +76,18 @@ openssl req -newkey rsa:2048 -keyout hakjserver-key.pem -out hakjserver-req.pem 
 Create the server certificate and sign it
 ```sh
 openssl x509 -req -in hakjserver-req.pem -days 9999 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out hakjserver-cert.pem -extfile hakjserver-ext.cfg -sha256
+```
+
+For mTLS, a client certificate is needed.
+
+Create client private key and certificate signing request
+```sh
+openssl req -newkey rsa:2048 -keyout client-key.pem -out client-req.pem -nodes -sha256 -subj "/OU=HakjDB client/CN=localhost"
+```
+
+Create the client certificate and sign it
+```sh
+openssl x509 -req -in client-req.pem -days 9999 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out client-cert.pem -extfile hakjserver-ext.cfg -sha256
 ```
 
 Verify certificate
