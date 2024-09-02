@@ -13,7 +13,6 @@ import (
 	serverrpc "github.com/hollowdll/hakjdb/cmd/hakjserver/grpc/server"
 	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -32,8 +31,7 @@ func SetupGrpcServer(s *server.HakjServer) *grpc.Server {
 		logger.Warning("TLS is disabled. Connections will not be encrypted")
 	} else {
 		logger.Info("Attempting to enable TLS ...")
-		cert := s.GetTLSCert()
-		opts = append(opts, grpc.Creds(credentials.NewServerTLSFromCert(&cert)))
+		opts = append(opts, grpc.Creds(s.GetTLSCredentials()))
 		logger.Info("TLS is enabled. Connections will be encrypted")
 	}
 

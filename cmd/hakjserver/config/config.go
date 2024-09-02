@@ -29,6 +29,8 @@ const (
 	ConfigKeyTLSCertPath string = "tls_cert_path"
 	// ConfigKeyTlsPrivKeyPath is the configuration key for TLS private key file path.
 	ConfigKeyTLSPrivKeyPath string = "tls_private_key_path"
+	// ConfigKeyTLSCACertPath is the configuration key for TLS CA certificate file path.
+	ConfigKeyTLSCACertPath string = "tls_ca_cert_path"
 	// ConfigKeyMaxClientConnections is the configuration key for maximum client connections.
 	ConfigKeyMaxClientConnections string = "max_client_connections"
 	// ConfigKeyLogLevel is the configuration key for log level.
@@ -60,6 +62,7 @@ const (
 	DefaultMaxClientConnections uint32 = common.DefaultMaxClientConnections
 	DefaultTLSCertPath          string = ""
 	DefaultTLSPrivKeyPath       string = ""
+	DefaultTLSCACertPath        string = ""
 	DefaultLogLevel             string = hakjdb.DefaultLogLevelStr
 	DefaultAuthTokenSecretKey   string = ""
 	DefaultAuthTokenTTL         uint32 = 900
@@ -91,6 +94,7 @@ type ServerConfig struct {
 
 	TLSCertPath    string
 	TLSPrivKeyPath string
+	TLSCACertPath  string
 
 	// Secret key used to sign JWT tokens.
 	AuthTokenSecretKey string
@@ -123,6 +127,7 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
 	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
+	viper.SetDefault(ConfigKeyTLSCACertPath, DefaultTLSCACertPath)
 	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
 	viper.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
 	viper.SetDefault(ConfigKeyAuthTokenSecretKey, DefaultAuthTokenSecretKey)
@@ -160,6 +165,7 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 		MaxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
 		TLSCertPath:          viper.GetString(ConfigKeyTLSCertPath),
 		TLSPrivKeyPath:       viper.GetString(ConfigKeyTLSPrivKeyPath),
+		TLSCACertPath:        viper.GetString(ConfigKeyTLSCACertPath),
 		AuthTokenSecretKey:   viper.GetString(ConfigKeyAuthTokenSecretKey),
 		AuthTokenTTL:         viper.GetUint32(ConfigKeyAuthTokenTTL),
 	}
@@ -181,6 +187,7 @@ func DefaultConfig() ServerConfig {
 		MaxClientConnections: DefaultMaxClientConnections,
 		TLSCertPath:          DefaultTLSCertPath,
 		TLSPrivKeyPath:       DefaultTLSPrivKeyPath,
+		TLSCACertPath:        DefaultTLSCACertPath,
 		AuthTokenSecretKey:   DefaultAuthTokenSecretKey,
 		AuthTokenTTL:         DefaultAuthTokenTTL,
 	}
