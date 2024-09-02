@@ -59,10 +59,15 @@ func TLSConfig() config.ServerConfig {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get TLS private key path: %v\n", err)
 	}
+	tlsCACertPath, err := filepath.Abs("../../tls/test-cert/ca-cert.pem")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to get TLS CA certificate path: %v\n", err)
+	}
 	cfg := config.DefaultConfig()
 	cfg.TLSEnabled = true
 	cfg.TLSCertPath = tlsCertPath
 	cfg.TLSPrivKeyPath = tlsPrivKeyPath
+	cfg.TLSCACertPath = tlsCACertPath
 	return cfg
 }
 
@@ -75,7 +80,7 @@ func InsecureConnection(address string) (*grpc.ClientConn, error) {
 }
 
 func SecureConnection(address string) (*grpc.ClientConn, error) {
-	certBytes, err := os.ReadFile("../../tls/test-cert/hakjserver-cert.pem")
+	certBytes, err := os.ReadFile("../../tls/test-cert/ca-cert.pem")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to read TLS certificate: %v\n", err)
 	}
