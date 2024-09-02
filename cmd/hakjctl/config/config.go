@@ -24,6 +24,8 @@ const (
 	ConfigKeyTlsEnabled string = "tls_enabled"
 	// ConfigKeyTlsCertPath is the configuration key for TLS certificate path.
 	ConfigKeyTlsCertPath string = "tls_cert_path"
+	// ConfigKeyTlsCACertPath is the configuration key for TLS CA certificate path.
+	ConfigKeyTlsCACertPath string = "tls_ca_cert_path"
 	// ConfigKeyCommandTimeout is the configuration key for setting command timeout.
 	ConfigKeyCommandTimeout string = "command_timeout"
 
@@ -52,6 +54,7 @@ func InitConfig() {
 	viper.SetDefault(ConfigKeyDatabase, DefaultDatabase)
 	viper.SetDefault(ConfigKeyTlsEnabled, false)
 	viper.SetDefault(ConfigKeyTlsCertPath, "")
+	viper.SetDefault(ConfigKeyTlsCACertPath, "")
 	viper.SetDefault(ConfigKeyCommandTimeout, DefaultCommandTimeout)
 
 	viper.SafeWriteConfig()

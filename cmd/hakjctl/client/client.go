@@ -60,13 +60,13 @@ func InitClient() {
 
 func getTransportCreds() credentials.TransportCredentials {
 	if viper.GetBool(config.ConfigKeyTlsEnabled) {
-		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCertPath))
+		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCACertPath))
 		if err != nil {
-			cobra.CheckErr(fmt.Sprintf("failed to read TLS certificate: %v", err))
+			cobra.CheckErr(fmt.Sprintf("failed to read TLS CA certificate: %v", err))
 		}
 		certPool := x509.NewCertPool()
 		if !certPool.AppendCertsFromPEM(certBytes) {
-			cobra.CheckErr("failed to parse TLS certificate")
+			cobra.CheckErr("failed to parse TLS CA certificate")
 		}
 
 		return credentials.NewClientTLSFromCert(certPool, "")
