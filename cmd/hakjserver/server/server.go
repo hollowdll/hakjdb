@@ -255,9 +255,14 @@ func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 		logger.Fatal("Failed to parse TLS CA certificate")
 	}
 
+	clientAuth := tls.NoClientCert
+	if s.Cfg.TLSClientCertAuthEnabled {
+		clientAuth = tls.RequireAndVerifyClientCert
+	}
+
 	return credentials.NewTLS(
 		&tls.Config{
-			ClientAuth:   tls.NoClientCert,
+			ClientAuth:   clientAuth,
 			Certificates: []tls.Certificate{serverCert},
 			ClientCAs:    certPool,
 		})
