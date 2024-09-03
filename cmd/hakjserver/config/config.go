@@ -25,6 +25,8 @@ const (
 	ConfigKeyLogFileEnabled string = "logfile_enabled"
 	// ConfigKeyTlsEnabled is the configuration key for enabling TLS.
 	ConfigKeyTLSEnabled string = "tls_enabled"
+	// ConfigKeyTLSClientCertAuthEnabled is the configuration key for enabling mTLS.
+	ConfigKeyTLSClientCertAuthEnabled string = "tls_client_cert_auth_enabled"
 	// ConfigKeyTlsCertPath is the configuration key for TLS certificate file path.
 	ConfigKeyTLSCertPath string = "tls_cert_path"
 	// ConfigKeyTlsPrivKeyPath is the configuration key for TLS private key file path.
@@ -49,32 +51,34 @@ const (
 	// EnvVarPassword is the environment variable for server password.
 	EnvVarPassword string = EnvPrefix + "_PASSWORD"
 
-	DefaultLogFileEnabled       bool   = false
-	DefaultTLSEnabled           bool   = false
-	DefaultDebugEnabled         bool   = false
-	DefaultVerboseLogsEnabled   bool   = false
-	DefaultAuthEnabled          bool   = false
-	DefaultDatabase             string = "default"
-	DefaultPort                 uint16 = common.ServerDefaultPort
-	DefaultLogFilePath          string = ""
-	DefaultMaxKeysPerDB         uint32 = common.DbMaxKeyCount
-	DefaultMaxHashMapFields     uint32 = common.HashMapMaxFields
-	DefaultMaxClientConnections uint32 = common.DefaultMaxClientConnections
-	DefaultTLSCertPath          string = ""
-	DefaultTLSPrivKeyPath       string = ""
-	DefaultTLSCACertPath        string = ""
-	DefaultLogLevel             string = hakjdb.DefaultLogLevelStr
-	DefaultAuthTokenSecretKey   string = ""
-	DefaultAuthTokenTTL         uint32 = 900
+	DefaultLogFileEnabled           bool   = false
+	DefaultTLSEnabled               bool   = false
+	DefaultTLSClientCertAuthEnabled bool   = false
+	DefaultDebugEnabled             bool   = false
+	DefaultVerboseLogsEnabled       bool   = false
+	DefaultAuthEnabled              bool   = false
+	DefaultDatabase                 string = "default"
+	DefaultPort                     uint16 = common.ServerDefaultPort
+	DefaultLogFilePath              string = ""
+	DefaultMaxKeysPerDB             uint32 = common.DbMaxKeyCount
+	DefaultMaxHashMapFields         uint32 = common.HashMapMaxFields
+	DefaultMaxClientConnections     uint32 = common.DefaultMaxClientConnections
+	DefaultTLSCertPath              string = ""
+	DefaultTLSPrivKeyPath           string = ""
+	DefaultTLSCACertPath            string = ""
+	DefaultLogLevel                 string = hakjdb.DefaultLogLevelStr
+	DefaultAuthTokenSecretKey       string = ""
+	DefaultAuthTokenTTL             uint32 = 900
 )
 
 // ServerConfig holds the server's configuration.
 type ServerConfig struct {
-	LogFileEnabled     bool
-	TLSEnabled         bool
-	DebugEnabled       bool
-	VerboseLogsEnabled bool
-	AuthEnabled        bool
+	LogFileEnabled           bool
+	TLSEnabled               bool
+	TLSClientCertAuthEnabled bool
+	DebugEnabled             bool
+	VerboseLogsEnabled       bool
+	AuthEnabled              bool
 
 	// The name of the default database that is created at server startup.
 	DefaultDB string
@@ -118,13 +122,15 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	viper.SetConfigType(configFileType)
 	viper.SetConfigName(configFileName)
 
-	viper.SetDefault(ConfigKeyPort, DefaultPort)
 	viper.SetDefault(ConfigKeyDebugEnabled, DefaultDebugEnabled)
-	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
 	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
 	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
+	viper.SetDefault(ConfigKeyTLSClientCertAuthEnabled, DefaultTLSClientCertAuthEnabled)
 	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
 	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
+
+	viper.SetDefault(ConfigKeyPort, DefaultPort)
+	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
 	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
 	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
 	viper.SetDefault(ConfigKeyTLSCACertPath, DefaultTLSCACertPath)
@@ -152,44 +158,46 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	}
 
 	return ServerConfig{
-		LogFileEnabled:       viper.GetBool(ConfigKeyLogFileEnabled),
-		TLSEnabled:           viper.GetBool(ConfigKeyTLSEnabled),
-		DebugEnabled:         viper.GetBool(ConfigKeyDebugEnabled),
-		VerboseLogsEnabled:   viper.GetBool(ConfigKeyVerboseLogsEnabled),
-		AuthEnabled:          viper.GetBool(ConfigKeyAuthEnabled),
-		DefaultDB:            viper.GetString(ConfigKeyDefaultDatabase),
-		LogFilePath:          filepath.Join(dataDirPath, logFileName),
-		MaxKeysPerDB:         DefaultMaxKeysPerDB,
-		MaxHashMapFields:     DefaultMaxHashMapFields,
-		PortInUse:            viper.GetUint16(ConfigKeyPort),
-		MaxClientConnections: viper.GetUint32(ConfigKeyMaxClientConnections),
-		TLSCertPath:          viper.GetString(ConfigKeyTLSCertPath),
-		TLSPrivKeyPath:       viper.GetString(ConfigKeyTLSPrivKeyPath),
-		TLSCACertPath:        viper.GetString(ConfigKeyTLSCACertPath),
-		AuthTokenSecretKey:   viper.GetString(ConfigKeyAuthTokenSecretKey),
-		AuthTokenTTL:         viper.GetUint32(ConfigKeyAuthTokenTTL),
+		LogFileEnabled:           viper.GetBool(ConfigKeyLogFileEnabled),
+		TLSEnabled:               viper.GetBool(ConfigKeyTLSEnabled),
+		TLSClientCertAuthEnabled: viper.GetBool(ConfigKeyTLSClientCertAuthEnabled),
+		DebugEnabled:             viper.GetBool(ConfigKeyDebugEnabled),
+		VerboseLogsEnabled:       viper.GetBool(ConfigKeyVerboseLogsEnabled),
+		AuthEnabled:              viper.GetBool(ConfigKeyAuthEnabled),
+		DefaultDB:                viper.GetString(ConfigKeyDefaultDatabase),
+		LogFilePath:              filepath.Join(dataDirPath, logFileName),
+		MaxKeysPerDB:             DefaultMaxKeysPerDB,
+		MaxHashMapFields:         DefaultMaxHashMapFields,
+		PortInUse:                viper.GetUint16(ConfigKeyPort),
+		MaxClientConnections:     viper.GetUint32(ConfigKeyMaxClientConnections),
+		TLSCertPath:              viper.GetString(ConfigKeyTLSCertPath),
+		TLSPrivKeyPath:           viper.GetString(ConfigKeyTLSPrivKeyPath),
+		TLSCACertPath:            viper.GetString(ConfigKeyTLSCACertPath),
+		AuthTokenSecretKey:       viper.GetString(ConfigKeyAuthTokenSecretKey),
+		AuthTokenTTL:             viper.GetUint32(ConfigKeyAuthTokenTTL),
 	}
 }
 
 // DefaultConfig returns the default configurations.
 func DefaultConfig() ServerConfig {
 	return ServerConfig{
-		LogFileEnabled:       DefaultLogFileEnabled,
-		TLSEnabled:           DefaultTLSEnabled,
-		DebugEnabled:         DefaultDebugEnabled,
-		VerboseLogsEnabled:   DefaultVerboseLogsEnabled,
-		AuthEnabled:          DefaultAuthEnabled,
-		DefaultDB:            DefaultDatabase,
-		LogFilePath:          DefaultLogFilePath,
-		MaxKeysPerDB:         DefaultMaxKeysPerDB,
-		MaxHashMapFields:     DefaultMaxHashMapFields,
-		PortInUse:            DefaultPort,
-		MaxClientConnections: DefaultMaxClientConnections,
-		TLSCertPath:          DefaultTLSCertPath,
-		TLSPrivKeyPath:       DefaultTLSPrivKeyPath,
-		TLSCACertPath:        DefaultTLSCACertPath,
-		AuthTokenSecretKey:   DefaultAuthTokenSecretKey,
-		AuthTokenTTL:         DefaultAuthTokenTTL,
+		LogFileEnabled:           DefaultLogFileEnabled,
+		TLSEnabled:               DefaultTLSEnabled,
+		TLSClientCertAuthEnabled: DefaultTLSClientCertAuthEnabled,
+		DebugEnabled:             DefaultDebugEnabled,
+		VerboseLogsEnabled:       DefaultVerboseLogsEnabled,
+		AuthEnabled:              DefaultAuthEnabled,
+		DefaultDB:                DefaultDatabase,
+		LogFilePath:              DefaultLogFilePath,
+		MaxKeysPerDB:             DefaultMaxKeysPerDB,
+		MaxHashMapFields:         DefaultMaxHashMapFields,
+		PortInUse:                DefaultPort,
+		MaxClientConnections:     DefaultMaxClientConnections,
+		TLSCertPath:              DefaultTLSCertPath,
+		TLSPrivKeyPath:           DefaultTLSPrivKeyPath,
+		TLSCACertPath:            DefaultTLSCACertPath,
+		AuthTokenSecretKey:       DefaultAuthTokenSecretKey,
+		AuthTokenTTL:             DefaultAuthTokenTTL,
 	}
 }
 
