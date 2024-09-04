@@ -1,5 +1,5 @@
 // HakjDB gRPC API
-// API version: 1.0.0
+// API version: 1.1.0
 //
 // This package contains Protobuf definitions related to the server.
 
@@ -68,6 +68,8 @@ message GeneralInfo {
   bool debug_enabled = 11;
   // Version of the API.
   string api_version = 12;
+  // True if TLS client certificate authentication is enabled.
+  bool tls_client_cert_auth_enabled = 13;
 }
 
 message GetServerInfoRequest {}

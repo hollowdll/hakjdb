@@ -1,5 +1,5 @@
 // HakjDB gRPC API
-// API version: 1.0.0
+// API version: 1.1.0
 //
 // This package contains Protobuf definitions related to key-value storage.
 
@@ -45,12 +45,7 @@ message DeleteAllKeysResponse {}
 service GeneralKVService {
   // GetAllKeys returns all the keys.
   // Uses the database sent in gRPC metadata or the default database if omitted.
-  rpc GetAllKeys(GetAllKeysRequest) returns (GetAllKeysResponse) {}
-
-  // NOT YET IMPLEMENTED!
-  // GetAllKeysOfType returns all the keys of the specified data type.
-  // Uses the database sent in gRPC metadata or the default database if omitted.
-  // rpc GetAllKeysOfType(GetAllKeysOfTypeRequest) returns (GetAllKeysOfTypeResponse) {}
+  rpc GetAllKeys(GetAllKeysRequest) returns (GetAllKeysResponse) {} 
 
   // GetKeyType returns the data type of the value a key is holding.
   // Uses the database sent in gRPC metadata or the default database if omitted.

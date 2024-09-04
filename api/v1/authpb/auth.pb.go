@@ -1,5 +1,5 @@
 // HakjDB gRPC API
-// API version: 1.0.0
+// API version: 1.1.0
 //
 // This package contains Protobuf definitions related to authentication.
 
