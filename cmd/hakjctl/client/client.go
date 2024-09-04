@@ -77,7 +77,7 @@ func getTransportCreds() credentials.TransportCredentials {
 		if isClientCertSet && isClientKeySet {
 			clientCert, err := tls.LoadX509KeyPair(clientCertPath, clientKeyPath)
 			if err != nil {
-				cobra.CheckErr("failed to load TLS client public/private key pair")
+				cobra.CheckErr(fmt.Sprintf("failed to load TLS client public/private key pair: %v", err))
 			}
 			certs = append(certs, clientCert)
 		}
