@@ -29,6 +29,7 @@ General
 - uptime_seconds: Server process uptime in seconds.
 - tcp_port: Server TCP/IP port.
 - tls_enabled: If TLS is enabled. Yes or no.
+- tls_client_cert_auth_enabled: If TLS client certificate authentication is enabled. Yes or no.
 - auth_enabled: If authentication is enabled. Yes or no.
 - logfile_enabled: If the log file is enabled. Yes or no.
 - debug_enabled: If debug mode is enabled. Yes or no.
@@ -79,6 +80,12 @@ func showServerInfo() {
 		info.WriteString("tls_enabled: yes\n")
 	} else {
 		info.WriteString("tls_enabled: no\n")
+	}
+
+	if res.GeneralInfo.TlsClientCertAuthEnabled {
+		info.WriteString("tls_client_cert_auth_enabled: yes\n")
+	} else {
+		info.WriteString("tls_client_cert_auth_enabled: no\n")
 	}
 
 	if res.GeneralInfo.AuthEnabled {
