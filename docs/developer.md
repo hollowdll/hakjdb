@@ -50,9 +50,7 @@ Run the script `gen_hakjctl_command_docs.sh` from the project root
 
 This generates the updated command documentation and places it in `docs/hakjctl-commands/generated` directory.
 
-## Generate self-signed TLS certificate and private key for testing
-
-Currently no native mTLS support so only server certificate and private key.
+## Generate self-signed TLS certificates and private keys for testing purposes.
 
 Directory `tls/test-cert` is meant for self-signed TLS certificates. Certificates should be placed there. They are meant only for testing and development.
 
