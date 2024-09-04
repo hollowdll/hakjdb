@@ -258,6 +258,7 @@ func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 	clientAuth := tls.NoClientCert
 	if s.Cfg.TLSClientCertAuthEnabled {
 		clientAuth = tls.RequireAndVerifyClientCert
+		logger.Infof("Using client certificate authentication in TLS. Clients are required to send a client certificate signed by the server's root CA certificate")
 	}
 
 	return credentials.NewTLS(

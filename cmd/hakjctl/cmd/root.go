@@ -5,7 +5,6 @@ import (
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/connect"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/db"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/hashmap"
-	"github.com/hollowdll/hakjdb/cmd/hakjctl/config"
 	"github.com/hollowdll/hakjdb/internal/common"
 	"github.com/hollowdll/hakjdb/version"
 	"github.com/spf13/cobra"
@@ -27,7 +26,7 @@ func Execute() error {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig, client.InitClient)
+	cobra.OnInitialize(client.InitClient)
 
 	rootCmd.AddCommand(db.CmdDb)
 	rootCmd.AddCommand(connect.CmdConnect)
