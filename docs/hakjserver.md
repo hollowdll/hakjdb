@@ -2,6 +2,10 @@
 
 hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases, and keys.
 
+# Directory
+
+It is recommended to place the binary in a directory called `hakjserver`. The server generates some files relative to the binary's parent directory, so they can be easily found there.
+
 # How to use
 
 ## Running the binary

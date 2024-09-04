@@ -2,6 +2,10 @@
 
 hakjctl is a CLI (command line interface) tool to control and interact with HakjDB servers.
 
+# Directory
+
+It is recommended to place the binary in a directory called `hakjctl`. The tool generates some files relative to the binary's parent directory, so they can be easily found there.
+
 # Configuration
 
 Configurations are stored in a configuration file and can be changed there. hakjctl creates this file with default configurations to the executable's directory if it doesn't exist and tries to find the file there. The name of the configuration file is `hakjctl-config.yaml`. Configurations are stored in YAML format.
@@ -48,6 +52,8 @@ tls_client_key_path: /path/to/your/client-privatekey
 # Commands
 
 Detailed command documentation can be found [here](./hakjctl-commands/generated/).
+
+The tool also generates a local copy of the command documentations in the tool's parent directory when the tool is run, if they don't exist. They are placed inside `generated-docs` directory.
 
 # How to use
 
