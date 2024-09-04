@@ -13,8 +13,9 @@ command_timeout: 10
 default_db: default
 host: localhost
 port: 12345
-tls_cert_path: ""
-tls_enabled: false
+tls_ca_cert_path: ""
+tls_client_cert_path: ""
+tls_client_key_path: ""
 ```
 
 Meaning of fields:
@@ -23,8 +24,9 @@ Meaning of fields:
 - `default_db`: Default database to use. Commands use this database by default.
 - `host`: Server's address to connect to. Can be hostname or IP address.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
-- `tls_cert_path`: The path to the TLS certificate file. The certificate has to be the server's certificate.
-- `tls_enabled`: Use TLS when connecting to a kvdb server. Needed if TLS is enabled on the server. Can be true or false.
+- `tls_ca_cert_path`: The path to the server's TLS CA certificate file. If set, the client tries to establish a TLS connection.
+- `tls_client_cert_path`: The path to the TLS client certificate file. Used if the server requires client certificate authentication.
+- `tls_client_key_path`: The path to the TLS client private key file. Used if the server requires client certificate authentication.
 
 # Environment variables
 
@@ -34,15 +36,14 @@ Below is a list of all environment variables:
 
 # TLS
 
-If TLS is enabled on the server, you must enable TLS connection. In addition, you must configure the path to the server's certificate file. Currently no native mTLS support.
+If TLS is enabled on the server, users must establish an encrypted TLS connection. Users must configure the file paths to the server's root CA certificate. If the server requires client certificate authentication, users must also configure the file paths to the client certificate and private key.
 
-This can be done by modifying the configuration file:
+Configuration file:
 ```yaml
-tls_cert_path: path/to/your/certificate
-tls_enabled: true
+tls_ca_cert_path: /path/to/your/ca-certificate
+tls_client_cert_path: /path/to/your/client-certificate
+tls_client_key_path: /path/to/your/client-privatekey
 ```
-
-Directory `tls/test-cert/` contains a certificate for testing purposes. Use it if the server is configured to use it. Otherwise use your own certificate.
 
 # Commands
 

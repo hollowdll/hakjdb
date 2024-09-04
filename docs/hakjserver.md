@@ -173,7 +173,7 @@ Connections can be encrypted with TLS/SSL. The server has native support for thi
 
 When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and proper configurations.
 
-Directory `tls/test-cert/` contains X.509 certificates and private keys for testing and development purposes. It can be used to test TLS locally. Alternatively, use your own certificate.
+Directory `tls/test-cert/` in the repository root contains X.509 certificates and private keys for testing and development purposes. They can be used to test TLS locally. Alternatively, use your own certificates.
 
 TLS can be enabled by modifying the configuration file or with environment variables.
 
