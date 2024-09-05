@@ -177,28 +177,28 @@ Connections can be encrypted with TLS/SSL. The server has native support for thi
 
 When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and proper configurations.
 
-Directory `tls/test-cert/` in the repository root contains X.509 certificates and private keys for testing and development purposes. They can be used to test TLS locally. Alternatively, use your own certificates.
+Directory `tls/test-cert/` in the repository root contains self-signed X.509 key pairs signed by a CA for testing and development purposes. It also contains self-signed CA. They can be used to test TLS locally. Alternatively, use your own certificates.
 
-TLS can be enabled by modifying the configuration file or with environment variables.
+TLS can be enabled by modifying the configuration file or with environment variables. Server certificate and private key need to be signed by a CA. The CA certificate is needed when using client certificate authentication. Client certificates are verified against this CA.
 
 With config file:
 ```yaml
 tls_enabled: true
-tls_ca_cert_path: /path/to/your/ca-certificate
 tls_cert_path: /path/to/your/certificate
 tls_private_key_path: /path/to/your/privatekey
 ```
 
-Or with `HAKJ_TLS_ENABLED`, `HAKJ_TLS_CA_CERT_PATH`, `HAKJ_TLS_CERT_PATH`, and `HAKJ_TLS_PRIVATE_KEY_PATH` environment variables.
+Or with `HAKJ_TLS_ENABLED`, `HAKJ_TLS_CERT_PATH`, and `HAKJ_TLS_PRIVATE_KEY_PATH` environment variables.
 
 It is also possible to enable mutual TLS (mTLS) for client certificate authentication. When this is enabled, clients need to provide a client certificate signed by the server's root CA when establishing the TLS connection.
 
 Config file:
 ```yaml
 tls_client_cert_auth_enabled: true
+tls_ca_cert_path: /path/to/your/ca-certificate
 ```
 
-Or with `HAKJ_TLS_CLIENT_CERT_AUTH_ENABLED` environment variable.
+Or with `HAKJ_TLS_CLIENT_CERT_AUTH_ENABLED` and `HAKJ_TLS_CA_CERT_PATH` environment variables.
 
 # Default database
 
