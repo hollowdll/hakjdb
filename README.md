@@ -36,6 +36,8 @@ However, it is recommended to build the binaries from source. Instructions on ho
 
 Releases are managed with [GoReleaser](https://goreleaser.com/).
 
+NOTE: This project went by name kvdb before v1.0.0. That's why name kvdb appears in older releases.
+
 # Build binaries
 
 To build the binaries, you first need to install Go. Minimum version required is go1.22.

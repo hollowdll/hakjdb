@@ -1,6 +1,7 @@
 package client
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"os"
@@ -59,17 +60,32 @@ func InitClient() {
 }
 
 func getTransportCreds() credentials.TransportCredentials {
-	if viper.GetBool(config.ConfigKeyTlsEnabled) {
-		certBytes, err := os.ReadFile(viper.GetString(config.ConfigKeyTlsCertPath))
+	caCertPath, isCACertSet := config.LookupTLSCACert()
+	if isCACertSet {
+		certBytes, err := os.ReadFile(caCertPath)
 		if err != nil {
-			cobra.CheckErr(fmt.Sprintf("failed to read TLS certificate: %v", err))
+			cobra.CheckErr(fmt.Sprintf("failed to read TLS CA certificate: %v", err))
 		}
 		certPool := x509.NewCertPool()
 		if !certPool.AppendCertsFromPEM(certBytes) {
-			cobra.CheckErr("failed to parse TLS certificate")
+			cobra.CheckErr("failed to parse TLS CA certificate")
 		}
 
-		return credentials.NewClientTLSFromCert(certPool, "")
+		var certs []tls.Certificate
+		clientCertPath, isClientCertSet := config.LookupTLSClientCert()
+		clientKeyPath, isClientKeySet := config.LookupTLSClientKey()
+		if isClientCertSet && isClientKeySet {
+			clientCert, err := tls.LoadX509KeyPair(clientCertPath, clientKeyPath)
+			if err != nil {
+				cobra.CheckErr(fmt.Sprintf("failed to load TLS client public/private key pair: %v", err))
+			}
+			certs = append(certs, clientCert)
+		}
+
+		return credentials.NewTLS(&tls.Config{
+			Certificates: certs,
+			RootCAs:      certPool,
+		})
 	} else {
 		return insecure.NewCredentials()
 	}

@@ -20,10 +20,12 @@ const (
 	ConfigKeyPort string = "port"
 	// ConfigKeyDatabase is the configuration key for default database.
 	ConfigKeyDatabase string = "default_db"
-	// ConfigKeyTlsEnabled is the configuration key for enabling TLS.
-	ConfigKeyTlsEnabled string = "tls_enabled"
-	// ConfigKeyTlsCertPath is the configuration key for TLS certificate path.
-	ConfigKeyTlsCertPath string = "tls_cert_path"
+	// ConfigKeyTlsCertPath is the configuration key for TLS client certificate path.
+	ConfigKeyTLSClientCertPath string = "tls_client_cert_path"
+	// ConfigKeyTLSClientKeyPath is the configuration key for TLS client key path.
+	ConfigKeyTLSClientKeyPath string = "tls_client_key_path"
+	// ConfigKeyTLSCACertPath is the configuration key for TLS CA certificate path.
+	ConfigKeyTLSCACertPath string = "tls_ca_cert_path"
 	// ConfigKeyCommandTimeout is the configuration key for setting command timeout.
 	ConfigKeyCommandTimeout string = "command_timeout"
 
@@ -50,8 +52,9 @@ func InitConfig() {
 	viper.SetDefault(ConfigKeyHost, common.ServerDefaultHost)
 	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
 	viper.SetDefault(ConfigKeyDatabase, DefaultDatabase)
-	viper.SetDefault(ConfigKeyTlsEnabled, false)
-	viper.SetDefault(ConfigKeyTlsCertPath, "")
+	viper.SetDefault(ConfigKeyTLSClientCertPath, "")
+	viper.SetDefault(ConfigKeyTLSClientKeyPath, "")
+	viper.SetDefault(ConfigKeyTLSCACertPath, "")
 	viper.SetDefault(ConfigKeyCommandTimeout, DefaultCommandTimeout)
 
 	viper.SafeWriteConfig()
@@ -62,4 +65,22 @@ func InitConfig() {
 // Command timeout is the maximum number of seconds to wait before a request is cancelled.
 func GetCmdTimeout() time.Duration {
 	return time.Duration(viper.GetUint32(ConfigKeyCommandTimeout)) * time.Second
+}
+
+// The returned string is the file path. The returned bool is true if the path is set.
+func LookupTLSCACert() (string, bool) {
+	path := viper.GetString(ConfigKeyTLSCACertPath)
+	return path, path != ""
+}
+
+// The returned string is the file path. The returned bool is true if the path is set.
+func LookupTLSClientCert() (string, bool) {
+	path := viper.GetString(ConfigKeyTLSClientCertPath)
+	return path, path != ""
+}
+
+// The returned string is the file path. The returned bool is true if the path is set.
+func LookupTLSClientKey() (string, bool) {
+	path := viper.GetString(ConfigKeyTLSClientKeyPath)
+	return path, path != ""
 }

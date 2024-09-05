@@ -16,6 +16,7 @@ import (
 	"github.com/hollowdll/hakjdb/cmd/hakjserver/validation"
 	hakjerrors "github.com/hollowdll/hakjdb/errors"
 	"github.com/hollowdll/hakjdb/internal/common"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -238,27 +239,33 @@ func (s *HakjServer) Init() {
 	s.CreateDefaultDatabase(s.Cfg.DefaultDB)
 }
 
-func (s *HakjServer) GetTLSCert() tls.Certificate {
+func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 	logger := s.Logger()
-	certBytes, err := os.ReadFile(s.Cfg.TLSCertPath)
+	serverCert, err := tls.LoadX509KeyPair(s.Cfg.TLSCertPath, s.Cfg.TLSPrivKeyPath)
 	if err != nil {
-		logger.Fatalf("Failed to read TLS certificate: %v", err)
-	}
-	privKeyBytes, err := os.ReadFile(s.Cfg.TLSPrivKeyPath)
-	if err != nil {
-		logger.Fatalf("Failed to read TLS private key: %v", err)
+		logger.Fatalf("Failed to load TLS private/public key pair: %v", err)
 	}
 
+	clientAuth := tls.NoClientCert
 	certPool := x509.NewCertPool()
-	if !certPool.AppendCertsFromPEM(certBytes) {
-		logger.Fatal("Failed to parse TLS certificate")
-	}
-	cert, err := tls.X509KeyPair(certBytes, privKeyBytes)
-	if err != nil {
-		logger.Fatalf("Failed to parse TLS public/private key pair: %v", err)
+	if s.Cfg.TLSClientCertAuthEnabled {
+		caCert, err := os.ReadFile(s.Cfg.TLSCACertPath)
+		if err != nil {
+			logger.Fatalf("Failed to read TLS CA certificate: %v", err)
+		}
+		if !certPool.AppendCertsFromPEM(caCert) {
+			logger.Fatal("Failed to parse TLS CA certificate")
+		}
+		clientAuth = tls.RequireAndVerifyClientCert
+		logger.Infof("Using client certificate authentication in TLS. Clients are required to send a client certificate signed by the server's root CA certificate")
 	}
 
-	return cert
+	return credentials.NewTLS(
+		&tls.Config{
+			ClientAuth:   clientAuth,
+			Certificates: []tls.Certificate{serverCert},
+			ClientCAs:    certPool,
+		})
 }
 
 func (s *HakjServer) SetupListener() {

@@ -50,13 +50,51 @@ Run the script `gen_hakjctl_command_docs.sh` from the project root
 
 This generates the updated command documentation and places it in `docs/hakjctl-commands/generated` directory.
 
-## Generate self-signed TLS certificate and private key for testing
+## Generate self-signed TLS certificates and private keys for testing purposes.
 
-Currently no native mTLS support so only server certificate and private key.
-
-Directory `tls/test-cert` has a cert.conf for self-signed certificate configuration. Certificates should be placed there.
+Directory `tls/test-cert` is meant for self-signed TLS certificates. Certificates should be placed there. They are meant only for testing and development.
 
 Example of generating certificate file and private key using openssl:
 ```sh
 sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout hakjserver.key -out hakjserver.crt -config cert.conf
+```
+
+More advanced example using CA (certificate authority) and CSR (certificate signing request):
+
+Create CA certificate and key
+```sh
+openssl req -x509 -sha256 -newkey rsa:2048 -days 9999 -keyout ca-key.pem -out ca-cert.pem -nodes -subj "/OU=HakjDB/CN=localhost"
+```
+
+Create server private key and certificate signing request
+```sh
+openssl req -newkey rsa:2048 -keyout hakjserver-key.pem -out hakjserver-req.pem -nodes -sha256 -subj "/OU=hakjserver/CN=localhost"
+```
+
+Create the server certificate and sign it
+```sh
+openssl x509 -req -in hakjserver-req.pem -days 9999 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out hakjserver-cert.pem -extfile hakjserver-ext.cfg -sha256
+```
+
+For mTLS, a client certificate is needed.
+
+Create client private key and certificate signing request
+```sh
+openssl req -newkey rsa:2048 -keyout client-key.pem -out client-req.pem -nodes -sha256 -subj "/OU=HakjDB client/CN=localhost"
+```
+
+Create the client certificate and sign it
+```sh
+openssl x509 -req -in client-req.pem -days 9999 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out client-cert.pem -extfile hakjserver-ext.cfg -sha256
+```
+
+Verify certificate
+```sh
+openssl x509 -in hakjserver-cert.pem -noout -text
+```
+
+Verify that certificate and private key match
+```sh
+openssl x509 -noout -modulus -in hakjserver-cert.pem | openssl sha256
+openssl rsa -noout -modulus -in hakjserver-key.pem | openssl sha256
 ```

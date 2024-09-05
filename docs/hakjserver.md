@@ -1,6 +1,10 @@
 # hakjserver
 
-hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases and keys.
+hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases, and keys.
+
+# Directory
+
+It is recommended to place the binary in a directory called `hakjserver`. The server generates some files relative to the binary's parent directory, so they can be easily found there.
 
 # How to use
 
@@ -26,36 +30,40 @@ Configurations are stored in a configuration file and can be changed there. This
 Below is a list of all configurations with their default values:
 
 ```yaml
-debug_enabled: false
-default_db: default
-logfile_enabled: false
-max_client_connections: 1000
-port: 12345
-tls_cert_path: ""
-tls_enabled: false
-tls_private_key_path: ""
-log_level: info
-verbose_logs_enabled: false
 auth_enabled: false
 auth_token_secret_key: ""
 auth_token_ttl: 900
+debug_enabled: false
+default_db: default
+log_level: info
+logfile_enabled: false
+max_client_connections: 1000
+port: 12345
+tls_ca_cert_path: ""
+tls_cert_path: ""
+tls_client_cert_auth_enabled: false
+tls_enabled: false
+tls_private_key_path: ""
+verbose_logs_enabled: false
 ```
 
 Meaning of fields:
 
-- `debug_enabled`: Enable debug mode. Some features are only enabled in debug mode. Can be true or false.
-- `default_db`: The name of the default database that is created at server startup.
-- `logfile_enabled`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
-- `max_client_connections`: The maximum number of active client connections allowed.
-- `port`: Server's TCP/IP port. Ranges from 1 to 65535.
-- `tls_cert_path`: The path to the TLS certificate file.
-- `tls_enabled`: Enable TLS. If enabled, connections will be encrypted. Can be true or false.
-- `tls_private_key_path`: The path to the TLS private key.
-- `log_level`: The log level. Can be debug, info, warning, error, or fatal.
-- `verbose_logs_enabled`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
 - `auth_enabled`: Enable authentication. If enabled, clients need to authenticate.
 - `auth_token_secret_key`: Secret key used to sign JWT tokens. Should be long and secure.
 - `auth_token_ttl`: JWT token time to live in seconds. Once a JWT token is created, it expires after the number of seconds specified by this.
+- `debug_enabled`: Enable debug mode. Some features are only enabled in debug mode. Can be true or false.
+- `default_db`: The name of the default database that is created at server startup.
+- `log_level`: The log level. Can be debug, info, warning, error, or fatal.
+- `logfile_enabled`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
+- `max_client_connections`: The maximum number of active client connections allowed.
+- `port`: Server's TCP/IP port. Ranges from 1 to 65535.
+- `tls_ca_cert_path`: The path to the TLS CA certificate file.
+- `tls_cert_path`: The path to the TLS certificate file.
+- `tls_client_cert_auth_enabled`: Enable TLS client certificate authentication (mTLS). If enabled, clients need to provide a client certificate signed by the server's root CA. This has no effect if TLS is not enabled. Can be true or false.
+- `tls_enabled`: Enable TLS. If enabled, connections will be encrypted. Can be true or false.
+- `tls_private_key_path`: The path to the TLS private key.
+- `verbose_logs_enabled`: Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
 
 # Environment variables
 
@@ -69,6 +77,8 @@ Below is a list of all environment variables:
 - `HAKJ_DEFAULT_DB`: The name of the default database that is created at server startup.
 - `HAKJ_LOGFILE_ENABLED`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
 - `HAKJ_TLS_ENABLED`: Enable TLS. If enabled, connections will be encrypted. Can be true or false.
+- `HAKJ_TLS_CLIENT_CERT_AUTH_ENABLED`: Enable TLS client certificate authentication (mTLS). If enabled, clients need to provide a client certificate signed by the server's root CA. This has no effect if TLS is not enabled. Can be true or false.
+- `HAKJ_TLS_CA_CERT_PATH`: The path to the TLS CA certificate file.
 - `HAKJ_TLS_CERT_PATH`: The path to the TLS certificate file.
 - `HAKJ_TLS_PRIVATE_KEY_PATH`: The path to the TLS private key.
 - `HAKJ_MAX_CLIENT_CONNECTIONS`: The maximum number of active client connections allowed.
@@ -147,7 +157,7 @@ The server can enable authentication to prevent unauthorized use. By default, au
 
 Authentication can be enabled in the configuration file or with environment variable. By default, the server uses empty password and JWT secret key. These should be set as the default values are insecure. By default, JWT tokens expire 15 minutes after they have been created. This can be changed.
 
-Password can be set with environment variable `KVDB_PASSWORD`. The password is hashed using bcrypt before storing it in memory. Authentication process compares the provided password to this password by hashing it with bcrypt. The maximum password size is 72 bytes.
+Password can be set with environment variable `HAKJ_PASSWORD`. The password is hashed using bcrypt before storing it in memory. Authentication process compares the provided password to this password by hashing it with bcrypt. The maximum password size is 72 bytes.
 
 Enable authentication
 - Config file: `auth_enabled`
@@ -165,20 +175,30 @@ JWT token secret key
 
 Connections can be encrypted with TLS/SSL. The server has native support for this.
 
-When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and using the certificate that you configured.
+When TLS is enabled, all non-TLS connections will be denied. Make sure that the client is connecting with TLS and proper configurations.
 
-Directory `tls/test-cert/` contains a X.509 certificate and private key for testing purposes. It can be used to test TLS locally. Alternatively, use your own certificate.
+Directory `tls/test-cert/` in the repository root contains self-signed X.509 key pairs signed by a CA for testing and development purposes. It also contains self-signed CA. They can be used to test TLS locally. Alternatively, use your own certificates.
 
-TLS can be enabled by modifying the configuration file or with environment variables.
+TLS can be enabled by modifying the configuration file or with environment variables. Server certificate and private key need to be signed by a CA. The CA certificate is needed when using client certificate authentication. Client certificates are verified against this CA.
 
 With config file:
 ```yaml
-tls_cert_path: path/to/your/certificate
 tls_enabled: true
-tls_private_key_path: path/to/your/privatekey
+tls_cert_path: /path/to/your/certificate
+tls_private_key_path: /path/to/your/privatekey
 ```
 
-Or with `KVDB_TLS_ENABLED`, `KVDB_TLS_CERT_PATH`, and `KVDB_TLS_PRIVATE_KEY_PATH` environment variables.
+Or with `HAKJ_TLS_ENABLED`, `HAKJ_TLS_CERT_PATH`, and `HAKJ_TLS_PRIVATE_KEY_PATH` environment variables.
+
+It is also possible to enable mutual TLS (mTLS) for client certificate authentication. When this is enabled, clients need to provide a client certificate signed by the server's root CA when establishing the TLS connection.
+
+Config file:
+```yaml
+tls_client_cert_auth_enabled: true
+tls_ca_cert_path: /path/to/your/ca-certificate
+```
+
+Or with `HAKJ_TLS_CLIENT_CERT_AUTH_ENABLED` and `HAKJ_TLS_CA_CERT_PATH` environment variables.
 
 # Default database
 

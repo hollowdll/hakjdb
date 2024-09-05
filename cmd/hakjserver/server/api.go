@@ -78,18 +78,19 @@ func (s *HakjServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 	}
 
 	generalInfo := &serverpb.GeneralInfo{
-		ServerVersion:  version.Version,
-		GoVersion:      runtime.Version(),
-		Os:             osInfo,
-		Arch:           runtime.GOARCH,
-		ProcessId:      uint32(os.Getpid()),
-		UptimeSeconds:  uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:        uint32(s.Cfg.PortInUse),
-		TlsEnabled:     s.Cfg.TLSEnabled,
-		AuthEnabled:    s.Cfg.AuthEnabled,
-		LogfileEnabled: s.Cfg.LogFileEnabled,
-		DebugEnabled:   s.Cfg.DebugEnabled,
-		ApiVersion:     version.APIVersion,
+		ServerVersion:            version.Version,
+		GoVersion:                runtime.Version(),
+		Os:                       osInfo,
+		Arch:                     runtime.GOARCH,
+		ProcessId:                uint32(os.Getpid()),
+		UptimeSeconds:            uint64(time.Since(s.startTime).Seconds()),
+		TcpPort:                  uint32(s.Cfg.PortInUse),
+		TlsEnabled:               s.Cfg.TLSEnabled,
+		TlsClientCertAuthEnabled: s.Cfg.TLSClientCertAuthEnabled,
+		AuthEnabled:              s.Cfg.AuthEnabled,
+		LogfileEnabled:           s.Cfg.LogFileEnabled,
+		DebugEnabled:             s.Cfg.DebugEnabled,
+		ApiVersion:               version.APIVersion,
 	}
 	memoryInfo := &serverpb.MemoryInfo{
 		MemoryAlloc:      m.Alloc,

@@ -168,7 +168,7 @@ func BenchmarkSetStringWithAuthAndTLS(b *testing.B) {
 	defer testutil.StopTestServer(gs)
 	s.EnableAuth(password)
 	address := testutil.GetServerAddress(port)
-	conn, err := testutil.SecureConnection(address)
+	conn, err := testutil.SecureConnection(address, false)
 	if err != nil {
 		b.Fatalf("setting up connection failed: %v", err)
 	}
@@ -207,7 +207,7 @@ func BenchmarkGetStringWithAuthAndTLS(b *testing.B) {
 	defer testutil.StopTestServer(gs)
 	s.EnableAuth(password)
 	address := testutil.GetServerAddress(port)
-	conn, err := testutil.SecureConnection(address)
+	conn, err := testutil.SecureConnection(address, false)
 	if err != nil {
 		b.Fatalf("setting up connection failed: %v", err)
 	}
@@ -256,7 +256,7 @@ func authCfg() config.ServerConfig {
 }
 
 func authTLSCfg() config.ServerConfig {
-	cfg := testutil.TLSConfig()
+	cfg := testutil.TLSConfig(false)
 	cfg.AuthEnabled = true
 	cfg.AuthTokenTTL = 30
 	cfg.AuthTokenSecretKey = "benchmark"
