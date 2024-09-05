@@ -246,17 +246,16 @@ func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 		logger.Fatalf("Failed to load TLS private/public key pair: %v", err)
 	}
 
-	certPool := x509.NewCertPool()
-	caCert, err := os.ReadFile(s.Cfg.TLSCACertPath)
-	if err != nil {
-		logger.Fatalf("Failed to read TLS CA certificate: %v", err)
-	}
-	if !certPool.AppendCertsFromPEM(caCert) {
-		logger.Fatal("Failed to parse TLS CA certificate")
-	}
-
 	clientAuth := tls.NoClientCert
+	certPool := x509.NewCertPool()
 	if s.Cfg.TLSClientCertAuthEnabled {
+		caCert, err := os.ReadFile(s.Cfg.TLSCACertPath)
+		if err != nil {
+			logger.Fatalf("Failed to read TLS CA certificate: %v", err)
+		}
+		if !certPool.AppendCertsFromPEM(caCert) {
+			logger.Fatal("Failed to parse TLS CA certificate")
+		}
 		clientAuth = tls.RequireAndVerifyClientCert
 		logger.Infof("Using client certificate authentication in TLS. Clients are required to send a client certificate signed by the server's root CA certificate")
 	}
