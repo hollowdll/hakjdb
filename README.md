@@ -15,6 +15,7 @@ Instances are easily configurable with environment variables and a simple YAML f
 Components:
 - `hakjserver` - The server process
 - `hakjctl` - CLI tool to control and interact with the server
+- [`hakjdb-gui`](https://github.com/hollowdll/hakjdb-gui) - Cross-platform GUI desktop application to visually interact with the server
 
 This is not meant for production use, as it lacks a lot of features, and is not as professional as some popular key-value stores.
 
@@ -84,7 +85,7 @@ These will build the binaries to `bin/` directory in the project root. You can c
 
 For more advanced build, use `go help build` to see more build options.
 
-You can also use the scripts `build_hakjctl` and `build_hakjserver` to build the binaries.
+You can also use the scripts `build_hakjctl.sh` and `build_hakjserver.sh` to build the binaries.
 
 # Docker
 
