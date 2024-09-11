@@ -19,6 +19,12 @@ Components:
 
 This is not meant for production use, as it lacks a lot of features, and is not as professional as some popular key-value stores.
 
+# How it works
+
+The following diagram shows the architecture in a simplified form
+
+![architecture](./docs/diagrams/architecture.jpg)
+
 # Documentation
 
 - [Using the server](./docs/hakjserver.md)
