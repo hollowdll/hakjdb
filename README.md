@@ -23,7 +23,7 @@ This is not meant for production use, as it lacks a lot of features, and is not 
 
 The following diagram shows the architecture in a simplified form
 
-![architecture](./docs/diagrams/architecture.jpg)
+![architecture](./docs/diagrams/architecture_simplified.jpg)
 
 # Documentation
 
