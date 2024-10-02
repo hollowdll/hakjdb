@@ -280,3 +280,7 @@ func (s *HakjServer) SetupListener() {
 	connListener := NewClientConnListener(lis, s, s.Cfg.MaxClientConnections)
 	s.ClientConnListener = connListener
 }
+
+func (s *HakjServer) ProcessConfigReload() {
+
+}

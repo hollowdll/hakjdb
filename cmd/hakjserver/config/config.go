@@ -106,13 +106,37 @@ type ServerConfig struct {
 	AuthTokenTTL uint32
 }
 
+// Reload reloads configurations that can be changed at runtime.
 func (cfg *ServerConfig) Reload(lg hakjdb.Logger) {
+	// Config that can be changed at runtime:
+	// - log file enabled
+	// - verbose logs
+	// - log level
+	// - auth enabled
+	// - password
+	// - auth token secret key
+	// - auth token ttl
+	// - max client connections
 
+	lg.Info("Reloading configurations ...")
+	dataDirPath := getDataDirPath(lg)
+	initConfig(dataDirPath)
+
+	if err := viper.ReadInConfig(); err != nil {
+		lg.Errorf("Failed to read configuration file: %v", err)
+	}
+
+	cfg.LogFileEnabled = viper.GetBool(ConfigKeyLogFileEnabled)
+	cfg.VerboseLogsEnabled = viper.GetBool(ConfigKeyVerboseLogsEnabled)
+	cfg.AuthEnabled = viper.GetBool(ConfigKeyAuthEnabled)
+	cfg.AuthTokenSecretKey = viper.GetString(ConfigKeyAuthTokenSecretKey)
+	cfg.AuthTokenTTL = viper.GetUint32(ConfigKeyAuthTokenTTL)
+	cfg.MaxClientConnections = viper.GetUint32(ConfigKeyMaxClientConnections)
 }
 
 // LoadConfig loads server configurations.
 func LoadConfig(lg hakjdb.Logger) ServerConfig {
-	lg.Infof("Loading configurations ...")
+	lg.Info("Loading configurations ...")
 	dataDirPath := getDataDirPath(lg)
 	initConfig(dataDirPath)
 	setConfigDefaults()
@@ -124,7 +148,7 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 		lg.Errorf("Failed to read configuration file: %v", err)
 	}
 
-	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(viper.GetString(ConfigKeyLogLevel))
+	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(GetLogLevelStr())
 	if !ok {
 		lg.Warning("Invalid log level configured. Default log level will be used")
 	}
@@ -224,4 +248,8 @@ func ShouldUsePassword() (string, bool) {
 
 func getEnvVar(envVar string) (string, bool) {
 	return os.LookupEnv(envVar)
+}
+
+func GetLogLevelStr() string {
+	return viper.GetString(ConfigKeyLogLevel)
 }
