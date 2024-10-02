@@ -37,17 +37,41 @@ The following diagram shows the architecture in a simplified form
 
 Release notes are available [here](./docs/changelog/).
 
-Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/hakjdb/releases).
+Prebuilt binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/hakjdb/releases).
 
-However, it is recommended to build the binaries from source. Instructions on how to build from source below.
+However, it is recommended to build the binaries from source or install them with Go.
 
 Releases are managed with [GoReleaser](https://goreleaser.com/).
 
 NOTE: This project went by name kvdb before v1.0.0. That's why name kvdb appears in older releases.
 
+# Install binaries
+
+The binaries can also be installed with Go.
+
+Install the server binary
+```sh
+go install github.com/hollowdll/hakjdb/cmd/hakjserver@latest
+```
+
+Install the CLI binary
+```sh
+go install github.com/hollowdll/hakjdb/cmd/hakjctl@latest
+```
+
+These will install the binaries to your Go bin directory. It is recommened to create separate directories for the binaries and then place the binaries in these directories because the binaries create some files relative to their parent directory.
+
+For example on Linux
+```sh
+mkdir -p ~/hakjdb/hakjserver
+mkdir -p ~/hakjdb/hakjctl
+mv hakjserver ~/hakjdb/hakjserver
+mv hakjctl ~/hakjdb/hakjctl
+```
+
 # Build binaries
 
-To build the binaries, you first need to install Go. Minimum version required is go1.22.
+To build the binaries from source, you first need to install Go. Minimum version required is go1.22.
 
 Instructions for installing Go can be found [here](https://go.dev/doc/install).
 
