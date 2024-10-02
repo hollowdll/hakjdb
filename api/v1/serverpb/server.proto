@@ -89,6 +89,10 @@ message GetLogsResponse {
   repeated string logs = 1;
 }
 
+message ReloadConfigRequest {}
+
+message ReloadConfigResponse {}
+
 // ServerService provides RPCs related to the server.
 service ServerService {
   // GetServerInfo returns information about the server.
@@ -96,4 +100,8 @@ service ServerService {
 
   // GetLogs returns the server logs if the log file is enabled.
   rpc GetLogs(GetLogsRequest) returns (GetLogsResponse) {}
+
+  // ReloadConfig reloads the server configurations.
+  // Not all configurations can be reloaded at runtime.
+  rpc ReloadConfig(ReloadConfigRequest) returns (ReloadConfigResponse) {}
 }
