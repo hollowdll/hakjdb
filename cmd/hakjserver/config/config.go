@@ -106,43 +106,21 @@ type ServerConfig struct {
 	AuthTokenTTL uint32
 }
 
+func (cfg *ServerConfig) Reload(lg hakjdb.Logger) {
+
+}
+
 // LoadConfig loads server configurations.
 func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	lg.Infof("Loading configurations ...")
-	parentDir, err := common.GetExecParentDirPath()
-	if err != nil {
-		lg.Fatalf("Failed to get the executable's parent directory: %v", err)
-	}
-	dataDirPath, err := common.GetDirPath(parentDir, dataDirName)
-	if err != nil {
-		lg.Fatalf("Failed to get the data directory: %v", err)
-	}
-
-	viper.AddConfigPath(dataDirPath)
-	viper.SetConfigType(configFileType)
-	viper.SetConfigName(configFileName)
-
-	viper.SetDefault(ConfigKeyDebugEnabled, DefaultDebugEnabled)
-	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
-	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
-	viper.SetDefault(ConfigKeyTLSClientCertAuthEnabled, DefaultTLSClientCertAuthEnabled)
-	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
-	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
-
-	viper.SetDefault(ConfigKeyPort, DefaultPort)
-	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
-	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
-	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
-	viper.SetDefault(ConfigKeyTLSCACertPath, DefaultTLSCACertPath)
-	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
-	viper.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
-	viper.SetDefault(ConfigKeyAuthTokenSecretKey, DefaultAuthTokenSecretKey)
-	viper.SetDefault(ConfigKeyAuthTokenTTL, DefaultAuthTokenTTL)
+	dataDirPath := getDataDirPath(lg)
+	initConfig(dataDirPath)
+	setConfigDefaults()
 
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
 	viper.SafeWriteConfig()
-	if err = viper.ReadInConfig(); err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		lg.Errorf("Failed to read configuration file: %v", err)
 	}
 
@@ -176,6 +154,43 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 		AuthTokenSecretKey:       viper.GetString(ConfigKeyAuthTokenSecretKey),
 		AuthTokenTTL:             viper.GetUint32(ConfigKeyAuthTokenTTL),
 	}
+}
+
+func getDataDirPath(lg hakjdb.Logger) string {
+	parentDir, err := common.GetExecParentDirPath()
+	if err != nil {
+		lg.Fatalf("Failed to get the executable's parent directory: %v", err)
+	}
+	dataDirPath, err := common.GetDirPath(parentDir, dataDirName)
+	if err != nil {
+		lg.Fatalf("Failed to get the data directory: %v", err)
+	}
+	return dataDirPath
+}
+
+func initConfig(dataDirPath string) {
+	viper.AddConfigPath(dataDirPath)
+	viper.SetConfigType(configFileType)
+	viper.SetConfigName(configFileName)
+}
+
+func setConfigDefaults() {
+	viper.SetDefault(ConfigKeyDebugEnabled, DefaultDebugEnabled)
+	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
+	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
+	viper.SetDefault(ConfigKeyTLSClientCertAuthEnabled, DefaultTLSClientCertAuthEnabled)
+	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
+	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
+
+	viper.SetDefault(ConfigKeyPort, DefaultPort)
+	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
+	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
+	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
+	viper.SetDefault(ConfigKeyTLSCACertPath, DefaultTLSCACertPath)
+	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
+	viper.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
+	viper.SetDefault(ConfigKeyAuthTokenSecretKey, DefaultAuthTokenSecretKey)
+	viper.SetDefault(ConfigKeyAuthTokenTTL, DefaultAuthTokenTTL)
 }
 
 // DefaultConfig returns the default configurations.
