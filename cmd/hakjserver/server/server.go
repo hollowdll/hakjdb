@@ -110,6 +110,7 @@ type HakjServer struct {
 	credentialStore auth.CredentialStore
 	logger          hakjdb.Logger
 	loggerMu        sync.RWMutex
+	cfgMu           sync.RWMutex
 
 	// Cfg is the configuration that the server is configured with.
 	// It is not intended to be changed after the server has been set up.
@@ -135,6 +136,13 @@ func (s *HakjServer) Logger() hakjdb.Logger {
 	l := s.logger
 	s.loggerMu.RUnlock()
 	return l
+}
+
+func (s *HakjServer) Config() config.ServerConfig {
+	s.cfgMu.RLock()
+	cfg := s.Cfg
+	s.cfgMu.RUnlock()
+	return cfg
 }
 
 // totalStoredDataSize returns the total amount of stored data on this server in bytes.
@@ -170,8 +178,8 @@ func (s *HakjServer) GetDBNameFromContext(ctx context.Context) string {
 
 // EnableLogFile enables logger to write logs to the log file.
 func (s *HakjServer) EnableLogFile() {
-	s.loggerMu.RLock()
-	defer s.loggerMu.RUnlock()
+	s.loggerMu.Lock()
+	defer s.loggerMu.Unlock()
 	err := s.logger.EnableLogFile(s.Cfg.LogFilePath)
 	if err != nil {
 		s.logger.Fatalf("Failed to enable log file: %v", err)
@@ -180,8 +188,8 @@ func (s *HakjServer) EnableLogFile() {
 
 // CloseLogger closes logger and releases its possible resources.
 func (s *HakjServer) CloseLogger() {
-	s.loggerMu.RLock()
-	defer s.loggerMu.RUnlock()
+	s.loggerMu.Lock()
+	defer s.loggerMu.Unlock()
 	err := s.logger.CloseLogFile()
 	if err != nil {
 		s.logger.Fatalf("Failed to close log file: %v", err)
@@ -270,7 +278,7 @@ func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 
 func (s *HakjServer) SetupListener() {
 	logger := s.Logger()
-	logger.Infof("Setting up listener ...")
+	logger.Info("Setting up listener ...")
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.Cfg.PortInUse))
 	if err != nil {
 		logger.Fatalf("Failed to listen: %v", err)
@@ -282,5 +290,42 @@ func (s *HakjServer) SetupListener() {
 }
 
 func (s *HakjServer) ProcessConfigReload() {
+	// Config that can be changed at runtime:
+	// - log file enabled
+	// - verbose logs
+	// - log level
+	// - auth enabled
+	// - password
+	// - auth token secret key
+	// - auth token ttl
+	// - max client connections
 
+	logger := s.Logger()
+	s.loggerMu.Lock()
+	defer s.loggerMu.Unlock()
+	cfg := s.Config()
+
+	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(config.GetLogLevelStr())
+	if !ok {
+		logger.Warning("Invalid log level configured. Default log level will be used")
+	}
+	logger.Infof("Using log level %s", logLevelStr)
+	// modify the original
+	s.logger.SetLogLevel(logLevel)
+
+	if cfg.VerboseLogsEnabled {
+		logger.Info("Verbose logs are enabled")
+	}
+
+	if cfg.LogFileEnabled {
+		err := s.logger.CloseLogFile()
+		if err != nil {
+			s.logger.Fatalf("Failed to close log file: %v", err)
+		}
+		err = s.logger.EnableLogFile(s.Cfg.LogFilePath)
+		if err != nil {
+			s.logger.Fatalf("Failed to enable log file: %v", err)
+		}
+		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", cfg.LogFilePath)
+	}
 }

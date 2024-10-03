@@ -121,10 +121,8 @@ func (cfg *ServerConfig) Reload(lg hakjdb.Logger) {
 	lg.Info("Reloading configurations ...")
 	dataDirPath := getDataDirPath(lg)
 	initConfig(dataDirPath)
-
-	if err := viper.ReadInConfig(); err != nil {
-		lg.Errorf("Failed to read configuration file: %v", err)
-	}
+	viper.SafeWriteConfig()
+	readConfigFile(lg)
 
 	cfg.LogFileEnabled = viper.GetBool(ConfigKeyLogFileEnabled)
 	cfg.VerboseLogsEnabled = viper.GetBool(ConfigKeyVerboseLogsEnabled)
@@ -144,9 +142,7 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
 	viper.SafeWriteConfig()
-	if err := viper.ReadInConfig(); err != nil {
-		lg.Errorf("Failed to read configuration file: %v", err)
-	}
+	readConfigFile(lg)
 
 	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(GetLogLevelStr())
 	if !ok {
@@ -156,7 +152,7 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	lg.SetLogLevel(logLevel)
 
 	if viper.GetBool(ConfigKeyVerboseLogsEnabled) {
-		lg.Info("verbose logs are enabled")
+		lg.Info("Verbose logs are enabled")
 	}
 
 	return ServerConfig{
@@ -177,6 +173,12 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 		TLSCACertPath:            viper.GetString(ConfigKeyTLSCACertPath),
 		AuthTokenSecretKey:       viper.GetString(ConfigKeyAuthTokenSecretKey),
 		AuthTokenTTL:             viper.GetUint32(ConfigKeyAuthTokenTTL),
+	}
+}
+
+func readConfigFile(lg hakjdb.Logger) {
+	if err := viper.ReadInConfig(); err != nil {
+		lg.Errorf("Failed to read configuration file: %v", err)
 	}
 }
 
