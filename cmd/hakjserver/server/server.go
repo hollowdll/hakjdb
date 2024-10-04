@@ -198,13 +198,24 @@ func (s *HakjServer) CloseLogger() {
 
 // EnableAuth enables authentication.
 func (s *HakjServer) EnableAuth(rootPassword string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	if err := s.credentialStore.SetPassword(auth.RootUserName, []byte(rootPassword)); err != nil {
 		s.logger.Fatalf("Failed to set root password: %v", err)
 	}
-	s.logger.Infof("Authentication is enabled. Clients need to authenticate.")
+	s.logger.Info("Authentication is enabled. Clients need to authenticate")
 	if rootPassword == "" {
-		s.logger.Warning("Using empty password. Consider changing it to a strong password.")
+		s.logger.Warning("Using empty password. Consider changing it to a strong password")
 	}
+}
+
+func (s *HakjServer) DisableAuth() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := s.credentialStore.SetPassword(auth.RootUserName, []byte("")); err != nil {
+		s.logger.Fatalf("Failed to clear root password: %v", err)
+	}
+	s.logger.Warning("Authentication is disabled")
 }
 
 // CreateDefaultDatabase creates an empty default database.
@@ -225,7 +236,7 @@ func (s *HakjServer) DBMaxKeysReached(db *hakjdb.DB) bool {
 
 // Init initializes the server.
 func (s *HakjServer) Init() {
-	s.logger.Infof("Initializing server ...")
+	s.logger.Info("Initializing server ...")
 
 	if s.Cfg.LogFileEnabled {
 		s.EnableLogFile()
@@ -290,31 +301,20 @@ func (s *HakjServer) SetupListener() {
 }
 
 func (s *HakjServer) ProcessConfigReload() {
-	// Config that can be changed at runtime:
-	// - log file enabled
-	// - verbose logs
-	// - log level
-	// - auth enabled
-	// - password
-	// - auth token secret key
-	// - auth token ttl
-	// - max client connections
-
-	logger := s.Logger()
 	s.loggerMu.Lock()
 	defer s.loggerMu.Unlock()
 	cfg := s.Config()
 
 	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(config.GetLogLevelStr())
 	if !ok {
-		logger.Warning("Invalid log level configured. Default log level will be used")
+		s.logger.Warning("Invalid log level configured. Default log level will be used")
 	}
-	logger.Infof("Using log level %s", logLevelStr)
+	s.logger.Infof("Using log level %s", logLevelStr)
 	// modify the original
 	s.logger.SetLogLevel(logLevel)
 
 	if cfg.VerboseLogsEnabled {
-		logger.Info("Verbose logs are enabled")
+		s.logger.Info("Verbose logs are enabled")
 	}
 
 	if cfg.LogFileEnabled {
@@ -322,10 +322,23 @@ func (s *HakjServer) ProcessConfigReload() {
 		if err != nil {
 			s.logger.Fatalf("Failed to close log file: %v", err)
 		}
-		err = s.logger.EnableLogFile(s.Cfg.LogFilePath)
+		err = s.logger.EnableLogFile(cfg.LogFilePath)
 		if err != nil {
 			s.logger.Fatalf("Failed to enable log file: %v", err)
 		}
 		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", cfg.LogFilePath)
 	}
+
+	if cfg.AuthEnabled {
+		s.logger.Info("Enabling authentication")
+		password, _ := config.ShouldUsePassword()
+		s.EnableAuth(password)
+	} else {
+		s.logger.Info("Disabling authentication")
+		s.DisableAuth()
+	}
+
+	s.ClientConnListener.mu.Lock()
+	s.ClientConnListener.maxClientConnections = cfg.MaxClientConnections
+	s.ClientConnListener.mu.Unlock()
 }
