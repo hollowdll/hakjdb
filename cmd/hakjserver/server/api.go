@@ -22,6 +22,7 @@ import (
 type ServerService interface {
 	GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error)
 	GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (*serverpb.GetLogsResponse, error)
+	ReloadConfig(ctx context.Context, req *serverpb.ReloadConfigRequest) (*serverpb.ReloadConfigResponse, error)
 }
 
 type DBService interface {
@@ -136,6 +137,17 @@ func (s *HakjServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) 
 	}
 
 	return &serverpb.GetLogsResponse{Logs: logs}, nil
+}
+
+func (s *HakjServer) ReloadConfig(ctx context.Context, req *serverpb.ReloadConfigRequest) (*serverpb.ReloadConfigResponse, error) {
+	lg := s.Logger()
+	s.cfgMu.Lock()
+	defer s.cfgMu.Unlock()
+
+	s.Cfg.Reload(lg)
+	s.ProcessConfigReload(&s.Cfg)
+
+	return &serverpb.ReloadConfigResponse{}, nil
 }
 
 func (s *HakjServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*dbpb.CreateDBResponse, error) {

@@ -300,10 +300,9 @@ func (s *HakjServer) SetupListener() {
 	s.ClientConnListener = connListener
 }
 
-func (s *HakjServer) ProcessConfigReload() {
+func (s *HakjServer) ProcessConfigReload(cfg *config.ServerConfig) {
 	s.loggerMu.Lock()
 	defer s.loggerMu.Unlock()
-	cfg := s.Config()
 
 	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(config.GetLogLevelStr())
 	if !ok {

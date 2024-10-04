@@ -18,21 +18,28 @@ func NewServerServiceServer(s *server.HakjServer) serverpb.ServerServiceServer {
 }
 
 // GetServerInfo is the implementation of RPC GetServerInfo.
-func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (res *serverpb.GetServerInfoResponse, err error) {
-	res, err = s.srv.GetServerInfo(ctx, req)
+func (s *ServerServiceServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
+	res, err := s.srv.GetServerInfo(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
-
 	return res, nil
 }
 
 // GetLogs is the implementation of RPC GetLogs.
-func (s *ServerServiceServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (res *serverpb.GetLogsResponse, err error) {
-	res, err = s.srv.GetLogs(ctx, req)
+func (s *ServerServiceServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (*serverpb.GetLogsResponse, error) {
+	res, err := s.srv.GetLogs(ctx, req)
 	if err != nil {
 		return nil, grpcerrors.ToGrpcError(err)
 	}
+	return res, nil
+}
 
+// ReloadConfig is the implementation of RPC ReloadConfig.
+func (s *ServerServiceServer) ReloadConfig(ctx context.Context, req *serverpb.ReloadConfigRequest) (*serverpb.ReloadConfigResponse, error) {
+	res, err := s.srv.ReloadConfig(ctx, req)
+	if err != nil {
+		return nil, grpcerrors.ToGrpcError(err)
+	}
 	return res, nil
 }
