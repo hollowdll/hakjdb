@@ -84,3 +84,31 @@ func LookupTLSClientKey() (string, bool) {
 	path := viper.GetString(ConfigKeyTLSClientKeyPath)
 	return path, path != ""
 }
+
+func WriteFile() error {
+	return viper.WriteConfig()
+}
+
+func GetDefaultDB() string {
+	return viper.GetString(ConfigKeyDatabase)
+}
+
+func GetPort() uint16 {
+	return viper.GetUint16(ConfigKeyPort)
+}
+
+func GetHost() string {
+	return viper.GetString(ConfigKeyHost)
+}
+
+func SetDefaultDB(name string) {
+	viper.Set(ConfigKeyDatabase, name)
+}
+
+func SetPort(port uint16) {
+	viper.Set(ConfigKeyPort, port)
+}
+
+func SetHost(host string) {
+	viper.Set(ConfigKeyHost, host)
+}

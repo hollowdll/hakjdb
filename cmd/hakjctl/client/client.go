@@ -14,7 +14,6 @@ import (
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/config"
 	"github.com/hollowdll/hakjdb/internal/common"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
@@ -43,7 +42,7 @@ func InitClient() {
 	dialOpts = append(dialOpts, grpc.WithTransportCredentials(getTransportCreds()))
 	createEmptyTokenCache()
 
-	address := fmt.Sprintf("%s:%d", viper.GetString("host"), viper.GetUint16("port"))
+	address := fmt.Sprintf("%s:%d", config.GetHost(), config.GetPort())
 	conn, err := grpc.NewClient(address, dialOpts...)
 	if err != nil {
 		cobra.CheckErr(fmt.Sprintf("failed to connect to the server: %s", err))
@@ -118,7 +117,7 @@ func GetBaseGrpcMetadata() metadata.MD {
 		md.Set(common.GrpcMetadataKeyAuthToken, token)
 	}
 
-	dbName := viper.GetString(config.ConfigKeyDatabase)
+	dbName := config.GetDefaultDB()
 	md.Set(common.GrpcMetadataKeyDbName, dbName)
 
 	return md

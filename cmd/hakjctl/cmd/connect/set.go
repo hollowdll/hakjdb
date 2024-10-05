@@ -3,7 +3,6 @@ package connect
 import (
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 const (
@@ -39,14 +38,13 @@ func init() {
 
 func setConnectionSettings() {
 	if host != defaultHost {
-		viper.Set(config.ConfigKeyHost, host)
+		config.SetHost(host)
 	}
 	if port != defaultPort {
-		viper.Set(config.ConfigKeyPort, port)
+		config.SetPort(port)
 	}
 	if dbName != defaultDbName {
-		viper.Set(config.ConfigKeyDatabase, dbName)
+		config.SetDefaultDB(dbName)
 	}
-	err := viper.WriteConfig()
-	cobra.CheckErr(err)
+	cobra.CheckErr(config.WriteFile())
 }

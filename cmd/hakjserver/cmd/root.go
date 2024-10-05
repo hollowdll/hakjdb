@@ -7,7 +7,6 @@ import (
 	"github.com/hollowdll/hakjdb/cmd/hakjserver/server"
 	"github.com/hollowdll/hakjdb/version"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var rootCmd = &cobra.Command{
@@ -25,6 +24,7 @@ func Execute() error {
 }
 
 func init() {
+	config.InitCfgRegistry()
 	parseCmdFlags()
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.DisableAutoGenTag = true
@@ -48,22 +48,23 @@ func parseCmdFlags() {
 	rootCmd.Flags().String("auth-token-secret-key", config.DefaultAuthTokenSecretKey, "secret key used to sign JWT tokens")
 	rootCmd.Flags().Uint32("auth-token-ttl", config.DefaultAuthTokenTTL, "JWT token time to live in seconds")
 
-	viper.BindPFlag(config.ConfigKeyPort, rootCmd.Flags().Lookup("port"))
-	viper.BindPFlag(config.ConfigKeyPassword, rootCmd.Flags().Lookup("password"))
-	viper.BindPFlag(config.ConfigKeyDebugEnabled, rootCmd.Flags().Lookup("debug-enabled"))
-	viper.BindPFlag(config.ConfigKeyDefaultDatabase, rootCmd.Flags().Lookup("default-db"))
-	viper.BindPFlag(config.ConfigKeyLogFileEnabled, rootCmd.Flags().Lookup("logfile-enabled"))
-	viper.BindPFlag(config.ConfigKeyTLSEnabled, rootCmd.Flags().Lookup("tls-enabled"))
-	viper.BindPFlag(config.ConfigKeyTLSClientCertAuthEnabled, rootCmd.Flags().Lookup("tls-client-cert-auth-enabled"))
-	viper.BindPFlag(config.ConfigKeyTLSCACertPath, rootCmd.Flags().Lookup("tls-ca-cert-path"))
-	viper.BindPFlag(config.ConfigKeyTLSCertPath, rootCmd.Flags().Lookup("tls-cert-path"))
-	viper.BindPFlag(config.ConfigKeyTLSPrivKeyPath, rootCmd.Flags().Lookup("tls-key-path"))
-	viper.BindPFlag(config.ConfigKeyMaxClientConnections, rootCmd.Flags().Lookup("max-client-connections"))
-	viper.BindPFlag(config.ConfigKeyLogLevel, rootCmd.Flags().Lookup("log-level"))
-	viper.BindPFlag(config.ConfigKeyVerboseLogsEnabled, rootCmd.Flags().Lookup("verbose-logs-enabled"))
-	viper.BindPFlag(config.ConfigKeyAuthEnabled, rootCmd.Flags().Lookup("auth-enabled"))
-	viper.BindPFlag(config.ConfigKeyAuthTokenSecretKey, rootCmd.Flags().Lookup("auth-token-secret-key"))
-	viper.BindPFlag(config.ConfigKeyAuthTokenTTL, rootCmd.Flags().Lookup("auth-token-ttl"))
+	registry := config.GetCfgRegistry()
+	registry.BindPFlag(config.ConfigKeyPort, rootCmd.Flags().Lookup("port"))
+	registry.BindPFlag(config.ConfigKeyPassword, rootCmd.Flags().Lookup("password"))
+	registry.BindPFlag(config.ConfigKeyDebugEnabled, rootCmd.Flags().Lookup("debug-enabled"))
+	registry.BindPFlag(config.ConfigKeyDefaultDatabase, rootCmd.Flags().Lookup("default-db"))
+	registry.BindPFlag(config.ConfigKeyLogFileEnabled, rootCmd.Flags().Lookup("logfile-enabled"))
+	registry.BindPFlag(config.ConfigKeyTLSEnabled, rootCmd.Flags().Lookup("tls-enabled"))
+	registry.BindPFlag(config.ConfigKeyTLSClientCertAuthEnabled, rootCmd.Flags().Lookup("tls-client-cert-auth-enabled"))
+	registry.BindPFlag(config.ConfigKeyTLSCACertPath, rootCmd.Flags().Lookup("tls-ca-cert-path"))
+	registry.BindPFlag(config.ConfigKeyTLSCertPath, rootCmd.Flags().Lookup("tls-cert-path"))
+	registry.BindPFlag(config.ConfigKeyTLSPrivKeyPath, rootCmd.Flags().Lookup("tls-key-path"))
+	registry.BindPFlag(config.ConfigKeyMaxClientConnections, rootCmd.Flags().Lookup("max-client-connections"))
+	registry.BindPFlag(config.ConfigKeyLogLevel, rootCmd.Flags().Lookup("log-level"))
+	registry.BindPFlag(config.ConfigKeyVerboseLogsEnabled, rootCmd.Flags().Lookup("verbose-logs-enabled"))
+	registry.BindPFlag(config.ConfigKeyAuthEnabled, rootCmd.Flags().Lookup("auth-enabled"))
+	registry.BindPFlag(config.ConfigKeyAuthTokenSecretKey, rootCmd.Flags().Lookup("auth-token-secret-key"))
+	registry.BindPFlag(config.ConfigKeyAuthTokenTTL, rootCmd.Flags().Lookup("auth-token-ttl"))
 }
 
 func startServer() {

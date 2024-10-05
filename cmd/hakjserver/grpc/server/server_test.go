@@ -96,6 +96,7 @@ func TestGetLogs(t *testing.T) {
 
 func TestReloadConfig(t *testing.T) {
 	cfg := config.DefaultConfig()
+	config.InitCfgRegistry()
 
 	t.Run("Success", func(t *testing.T) {
 		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
