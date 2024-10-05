@@ -163,14 +163,15 @@ func (s *HakjServer) dbExists(name string) bool {
 
 // GetDBNameFromContext gets the database name from the incoming context gRPC metadata.
 func (s *HakjServer) GetDBNameFromContext(ctx context.Context) string {
+	cfg := s.Config()
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return s.Cfg.DefaultDB
+		return cfg.DefaultDB
 	}
 
 	dbName := md.Get(common.GrpcMetadataKeyDbName)
 	if len(dbName) < 1 {
-		return s.Cfg.DefaultDB
+		return cfg.DefaultDB
 	}
 
 	return dbName[0]
@@ -220,10 +221,11 @@ func (s *HakjServer) DisableAuth() {
 
 // CreateDefaultDatabase creates an empty default database.
 func (s *HakjServer) CreateDefaultDatabase(name string) {
+	cfg := s.Config()
 	if err := validation.ValidateDBName(name); err != nil {
 		s.logger.Fatalf("Failed to create default database: %v", err)
 	}
-	dbConfig := hakjdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	dbConfig := hakjdb.DBConfig{MaxHashMapFields: cfg.MaxHashMapFields}
 	db := hakjdb.NewDB(name, "", dbConfig)
 	s.dbs[db.Name()] = db
 	s.logger.Infof("Created default database '%s'", db.Name())
@@ -231,23 +233,25 @@ func (s *HakjServer) CreateDefaultDatabase(name string) {
 
 // DBMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
 func (s *HakjServer) DBMaxKeysReached(db *hakjdb.DB) bool {
-	return uint32(db.GetKeyCount()) >= s.Cfg.MaxKeysPerDB
+	cfg := s.Config()
+	return uint32(db.GetKeyCount()) >= cfg.MaxKeysPerDB
 }
 
 // Init initializes the server.
 func (s *HakjServer) Init() {
 	s.logger.Info("Initializing server ...")
+	cfg := s.Config()
 
-	if s.Cfg.LogFileEnabled {
+	if cfg.LogFileEnabled {
 		s.EnableLogFile()
-		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", s.Cfg.LogFilePath)
+		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", cfg.LogFilePath)
 	}
 
-	if s.Cfg.DebugEnabled {
+	if cfg.DebugEnabled {
 		s.logger.Info("Debug mode is enabled")
 	}
 
-	if s.Cfg.AuthEnabled {
+	if cfg.AuthEnabled {
 		s.logger.Info("Enabling authentication")
 		password, _ := config.ShouldUsePassword()
 		s.EnableAuth(password)
@@ -255,20 +259,21 @@ func (s *HakjServer) Init() {
 		s.logger.Warning("Authentication is disabled")
 	}
 
-	s.CreateDefaultDatabase(s.Cfg.DefaultDB)
+	s.CreateDefaultDatabase(cfg.DefaultDB)
 }
 
 func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 	logger := s.Logger()
-	serverCert, err := tls.LoadX509KeyPair(s.Cfg.TLSCertPath, s.Cfg.TLSPrivKeyPath)
+	cfg := s.Config()
+	serverCert, err := tls.LoadX509KeyPair(cfg.TLSCertPath, cfg.TLSPrivKeyPath)
 	if err != nil {
 		logger.Fatalf("Failed to load TLS private/public key pair: %v", err)
 	}
 
 	clientAuth := tls.NoClientCert
 	certPool := x509.NewCertPool()
-	if s.Cfg.TLSClientCertAuthEnabled {
-		caCert, err := os.ReadFile(s.Cfg.TLSCACertPath)
+	if cfg.TLSClientCertAuthEnabled {
+		caCert, err := os.ReadFile(cfg.TLSCACertPath)
 		if err != nil {
 			logger.Fatalf("Failed to read TLS CA certificate: %v", err)
 		}
@@ -289,14 +294,15 @@ func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 
 func (s *HakjServer) SetupListener() {
 	logger := s.Logger()
+	cfg := s.Config()
 	logger.Info("Setting up listener ...")
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.Cfg.PortInUse))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.PortInUse))
 	if err != nil {
 		logger.Fatalf("Failed to listen: %v", err)
 	}
 	logger.Infof("Server listening at %v", lis.Addr())
 
-	connListener := NewClientConnListener(lis, s, s.Cfg.MaxClientConnections)
+	connListener := NewClientConnListener(lis, s, cfg.MaxClientConnections)
 	s.ClientConnListener = connListener
 }
 

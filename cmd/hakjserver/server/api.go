@@ -58,8 +58,10 @@ type AuthService interface {
 
 func (s *HakjServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerInfoRequest) (*serverpb.GetServerInfoResponse, error) {
 	lg := s.Logger()
+	cfg := s.Config()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
+
 	if s.ClientConnListener != nil {
 		s.ClientConnListener.mu.RLock()
 		defer s.ClientConnListener.mu.RUnlock()
@@ -85,12 +87,12 @@ func (s *HakjServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 		Arch:                     runtime.GOARCH,
 		ProcessId:                uint32(os.Getpid()),
 		UptimeSeconds:            uint64(time.Since(s.startTime).Seconds()),
-		TcpPort:                  uint32(s.Cfg.PortInUse),
-		TlsEnabled:               s.Cfg.TLSEnabled,
-		TlsClientCertAuthEnabled: s.Cfg.TLSClientCertAuthEnabled,
-		AuthEnabled:              s.Cfg.AuthEnabled,
-		LogfileEnabled:           s.Cfg.LogFileEnabled,
-		DebugEnabled:             s.Cfg.DebugEnabled,
+		TcpPort:                  uint32(cfg.PortInUse),
+		TlsEnabled:               cfg.TLSEnabled,
+		TlsClientCertAuthEnabled: cfg.TLSClientCertAuthEnabled,
+		AuthEnabled:              cfg.AuthEnabled,
+		LogfileEnabled:           cfg.LogFileEnabled,
+		DebugEnabled:             cfg.DebugEnabled,
 		ApiVersion:               version.APIVersion,
 	}
 	memoryInfo := &serverpb.MemoryInfo{
@@ -108,7 +110,7 @@ func (s *HakjServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 	}
 	dbInfo := &serverpb.DatabaseInfo{
 		DbCount:   uint32(len(s.dbs)),
-		DefaultDb: s.Cfg.DefaultDB,
+		DefaultDb: cfg.DefaultDB,
 	}
 
 	return &serverpb.GetServerInfoResponse{
@@ -122,15 +124,16 @@ func (s *HakjServer) GetServerInfo(ctx context.Context, req *serverpb.GetServerI
 
 func (s *HakjServer) GetLogs(ctx context.Context, req *serverpb.GetLogsRequest) (*serverpb.GetLogsResponse, error) {
 	lg := s.Logger()
+	cfg := s.Config()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	if !s.Cfg.LogFileEnabled {
+	if !cfg.LogFileEnabled {
 		lg.Debug("Logs were requested but the log file is not enabled. Consider enabling it.")
 		return nil, hakjerrors.ErrLogFileNotEnabled
 	}
 
-	logs, err := common.ReadFileLines(s.Cfg.LogFilePath)
+	logs, err := common.ReadFileLines(cfg.LogFilePath)
 	if err != nil {
 		lg.Errorf("%v: %v", hakjerrors.ErrReadLogFile, err)
 		return nil, hakjerrors.ErrReadLogFile
@@ -156,6 +159,7 @@ func (s *HakjServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*
 	}
 
 	lg := s.Logger()
+	cfg := s.Config()
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -164,7 +168,7 @@ func (s *HakjServer) CreateDB(ctx context.Context, req *dbpb.CreateDBRequest) (*
 		return nil, hakjerrors.ErrDatabaseExists
 	}
 
-	dbConfig := hakjdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	dbConfig := hakjdb.DBConfig{MaxHashMapFields: cfg.MaxHashMapFields}
 	db := hakjdb.NewDB(req.DbName, req.Description, dbConfig)
 	s.dbs[db.Name()] = db
 	lg.Infof("Created database '%s'", db.Name())
@@ -444,6 +448,7 @@ func (s *HakjServer) DeleteHashMapFields(ctx context.Context, req *kvpb.DeleteHa
 
 func (s *HakjServer) Authenticate(ctx context.Context, req *authpb.AuthenticateRequest) (*authpb.AuthenticateResponse, error) {
 	lg := s.Logger()
+	cfg := s.Config()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -453,7 +458,7 @@ func (s *HakjServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 		}
 	}()
 
-	if !s.Cfg.AuthEnabled {
+	if !cfg.AuthEnabled {
 		return nil, hakjerrors.ErrAuthNotEnabled
 	}
 
@@ -465,8 +470,8 @@ func (s *HakjServer) Authenticate(ctx context.Context, req *authpb.AuthenticateR
 	}
 
 	opts := &auth.JWTOptions{
-		SignKey: s.Cfg.AuthTokenSecretKey,
-		TTL:     time.Duration(s.Cfg.AuthTokenTTL) * time.Second,
+		SignKey: cfg.AuthTokenSecretKey,
+		TTL:     time.Duration(cfg.AuthTokenTTL) * time.Second,
 	}
 	lg.Debugf("JWT token TTL: %s", opts.TTL)
 	token, err := auth.GenerateJWT(opts, username)
