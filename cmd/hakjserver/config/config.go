@@ -45,6 +45,8 @@ const (
 	ConfigKeyAuthTokenSecretKey string = "auth_token_secret_key"
 	// ConfigKeyAuthTokenTTL is the configuration key for setting the JWT token time to live in seconds.
 	ConfigKeyAuthTokenTTL string = "auth_token_ttl"
+	// ConfigKeyPassword is the configuration key for server password.
+	ConfigKeyPassword string = "password"
 
 	// EnvPrefix is the prefix that environment variables use.
 	EnvPrefix string = "HAKJ"
@@ -58,6 +60,7 @@ const (
 	DefaultVerboseLogsEnabled       bool   = false
 	DefaultAuthEnabled              bool   = false
 	DefaultDatabase                 string = "default"
+	DefaultPassword                 string = ""
 	DefaultPort                     uint16 = common.ServerDefaultPort
 	DefaultLogFilePath              string = ""
 	DefaultMaxKeysPerDB             uint32 = common.DbMaxKeyCount
@@ -207,7 +210,7 @@ func setConfigDefaults() {
 	viper.SetDefault(ConfigKeyTLSClientCertAuthEnabled, DefaultTLSClientCertAuthEnabled)
 	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
 	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
-
+	viper.SetDefault(ConfigKeyPassword, DefaultPassword)
 	viper.SetDefault(ConfigKeyPort, DefaultPort)
 	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
 	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
@@ -242,10 +245,17 @@ func DefaultConfig() ServerConfig {
 	}
 }
 
-// ShouldUsePassword returns the server password if it is set with an environment variable.
+// GetPassword returns the server password.
 // The returned bool is true if it is set and false if not.
-func ShouldUsePassword() (string, bool) {
-	return getEnvVar(EnvVarPassword)
+// Clears the password after reading it so it won't live in memory improving security.
+func GetPassword() (string, bool) {
+	password := viper.GetString(ConfigKeyPassword)
+	clearPassword()
+	return password, password != ""
+}
+
+func clearPassword() {
+	viper.Set(ConfigKeyPassword, "")
 }
 
 func getEnvVar(envVar string) (string, bool) {

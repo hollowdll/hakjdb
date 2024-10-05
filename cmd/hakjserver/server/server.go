@@ -253,7 +253,7 @@ func (s *HakjServer) Init() {
 
 	if cfg.AuthEnabled {
 		s.logger.Info("Enabling authentication")
-		password, _ := config.ShouldUsePassword()
+		password, _ := config.GetPassword()
 		s.EnableAuth(password)
 	} else {
 		s.logger.Warning("Authentication is disabled")
@@ -336,7 +336,7 @@ func (s *HakjServer) ProcessConfigReload(cfg *config.ServerConfig) {
 
 	if cfg.AuthEnabled {
 		s.logger.Info("Enabling authentication")
-		password, _ := config.ShouldUsePassword()
+		password, _ := config.GetPassword()
 		s.EnableAuth(password)
 	} else {
 		s.logger.Info("Disabling authentication")
