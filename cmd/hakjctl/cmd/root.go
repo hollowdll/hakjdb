@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/client"
+	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/config"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/connect"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/db"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/hashmap"
@@ -31,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(db.CmdDb)
 	rootCmd.AddCommand(connect.CmdConnect)
 	rootCmd.AddCommand(hashmap.CmdHashMap)
+	rootCmd.AddCommand(config.CmdConfig)
 	rootCmd.AddCommand(cmdGetString)
 	rootCmd.AddCommand(cmdSetString)
 	rootCmd.AddCommand(cmdDeleteKeys)
