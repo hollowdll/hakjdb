@@ -15,6 +15,7 @@ CLI tool for HakjDB key-value data store. Use it to control and interact with Ha
 ### SEE ALSO
 
 * [hakjctl authenticate](hakjctl_authenticate.md)	 - Authenticate to the server
+* [hakjctl config](hakjctl_config.md)	 - Manage configurations
 * [hakjctl connect](hakjctl_connect.md)	 - Manage connection settings
 * [hakjctl db](hakjctl_db.md)	 - Manage databases
 * [hakjctl delete](hakjctl_delete.md)	 - Delete keys
