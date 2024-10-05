@@ -18,6 +18,8 @@ import (
 
 func SetupGrpcServer(s *server.HakjServer) *grpc.Server {
 	logger := s.Logger()
+	cfg := s.Config()
+
 	logger.Infof("Setting up gRPC server ...")
 	var opts []grpc.ServerOption
 	chainUnaryInterceptors := []grpc.UnaryServerInterceptor{
@@ -27,7 +29,7 @@ func SetupGrpcServer(s *server.HakjServer) *grpc.Server {
 	}
 	opts = append(opts, grpc.ChainUnaryInterceptor(chainUnaryInterceptors...))
 
-	if !s.Cfg.TLSEnabled {
+	if !cfg.TLSEnabled {
 		logger.Warning("TLS is disabled. Connections will not be encrypted")
 	} else {
 		logger.Info("Attempting to enable TLS ...")
@@ -45,7 +47,7 @@ func SetupGrpcServer(s *server.HakjServer) *grpc.Server {
 	authpb.RegisterAuthServiceServer(grpcServer, authrpc.NewAuthServiceServer(s))
 
 	// enable gRPC server reflection in debug mode
-	if s.Cfg.DebugEnabled {
+	if cfg.DebugEnabled {
 		logger.Info("Debug mode detected: enabling gRPC server reflection ...")
 		reflection.Register(grpcServer)
 		logger.Info("gRPC server reflection enabled")
