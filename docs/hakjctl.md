@@ -300,3 +300,11 @@ hakjctl hashmap delete key1 field1 field2
 ```
 This removes the fields "field1" and "field2" along with the values they are holding from the HashMap stored at key "key1".
 
+## Reload server configurations
+
+Reload configurations on the HakjDB server from its configuration sources:
+```sh
+hakjctl config reload
+```
+This reloads the configurations that can be changed at runtime without restarting the server.
+

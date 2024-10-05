@@ -1,6 +1,6 @@
 # hakjserver
 
-hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases, and keys.
+hakjserver is the HakjDB server process that listens for requests from clients. It is responsible for managing the server, databases and keys.
 
 # Directory
 
@@ -87,6 +87,19 @@ Below is a list of all environment variables:
 - `HAKJ_AUTH_ENABLED`: Enable authentication. If enabled, clients need to authenticate.
 - `HAKJ_AUTH_TOKEN_SECRET_KEY`: Secret key used to sign JWT tokens. Should be long and secure.
 - `HAKJ_AUTH_TOKEN_TTL`: JWT token time to live in seconds. Once a JWT token is created, it expires after the number of seconds specified by this.
+
+# Runtime configurable features
+
+The following features can be changed at runtime without restarting the server:
+
+- Log file enabled
+- Verbose logs enabled
+- Authentication enabled
+- Log level
+- Password
+- JWT token TTL
+- JWT token secret key
+- Max active client connections
 
 # Port
 
