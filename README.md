@@ -6,11 +6,11 @@ HakjDB is a simple in-memory key-value data store that was built as an educative
 
 HakjDB allows you to store key-value pairs of different data types in namespaces called databases. The data is stored in the server's memory.
 
-HakjDB uses a simple client-server model, and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage, or cache. It may not be suitable for advanced needs, and does not offer data persistence on disk.
+HakjDB uses a simple client-server model, and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage or cache. It may not be suitable for advanced needs, and does not offer data persistence on disk.
 
 Data is stored at keys of different types. Each data type allows you to store different kind of data such as string values or objects.
 
-Instances are easily configurable with environment variables and a simple YAML file.
+Instances are easily configurable with command line flags, environment variables and a simple YAML file.
 
 Components:
 - `hakjserver` - The server process
@@ -29,6 +29,7 @@ The following diagram shows the architecture in a simplified form
 
 - [Using the server](./docs/hakjserver.md)
 - [Using the CLI](./docs/hakjctl.md)
+- [Configuring the server](./docs/configuration.md)
 - [Databases](./docs/databases.md)
 - [Data types](./docs/datatypes.md)
 - [API](./docs/api.md)
@@ -47,7 +48,7 @@ NOTE: This project went by name kvdb before v1.0.0. That's why name kvdb appears
 
 # Install binaries
 
-The binaries can also be installed with Go.
+The binaries can be installed with Go.
 
 Install the server binary
 ```sh

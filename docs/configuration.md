@@ -2,6 +2,13 @@
 
 HakjDB can be configured with a configuration file, environment variables and command line flags.
 
+The configurations are processed in the following order:
+1. Command line flags
+2. Environment variables
+3. Configuration file
+
+This means that if for example port is configured with all the sources, it will process the value set by the command line flag when the configurations are loaded.
+
 Below is a list of all configuration options
 
 # Configuration options
