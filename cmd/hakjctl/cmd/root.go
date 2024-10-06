@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/client"
-	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/config"
+	cmdconfig "github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/config"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/connect"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/db"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/cmd/hashmap"
+	"github.com/hollowdll/hakjdb/cmd/hakjctl/config"
 	"github.com/hollowdll/hakjdb/internal/common"
 	"github.com/hollowdll/hakjdb/version"
 	"github.com/spf13/cobra"
@@ -27,12 +28,13 @@ func Execute() error {
 }
 
 func init() {
+	config.InitCfgRegistry()
 	cobra.OnInitialize(client.InitClient)
 
 	rootCmd.AddCommand(db.CmdDb)
 	rootCmd.AddCommand(connect.CmdConnect)
 	rootCmd.AddCommand(hashmap.CmdHashMap)
-	rootCmd.AddCommand(config.CmdConfig)
+	rootCmd.AddCommand(cmdconfig.CmdConfig)
 	rootCmd.AddCommand(cmdGetString)
 	rootCmd.AddCommand(cmdSetString)
 	rootCmd.AddCommand(cmdDeleteKeys)
