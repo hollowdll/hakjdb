@@ -112,7 +112,8 @@ TLS key path
 - Command line flag: --tls-private-key-path
 
 Verbose logs enabled
-- Enable TLS. Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.- Default: false
+- Enable TLS. Enable verbose logs. Verbose logs show more information and details. Typically used with debug log level for debugging purposes.
+- Default: false
 - Config file: verbose_logs_enabled
 - Env variable: HAKJ_VERBOSE_LOGS_ENABLED
 - Command line flag: --verbose-logs-enabled
