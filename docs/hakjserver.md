@@ -19,11 +19,22 @@ This runs it from the current working directory. Make sure to be in the same dir
 
 Now the server should be running with default configurations. The default TCP/IP port is 12345.
 
+You can pass `--help` flag to see all the different command line flags
+```sh
+./hakjserver --help
+```
+
+To change the port for example, you can use
+```sh
+./hakjserver --port 8080
+```
+Now the server listens for requests in port 8080.
+
 ## Running with Docker
 
 Another way to run the server is by using Docker. Instructions [here](../README.md#docker)
 
-# Configuration
+# Configuration file
 
 Configurations are stored in a configuration file and can be changed there. This file is created with default configurations if it doesn't exist. The name of the configuration file is `hakjserver-config.yaml` and it is created to the [data directory](#data-directory). The server tries to find the file in this directory. Configurations are stored in YAML format.
 
@@ -38,6 +49,7 @@ default_db: default
 log_level: info
 logfile_enabled: false
 max_client_connections: 1000
+password: ""
 port: 12345
 tls_ca_cert_path: ""
 tls_cert_path: ""
@@ -57,6 +69,7 @@ Meaning of fields:
 - `log_level`: The log level. Can be debug, info, warning, error, or fatal.
 - `logfile_enabled`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
 - `max_client_connections`: The maximum number of active client connections allowed.
+- `password`: Server password used for authentication.
 - `port`: Server's TCP/IP port. Ranges from 1 to 65535.
 - `tls_ca_cert_path`: The path to the TLS CA certificate file.
 - `tls_cert_path`: The path to the TLS certificate file.
@@ -72,7 +85,7 @@ It is also possible to change configurations with environment variables. Environ
 Below is a list of all environment variables:
 
 - `HAKJ_PORT`: Server TCP/IP port. Ranges from 1 to 65535.
-- `HAKJ_PASSWORD`: Server password. Password is used in authentication.
+- `HAKJ_PASSWORD`: Server password used for authentication.
 - `HAKJ_DEBUG_ENABLED`: Enable debug mode. Some features are only enabled in debug mode. Can be true or false.
 - `HAKJ_DEFAULT_DB`: The name of the default database that is created at server startup.
 - `HAKJ_LOGFILE_ENABLED`: Enable the log file. If enabled, logs will be written to the log file. Can be true or false.
