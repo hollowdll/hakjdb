@@ -21,9 +21,9 @@ This is not meant for production use, as it lacks a lot of features, and is not 
 
 # How it works
 
-The following diagram shows the architecture in a simplified form
+The following diagram shows the architecture
 
-![architecture](./docs/diagrams/architecture_simplified.jpg)
+![architecture](./docs/diagrams/hakjdb_architecture.jpg)
 
 # Documentation
 
