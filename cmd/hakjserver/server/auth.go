@@ -14,10 +14,11 @@ import (
 
 // AuthorizeIncomingRpcCall checks that incoming RPC call provides valid credentials.
 func (s *HakjServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
+	cfg := s.Config()
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	if s.Cfg.AuthEnabled {
+	if cfg.AuthEnabled {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			return status.Error(codes.Unauthenticated, hakjerrors.ErrMissingMetadata.Error())
@@ -39,8 +40,8 @@ func (s *HakjServer) AuthorizeIncomingRpcCall(ctx context.Context) error {
 		}()
 
 		opts := &auth.JWTOptions{
-			SignKey: s.Cfg.AuthTokenSecretKey,
-			TTL:     time.Duration(s.Cfg.AuthTokenTTL) * time.Second,
+			SignKey: cfg.AuthTokenSecretKey,
+			TTL:     time.Duration(cfg.AuthTokenTTL) * time.Second,
 		}
 		_, err := auth.ValidateJWT(tokenStr, opts)
 		if err != nil {

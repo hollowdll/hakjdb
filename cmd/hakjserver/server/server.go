@@ -110,6 +110,7 @@ type HakjServer struct {
 	credentialStore auth.CredentialStore
 	logger          hakjdb.Logger
 	loggerMu        sync.RWMutex
+	cfgMu           sync.RWMutex
 
 	// Cfg is the configuration that the server is configured with.
 	// It is not intended to be changed after the server has been set up.
@@ -137,6 +138,13 @@ func (s *HakjServer) Logger() hakjdb.Logger {
 	return l
 }
 
+func (s *HakjServer) Config() config.ServerConfig {
+	s.cfgMu.RLock()
+	cfg := s.Cfg
+	s.cfgMu.RUnlock()
+	return cfg
+}
+
 // totalStoredDataSize returns the total amount of stored data on this server in bytes.
 func (s *HakjServer) totalStoredDataSize() uint64 {
 	var sum uint64
@@ -155,14 +163,15 @@ func (s *HakjServer) dbExists(name string) bool {
 
 // GetDBNameFromContext gets the database name from the incoming context gRPC metadata.
 func (s *HakjServer) GetDBNameFromContext(ctx context.Context) string {
+	cfg := s.Config()
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return s.Cfg.DefaultDB
+		return cfg.DefaultDB
 	}
 
 	dbName := md.Get(common.GrpcMetadataKeyDbName)
 	if len(dbName) < 1 {
-		return s.Cfg.DefaultDB
+		return cfg.DefaultDB
 	}
 
 	return dbName[0]
@@ -170,8 +179,8 @@ func (s *HakjServer) GetDBNameFromContext(ctx context.Context) string {
 
 // EnableLogFile enables logger to write logs to the log file.
 func (s *HakjServer) EnableLogFile() {
-	s.loggerMu.RLock()
-	defer s.loggerMu.RUnlock()
+	s.loggerMu.Lock()
+	defer s.loggerMu.Unlock()
 	err := s.logger.EnableLogFile(s.Cfg.LogFilePath)
 	if err != nil {
 		s.logger.Fatalf("Failed to enable log file: %v", err)
@@ -180,8 +189,8 @@ func (s *HakjServer) EnableLogFile() {
 
 // CloseLogger closes logger and releases its possible resources.
 func (s *HakjServer) CloseLogger() {
-	s.loggerMu.RLock()
-	defer s.loggerMu.RUnlock()
+	s.loggerMu.Lock()
+	defer s.loggerMu.Unlock()
 	err := s.logger.CloseLogFile()
 	if err != nil {
 		s.logger.Fatalf("Failed to close log file: %v", err)
@@ -190,21 +199,33 @@ func (s *HakjServer) CloseLogger() {
 
 // EnableAuth enables authentication.
 func (s *HakjServer) EnableAuth(rootPassword string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	if err := s.credentialStore.SetPassword(auth.RootUserName, []byte(rootPassword)); err != nil {
 		s.logger.Fatalf("Failed to set root password: %v", err)
 	}
-	s.logger.Infof("Authentication is enabled. Clients need to authenticate.")
+	s.logger.Info("Authentication is enabled. Clients need to authenticate")
 	if rootPassword == "" {
-		s.logger.Warning("Using empty password. Consider changing it to a strong password.")
+		s.logger.Warning("Using empty password. Consider changing it to a strong password")
 	}
+}
+
+func (s *HakjServer) DisableAuth() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := s.credentialStore.SetPassword(auth.RootUserName, []byte("")); err != nil {
+		s.logger.Fatalf("Failed to clear root password: %v", err)
+	}
+	s.logger.Warning("Authentication is disabled")
 }
 
 // CreateDefaultDatabase creates an empty default database.
 func (s *HakjServer) CreateDefaultDatabase(name string) {
+	cfg := s.Config()
 	if err := validation.ValidateDBName(name); err != nil {
 		s.logger.Fatalf("Failed to create default database: %v", err)
 	}
-	dbConfig := hakjdb.DBConfig{MaxHashMapFields: s.Cfg.MaxHashMapFields}
+	dbConfig := hakjdb.DBConfig{MaxHashMapFields: cfg.MaxHashMapFields}
 	db := hakjdb.NewDB(name, "", dbConfig)
 	s.dbs[db.Name()] = db
 	s.logger.Infof("Created default database '%s'", db.Name())
@@ -212,44 +233,47 @@ func (s *HakjServer) CreateDefaultDatabase(name string) {
 
 // DBMaxKeysReached returns true if a database has reached or exceeded the maximum key limit.
 func (s *HakjServer) DBMaxKeysReached(db *hakjdb.DB) bool {
-	return uint32(db.GetKeyCount()) >= s.Cfg.MaxKeysPerDB
+	cfg := s.Config()
+	return uint32(db.GetKeyCount()) >= cfg.MaxKeysPerDB
 }
 
 // Init initializes the server.
 func (s *HakjServer) Init() {
-	s.logger.Infof("Initializing server ...")
+	s.logger.Info("Initializing server ...")
+	cfg := s.Config()
 
-	if s.Cfg.LogFileEnabled {
+	if cfg.LogFileEnabled {
 		s.EnableLogFile()
-		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", s.Cfg.LogFilePath)
+		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", cfg.LogFilePath)
 	}
 
-	if s.Cfg.DebugEnabled {
+	if cfg.DebugEnabled {
 		s.logger.Info("Debug mode is enabled")
 	}
 
-	if s.Cfg.AuthEnabled {
+	if cfg.AuthEnabled {
 		s.logger.Info("Enabling authentication")
-		password, _ := config.ShouldUsePassword()
+		password, _ := config.GetPassword()
 		s.EnableAuth(password)
 	} else {
 		s.logger.Warning("Authentication is disabled")
 	}
 
-	s.CreateDefaultDatabase(s.Cfg.DefaultDB)
+	s.CreateDefaultDatabase(cfg.DefaultDB)
 }
 
 func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 	logger := s.Logger()
-	serverCert, err := tls.LoadX509KeyPair(s.Cfg.TLSCertPath, s.Cfg.TLSPrivKeyPath)
+	cfg := s.Config()
+	serverCert, err := tls.LoadX509KeyPair(cfg.TLSCertPath, cfg.TLSPrivKeyPath)
 	if err != nil {
 		logger.Fatalf("Failed to load TLS private/public key pair: %v", err)
 	}
 
 	clientAuth := tls.NoClientCert
 	certPool := x509.NewCertPool()
-	if s.Cfg.TLSClientCertAuthEnabled {
-		caCert, err := os.ReadFile(s.Cfg.TLSCACertPath)
+	if cfg.TLSClientCertAuthEnabled {
+		caCert, err := os.ReadFile(cfg.TLSCACertPath)
 		if err != nil {
 			logger.Fatalf("Failed to read TLS CA certificate: %v", err)
 		}
@@ -270,13 +294,56 @@ func (s *HakjServer) GetTLSCredentials() credentials.TransportCredentials {
 
 func (s *HakjServer) SetupListener() {
 	logger := s.Logger()
-	logger.Infof("Setting up listener ...")
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.Cfg.PortInUse))
+	cfg := s.Config()
+	logger.Info("Setting up listener ...")
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.PortInUse))
 	if err != nil {
 		logger.Fatalf("Failed to listen: %v", err)
 	}
 	logger.Infof("Server listening at %v", lis.Addr())
 
-	connListener := NewClientConnListener(lis, s, s.Cfg.MaxClientConnections)
+	connListener := NewClientConnListener(lis, s, cfg.MaxClientConnections)
 	s.ClientConnListener = connListener
+}
+
+func (s *HakjServer) ProcessConfigReload(cfg *config.ServerConfig) {
+	s.loggerMu.Lock()
+	defer s.loggerMu.Unlock()
+
+	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(config.GetLogLevelStr())
+	if !ok {
+		s.logger.Warning("Invalid log level configured. Default log level will be used")
+	}
+	s.logger.Infof("Using log level %s", logLevelStr)
+	// modify the original
+	s.logger.SetLogLevel(logLevel)
+
+	if cfg.VerboseLogsEnabled {
+		s.logger.Info("Verbose logs are enabled")
+	}
+
+	if cfg.LogFileEnabled {
+		err := s.logger.CloseLogFile()
+		if err != nil {
+			s.logger.Fatalf("Failed to close log file: %v", err)
+		}
+		err = s.logger.EnableLogFile(cfg.LogFilePath)
+		if err != nil {
+			s.logger.Fatalf("Failed to enable log file: %v", err)
+		}
+		s.logger.Infof("Log file is enabled. Logs will be written to the log file. The file is located at %s", cfg.LogFilePath)
+	}
+
+	if cfg.AuthEnabled {
+		s.logger.Info("Enabling authentication")
+		password, _ := config.GetPassword()
+		s.EnableAuth(password)
+	} else {
+		s.logger.Info("Disabling authentication")
+		s.DisableAuth()
+	}
+
+	s.ClientConnListener.mu.Lock()
+	s.ClientConnListener.maxClientConnections = cfg.MaxClientConnections
+	s.ClientConnListener.mu.Unlock()
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cmdConnectShow = &cobra.Command{
@@ -21,9 +20,9 @@ hakjctl connect show`,
 
 func showConnectionSettings() {
 	var output string
-	output += fmt.Sprintf("host: %s\n", viper.GetString(config.ConfigKeyHost))
-	output += fmt.Sprintf("port: %d\n", viper.GetUint16(config.ConfigKeyPort))
-	output += fmt.Sprintf("database: %s", viper.GetString(config.ConfigKeyDatabase))
+	output += fmt.Sprintf("host: %s\n", config.GetHost())
+	output += fmt.Sprintf("port: %d\n", config.GetPort())
+	output += fmt.Sprintf("database: %s", config.GetDefaultDB())
 
 	fmt.Println(output)
 }

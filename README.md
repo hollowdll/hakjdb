@@ -6,11 +6,11 @@ HakjDB is a simple in-memory key-value data store that was built as an educative
 
 HakjDB allows you to store key-value pairs of different data types in namespaces called databases. The data is stored in the server's memory.
 
-HakjDB uses a simple client-server model, and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage, or cache. It may not be suitable for advanced needs, and does not offer data persistence on disk.
+HakjDB uses a simple client-server model, and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage or cache. It may not be suitable for advanced needs, and does not offer data persistence on disk.
 
 Data is stored at keys of different types. Each data type allows you to store different kind of data such as string values or objects.
 
-Instances are easily configurable with environment variables and a simple YAML file.
+Instances are easily configurable with command line flags, environment variables and a simple YAML file.
 
 Components:
 - `hakjserver` - The server process
@@ -21,14 +21,15 @@ This is not meant for production use, as it lacks a lot of features, and is not 
 
 # How it works
 
-The following diagram shows the architecture in a simplified form
+The following diagram shows the architecture
 
-![architecture](./docs/diagrams/architecture_simplified.jpg)
+![architecture](./docs/diagrams/hakjdb_architecture.jpg)
 
 # Documentation
 
 - [Using the server](./docs/hakjserver.md)
 - [Using the CLI](./docs/hakjctl.md)
+- [Configuring the server](./docs/configuration.md)
 - [Databases](./docs/databases.md)
 - [Data types](./docs/datatypes.md)
 - [API](./docs/api.md)
@@ -37,17 +38,41 @@ The following diagram shows the architecture in a simplified form
 
 Release notes are available [here](./docs/changelog/).
 
-Binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/hakjdb/releases).
+Prebuilt binaries are available for download. Multiple platforms supported. You can download them [here](https://github.com/hollowdll/hakjdb/releases).
 
-However, it is recommended to build the binaries from source. Instructions on how to build from source below.
+However, it is recommended to build the binaries from source or install them with Go.
 
 Releases are managed with [GoReleaser](https://goreleaser.com/).
 
 NOTE: This project went by name kvdb before v1.0.0. That's why name kvdb appears in older releases.
 
+# Install binaries
+
+The binaries can be installed with Go.
+
+Install the server binary
+```sh
+go install github.com/hollowdll/hakjdb/cmd/hakjserver@latest
+```
+
+Install the CLI binary
+```sh
+go install github.com/hollowdll/hakjdb/cmd/hakjctl@latest
+```
+
+These will install the binaries to your Go bin directory. It is recommened to create separate directories for the binaries and then place the binaries in these directories because the binaries create some files relative to their parent directory.
+
+For example on Linux
+```sh
+mkdir -p ~/hakjdb/hakjserver
+mkdir -p ~/hakjdb/hakjctl
+mv hakjserver ~/hakjdb/hakjserver
+mv hakjctl ~/hakjdb/hakjctl
+```
+
 # Build binaries
 
-To build the binaries, you first need to install Go. Minimum version required is go1.22.
+To build the binaries from source, you first need to install Go. Minimum version required is go1.22.
 
 Instructions for installing Go can be found [here](https://go.dev/doc/install).
 

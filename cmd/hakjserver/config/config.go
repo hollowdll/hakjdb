@@ -45,6 +45,8 @@ const (
 	ConfigKeyAuthTokenSecretKey string = "auth_token_secret_key"
 	// ConfigKeyAuthTokenTTL is the configuration key for setting the JWT token time to live in seconds.
 	ConfigKeyAuthTokenTTL string = "auth_token_ttl"
+	// ConfigKeyPassword is the configuration key for server password.
+	ConfigKeyPassword string = "password"
 
 	// EnvPrefix is the prefix that environment variables use.
 	EnvPrefix string = "HAKJ"
@@ -58,6 +60,7 @@ const (
 	DefaultVerboseLogsEnabled       bool   = false
 	DefaultAuthEnabled              bool   = false
 	DefaultDatabase                 string = "default"
+	DefaultPassword                 string = ""
 	DefaultPort                     uint16 = common.ServerDefaultPort
 	DefaultLogFilePath              string = ""
 	DefaultMaxKeysPerDB             uint32 = common.DbMaxKeyCount
@@ -70,6 +73,8 @@ const (
 	DefaultAuthTokenSecretKey       string = ""
 	DefaultAuthTokenTTL             uint32 = 900
 )
+
+var cfgRegistry *viper.Viper
 
 // ServerConfig holds the server's configuration.
 type ServerConfig struct {
@@ -106,9 +111,89 @@ type ServerConfig struct {
 	AuthTokenTTL uint32
 }
 
+// Reload reloads configurations that can be changed at runtime.
+func (cfg *ServerConfig) Reload(lg hakjdb.Logger) {
+	// Config that can be changed at runtime:
+	// - log file enabled
+	// - verbose logs
+	// - log level
+	// - auth enabled
+	// - password
+	// - auth token secret key
+	// - auth token ttl
+	// - max client connections
+
+	lg.Info("Reloading configurations ...")
+	dataDirPath := getDataDirPath(lg)
+	initConfigFile(dataDirPath)
+	cfgRegistry.SafeWriteConfig()
+	readConfigFile(lg)
+
+	cfg.LogFileEnabled = cfgRegistry.GetBool(ConfigKeyLogFileEnabled)
+	cfg.VerboseLogsEnabled = cfgRegistry.GetBool(ConfigKeyVerboseLogsEnabled)
+	cfg.AuthEnabled = cfgRegistry.GetBool(ConfigKeyAuthEnabled)
+	cfg.AuthTokenSecretKey = cfgRegistry.GetString(ConfigKeyAuthTokenSecretKey)
+	cfg.AuthTokenTTL = cfgRegistry.GetUint32(ConfigKeyAuthTokenTTL)
+	cfg.MaxClientConnections = cfgRegistry.GetUint32(ConfigKeyMaxClientConnections)
+}
+
+func InitCfgRegistry() {
+	if cfgRegistry == nil {
+		cfgRegistry = viper.New()
+	}
+}
+
 // LoadConfig loads server configurations.
 func LoadConfig(lg hakjdb.Logger) ServerConfig {
-	lg.Infof("Loading configurations ...")
+	lg.Info("Loading configurations ...")
+	dataDirPath := getDataDirPath(lg)
+	initConfigFile(dataDirPath)
+	setConfigDefaults()
+
+	cfgRegistry.SetEnvPrefix(EnvPrefix)
+	cfgRegistry.AutomaticEnv()
+	cfgRegistry.SafeWriteConfig()
+	readConfigFile(lg)
+
+	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(GetLogLevelStr())
+	if !ok {
+		lg.Warning("Invalid log level configured. Default log level will be used")
+	}
+	lg.Infof("Using log level %s", logLevelStr)
+	lg.SetLogLevel(logLevel)
+
+	if cfgRegistry.GetBool(ConfigKeyVerboseLogsEnabled) {
+		lg.Info("Verbose logs are enabled")
+	}
+
+	return ServerConfig{
+		LogFileEnabled:           cfgRegistry.GetBool(ConfigKeyLogFileEnabled),
+		TLSEnabled:               cfgRegistry.GetBool(ConfigKeyTLSEnabled),
+		TLSClientCertAuthEnabled: cfgRegistry.GetBool(ConfigKeyTLSClientCertAuthEnabled),
+		DebugEnabled:             cfgRegistry.GetBool(ConfigKeyDebugEnabled),
+		VerboseLogsEnabled:       cfgRegistry.GetBool(ConfigKeyVerboseLogsEnabled),
+		AuthEnabled:              cfgRegistry.GetBool(ConfigKeyAuthEnabled),
+		DefaultDB:                cfgRegistry.GetString(ConfigKeyDefaultDatabase),
+		LogFilePath:              filepath.Join(dataDirPath, logFileName),
+		MaxKeysPerDB:             DefaultMaxKeysPerDB,
+		MaxHashMapFields:         DefaultMaxHashMapFields,
+		PortInUse:                cfgRegistry.GetUint16(ConfigKeyPort),
+		MaxClientConnections:     cfgRegistry.GetUint32(ConfigKeyMaxClientConnections),
+		TLSCertPath:              cfgRegistry.GetString(ConfigKeyTLSCertPath),
+		TLSPrivKeyPath:           cfgRegistry.GetString(ConfigKeyTLSPrivKeyPath),
+		TLSCACertPath:            cfgRegistry.GetString(ConfigKeyTLSCACertPath),
+		AuthTokenSecretKey:       cfgRegistry.GetString(ConfigKeyAuthTokenSecretKey),
+		AuthTokenTTL:             cfgRegistry.GetUint32(ConfigKeyAuthTokenTTL),
+	}
+}
+
+func readConfigFile(lg hakjdb.Logger) {
+	if err := cfgRegistry.ReadInConfig(); err != nil {
+		lg.Errorf("Failed to read configuration file: %v", err)
+	}
+}
+
+func getDataDirPath(lg hakjdb.Logger) string {
 	parentDir, err := common.GetExecParentDirPath()
 	if err != nil {
 		lg.Fatalf("Failed to get the executable's parent directory: %v", err)
@@ -117,65 +202,32 @@ func LoadConfig(lg hakjdb.Logger) ServerConfig {
 	if err != nil {
 		lg.Fatalf("Failed to get the data directory: %v", err)
 	}
+	return dataDirPath
+}
 
-	viper.AddConfigPath(dataDirPath)
-	viper.SetConfigType(configFileType)
-	viper.SetConfigName(configFileName)
+func initConfigFile(dataDirPath string) {
+	cfgRegistry.AddConfigPath(dataDirPath)
+	cfgRegistry.SetConfigType(configFileType)
+	cfgRegistry.SetConfigName(configFileName)
+}
 
-	viper.SetDefault(ConfigKeyDebugEnabled, DefaultDebugEnabled)
-	viper.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
-	viper.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
-	viper.SetDefault(ConfigKeyTLSClientCertAuthEnabled, DefaultTLSClientCertAuthEnabled)
-	viper.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
-	viper.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
-
-	viper.SetDefault(ConfigKeyPort, DefaultPort)
-	viper.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
-	viper.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
-	viper.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
-	viper.SetDefault(ConfigKeyTLSCACertPath, DefaultTLSCACertPath)
-	viper.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
-	viper.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
-	viper.SetDefault(ConfigKeyAuthTokenSecretKey, DefaultAuthTokenSecretKey)
-	viper.SetDefault(ConfigKeyAuthTokenTTL, DefaultAuthTokenTTL)
-
-	viper.SetEnvPrefix(EnvPrefix)
-	viper.AutomaticEnv()
-	viper.SafeWriteConfig()
-	if err = viper.ReadInConfig(); err != nil {
-		lg.Errorf("Failed to read configuration file: %v", err)
-	}
-
-	logLevel, logLevelStr, ok := hakjdb.GetLogLevelFromStr(viper.GetString(ConfigKeyLogLevel))
-	if !ok {
-		lg.Warning("Invalid log level configured. Default log level will be used")
-	}
-	lg.Infof("Using log level %s", logLevelStr)
-	lg.SetLogLevel(logLevel)
-
-	if viper.GetBool(ConfigKeyVerboseLogsEnabled) {
-		lg.Info("verbose logs are enabled")
-	}
-
-	return ServerConfig{
-		LogFileEnabled:           viper.GetBool(ConfigKeyLogFileEnabled),
-		TLSEnabled:               viper.GetBool(ConfigKeyTLSEnabled),
-		TLSClientCertAuthEnabled: viper.GetBool(ConfigKeyTLSClientCertAuthEnabled),
-		DebugEnabled:             viper.GetBool(ConfigKeyDebugEnabled),
-		VerboseLogsEnabled:       viper.GetBool(ConfigKeyVerboseLogsEnabled),
-		AuthEnabled:              viper.GetBool(ConfigKeyAuthEnabled),
-		DefaultDB:                viper.GetString(ConfigKeyDefaultDatabase),
-		LogFilePath:              filepath.Join(dataDirPath, logFileName),
-		MaxKeysPerDB:             DefaultMaxKeysPerDB,
-		MaxHashMapFields:         DefaultMaxHashMapFields,
-		PortInUse:                viper.GetUint16(ConfigKeyPort),
-		MaxClientConnections:     viper.GetUint32(ConfigKeyMaxClientConnections),
-		TLSCertPath:              viper.GetString(ConfigKeyTLSCertPath),
-		TLSPrivKeyPath:           viper.GetString(ConfigKeyTLSPrivKeyPath),
-		TLSCACertPath:            viper.GetString(ConfigKeyTLSCACertPath),
-		AuthTokenSecretKey:       viper.GetString(ConfigKeyAuthTokenSecretKey),
-		AuthTokenTTL:             viper.GetUint32(ConfigKeyAuthTokenTTL),
-	}
+func setConfigDefaults() {
+	cfgRegistry.SetDefault(ConfigKeyDebugEnabled, DefaultDebugEnabled)
+	cfgRegistry.SetDefault(ConfigKeyLogFileEnabled, DefaultLogFileEnabled)
+	cfgRegistry.SetDefault(ConfigKeyTLSEnabled, DefaultTLSEnabled)
+	cfgRegistry.SetDefault(ConfigKeyTLSClientCertAuthEnabled, DefaultTLSClientCertAuthEnabled)
+	cfgRegistry.SetDefault(ConfigKeyVerboseLogsEnabled, DefaultVerboseLogsEnabled)
+	cfgRegistry.SetDefault(ConfigKeyAuthEnabled, DefaultAuthEnabled)
+	cfgRegistry.SetDefault(ConfigKeyPassword, DefaultPassword)
+	cfgRegistry.SetDefault(ConfigKeyPort, DefaultPort)
+	cfgRegistry.SetDefault(ConfigKeyDefaultDatabase, DefaultDatabase)
+	cfgRegistry.SetDefault(ConfigKeyTLSCertPath, DefaultTLSCertPath)
+	cfgRegistry.SetDefault(ConfigKeyTLSPrivKeyPath, DefaultTLSPrivKeyPath)
+	cfgRegistry.SetDefault(ConfigKeyTLSCACertPath, DefaultTLSCACertPath)
+	cfgRegistry.SetDefault(ConfigKeyMaxClientConnections, DefaultMaxClientConnections)
+	cfgRegistry.SetDefault(ConfigKeyLogLevel, DefaultLogLevel)
+	cfgRegistry.SetDefault(ConfigKeyAuthTokenSecretKey, DefaultAuthTokenSecretKey)
+	cfgRegistry.SetDefault(ConfigKeyAuthTokenTTL, DefaultAuthTokenTTL)
 }
 
 // DefaultConfig returns the default configurations.
@@ -201,12 +253,27 @@ func DefaultConfig() ServerConfig {
 	}
 }
 
-// ShouldUsePassword returns the server password if it is set with an environment variable.
+// GetPassword returns the server password.
 // The returned bool is true if it is set and false if not.
-func ShouldUsePassword() (string, bool) {
-	return getEnvVar(EnvVarPassword)
+// Clears the password after reading it so it won't live in memory improving security.
+func GetPassword() (string, bool) {
+	password := cfgRegistry.GetString(ConfigKeyPassword)
+	clearPassword()
+	return password, password != ""
+}
+
+func clearPassword() {
+	cfgRegistry.Set(ConfigKeyPassword, "")
 }
 
 func getEnvVar(envVar string) (string, bool) {
 	return os.LookupEnv(envVar)
+}
+
+func GetLogLevelStr() string {
+	return cfgRegistry.GetString(ConfigKeyLogLevel)
+}
+
+func GetCfgRegistry() *viper.Viper {
+	return cfgRegistry
 }

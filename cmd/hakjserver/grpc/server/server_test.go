@@ -27,8 +27,8 @@ func TestGetServerInfo(t *testing.T) {
 
 		req := &serverpb.GetServerInfoRequest{}
 		resp, err := grpcSrv.GetServerInfo(context.Background(), req)
-		assert.NoErrorf(t, err, "expected no error; error = %v", err)
-		assert.NotNil(t, resp)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, resp)
 	})
 }
 
@@ -46,7 +46,7 @@ func TestGetLogs(t *testing.T) {
 		st, ok := status.FromError(err)
 		require.NotNil(t, st)
 		require.Equal(t, true, ok, "expected ok")
-		assert.Equal(t, codes.FailedPrecondition, st.Code(), "expected status = %s; got = %s", codes.FailedPrecondition, st.Code())
+		require.Equal(t, codes.FailedPrecondition, st.Code(), "expected status = %s; got = %s", codes.FailedPrecondition, st.Code())
 	})
 
 	t.Run("MultipleLogs", func(t *testing.T) {
@@ -91,5 +91,23 @@ func TestGetLogs(t *testing.T) {
 		require.NoErrorf(t, err, "expected no error; error = %v", err)
 		require.NotNil(t, res)
 		require.Equal(t, expectedLogs, len(res.Logs), "expected logs = %d; got = %d", expectedLogs, len(res.Logs))
+	})
+}
+
+func TestReloadConfig(t *testing.T) {
+	cfg := config.DefaultConfig()
+	config.InitCfgRegistry()
+
+	t.Run("Success", func(t *testing.T) {
+		s := server.NewHakjServer(cfg, hakjdb.DisabledLogger())
+		connLis := server.NewClientConnListener(nil, s, cfg.MaxClientConnections)
+		s.ClientConnListener = connLis
+		grpcSrv := NewServerServiceServer(s)
+
+		req := &serverpb.ReloadConfigRequest{}
+		resp, err := grpcSrv.ReloadConfig(context.Background(), req)
+		require.NoErrorf(t, err, "expected no error; error = %v", err)
+		require.NotNil(t, resp)
+		require.NotNil(t, s.Config())
 	})
 }

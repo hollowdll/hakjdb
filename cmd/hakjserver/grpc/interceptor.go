@@ -42,13 +42,14 @@ func newAuthUnaryInterceptor(s *server.HakjServer) grpc.UnaryServerInterceptor {
 func newLogUnaryInterceptor(s *server.HakjServer) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		logger := s.Logger()
+		cfg := s.Config()
 		dbName := s.GetDBNameFromContext(ctx)
-		logRequestCall(logger, s.Cfg.VerboseLogsEnabled, info.FullMethod, dbName, req)
+		logRequestCall(logger, cfg.VerboseLogsEnabled, info.FullMethod, dbName, req)
 		resp, err := handler(ctx, req)
 		if err != nil {
-			logRequestFailed(logger, s.Cfg.VerboseLogsEnabled, info.FullMethod, dbName, req, err)
+			logRequestFailed(logger, cfg.VerboseLogsEnabled, info.FullMethod, dbName, req, err)
 		} else {
-			logRequestSuccess(logger, s.Cfg.VerboseLogsEnabled, info.FullMethod, dbName, req, resp)
+			logRequestSuccess(logger, cfg.VerboseLogsEnabled, info.FullMethod, dbName, req, resp)
 		}
 		return resp, err
 	}

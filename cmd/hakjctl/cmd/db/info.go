@@ -9,7 +9,6 @@ import (
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/client"
 	"github.com/hollowdll/hakjdb/cmd/hakjctl/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -45,7 +44,7 @@ func showDbInfo() {
 	ctx, cancel := context.WithTimeout(ctx, config.GetCmdTimeout())
 	defer cancel()
 	if len(dbName) < 1 {
-		dbName = viper.GetString(config.ConfigKeyDatabase)
+		dbName = config.GetDefaultDB()
 	}
 	resp, err := client.GrpcDBClient.GetDBInfo(ctx, &dbpb.GetDBInfoRequest{DbName: dbName})
 	client.CheckGrpcError(err)

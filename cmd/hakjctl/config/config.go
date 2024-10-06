@@ -40,47 +40,88 @@ const (
 	DefaultCommandTimeout uint32 = 10
 )
 
+var cfgRegistry *viper.Viper
+
+func InitCfgRegistry() {
+	if cfgRegistry == nil {
+		cfgRegistry = viper.New()
+	}
+}
+
 // InitConfig initializes and loads configurations.
 func InitConfig() {
 	configDirPath, err := common.GetExecParentDirPath()
 	cobra.CheckErr(err)
+	initConfigFile(configDirPath)
+	setConfigDefaults()
+	cfgRegistry.SafeWriteConfig()
+	cobra.CheckErr(cfgRegistry.ReadInConfig())
+}
 
-	viper.AddConfigPath(configDirPath)
-	viper.SetConfigType(configFileType)
-	viper.SetConfigName(configFileName)
+func initConfigFile(configDirPath string) {
+	cfgRegistry.AddConfigPath(configDirPath)
+	cfgRegistry.SetConfigType(configFileType)
+	cfgRegistry.SetConfigName(configFileName)
+}
 
-	viper.SetDefault(ConfigKeyHost, common.ServerDefaultHost)
-	viper.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
-	viper.SetDefault(ConfigKeyDatabase, DefaultDatabase)
-	viper.SetDefault(ConfigKeyTLSClientCertPath, "")
-	viper.SetDefault(ConfigKeyTLSClientKeyPath, "")
-	viper.SetDefault(ConfigKeyTLSCACertPath, "")
-	viper.SetDefault(ConfigKeyCommandTimeout, DefaultCommandTimeout)
-
-	viper.SafeWriteConfig()
-	cobra.CheckErr(viper.ReadInConfig())
+func setConfigDefaults() {
+	cfgRegistry.SetDefault(ConfigKeyHost, common.ServerDefaultHost)
+	cfgRegistry.SetDefault(ConfigKeyPort, common.ServerDefaultPort)
+	cfgRegistry.SetDefault(ConfigKeyDatabase, DefaultDatabase)
+	cfgRegistry.SetDefault(ConfigKeyTLSClientCertPath, "")
+	cfgRegistry.SetDefault(ConfigKeyTLSClientKeyPath, "")
+	cfgRegistry.SetDefault(ConfigKeyTLSCACertPath, "")
+	cfgRegistry.SetDefault(ConfigKeyCommandTimeout, DefaultCommandTimeout)
 }
 
 // GetCmdTimeout gets the configured command timeout.
 // Command timeout is the maximum number of seconds to wait before a request is cancelled.
 func GetCmdTimeout() time.Duration {
-	return time.Duration(viper.GetUint32(ConfigKeyCommandTimeout)) * time.Second
+	return time.Duration(cfgRegistry.GetUint32(ConfigKeyCommandTimeout)) * time.Second
 }
 
 // The returned string is the file path. The returned bool is true if the path is set.
 func LookupTLSCACert() (string, bool) {
-	path := viper.GetString(ConfigKeyTLSCACertPath)
+	path := cfgRegistry.GetString(ConfigKeyTLSCACertPath)
 	return path, path != ""
 }
 
 // The returned string is the file path. The returned bool is true if the path is set.
 func LookupTLSClientCert() (string, bool) {
-	path := viper.GetString(ConfigKeyTLSClientCertPath)
+	path := cfgRegistry.GetString(ConfigKeyTLSClientCertPath)
 	return path, path != ""
 }
 
 // The returned string is the file path. The returned bool is true if the path is set.
 func LookupTLSClientKey() (string, bool) {
-	path := viper.GetString(ConfigKeyTLSClientKeyPath)
+	path := cfgRegistry.GetString(ConfigKeyTLSClientKeyPath)
 	return path, path != ""
+}
+
+func WriteFile() error {
+	return cfgRegistry.WriteConfig()
+}
+
+func GetDefaultDB() string {
+	return cfgRegistry.GetString(ConfigKeyDatabase)
+}
+
+func GetPort() uint16 {
+	return cfgRegistry.GetUint16(ConfigKeyPort)
+}
+
+func GetHost() string {
+	return cfgRegistry.GetString(ConfigKeyHost)
+}
+
+func SetDefaultDB(name string) {
+	cfgRegistry.Set(ConfigKeyDatabase, name)
+}
+
+func SetPort(port uint16) {
+	cfgRegistry.Set(ConfigKeyPort, port)
+}
+
+func SetHost(host string) {
+	cfgRegistry.Set(ConfigKeyHost, host)
 }
