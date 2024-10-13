@@ -148,7 +148,7 @@ docker build -f "./Dockerfile.bookworm" -t hakjdb:bookworm .
 ```
 Alpine Linux based image
 ```sh
-docker build -f "./Dockerfile.alpine" -t hakjdbdb:alpine .
+docker build -f "./Dockerfile.alpine" -t hakjdb:alpine .
 ```
 
 These commands build the image only for a single architecture. If you want to build multi-arch images for other platforms, read [this](https://docs.docker.com/build/building/multi-platform/).
