@@ -69,6 +69,13 @@ Max client connections
 - Env variable: HAKJ_MAX_CLIENT_CONNECTIONS
 - Command line flag: --max-client-connections
 
+Password
+- The server password used for authenticating clients.
+- Default: ""
+- Config file: password
+- Env variable: HAKJ_PASSWORD
+- Command line flag: --password
+
 Port
 - Server TCP/IP port. Ranges from 1 to 65535.
 - Default: 12345
