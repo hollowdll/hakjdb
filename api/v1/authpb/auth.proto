@@ -10,14 +10,35 @@ option go_package = "api/v1/authpb";
 
 message AuthenticateRequest {
   string password = 1;
+  bool request_refresh_token = 2;
 }
 
 message AuthenticateResponse {
   string auth_token = 1;
+  // unix timestamp in seconds when the auth_token expires.
+  uint64 expires_in_seconds = 2;
+  optional string refresh_token = 3;
+}
+
+message RefreshSessionRequest {
+  string refresh_token = 1;
+  // client secret that is configured on the server.
+  string client_secret = 2;
+  bool request_new_refresh_token = 3;
+}
+
+message RefreshSessionResponse {
+  string auth_token = 1;
+  // unix timestamp in seconds when the auth_token expires.
+  uint64 expires_in_seconds = 2;
+  optional string refresh_token = 3;
 }
 
 // AuthService provides RPCs related to authentication.
 service AuthService {
   // Authenticate authenticates a client.
   rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {}
+  // RefreshSession refreshes the client session.
+  // It requests a new auth token using a refresh token.
+  rpc RefreshSession(RefreshSessionRequest) returns (RefreshSessionResponse) {}
 }
