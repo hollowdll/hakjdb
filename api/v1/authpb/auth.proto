@@ -17,21 +17,18 @@ message AuthenticateResponse {
   string auth_token = 1;
   // unix timestamp in seconds when the auth_token expires.
   uint64 expires_in_seconds = 2;
+  // present if refresh token was requested.
   optional string refresh_token = 3;
 }
 
 message RefreshSessionRequest {
   string refresh_token = 1;
-  // client secret that is configured on the server.
-  string client_secret = 2;
-  bool request_new_refresh_token = 3;
 }
 
 message RefreshSessionResponse {
   string auth_token = 1;
   // unix timestamp in seconds when the auth_token expires.
   uint64 expires_in_seconds = 2;
-  optional string refresh_token = 3;
 }
 
 // AuthService provides RPCs related to authentication.
