@@ -6,7 +6,7 @@ HakjDB is a simple in-memory key-value data store that was built as an educative
 
 HakjDB allows you to store key-value pairs of different data types in namespaces called databases. The data is stored in the server's memory.
 
-HakjDB uses a simple client-server model, and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage or cache. It may not be suitable for advanced needs, and does not offer data persistence on disk.
+HakjDB uses a simple client-server model and has a well-defined and documented gRPC API. It can be used as a temporary database, session storage or cache. It may not be suitable for advanced needs and does not offer data persistence on disk.
 
 Data is stored at keys of different types. Each data type allows you to store different kind of data such as string values or objects.
 
@@ -16,8 +16,9 @@ Components:
 - `hakjserver` - The server process
 - `hakjctl` - CLI tool to control and interact with the server
 - [`hakjdb-gui`](https://github.com/hollowdll/hakjdb-gui) - Cross-platform GUI desktop application to visually interact with the server
+- [`hakjdb-java`](https://github.com/hollowdll/hakjdb-java) - Java client library
 
-This is not meant for production use, as it lacks a lot of features, and is not as professional as some popular key-value stores.
+This is not meant for production use as it lacks a lot of features and is not as professional as some popular key-value stores.
 
 # How it works
 
@@ -72,7 +73,7 @@ mv hakjctl ~/hakjdb/hakjctl
 
 # Build binaries
 
-To build the binaries from source, you first need to install Go. Minimum version required is go1.22.
+To build the binaries from source, you first need to install Go. Minimum required Go version is 1.22.
 
 Instructions for installing Go can be found [here](https://go.dev/doc/install).
 
@@ -124,7 +125,6 @@ Images are available in Docker Hub with multiple tags. Links below.
 
 - [Repository](https://hub.docker.com/r/hakj/hakjdb)
 - [Old repository](https://hub.docker.com/r/hakj/kvdb)
-
 
 ## Pull the server image
 
